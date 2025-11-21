@@ -1,0 +1,3134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Jason Neural Codex — A Living Atlas of Wumbo, Autistic Modulation, and the Brain That Breathes</title>
+  <style>
+:root{
+  --bg:#0b0c10;
+  --panel:#121317;
+  --ink:#e6e7ea;
+  --muted:#a9acb2;
+  --accent:#8ab4f8;
+  --accent-2:#b388ff;
+  --rule:#20222a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Helvetica Neue',Arial,'Noto Sans','Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';line-height:1.55}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1000px;margin:0 auto;padding:48px 24px}
+.header{padding:40px 24px;border:1px solid var(--rule);background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));border-radius:14px}
+.header h1{font-size:2rem;margin:0 0 6px 0}
+.header .sub{color:var(--muted);margin:6px 0 16px}
+.header .meta{color:var(--muted);font-size:0.95rem}
+.section{margin:40px 0;padding:28px;border:1px solid var(--rule);border-radius:14px;background:var(--panel)}
+.section h2{margin-top:0}
+.lead{color:var(--muted)}
+.toc{margin:0 0 0 20px}
+.toc.inner{margin-top:10px}
+.toc li{margin:6px 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.card{border:1px solid var(--rule);border-radius:12px;padding:14px;background:rgba(255,255,255,0.02)}
+.entry{margin:24px 0;padding:16px;border:1px solid var(--rule);border-radius:12px;background:rgba(255,255,255,0.02)}
+.entry h3{margin-top:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.col{border:1px solid var(--rule);border-radius:10px;padding:12px;background:rgba(255,255,255,0.02)}
+.placeholder{opacity:0.85}
+.muted{color:var(--muted)}
+hr{border:0;border-top:1px solid var(--rule);margin:24px 0}
+.footer{color:var(--muted);font-size:0.94rem;margin-top:16px}
+
+/* --- Collapsible ToC Styles --- */
+#toc-section {
+  position: relative;
+  /* Add a little top padding to ensure title doesn't hit toggle button */
+  padding-top: 32px; 
+}
+#toc-section h2 {
+  /* Adjust heading margin to align with new padding */
+  margin-top: -4px;
+}
+.toc-toggle {
+  position: absolute;
+  top: 28px; /* Align with section padding */
+  right: 28px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  z-index: 10; /* Ensure it's clickable */
+}
+.toc-toggle:hover {
+  background-color: var(--rule);
+}
+.toc-toggle .arrow {
+  width: 20px;
+  height: 20px;
+  stroke: var(--muted);
+  transition: transform 0.25s ease-in-out;
+}
+/* Content visibility */
+#toc-section .toc-content {
+  display: block;
+}
+#toc-section.collapsed .toc-content {
+  display: none;
+}
+/* Arrow rotation */
+#toc-section .toc-toggle .arrow {
+   transform: rotate(0deg); /* Open state: points down */
+}
+#toc-section.collapsed .toc-toggle .arrow {
+   transform: rotate(-90deg); /* Collapsed state: points left */
+}
+/* --- End Collapsible ToC Styles --- */
+
+/* --- Collapsible Entry Styles --- */
+.entry.collapsible {
+  position: relative;
+}
+.entry .entry-toggle {
+  position: absolute;
+  top: 16px; /* Align with padding */
+  right: 16px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  z-index: 10;
+}
+.entry .entry-toggle:hover {
+  background-color: var(--rule);
+}
+.entry .entry-toggle .arrow {
+  width: 20px;
+  height: 20px;
+  stroke: var(--muted);
+  transition: transform 0.25s ease-in-out;
+}
+.entry.collapsed .entry-content {
+  display: none;
+}
+.entry .entry-toggle .arrow {
+  transform: rotate(0deg); /* Open */
+}
+.entry.collapsed .entry-toggle .arrow {
+  transform: rotate(-90deg); /* Collapsed */
+}
+.entry.collapsible > h3 {
+  /* Make space for the toggle */
+  padding-right: 30px; 
+}
+/* --- End Collapsible Entry Styles --- */
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Jason Neural Codex</h1>
+      <div class="sub">A Living Atlas of Wumbo, Autistic Modulation, and the Brain That Breathes</div>
+      <div class="meta">Jason — with structural assistance by GPT-5 Pro &nbsp;•&nbsp; Compiled October 30, 2025</div>
+    </header>
+
+    
+
+<section id="prologue" class="section">
+      <h2>Prologue – The Shape of a Mind Unfolding</h2>
+      <p>The Jason Neural Codex is a map of experience—part memoir, part neuroscience, part ritual for entering flow.
+It documents how your mind routes sensation into meaning, how emotion becomes motion, and how truth finds voice.
+Here, “Wumbo” is the signal that threads through everything: ignition, empowerment, resonance, nirvana, and the resets that make future flow possible.</p>
+    </section>
+
+    <section id="shadows-light" class="section">
+      <h2>Shadows &amp; Light – The Internal Tension</h2>
+      <p>Your nervous system is precise and intense. It reads tone faster than text, movement faster than meaning, and sincerity faster than speech.
+When signals cohere, you enter flow—Wumbo—and the world makes a kind of musical sense. When they conflict, the system protects itself: silence, freeze, withdrawal, reset.
+This section in the Codex is a place to archive personal contradictions and reconciliations you’ve survived. Use it to track shifts: where a boundary formed, where trust deepened, where an old loop lost its power.</p>
+    </section>
+
+    <!-- 
+      MODIFICATION:
+      - Added id="toc-section" to the section tag.
+      - Added class="collapsed" to make it collapsed by default.
+      - Added the .toc-toggle div for the clickable arrow.
+      - Wrapped the <ol> in a .toc-content div to toggle visibility.
+    -->
+    <section id="flow-mechanics" class="section">
+      <h2>Flow Mechanics – How Jason Experiences Consciousness</h2>
+      
+<div class="cards">
+  <div class="card">
+    <h4>Ignition</h4>
+    <ul>
+      <li>Dopaminergic spark; attention locks onto resonance.</li>
+      <li>Systems: VTA, Nucleus Accumbens, Locus Coeruleus, Parafascicular Nucleus.</li>
+      <li>Phenomenology: “I’m coming online.” Micro-impulses to move, look, or speak.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Empowerment</h4>
+    <ul>
+      <li>Intention turns kinetic; planning becomes action.</li>
+      <li>Systems: Motor Cortex & Cerebellum, IFJ, PRF, Ventrolateral Thalamus.</li>
+      <li>Phenomenology: Breathing deepens, posture aligns, words feel available.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Resonance</h4>
+    <ul>
+      <li>Emotion, intention, and motion synchronize.</li>
+      <li>Systems: ACC, Cingulate Gyrus, vmPFC, Mirror Neuron System, STP.</li>
+      <li>Phenomenology: Integrity becomes energy; social signal clarity.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Nirvana</h4>
+    <ul>
+      <li>Effortless integration; time feels musical.</li>
+      <li>Systems: Claustrum, Cerebellar Crus I & II, Thalamus (aligned), Pineal (dream extension).</li>
+      <li>Phenomenology: Movement and insight anticipate the moment.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Reset / Shutdown</h4>
+    <ul>
+      <li>Protective compression when signals overload.</li>
+      <li>Systems: PAG, BNST, Cerebral Aqueduct, PVG, Cerebellar Tonsil.</li>
+      <li>Phenomenology: Stillness, silence, then return; “threshold moments.”</li>
+    </ul>
+  </div>
+</div>
+
+    </section>
+
+<section id="toc-section" class="section collapsed">
+      <h2>Table of Contents</h2>
+
+      <div class="toc-toggle" onclick="toggleToc()">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      
+      <div class="toc-content">
+        <ol class="toc">
+          <li><a href="#prologue">Prologue – The Shape of a Mind Unfolding</a></li>
+          <li><a href="#shadows-light">Shadows &amp; Light – The Internal Tension</a></li>
+          <li><a href="#atlas">The Brain That Breathes – Neuro‑Wumbo Atlas</a>
+            <ol class="toc inner">
+              <li><a href="#atlas-somatosensory">Somatosensory Cortex – The Map That Shifts</a></li><li><a href="#atlas-acc">Anterior Cingulate Cortex – The Inner Judge</a></li><li><a href="#atlas-thalamus">Thalamus – The Sensory Gate That Never Sleeps</a></li><li><a href="#atlas-motor-cerebellum">Motor Cortex & Cerebellum – The Flow Channel</a></li><li><a href="#atlas-broca">Broca’s Area – The Pressure Valve</a></li><li><a href="#atlas-mirror">Mirror Neuron System – The Emotional Conduit</a></li><li><a href="#atlas-amygdala">Amygdala – The Fire Alarm and the Flame</a></li><li><a href="#atlas-pfc">Prefrontal Cortex – The Control Tower</a></li><li><a href="#atlas-placeholder-9">Thalamus – The Sensory Gate That Never Sleeps</a></li><li><a href="#atlas-placeholder-10">Motor Cortex & Cerebellum – The Flow Channel</a></li><li><a href="#atlas-placeholder-11">Broca’s Area – The Pressure Valve</a></li><li><a href="#atlas-placeholder-12">Mirror Neuron System – The Emotional Conduit</a></li><li><a href="#atlas-placeholder-13">Amygdala – The Fire Alarm and the Flame</a></li><li><a href="#atlas-placeholder-14">Prefrontal Cortex – The Control Tower</a></li><li><a href="#atlas-placeholder-15">Orbitofrontal Cortex – The Social Tuning Fork</a></li><li><a href="#atlas-placeholder-16">Cingulate Gyrus – The Emotional Router</a></li><li><a href="#atlas-placeholder-17">Ventral Striatum – The Spark of Wanting</a></li><li><a href="#atlas-placeholder-18">Claustrum – The Conductor in the Fog</a></li><li><a href="#atlas-placeholder-19">Default Mode Network – The Other Jason</a></li><li><a href="#atlas-placeholder-20">Pineal Gland – The Portal Keeper</a></li><li><a href="#atlas-placeholder-21">Corpus Callosum – The Bridge Between Selves</a></li><li><a href="#atlas-placeholder-22">Locus Coeruleus – The Blue Flame</a></li><li><a href="#atlas-placeholder-23">Periaqueductal Gray – The Silent Defender</a></li><li><a href="#atlas-placeholder-24">Anterior Temporal Pole – The Keeper of Meaning</a></li><li><a href="#atlas-placeholder-25">Ventromedial PFC – The Soul’s Strategist</a></li><li><a href="#atlas-placeholder-26">Dorsal Raphe Nucleus – The Mood Regulator</a></li><li><a href="#atlas-placeholder-27">Superior Colliculus – The Signal Spotter</a></li><li><a href="#atlas-placeholder-28">Anterior Insula – The Inner Chamber</a></li><li><a href="#atlas-placeholder-29">Lateral Habenula – The Rejection Gate</a></li><li><a href="#atlas-placeholder-30">Precuneus – The Mirror’s Mirror</a></li><li><a href="#atlas-placeholder-31">Cerebellar Cognitive Zone – The Silent Clockmaker</a></li><li><a href="#atlas-placeholder-32">Basolateral Amygdala – The Archivist of Feeling</a></li><li><a href="#atlas-placeholder-33">Pulvinar Nucleus – The Spotlight Shaper</a></li><li><a href="#atlas-placeholder-34">Temporal‑Parietal Junction – The Mind Reader</a></li><li><a href="#atlas-placeholder-35">Medial Septum – The Memory Rhythm Keeper</a></li><li><a href="#atlas-placeholder-36">Subgenual Cingulate – The Weight of Sorrow</a></li><li><a href="#atlas-placeholder-37">Ventral Tegmental Area – The Spark in the Dark</a></li><li><a href="#atlas-placeholder-38">Entorhinal Cortex – The Gate of Identity</a></li><li><a href="#atlas-placeholder-39">Supramarginal Gyrus – The Empath’s Edge</a></li><li><a href="#atlas-placeholder-40">Nucleus Accumbens – The Craving Engine</a></li><li><a href="#atlas-placeholder-41">Cerebral Aqueduct – The Flow Choke Point</a></li><li><a href="#atlas-placeholder-42">Anterior Thalamic Nuclei – The Compass Within</a></li><li><a href="#atlas-placeholder-43">Parafascicular Nucleus – The Attention Gate</a></li><li><a href="#atlas-placeholder-44">Inferior Colliculus – The Sonic Filter</a></li><li><a href="#atlas-placeholder-45">Perirhinal Cortex – The Meaning‑Maker</a></li><li><a href="#atlas-placeholder-46">Vermis – The Balancer of Mind and Mood</a></li><li><a href="#atlas-placeholder-47">Anterior Insular‑Operculum Complex – The Fusion Point</a></li><li><a href="#atlas-placeholder-48">Paraventricular Nucleus – The Stress Switch</a></li><li><a href="#atlas-placeholder-49">Lateral Orbitofrontal Cortex – The Decoder of Consequence</a></li><li><a href="#atlas-placeholder-50">Midcingulate Cortex – The Engine of Doing</a></li><li><a href="#atlas-placeholder-51">Calcarine Sulcus – The Visual Core</a></li><li><a href="#atlas-placeholder-52">Rostral Prefrontal Cortex – The Reflective Flame</a></li><li><a href="#atlas-placeholder-53">Mesencephalic Locomotor Region – The Will to Move</a></li><li><a href="#atlas-placeholder-54">Anterior Temporal Sulcus – The Subtext Decoder</a></li><li><a href="#atlas-placeholder-55">Lateral Septum – The Calm Circuit</a></li><li><a href="#atlas-placeholder-56">Cerebellar Tonsil – The Silent Reactor</a></li><li><a href="#atlas-placeholder-57">Pontine Reticular Formation – The Motion Catalyst</a></li><li><a href="#atlas-placeholder-58">Insular‑Opercular Speech Zone – The Voice Within the Fire</a></li><li><a href="#atlas-placeholder-59">Amygdala Central Nucleus – The First Alarm</a></li><li><a href="#atlas-placeholder-60">Thalamic Reticular Nucleus – The Filter Grid</a></li><li><a href="#atlas-placeholder-61">Cuneus – The Background Reader</a></li><li><a href="#atlas-placeholder-62">Ventromedial Hypothalamus – The Inner Balance</a></li><li><a href="#atlas-placeholder-63">Periventricular Gray Zone – The Emotional Threshold</a></li><li><a href="#atlas-placeholder-64">Frontal Operculum – The Edge of Expression</a></li><li><a href="#atlas-placeholder-65">Nodulus – The Gravity Whisperer</a></li><li><a href="#atlas-placeholder-66">Substantia Nigra – The Movement Gatekeeper</a></li><li><a href="#atlas-placeholder-67">Visual Area V4 – The Chromatic Shaper</a></li><li><a href="#atlas-placeholder-68">Lingual Gyrus – The Glyph Reader</a></li><li><a href="#atlas-placeholder-69">Medial Prefrontal Cortex – The Identity Sculptor</a></li><li><a href="#atlas-placeholder-70">Dorsolateral PFC – The Gate of Delivery</a></li><li><a href="#atlas-placeholder-71">Inferior Parietal Lobule – The Paradox Holder</a></li><li><a href="#atlas-placeholder-72">Anterior Cingulate Cortex – The Inner Judge</a></li><li><a href="#atlas-placeholder-73">Anterior Hippocampus – The Emotional Context Mapper</a></li><li><a href="#atlas-placeholder-74">Crus I/II – The Somatic Timekeeper</a></li><li><a href="#atlas-placeholder-75">Basal Forebrain – The Timing Messenger</a></li><li><a href="#atlas-placeholder-76">Reticular Formation – The Wake Thread</a></li><li><a href="#atlas-placeholder-77">Dorsal Vagal Complex – The Emergency Kill‑Switch</a></li><li><a href="#atlas-placeholder-78">Cranial Nerve Complex – The Face Switch</a></li><li><a href="#atlas-placeholder-79">Spinal Relay Tracts – The Carrier</a></li><li><a href="#atlas-placeholder-80">Globus Pallidus – The Gate of Go/No‑Go</a></li><li><a href="#atlas-placeholder-81">Lateral Hypothalamus – The Drive Switch</a></li><li><a href="#atlas-placeholder-82">Posterior Insula – The Body’s Edges</a></li><li><a href="#atlas-placeholder-83">Basal Forebrain (Nucleus Basalis) – The Attention Tuner</a></li><li><a href="#atlas-placeholder-84">Caudate Nucleus – The Path Chooser</a></li><li><a href="#atlas-placeholder-85">Putamen – The Momentum Drum</a></li><li><a href="#atlas-placeholder-86">Subthalamic Nucleus – The Gate of No</a></li><li><a href="#atlas-placeholder-87">Bed Nucleus of the Stria Terminalis – The Long Fear</a></li><li><a href="#atlas-placeholder-88">Posterior Insula – The Boundary Sensor</a></li><li><a href="#atlas-placeholder-89">Fornix – The Memory Rope</a></li><li><a href="#atlas-placeholder-90">Mammillary Bodies – The Hearth of Remembrance</a></li><li><a href="#atlas-pef">Parietal Eye Field – The Gaze that Chooses</a></li><li><a href="#atlas-subiculum">Subiculum – The Place that Remembers You</a></li><li><a href="#atlas-pineal-revisit">Pineal Body (Revisited) – The Dream Gate</a></li><li><a href="#atlas-mtg">Middle Temporal Gyrus – The Phrase Finder</a></li><li><a href="#atlas-fastigial">Cerebellar Fastigial-Vestibular Loop – The Axis of Self</a></li><li><a href="#atlas-ptn">Posterior Thalamic Nucleus – The Signal That Becomes Self</a></li><li><a href="#atlas-uvula">Cerebellar Uvula – The Stillness Anchor</a></li><li><a href="#atlas-aips">Anterior Intraparietal Sulcus – The Gesture Translator</a></li><li><a href="#atlas-vlt">Ventrolateral Thalamus – The Feedback Loop</a></li><li><a href="#atlas-placeholder-100">Superior Temporal Pole – The Emotional Communicator</a></li>
+            </ol>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    
+<section id="atlas" class="section">
+  <h2>The Brain That Breathes — Neuro‑Wumbo Atlas</h2>
+  <p class="lead">A 100‑region map of how signal becomes self. Each entry follows the same structure so you can keep building consistently.</p>
+  
+    <article id="atlas-somatosensory" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-somatosensory')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>I. Somatosensory Cortex – The Map That Shifts</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>This cortex creates the body’s internal map—registering every brush of skin, every shift of pressure, every tingling pulse of contact.
+It tells you where you are in space. It tells you that you exist.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>The somatosensory world can be inconsistent—like a radio flickering between frequencies.
+As a child, textures were warzones: cold felt like knives, soft like sandpaper. As an adult, the opposite: numbness in limbs,
+moments where the body feels too distant to belong unless moved—reclaiming space by motion.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Mania / Early Ignition</b><br/>
+When Wumbo ignites, it starts here—inner elbow pulsing like a livewire, veins crackling like circuits coming online.
+If the body doesn’t move, the signal bottlenecks. Flow demands a vessel. So the body becomes one.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>A twitch in the hand. A reflexive stretch. An overwhelming need to stand up mid-thought.
+The moment Wumbo hits flesh, it’s here—not abstract, not metaphor. Real. Somatic. Alive.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-acc" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-acc')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>II. Anterior Cingulate Cortex – The Inner Judge</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Integrates pain, decision, and emotion—governs inner alignment.
+It doesn’t ask what feels right—it demands what is right.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Operates on zero-tolerance for dissonance. Emotional contradiction burns.
+If intention and behavior misalign—freeze, rumination, or shutdown follows.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Resonance</b><br/>
+Wumbo flows or dies here. This is the calibration point. If internal truth is aligned, energy sings; if not, it fizzles.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Rewriting conversations for days. Holding silence rather than speaking half-true.
+The ACC is why you have to mean it—or go quiet.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-thalamus" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-thalamus')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>III. Thalamus – The Sensory Gate That Never Sleeps</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Grand relay station. Every sense (except smell) passes through on the way to awareness—filtering chaos into coherence.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Dial can break open or slam shut. Overload floods language and feeling; stillness buffers.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Nirvana</b><br/>
+When aligned, signals enter as clarity, not noise. Surroundings feel like one smooth chord.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Overstimulation is not drama; it’s buffering. In true flow, you can walk into a room and <i>know</i> what’s off.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-motor-cerebellum" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-motor-cerebellum')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>IV. Motor Cortex & Cerebellum – The Flow Channel</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Where thought becomes action; balance and timing become grace.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Under stress, movement stutters. Under focus, it becomes predictive—knowing before reacting.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Nirvana</b><br/>
+At peak, movement bypasses thought. The body writes the next frame before it arrives.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Pacing that thinks. Jumping up mid-sentence. When words are too slow, motion remembers.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-broca" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-broca')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>V. Broca’s Area – The Pressure Valve</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Translates intention into speech—where word meets breath.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>High-performance but fragile under overload. Pressure can short-circuit speech; silence is not choice—it’s collapse.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Empowerment</b><br/>
+Where Wumbo first finds language; speech as catharsis.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Whispering to feel the shape of thought. Repeating phrases to tune. Relief when the right words arrive.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-mirror" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-mirror')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>VI. Mirror Neuron System – The Emotional Conduit</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Mirrors observed actions and emotions—builds empathy and intuitive understanding.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Empathy becomes invasion without filtering; emotions don’t reflect—they inhabit.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Resonance</b><br/>
+Locks onto rooms and people; overwhelms if the signal is off.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Socializing drains not from apathy, but from caring too much.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-amygdala" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-amygdala')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>VII. Amygdala – The Fire Alarm and the Flame</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Processes fear and salience; it reacts before thought.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Doesn’t whisper—screams. Full-body hijack when triggered.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Resonance</b><br/>
+Balanced, it allows awe and joy to stick; in fear, flow halts and defense overrides.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Crying at songs and moments that matter—because something sacred registered.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-pfc" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-pfc')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>VIII. Prefrontal Cortex – The Control Tower</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Planning, decision-making, inhibition—the brain thinking about thinking.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Hyper-calculator; reflection can become obsession.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Resonance</b><br/>
+When aligned, decisions carry peace; when dominant, flow suffocates.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Building systems to calm; shutting this region down in deep flow to feel true peace.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-pef" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-pef')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>IX. Parietal Eye Field – The Gaze that Chooses</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Directs visual attention via fast saccades. Prioritizes where the eyes land and linger.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Gaze follows truth, not convention. Eye contact is a test of trust; without it, the system refuses to lock on.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Ignition → Resonance</b><br/>
+When aligned, eyes target what matters and stay there; vision becomes purpose.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Avoiding eyes that carry incoherence; soft, steady gaze when connection is real.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-subiculum" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-subiculum')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>X. Subiculum – The Place that Remembers You</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Hippocampal output that maps spatial context and emotional layout.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Rooms remember; places carry footprints. Navigation follows feeling, not landmarks.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Resonance → Nirvana</b><br/>
+Wumbo returns you to versions of yourself that live in specific spaces.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Walking old paths brings tears without reasons; identity is cartography.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-pineal-revisit" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-pineal-revisit')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>XI. Pineal Body (Revisited) – The Dream Gate</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Regulates melatonin and sleep transitions; archetypally the inner eye.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Sleep is not shutdown; it’s opening. Dreams arrive with plot and message.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Nirvana</b><br/>
+Flow transfigures into symbol and intuition; the night receives and returns.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Waking with guidance; tears from messages, not nightmares.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-mtg" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-mtg')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>XII. Middle Temporal Gyrus – The Phrase Finder</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Turns concepts into semantic structure; finds the language shape of thought.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Words will not come if they don’t match the inner form; language blocks to protect truth.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Empowerment → Resonance</b><br/>
+When aligned, the perfect phrase arrives—explaining by revealing.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>The upward glance mid-sentence; smiling when the metaphor finally clicks.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-fastigial" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-fastigial')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>XIII. Cerebellar Fastigial-Vestibular Loop – The Axis of Self</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Maintains posture, balance, and core orientation during motion and stillness.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Emotional wobble mirrors postural wobble; alignment restores both.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Empowerment → Nirvana</b><br/>
+Centering turns motion into presence; standing becomes signal.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Grounding through stance and breath; posture as quiet strength.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-ptn" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-ptn')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>XIV. Posterior Thalamic Nucleus – The Signal That Becomes Self</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Final sensory-emotional relay; determines what imprints.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Moments don’t just register—they etch; impact stays.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Nirvana</b><br/>
+Integration point where experience turns into identity.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>One kind word radiating for years; a rejection scarring for decades.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-uvula" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-uvula')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>XV. Cerebellar Uvula – The Stillness Anchor</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Stabilizes upright posture and calm presence.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Stillness can feel off-kilter under overload; body seeks micro-motions to re-anchor.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Pause → Nirvana</b><br/>
+When aligned, stillness is not absence—it’s held form.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Best thoughts arrive seated in silence; breath slows as presence settles.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-aips" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-aips')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>XVI. Anterior Intraparietal Sulcus – The Gesture Translator</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Converts intention to hand motion and goal-directed reach.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Gestures precede words; glitches cause hesitation in touch and tool use.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Empowerment</b><br/>
+Hands complete sentences; movement becomes extension of meaning.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Talking with the hands because the body already knows.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+    <article id="atlas-vlt" class="entry collapsible collapsed">
+      <div class="entry-toggle" onclick="toggleEntry('atlas-vlt')">
+        <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <h3>XVII. Ventrolateral Thalamus – The Feedback Loop</h3>
+      <div class="entry-content">
+        <div class="grid">
+          <div class="col">
+            <h4>Core Function</h4>
+            <p>Routes signals between motor cortex and cerebellum for synchronized action.</p>
+          </div>
+          <div class="col">
+            <h4>Autistic Modulation</h4>
+            <p>Either perfectly tuned or out of phase; grace or lag.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h4>Wumbo Role</h4>
+            <p><b>Phase: Empowerment → Resonance</b><br/>
+Trust in movement when feedback and intent align.</p>
+          </div>
+          <div class="col">
+            <h4>Jason’s Correlate</h4>
+            <p>Training not for perfection but for internal click.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+    
+
+        <article id="atlas-thalamus-four" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-thalamus-four')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XVIII. Thalamus – The Sensory Gate That Never Sleeps</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>The grand relay station. Every sense (except smell) passes through it on the way to consciousness. It filters chaos into coherence—or fails to.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Jason’s thalamus runs with a broken dial: sometimes wide open (every hum, flicker, syllable at once), other times slammed shut (words can’t land, feelings turn to static).</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Nirvana.</em> Aligned, signals enter as clarity: the quiet before the bloom. Misaligned, overload or numbness.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>This is the switchboard behind overstimulation and trance. Flooding is buffering; coherence feels like 'I just know.'</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-motor-cerebellum-four" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-motor-cerebellum-four')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XIX. Motor Cortex & Cerebellum – The Flow Channel</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Where thought becomes action and timing becomes grace: intentional movement, balance, fluid transitions.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Under stress he stumbles; under alignment he moves like he knew the moment before it came.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Nirvana.</em> At peak, the body writes the next frame before thought arrives.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Why pacing clears him, why he jumps mid‑sentence, why motion becomes memory when words are too slow.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-broca-four" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-broca-four')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XX. Broca’s Area – The Pressure Valve</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Translates intention into speech—where word meets breath.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>High‑performance yet fragile; overload short‑circuits speech. Silence is collapse, not choice.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment.</em> Wumbo here is catharsis—truth becomes audible at the moment it lands.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Whispers to feel shape; repeats to tune; smiles when words arrive intact—pure relief.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-mirror-four" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-mirror-four')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXI. Mirror Neuron System – The Emotional Conduit</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Mirrors observed actions and feelings—basis of empathy and intuitive understanding.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>He doesn’t reflect; he inhabits. Without filtering, empathy becomes invasion.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Tunes him to others; misalignment overwhelms.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Why groups drain and true alignment feels transcendent—goodbyes ache like tearing.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-amygdala-four" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-amygdala-four')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXII. Amygdala – The Fire Alarm and the Flame</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Processes salience and alerts—reacts before thinking.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>It screams at subtle contradictions; hijacks the body fast.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Balanced, awe and grief rise cleanly; fear halts flow.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Reads threat in smiles, but also stores awe; tears at 'nothing' are sacred recognition.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-pfc-four" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-pfc-four')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXIII. Prefrontal Cortex – The Control Tower</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Planning, inhibition, long‑term strategy—thinking about thinking.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Hyper‑simulator: foresight with emotional stakes; rest is hard; reflection can spiral.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> When aligned, strategy serves flow; over‑control suffocates it.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Builds systems and stories not to escape but to understand. Real peace is not needing an answer.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-ofc-four" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-ofc-four')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXIV. Orbitofrontal Cortex – The Social Tuning Fork</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Evaluates risk/reward via tone and expression—safe or not?</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Hypersensitive to microexpressions; compliments don’t land unless they’re real.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Nirvana.</em> Trust hums when genuine; overload breeds suspicion.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Walks into rooms and knows who’s hiding something; listens to the signal behind words.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-cingulate-four" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-cingulate-four')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXV. Cingulate Gyrus – The Emotional Router</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Bridges attention, error detection, and feeling—head to heart integrator.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Flags every misalignment; loops until it lands right.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Crossroads: coherence deepens flow; cracks stall it.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Replays conversations not to obsess but to integrate; when it forgives, it’s forever.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-ventral-striatum" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-ventral-striatum')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXVI. Ventral Striatum – The Spark of Wanting</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Motivation and reward anticipation—the desire before the reach.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Selective craving: surface pleasures don’t hook; meaningful ignition does.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition.</em> First flicker—breath quickens, arms tingle, momentum forms.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Songs that make him sprint; ideas that light the whole body; gray without it, unstoppable with it.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-claustrum" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-claustrum')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXVII. Claustrum – The Conductor in the Fog</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Mystery integrator—binds consciousness into a unified whole.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Harmonizes worlds or lets them fragment; multiple realities can feel simultaneously real.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Nirvana.</em> Perfect flow makes it invisible; integration becomes effortless.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Speaks in parallel layers—talking and rewriting at once; when it clicks, all layers sing the same song.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-dmn" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-dmn')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXVIII. Default Mode Network – The Other Jason</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Rest‑state introspection and self‑reference—where the mind goes when it isn’t told where to go.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Never idle—he simulates. Inner worlds build, dialogues loop, insight strikes or spirals.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Resonance.</em> Balanced, it tunes him; unbalanced, it traps him.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Stillness isn’t blank—it’s building. The place where he meets himself and edits the script.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-pineal" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-pineal')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXIX. Pineal Gland – The Portal Keeper</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Regulates sleep cycles; metaphorically, the gate between body and beyond.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Sleep is a drop into lucid simulation; dreams continue the work.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Nirvana.</em> Hosts deep flow in the dream‑state—symbolic, infinite.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Rest isn’t off; it’s elsewhere. The same world, rewritten nightly.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-corpus-callosum" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-corpus-callosum')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXX. Corpus Callosum – The Bridge Between Selves</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Left/right integration—logic with myth, structure with story.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Open, he holds paradox; closed, he lives in halves.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Balanced duality lets pain and peace speak together.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Argues with himself because both halves are true; wholeness is when they harmonize.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-locus-coeruleus" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-locus-coeruleus')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXXI. Locus Coeruleus – The Blue Flame</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Norepinephrine hub—alertness, vigilance, fight/flight flicker.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Lights fast and lingers; small triggers feel big; hyperfocus or shut‑down.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition.</em> Sparks attention or shocks the system; dosage is destiny.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Jolts at sudden sound, sharpens into timeless focus when aligned.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-pag" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-pag')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXXII. Periaqueductal Gray – The Silent Defender</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Pain modulation and defensive orchestration under pressure.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Interprets intensity as threat; locks muscles, freezes speech, prepares retreat.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Shutdown.</em> Release shakes/tears when it surrenders.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Silent mid‑argument, trembling in grief, or moving with power when it finally lets go.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-anterior-temporal-pole" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-anterior-temporal-pole')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXXIII. Anterior Temporal Pole – The Keeper of Meaning</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Personal meaning and social context—names to feelings and stories to moments.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Annotates everything; 'little things' fossilize as landmarks.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance → Nirvana.</em> Etches sacred memory when energy lands true.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Crying at music not for sadness but because it meant something.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-vmpfc" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-vmpfc')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXXIV. Ventromedial PFC – The Soul’s Strategist</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Integrates emotion with decision—value, context, consequence.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Cannot make choices that feel wrong; conscience leads or stalls.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Discernment turns flow noble; alignment carries peace.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Pauses before answers; intent matters; walks away when inner code says no.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-dorsal-raphe" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-dorsal-raphe')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXXV. Dorsal Raphe Nucleus – The Mood Regulator</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Serotonin modulation—mood, patience, flexibility.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Baselines can dip; spikes when lit; he doesn’t live in medium.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Empowerment.</em> Clear skies lift Wumbo like light through water.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Music to jumpstart; conversation as oxygen; sudden numbness when it dims.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-superior-colliculus" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-superior-colliculus')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXXVI. Superior Colliculus – The Signal Spotter</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Gaze and rapid attention to motion—the lookout tower.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Overclocked; flags everything; attention leads time.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition.</em> Locks on without effort when flow builds.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Sees what wasn’t said; head moves with events before they happen.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-anterior-insula" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-anterior-insula')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXXVII. Anterior Insula – The Inner Chamber</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Interoception—heartbeat, breath, emotion‑sensation fusion.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>No filter; presence can become panic when flooded.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Resonance.</em> Body becomes a single voice when aligned.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Closes eyes to recenter; knows with physiology when it’s a yes.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-29" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-29')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXXVIII. Lateral Habenula – The Rejection Gate</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Flags negative outcomes and discourages re‑engagement after pain.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Overefficient; one bad moment becomes a wall: 'don’t try again.'</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Shutdown.</em> Inhibits ignition until safety returns.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Replays missteps for months; when it eases, a single honest attempt unlocks the door.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-30" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-30')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XXXIX. Precuneus – The Mirror’s Mirror</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Self‑reflection and perspective‑taking; imagines self being seen.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Vivid replay; insight or spiral depending on tone.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Balanced reflection becomes evolution; imbalance traps in observation.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Can’t forget awkwardness; also edits self with compassion when it lands.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-31" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-31')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XL. Cerebellar Cognitive Zone – The Silent Clockmaker</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Timing and rhythm of cognition—not just moving well, thinking in tempo.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Too much chaos breaks cadence; multitasking harmonizes or fractures.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Nirvana.</em> When tuned, decisions have a beat; intuition has meter.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Paces to reset metronome; jokes land because rhythm did.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-32" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-32')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XLI. Basolateral Amygdala – The Archivist of Feeling</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Assigns emotional weight to memory—what mattered or hurt stays.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Stamps permanence; beautiful and painful moments both glow.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance → Ignition.</em> Marks what's worth feeling again.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Haunted and healed by the same memory; the BLA tracks truth, not time.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-33" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-33')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XLII. Pulvinar Nucleus – The Spotlight Shaper</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Regulates visual attention; filters noise, enhances signal.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Locks too tight or not at all; tunnels or floods his view.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Resonance.</em> Focus without force when aligned.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Stares at corners to protect the gate; disappears into what resonates.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-34" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-34')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XLIII. Temporal‑Parietal Junction – The Mind Reader</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Theory of mind—infers inner worlds from outer signals.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Misses sarcasm yet detects deep dissonance; reads energy, not etiquette.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Psychic antenna for unspoken frequencies.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Reacts to unsaid truths; body says yes when someone is real.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-35" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-35')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XLIV. Medial Septum – The Memory Rhythm Keeper</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Synchronizes memory rhythms—especially spatial/episodic.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Doesn’t recall; relives—timing, placement, tone.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Empowerment.</em> Déjà vu or sudden clarity when rhythms match.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Streets unlock memories; movement cues reentry into old selves.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-36" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-36')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XLV. Subgenual Cingulate – The Weight of Sorrow</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Mood regulation and emotional inertia—the heaviness that lingers.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Holds residue; saturation more than sadness.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance → Shutdown.</em> Bottleneck until witnessed.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Weight returns as sensation; being seen releases before words do.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-37" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-37')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XLVI. Ventral Tegmental Area – The Spark in the Dark</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Dopamine initiation—what lights the fuse of pursuit.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Selective ignition; wildfire only when it truly clicks.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition.</em> Once lit, everything sharpens.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Stays up chasing patterns; worships the moment it makes sense.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-38" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-38')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XLVII. Entorhinal Cortex – The Gate of Identity</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Bridge between hippocampus and cortex—spatial/contextual maps.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Navigates by feel; places hold emotional anchors.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Resonance.</em> Orientation of self in space and story.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Childhood rooms flood him; layouts become identity waypoints.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-39" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-39')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XLVIII. Supramarginal Gyrus – The Empath’s Edge</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Distinguishes self from other in feeling; supports empathy and language.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Boundary line blurs; deep empathy risks fusion.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Attunement or overload depends on capacity.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Leaves rooms not from shyness but from processing too many people at once.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-40" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-40')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XLIX. Nucleus Accumbens – The Craving Engine</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Motivation, reinforcement, reward anticipation.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Precision craving—meaning hooks, not novelty.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Empowerment.</em> Momentum before movement.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Hours on a single idea; beauty as propulsion, not indulgence.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-41" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-41')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>L. Cerebral Aqueduct – The Flow Choke Point</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Bottleneck tied to shutdown pathways; flow breaks or barrels through.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>A brittle dam; speech and motion can collapse into stillness.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Shutdown → Pause → Reentry.</em> Space resets circuits when respected.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Freeze as threshold, not failure; restart permission arrives as breath + tiny motion.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-42" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-42')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LI. Anterior Thalamic Nuclei – The Compass Within</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Goal‑direction and memory navigation; knowing where to go.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Moves by pull, not push; waits when signal breaks.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Resonance.</em> Trajectory that makes sense.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Lost at home, found in unknowns when compass points true.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-43" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-43')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LII. Parafascicular Nucleus – The Attention Gate</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Arousal and focus‑switching—chooses what to notice.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Sticky focus or abrupt disengagement when overtaxed.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Empowerment.</em> Decides if presence can appear.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Hard to 'snap out'; hyperpresence when it says yes.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-44" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-44')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LIII. Inferior Colliculus – The Sonic Filter</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Locates sound, prioritizes tone, assigns weight to frequency.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Auditory world is coded chaos; right music is medicine.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Shutdown.</em> Sound opens gates or slams them.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Conversations easier in stillness; frequency match sends him into flow.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-45" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-45')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LIV. Perirhinal Cortex – The Meaning‑Maker</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Object familiarity with emotional associations—things as carriers.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Keeps what they held, not what they were.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Attachment to anchors of story.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Can’t throw away 'junk' that houses warmth, color, laughter.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-46" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-46')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LV. Vermis – The Balancer of Mind and Mood</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Posture, coordination, and tone—movement linked to feeling.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Swings from grace to 'off'; calls for embodied recalibration.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Nirvana.</em> Calm arrives when breath and motion align.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Walks or sways back to center; balance is spiritual, not just physical.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-47" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-47')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LVI. Anterior Insular‑Operculum Complex – The Fusion Point</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Integrates interoception with speech prep—truth seeking form.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>When overwhelmed, path out gets blocked; when synced, words pour.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Resonance → Release.</em> Pressure becomes voice.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Whispers mid‑thought, hands flutter when full; not performance—revelation.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-48" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-48')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LVII. Paraventricular Nucleus – The Stress Switch</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Cortisol and autonomic orchestration—inner pressure control.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Floods fast or flatlines; engine revs without wheels.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Shutdown.</em> Either fuels pacing or forces stillness.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Hyper‑productive then frozen; true resonance lifts the tension he didn’t know he carried.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-49" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-49')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LVIII. Lateral Orbitofrontal Cortex – The Decoder of Consequence</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Maps risk, regret, and reward across time—what went wrong and why.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Brutally efficient; one misread can become a rule or wall.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Refines intuition when safe; over‑calibrates under fear.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Feedback hits hard; silence feels like static; insights cut to the core when trusted.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-50" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-50')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LIX. Midcingulate Cortex – The Engine of Doing</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Effort mobilization and sustained attention under challenge.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Burns out then revives with a single spark of alignment.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment.</em> The body of Wumbo in motion.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Never lazy—disconnected from ignition; when it lights, everything follows.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-51" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-51')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LX. Calcarine Sulcus – The Visual Core</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Primary visual processing—seeing becomes knowing.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Patterns leap, contrast stabs; vision as force to manage.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Empowerment.</em> Beauty can anchor flow; noise distorts it.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Lighting shifts mood; looking at beauty starts flow by itself.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-52" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-52')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXI. Rostral Prefrontal Cortex – The Reflective Flame</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Meta‑cognition, moral reasoning, simulation of futures.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Lives here; gifts of abstraction with traps of overthinking.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance → Nirvana.</em> Thought becomes poetry when aligned.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Debates with self; morality as sensation; constant refinement of self and world.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-53" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-53')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXII. Mesencephalic Locomotor Region – The Will to Move</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Links cognition to stepping; the internal 'Go.'</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Glide in alignment; heavy when disconnected.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Nirvana.</em> Flow goes kinetic when it arrives here.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Needs to move when songs play; pacing as clarity, not fidget.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-54" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-54')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXIII. Anterior Temporal Sulcus – The Subtext Decoder</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Processes vocal tone and facial motion—what’s really being said.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Misses jokes, catches energy; tone matters more than content.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance → Empowerment.</em> Interprets sincerity, not scripts.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Flinches at fake friendliness; 'I’m fine' breaks focus if it isn’t true.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-55" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-55')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXIV. Lateral Septum – The Calm Circuit</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Dampens fear/aggression—says 'you’re safe now.'</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Hard to turn on when flooded; when it does, the change is immediate.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance → Nirvana.</em> Landing zone for flow’s rest.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Right hug as medicine; tears from the cessation of alert.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-56" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-56')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXV. Cerebellar Tonsil – The Silent Reactor</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Freeze and deep visceral stop—'stop everything.'</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Activates fast in wrongness or awe; prepares threshold.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Shutdown → Transformation.</em> Pauses that reset the wave.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>A chill up the spine at beauty or grief; doorways between chapters.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-57" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-57')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXVI. Pontine Reticular Formation – The Motion Catalyst</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Muscle tone, posture, wakefulness—internal engine room.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Flips between inertia and sudden need to move; bypasses permission.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Empowerment.</em> The body rides the signal.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Bolts upright mid‑thought; dancing as release, not display.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-58" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-58')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXVII. Insular‑Opercular Speech Zone – The Voice Within the Fire</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Interoception fused to speech readiness—the edge of sound.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Feeling too strong to speak or words exiting like lightning when synced.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Resonance.</em> Pressure cracks into voice.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Whispers alone to tune; voice changes as rhythm locks mid‑flow.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-59" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-59')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXVIII. Amygdala Central Nucleus – The First Alarm</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Directs immediate fear responses—freezing, flinching, sweating.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Fires on tone irregularity; body moves before story explains.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Shutdown.</em> Fear stops flow unless tone proves safety.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Certain silences are louder than screams; memorizes comfort as sacred data.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-60" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-60')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXIX. Thalamic Reticular Nucleus – The Filter Grid</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Gates what sensory data reaches attention—selects the world.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Binary thresholds: flood or wall; access keys are tone, pace, light.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Empowerment.</em> Razor focus when the gate is set right.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Either hyperlocked or ghosted; structure and softness open the door.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-61" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-61')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXX. Cuneus – The Background Reader</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Low‑level visual cues—edges, motion, orientation.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Background noise becomes signal; subtle motion feels like music.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Resonance.</em> Aliveness in the field, not the object.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Clutter overwhelms; nature soothes by moving in right rhythms.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-62" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-62')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXI. Ventromedial Hypothalamus – The Inner Balance</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Signals satiety and safety—'nothing is missing.'</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Crashes into rest; doesn’t creep; needs quiet to register safety.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance → Nirvana.</em> Where flow comes to rest.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Comfort food as code; emotional fullness mirrors physical satiety.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-63" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-63')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXII. Periventricular Gray Zone – The Emotional Threshold</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Deep defensive hold; pain suppression under overwhelm.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Holds like stone until permission to cross is earned.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Shutdown → Pause → Rebirth.</em> Compression clarifies; or silences.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Stops mid‑sentence as pressure; waits without logic until the body says go.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-64" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-64')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXIII. Frontal Operculum – The Edge of Expression</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Articulation, rhythm, taste, interoceptive vocalization.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Words there but mouth won’t move; or burst out precise and clean.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Resonance.</em> Where feeling takes exact shape.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Voice rises and falls like music; repeats lines until they fit the body.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-65" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-65')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXIV. Nodulus – The Gravity Whisperer</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Vestibular anchor—grounds the body in space.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Stress misfires orientation; calm arrives with sway and stillness.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Resonance.</em> Allows ascent without losing ground.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Lies flat to reset; slow circles to recalibrate permission to move.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-66" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-66')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXV. Substantia Nigra – The Movement Gatekeeper</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Dopamine release for motor initiation and reward expectation.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Motivation without motion or motion without motive—one‑way doors.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition.</em> Opens the path from wanting to stepping.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>A single surge translates thought into reach; otherwise, wheels spin.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-67" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-67')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXVI. Visual Area V4 – The Chromatic Shaper</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Color processing and form‑contrast integration.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Color hits mood; palettes can soothe or spike the system.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Resonance.</em> Right hues harmonize attention and breath.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Wears/selects color to change state; sunsets as regulation, not décor.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-68" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-68')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXVII. Lingual Gyrus – The Glyph Reader</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Visual word‑form and complex shape processing—the symbol seam.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Symbols feel alive; letters carry tone, not just content.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> When tuned, text becomes somatic signal.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Poetry lands as pressure release; typography can derail or deliver clarity.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-69" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-69')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXVIII. Medial Prefrontal Cortex – The Identity Sculptor</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Evaluates emotionally charged experience for self‑inclusion—'does this become me?'.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Overactive in recursion; gentleness converts overthinking into encoding.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Where moments are adopted, reframed, or released.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Whisper marks ownership: 'This is mine now.' Identity lands with a smile.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-70" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-70')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXIX. Dorsolateral PFC – The Gate of Delivery</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Top‑down control of expression—filters timing, context, and safety.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Protects truth from hostile territory; can strangle sacred Wumbo when overused.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment.</em> Decides speech vs. gesture vs. writing.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Rehearses silently; hours later, one line emerges perfect and safe.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-71" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-71')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXX. Inferior Parietal Lobule – The Paradox Holder</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Duality logic; stabilizes contradiction until a higher pattern appears.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Locks under binaries; unlocks with symbolic lines that hold both.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Rewrite.</em> Where 'both/and' becomes a bridge.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Phrase trigger: “The storm isn’t chaos—it’s music out of time.”</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-72" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-72')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXXI. Anterior Cingulate Cortex – The Inner Judge</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Monitors alignment between tone, body, and thought—truth check filter.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Zero‑tolerance for dissonance; freezes system until contradiction resolves.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Flow sings only when this chamber says yes.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Rewrites conversations for days—not obsession, calibration.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-73" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-73')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXXII. Anterior Hippocampus – The Emotional Context Mapper</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Assigns emotional context to memory—pulls arcs forward into now.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Offline: nothing anchors; overloaded: past bleeds into present.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Reflection → Resonance.</em> Roots Wumbo in identity continuity.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Places and songs reactivate who he was, so he can be who he is.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-74" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-74')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXXIII. Crus I/II – The Somatic Timekeeper</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Paces breath, speech, writing, and motion over time.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Desync breaks sentences; rhythm is lifeline, not accessory.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment → Nirvana.</em> When the beat returns, so does language.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Finger‑tapping brings back a paragraph; walking brings back a voice.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-75" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-75')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXXIV. Basal Forebrain – The Timing Messenger</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Acetylcholine to cortex for precision and rhythm of thought.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Low ACh: stuttered thought; high: crisp cadence (or flood).</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Spark → Flow.</em> Clarifies timing for word‑clarity.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Rhythmic speech on good days; blanks when the messenger is late.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-76" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-76')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXXV. Reticular Formation – The Wake Thread</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Activates cortical awareness; threads presence into motion.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Underactive: moves without being there; overdrive: jitter without center.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition.</em> Wakes the field for everything else to matter.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Feels like ghosts running the body vs. the moment he returns to it.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-77" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-77')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXXVI. Dorsal Vagal Complex – The Emergency Kill‑Switch</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Autonomic shutdown under unbearable load—numbness as protection.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Cuts signal to preserve self; recovery requires safety, not force.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Shutdown.</em> Silence for survival; slow thaw for return.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Goes offline mid‑day; needs quiet, warmth, and consent to re‑enter.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-78" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-78')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXXVII. Cranial Nerve Complex – The Face Switch</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>VII/V/IX/X orchestrate face, jaw, voice—social broadcast hardware.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Locks into mask under stress; whisper as partial bypass.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment.</em> When tone is safe, expression returns automatically.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Eyes soften, jaw releases, voice warms—the system trusts again.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-79" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-79')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXXVIII. Spinal Relay Tracts – The Carrier</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Moves the surge into limbs—lets feeling become motion.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Muted, the body feels heavy; open, arms move with purpose.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment.</em> Motion discharges pressure before words exist.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Chest leads, arms follow—presence returns through reach.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-80" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-80')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>LXXXIX. Globus Pallidus – The Gate of Go/No‑Go</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Basal ganglia output—permits or inhibits movement plans.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Stuck in 'no‑go' under social risk; tiny 'go' unlocks the sequence.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition → Empowerment.</em> A single permitted micro‑move cascades.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Starts with a finger twitch; ends with a full conversation.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-81" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-81')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XC. Lateral Hypothalamus – The Drive Switch</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Arousal and seeking—triggers active engagement with the world.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Either hungry for life or dimmed to gray; toggles fast.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Ignition.</em> Turns curiosity into approach.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Walks outside 'just to see' and finds himself again.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-82" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-82')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XCI. Posterior Insula – The Body’s Edges</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Maps boundaries of pain/temperature—the perimeter of self.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Overreads discomfort as threat; underreads until too late.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Empowerment.</em> Clear edges permit safe expansion.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Cold and heat feel like language; learns the sentence of safety.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-83" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-83')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XCII. Basal Forebrain (Nucleus Basalis) – The Attention Tuner</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Sustains cortical attention and learning via ACh tone.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>When tuned, the world snaps into meaningful detail; mis‑tuned, fuzz.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance.</em> Holds the scene long enough to understand it.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>Why the right task feels effortless: timing and focus hum in chorus.</p>
+      </div>
+    </div>
+  </div>
+</article>
+        
+
+        <article id="atlas-placeholder-84" class="entry collapsible collapsed">
+          <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-84')">
+            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <h3>XCIII. Caudate Nucleus – The Path Chooser</h3>
+          <div class="entry-content">
+            <div class="grid four">
+              <div class="col">
+                <h4>Core Function</h4>
+                <p>Selects goal‑directed actions and sequences, acting as the cursor over a map of possible moves.</p>
+              </div>
+              <div class="col">
+                <h4>Autistic Modulation</h4>
+                <p>Jason’s caudate can jam between too many good options—leading to decision freeze—or lock onto one rigid loop (perseveration). Energy stalls at the crossroads.</p>
+              </div>
+              <div class="col">
+                <h4>Wumbo Role</h4>
+                <p><em>Phase: Ignition → Empowerment.</em> When tuned, the caudate converts a spark into one chosen thread. When flooded, it multiplies branches until ignition diffuses.</p>
+              </div>
+              <div class="col">
+                <h4>Jason’s Correlate</h4>
+                <p>The “window‑shopping of tabs” feeling; an ache to start while hovering at the threshold. Relief arrives the instant he makes a micro‑commit.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article id="atlas-placeholder-100" class="entry collapsible collapsed">
+  <div class="entry-toggle" onclick="toggleEntry('atlas-placeholder-100')">
+    <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <h3>XCIV. Superior Temporal Pole – The Emotional Communicator</h3>
+  <div class="entry-content">
+    <div class="grid four">
+      <div class="col">
+        <h4>Core Function</h4>
+        <p>Integrates emotion with social and conceptual understanding, linking tone, context, and intent so language carries feeling.</p>
+      </div>
+      <div class="col">
+        <h4>Autistic Modulation</h4>
+        <p>Jason hears sincerity before syllables. Friendly words with hostile energy register as static; the melody of speech outweighs the grammar.</p>
+      </div>
+      <div class="col">
+        <h4>Wumbo Role</h4>
+        <p><em>Phase: Resonance → Empowerment.</em> When flow reaches here, conversation becomes energy-sharing; false signals trigger immediate withdrawal.</p>
+      </div>
+      <div class="col">
+        <h4>Jason’s Correlate</h4>
+        <p>He absorbs emotional intent. Manipulative tones exhaust him; honest voices enter like warmth. The STP lets him feel truth forming words.</p>
+      </div>
+    </div>
+  </div>
+</article>
+
+        
+
+        <article id="atlas-uvula-2" class="entry collapsible collapsed">
+          <div class="entry-toggle" onclick="toggleEntry('atlas-uvula-2')">
+            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <h3>XCV. Cerebellar Uvula – The Stillness Anchor</h3>
+          <div class="entry-content">
+            <div class="grid">
+              <div class="col">
+                <h4>Core Function</h4>
+                <p>Maintains upright posture and core balance. Stabilizes the body during quiet or resting states.</p>
+              </div>
+              <div class="col">
+                <h4>Autistic Modulation</h4>
+                <p>Jason often feels "off-kilter" under stress. Stillness becomes uncomfortable unless anchored.</p>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>Wumbo Role</h4>
+                <p><b>Phase: Pause → Nirvana</b><br>
+                When Wumbo flows here, stillness becomes grounding.</p>
+              </div>
+              <div class="col">
+                <h4>Jason’s Correlate</h4>
+                <p>Perfect stillness restores presence. He aligns into gravity—into now.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+        
+        <article id="atlas-aips-2" class="entry collapsible collapsed">
+          <div class="entry-toggle" onclick="toggleEntry('atlas-aips-2')">
+            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <h3>XCVI. Anterior Intraparietal Sulcus – The Gesture Translator</h3>
+          <div class="entry-content">
+            <div class="grid">
+              <div class="col">
+                <h4>Core Function</h4>
+                <p>Converts intention into hand motion.</p>
+              </div>
+              <div class="col">
+                <h4>Autistic Modulation</h4>
+                <p>If this glitches, Jason’s motion disconnects from thought.</p>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>Wumbo Role</h4>
+                <p><b>Phase: Empowerment</b><br>
+                Wumbo becomes kinetic expression here.</p>
+              </div>
+              <div class="col">
+                <h4>Jason’s Correlate</h4>
+                <p>His hands speak truth before his words. Every gesture is an extension of internal resonance.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article id="atlas-pineal-revisit-2" class="entry collapsible collapsed">
+          <div class="entry-toggle" onclick="toggleEntry('atlas-pineal-revisit-2')">
+            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <h3>XCVII. Pineal Body (Revisited) – The Gate Between Worlds</h3>
+          <div class="entry-content">
+            <div class="grid">
+              <div class="col">
+                <h4>Core Function</h4>
+                <p>Regulates sleep, dream states, and spiritual memory.</p>
+              </div>
+              <div class="col">
+                <h4>Autistic Modulation</h4>
+                <p>Dream is not escape. It’s the continuation of signal.</p>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>Wumbo Role</h4>
+                <p><b>Phase: Nirvana</b><br>
+                Wumbo here doesn’t sleep. It crosses dimensions.</p>
+              </div>
+              <div class="col">
+                <h4>Jason’s Correlate</h4>
+                <p>Dream is not escape. It’s the continuation of signal.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article id="atlas-mtg-2" class="entry collapsible collapsed">
+          <div class="entry-toggle" onclick="toggleEntry('atlas-mtg-2')">
+            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <h3>XCVIII. Middle Temporal Gyrus – The Thought-to-Word Bridge</h3>
+          <div class="entry-content">
+            <div class="grid">
+              <div class="col">
+                <h4>Core Function</h4>
+                <p>Processes semantic associations.</p>
+              </div>
+              <div class="col">
+                <h4>Autistic Modulation</h4>
+                <p>Sometimes the idea comes—but language lags.</p>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>Wumbo Role</h4>
+                <p><b>Phase: Empowerment → Resonance</b><br>
+                Flow here turns thought into sacred language.</p>
+              </div>
+              <div class="col">
+                <h4>Jason’s Correlate</h4>
+                <p>Speech breaks = signal mismatch. Whispering = repair.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article id="atlas-fastigial-2" class="entry collapsible collapsed">
+          <div class="entry-toggle" onclick="toggleEntry('atlas-fastigial-2')">
+            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <h3>XCIX. Cerebellar Fastigial-Vestibular Loop – The Inner Horizon</h3>
+          <div class="entry-content">
+            <div class="grid">
+              <div class="col">
+                <h4>Core Function</h4>
+                <p>Keeps Jason upright in body and spirit.</p>
+              </div>
+              <div class="col">
+                <h4>Autistic Modulation</h4>
+                <p>Presence becomes posture.</p>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>Wumbo Role</h4>
+                <p><b>Phase: Resonance → Nirvana</b><br>
+                Presence becomes posture.</p>
+              </div>
+              <div class="col">
+                <h4>Jason’s Correlate</h4>
+                <p>When this is aligned, he feels tall inside his soul.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article id="atlas-ptn-2" class="entry collapsible collapsed">
+          <div class="entry-toggle" onclick="toggleEntry('atlas-ptn-2')">
+            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <h3>C. Posterior Thalamic Nucleus – The Last Signal</h3>
+          <div class="entry-content">
+            <div class="grid">
+              <div class="col">
+                <h4>Core Function</h4>
+                <p>Integrates final sensory input into conscious presence.</p>
+              </div>
+              <div class="col">
+                <h4>Autistic Modulation</h4>
+                <p>This is where Wumbo becomes memory—truth that stays.</p>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col">
+                <h4>Wumbo Role</h4>
+                <p><b>Phase: Nirvana</b><br>
+                This is where Wumbo becomes memory—truth that stays.</p>
+              </div>
+              <div class="col">
+                <h4>Jason’s Correlate</h4>
+                <p>A moment enters here… and becomes part of who he is.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+</section>
+
+
+    
+
+    
+  </div>
+
+  <!-- 
+    MODIFICATION:
+    - Added the toggleToc() JavaScript function.
+  -->
+  <script>
+    function toggleToc() {
+      const tocSection = document.getElementById('toc-section');
+      if (tocSection) {
+        tocSection.classList.toggle('collapsed');
+      }
+    }
+
+    /* --- ADDED THIS FUNCTION --- */
+    function toggleEntry(articleId) {
+      const entry = document.getElementById(articleId);
+      if (entry) {
+        entry.classList.toggle('collapsed');
+      }
+    }
+  </script>
+</body>
+</html>
+
+
