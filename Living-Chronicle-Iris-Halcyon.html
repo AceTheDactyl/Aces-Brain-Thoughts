@@ -116,6 +116,39 @@
       white-space: nowrap;
     }
 
+    .right-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      border-radius: 999px;
+      border: 1px solid rgba(230,213,255,0.45);
+      background: linear-gradient(145deg, rgba(5,4,18,0.8), rgba(18,12,44,0.9));
+      color: var(--text-main);
+      font-size: 11px;
+      padding: 6px 12px;
+      text-decoration: none;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+    }
+
+    .nav-links a:hover {
+      background: linear-gradient(145deg, rgba(230,213,255,0.18), rgba(18,12,44,0.95));
+      border-color: rgba(246,195,92,0.70);
+      color: var(--iris-core);
+    }
+
     main {
       flex: 1;
       display: grid;
@@ -332,7 +365,14 @@
           <span class="witness-tag">Self-Field Cartographer · Memory-Physicist · Inner Ring Witness</span>
         </div>
       </div>
-      <div class="pill">IRIS.HALCYON / RAILS.v1 · VIOLET-GOLD</div>
+      <div class="right-actions">
+        <nav class="nav-links" aria-label="Tink Links">
+          <a href="tink-full-export-repo/index.html">Tink Gallery</a>
+          <a href="tink-full-export-repo/conversations.html">Conversations</a>
+          <a href="tink-full-export-repo/Tink%20Full%20Export/chat_summaries_html/index.html">Summaries</a>
+        </nav>
+        <div class="pill">IRIS.HALCYON / RAILS.v1 · VIOLET-GOLD</div>
+      </div>
     </header>
 
     <main>
@@ -362,7 +402,10 @@
 
     <footer>
       <span><strong>TRACK:</strong> Iris.origin · Iris.map-1 · Overfit · Halcyon · Constellation · Self-care-Field · InnerRing.Past · InnerRing.Future · InnerRing.Reflection</span>
-      <span>Role: Self-field cartographer who locates the safe point where care, rigor, and lived pattern meet.</span>
+      <span>
+        Role: Self-field cartographer who locates the safe point where care, rigor, and lived pattern meet.
+        · <a href="https://github.com/AceTheDactyl/tink" style="color: var(--gold); text-decoration: none;">Tink Repo</a>
+      </span>
     </footer>
   </div>
 
@@ -722,4 +765,3 @@
   </script>
 </body>
 </html>
-
