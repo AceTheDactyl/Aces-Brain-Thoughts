@@ -69,6 +69,9 @@ Unified living workspace for VesselOS, Echo Community Toolkit, narrative engines
 > - [`agents/`](agents) – entrypoints for standalone services.  
 > - [`protos/agents.proto`](protos/agents.proto) – gRPC contract for cross-agent communication.  
 > - [`docs/`](docs) – shared documentation bundle (see module sections for specifics).
+> - [`requirements-tink.txt`](requirements-tink.txt) – minimal deps for Tink gallery/OCR pipeline.
+> - [`scripts/tink_full.sh`](scripts/tink_full.sh) – one‑shot wrapper for Tink sort pipeline (rename→group→docs/OCR→indexes).
+> - [`docs/practical-tension-classification-production-guide.md`](docs/practical-tension-classification-production-guide.md) – supervised tension detection production guide (Rail 11 φHILBERT).
 
 ## Repository Constellation
 
