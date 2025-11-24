@@ -29,6 +29,7 @@
     .controls{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
     .index-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
     .chip{padding:6px 10px;border:1px solid var(--rule);border-radius:999px;background:#11121a;color:var(--ink);cursor:pointer}
+    .chip.active{background:var(--accent);color:#0b0c10;border-color:#000}
     mark, .hl{background: #fff176;color:#111;padding:0 2px;border-radius:2px}
     .sticky{position:sticky;top:8px;z-index:5;padding:8px;border:1px solid var(--rule);border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
     .toc-section{margin-top:8px}
@@ -726,18 +727,59 @@
       filterWrap.className = 'card';
       const f = document.createElement('input');
       f.type = 'search'; f.placeholder = 'Filter tokens by name…'; f.style.width = '100%';
+      const rolesWrap = document.createElement('div');
+      rolesWrap.className = 'row-items';
+      rolesWrap.style.marginTop = '8px';
+      const rolesLabel = document.createElement('div'); rolesLabel.className = 'small'; rolesLabel.textContent = 'Wumbo Roles:';
+      rolesWrap.appendChild(rolesLabel);
+      const rolesChips = document.createElement('div'); rolesChips.className = 'row-items';
+      rolesWrap.appendChild(rolesChips);
       filterWrap.appendChild(f);
+      filterWrap.appendChild(rolesWrap);
       out.appendChild(filterWrap);
 
       const list = document.createElement('div');
       list.className = 'grid';
       out.appendChild(list);
 
+      const allRoles = Array.from(new Set((pack.tokens||[]).flatMap(t => (t.wumbo_roles||[])))).sort();
+      const selectedRoles = new Set();
+      function renderRoleChips(){
+        rolesChips.innerHTML='';
+        const clear = document.createElement('button'); clear.className='chip'; clear.textContent='Clear'; clear.onclick=()=>{selectedRoles.clear(); renderRoleChips(); renderList();};
+        rolesChips.appendChild(clear);
+        allRoles.forEach(role => {
+          const chip = document.createElement('button');
+          chip.className = 'chip' + (selectedRoles.has(role)?' active':'');
+          chip.textContent = role;
+          chip.onclick = () => {
+            if(selectedRoles.has(role)) selectedRoles.delete(role); else selectedRoles.add(role);
+            renderRoleChips();
+            renderList();
+          };
+          rolesChips.appendChild(chip);
+        });
+      }
+      renderRoleChips();
+
+      function roleMatch(t){
+        if(selectedRoles.size === 0) return true;
+        const set = new Set(t.wumbo_roles||[]);
+        for(const r of selectedRoles){ if(!set.has(r)) return false; }
+        return true;
+      }
+
+      function badgeLabel(p, m){
+        const title = p && p.title ? p.title : ('Pathway '+m.number);
+        return `P${m.number}: ${title} • ${m.confidence.toFixed(2)}`;
+      }
+
       function renderList(){
         const q = (f.value||'').toLowerCase().trim();
         list.innerHTML = '';
         (pack.tokens||[]).forEach(t => {
           if(q && !(t.name||'').toLowerCase().includes(q) && !(t.id||'').toLowerCase().includes(q)) return;
+          if(!roleMatch(t)) return;
           const card = document.createElement('div');
           card.className = 'card';
           const top = document.createElement('div');
@@ -751,7 +793,7 @@
             const p = pathByNum.get(m.number);
             const b = document.createElement('button');
             b.className = 'badge '+confClass(m.confidence);
-            b.textContent = `P${m.number} ${m.confidence.toFixed(2)}`;
+            b.textContent = badgeLabel(p, m);
             b.title = p ? p.title : ('Pathway '+m.number);
             b.onclick = () => openMatrixAt(m.number, t.name);
             rowBadges.appendChild(b);
@@ -778,7 +820,7 @@
               const p = pathByNum.get(m.number);
               const badge = document.createElement('button');
               badge.className = 'badge '+confClass(m.confidence);
-              badge.textContent = `Pathway ${m.number} · ${m.confidence.toFixed(2)}`;
+              badge.textContent = badgeLabel(p, m);
               badge.title = p ? p.title : ('Pathway '+m.number);
               badge.onclick = () => openMatrixAt(m.number, t.name);
               tbl.appendChild(badge);
