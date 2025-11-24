@@ -168,6 +168,9 @@
             const q = query;
             if(lastDocPathB){
               doSearchIn('viewerB', q, true);
+              if(lastDocPathB && /NEURAL_PATHING_MATRIX/i.test(lastDocPathB)){
+                gotoNearestPathway('viewerB');
+              }
             } else {
               // Auto-load the other doc
               if(lastDocPath && lastDocPath.includes('TOKEN_INDEX')){
@@ -182,6 +185,46 @@
       });
     }
 
+    // Index and navigation helpers for the Neural Pathing Matrix
+    function ensureMatrixAnchors(viewerId){
+      const el = document.getElementById(viewerId);
+      if(!el) return;
+      const heads = el.querySelectorAll('h1, h2, h3, h4, h5');
+      heads.forEach(h => {
+        const t = (h.textContent||'').trim();
+        const m = t.match(/^Pathway\s+(\d+)/i);
+        if(m){
+          const id = 'pathway-' + m[1];
+          if(!h.id) h.id = id; // stable anchor
+        }
+      });
+    }
+
+    function gotoNearestPathway(viewerId){
+      const el = document.getElementById(viewerId);
+      if(!el) return false;
+      ensureMatrixAnchors(viewerId);
+      const ref = el.querySelector('mark.hl');
+      if(!ref) return false;
+      const refTop = ref.getBoundingClientRect().top + window.scrollY;
+      const heads = Array.from(el.querySelectorAll('h1, h2, h3, h4, h5')).filter(h => /^Pathway\s+\d+/i.test((h.textContent||'').trim()));
+      if(heads.length === 0) return false;
+      let best = heads[0];
+      let bestDelta = -Infinity;
+      heads.forEach(h => {
+        const top = h.getBoundingClientRect().top + window.scrollY;
+        const delta = refTop - top; // positive if head is above ref
+        if(delta >= 0 && delta > bestDelta){ bestDelta = delta; best = h; }
+      });
+      if(best){
+        best.scrollIntoView({behavior:'smooth', block:'start'});
+        best.style.outline = '2px solid #8ab4f8';
+        setTimeout(()=>{ best.style.outline = 'none'; }, 1200);
+        return true;
+      }
+      return false;
+    }
+
     async function loadDoc(path, toSecondary=false, postSearch=null){
       try{
         const res = await fetch(path, {cache:'no-cache'});
@@ -191,17 +234,26 @@
           if(toSecondary){
             lastDocPathB = path; lastDocTextB = md;
             renderMarkdownTo('viewerB', md);
-            if(postSearch){ doSearchIn('viewerB', postSearch, true); }
+            if(/NEURAL_PATHING_MATRIX/i.test(path)) ensureMatrixAnchors('viewerB');
+            if(postSearch){
+              doSearchIn('viewerB', postSearch, true);
+              if(/NEURAL_PATHING_MATRIX/i.test(path)) gotoNearestPathway('viewerB');
+            }
           }else{
             lastDocPath = path; lastDocText = md;
             renderMarkdownTo('viewer', md);
             if(path.includes('TOKEN_INDEX')){ postProcessTokenIndex(document.getElementById('viewer')); }
-            if(postSearch){ doSearchIn('viewer', postSearch, true); }
+            if(/NEURAL_PATHING_MATRIX/i.test(path)) ensureMatrixAnchors('viewer');
+            if(postSearch){
+              doSearchIn('viewer', postSearch, true);
+              if(/NEURAL_PATHING_MATRIX/i.test(path)) gotoNearestPathway('viewer');
+            }
           }
         }else{
           lastDocPath = path; lastDocText = md;
           renderMarkdownTo('viewer_single', md);
           if(path.includes('TOKEN_INDEX')){ postProcessTokenIndex(document.getElementById('viewer_single')); }
+          if(/NEURAL_PATHING_MATRIX/i.test(path)) ensureMatrixAnchors('viewer_single');
           if(postSearch){ doSearchIn('viewer_single', postSearch, true); }
         }
         // Reset search box
@@ -283,6 +335,9 @@
       const ok = doSearchIn(split ? 'viewer' : 'viewer_single', q, true);
       if(split && document.getElementById('syncSearch').checked){
         doSearchIn('viewerB', q, false);
+        if(lastDocPathB && /NEURAL_PATHING_MATRIX/i.test(lastDocPathB)){
+          gotoNearestPathway('viewerB');
+        }
       }
       if(!ok){ /* no-op */ }
     }
@@ -307,6 +362,9 @@
       window.scrollBy({top: rect.top - 120, behavior:'smooth'});
       if(split && document.getElementById('syncSearch').checked){
         doSearchIn('viewerB', q, false);
+        if(lastDocPathB && /NEURAL_PATHING_MATRIX/i.test(lastDocPathB)){
+          gotoNearestPathway('viewerB');
+        }
       }
     }
 
@@ -329,6 +387,9 @@
       window.scrollBy({top: rect.top - 120, behavior:'smooth'});
       if(split && document.getElementById('syncSearch').checked){
         doSearchIn('viewerB', q, false);
+        if(lastDocPathB && /NEURAL_PATHING_MATRIX/i.test(lastDocPathB)){
+          gotoNearestPathway('viewerB');
+        }
       }
     }
 
