@@ -1,0 +1,46 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\title{APL Seven Sentences Test Pack}
+\author{APL Working Notes}
+\date{v1.0}
+\begin{document}
+\maketitle
+\begin{abstract}
+This protocol translates seven compact APL sentences into falsifiable, cross-domain hypotheses testable with standard models across geometry, waves, chemistry, and materials.
+\end{abstract}
+
+\section{Sentences}
+Each entry is of the form \texttt{[Direction][Op]|[Machine]|[Domain]}.
+\begin{itemize}
+  \item A3: \texttt{u\^{}|Oscillator|wave}
+  \item A7: \texttt{u\%|Reactor|wave}
+  \item A1: \texttt{d()|Conductor|geometry}
+  \item A4: \texttt{m\texttimes|Encoder|chemistry}
+  \item A5: \texttt{u\texttimes|Catalyst|chemistry}
+  \item A6: \texttt{u+|Reactor|wave}
+  \item A8: \texttt{m()|Filter|wave \& d\texttimes}
+\end{itemize}
+
+\section{Interpretation Rule}
+If a system is built to match the LHS structure and driving, then the RHS regime should appear more often, more strongly, or at lower thresholds than in matched controls.
+
+\section{Testing Strategy}
+\begin{enumerate}
+  \item Choose standard models: phase-field, Cahn--Hilliard, curvature flow (geometry); Navier--Stokes, lattice Boltzmann, wave equation (flows/waves); reaction--diffusion, polymerization, DLA, KMC (chemistry).
+  \item Implement LHS conditions: gain at resonant modes (u\^{}); stochastic forcing (u\%); boundary relaxation (d()); modulation of boundaries (m()); forward or collapse fusion catalysts (u\texttimes/d\texttimes); grouping fields/geometry (u+).
+  \item Design matched controls by removing or inverting the key operator while keeping other conditions comparable.
+  \item Define regime metrics: A1 sphericity/SV ratio/isotropy; A3 vortex count/lifetime/closed streamlines; A4 helical order/info capacity; A5 fractal dimension/branching; A6 jet angles/coherence; A7 spectral width/RMS/Lyapunov; A8 adaptive sharpening/retuning.
+  \item Sweep parameters (drive, noise, tension, catalytic bias) and run multiple realizations; quantify bias toward target regimes.
+\end{enumerate}
+
+\section{Preliminary Checks}
+A1: 2D isotropic collapse yields circular, angle-isotropic cluster.\\
+A5: 2D DLA produces fractal branching (D $\approx$ 1.2).
+
+\section{Reporting}
+Report both confirmations and refutations. Negative results that fail to show bias under LHS are evidence against APL.
+
+\end{document}

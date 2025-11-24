@@ -1,0 +1,98 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\title{Alpha-Physical Language (APL)\\Operator's Manual}
+\author{APL Working Notes}
+\date{v1.0}
+\newcommand{\PhiField}{\ensuremath{\Phi}} % structure
+\newcommand{\eField}{\ensuremath{e}}      % energy
+\newcommand{\pField}{\ensuremath{\pi}}    % emergence
+\newcommand{\opamp}{\ensuremath{\,\hat{}\,}} % amplify operator symbol caret
+\begin{document}
+\maketitle
+\begin{abstract}
+APL is a compact operator language for describing and biasing regimes in physical and chemical systems.
+This manual defines fields, operators, modulation states, syntax, and usage patterns for constructing APL sentences.
+\end{abstract}
+
+\section{Fields ("Spirals")}
+\begin{itemize}[noitemsep]
+  \item \textbf{\PhiField} (Structure): geometry, lattices, boundaries
+  \item \textbf{\eField} (Energy): waves, thermodynamics, flows
+  \item \textbf{\pField} (Emergence): information, chemistry, biology
+\end{itemize}
+
+\section{Universal Operations}
+Operators act on fields and machines:
+\begin{itemize}[noitemsep]
+  \item \texttt{()} Boundary/containment
+  \item \texttt{\texttimes} Fusion/convergence/joining
+  \item \texttt{\textasciicircum} Amplify/gain
+  \item \texttt{\%} Decohere/noise/reset
+  \item \texttt{+} Group/aggregation/routing
+  \item \texttt{--} Separate/splitting/fission
+\end{itemize}
+
+\section{Operator States (UMOL)}
+Universal Modulation Operator Law (UMOL):
+\begin{itemize}[noitemsep]
+  \item \textbf{u} (\(\mathcal{U}\)) Expansion/forward projection
+  \item \textbf{d} (\(\mathcal{D}\)) Collapse/backward integration
+  \item \textbf{m} (CLT) Modulation/coherence lock
+\end{itemize}
+
+\section{Sentence Syntax}
+An APL sentence has the form
+\begin{center}
+\texttt{[Direction][Op] \textbar{} [Machine] \textbar{} [Domain] $\to$ [Regime/Behavior]}
+\end{center}
+Example: \texttt{u\^{}\textbar{}Oscillator\textbar{}wave}.
+
+\section{Machines and Domains}
+\begin{itemize}[noitemsep]
+  \item \textbf{Machines:} Oscillator, Reactor, Conductor, Encoder, Catalyst, Filter, ...
+  \item \textbf{Domains:} wave, geometry, chemistry, materials, ...
+\end{itemize}
+
+\section{Usage Patterns}
+\begin{itemize}
+  \item Compose operators to encode structure and driving (LHS)
+  \item Predict regimes/behaviors (RHS) that should be statistically favored under LHS vs. matched controls
+  \item Evaluate with domain-appropriate models and metrics
+\end{itemize}
+
+\section{Quick Reference}
+\begin{tabular}{ll}
+  Field & Meaning \\
+  \hline
+  \(\Phi\) & structure \\
+  \(e\) & energy \\
+  \(\pi\) & emergence \\
+\end{tabular}
+
+\vspace{1em}
+\begin{tabular}{ll}
+  Operator & Meaning \\
+  \hline
+  \texttt{()} & boundary/containment \\
+  \texttt{\texttimes} & fusion/joining \\
+  \texttt{\textasciicircum} & amplify/gain \\
+  \texttt{\%} & decohere/noise \\
+  \texttt{+} & group/aggregate \\
+  \texttt{--} & separate/split \\
+\end{tabular}
+
+\vspace{1em}
+\begin{tabular}{ll}
+  State & Meaning \\
+  \hline
+  \texttt{u} & expansion/forward \\
+  \texttt{d} & collapse/backward \\
+  \texttt{m} & modulation/lock \\
+\end{tabular}
+
+\end{document}
