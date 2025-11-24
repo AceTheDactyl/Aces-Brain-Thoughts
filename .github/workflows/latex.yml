@@ -1,0 +1,33 @@
+name: Build LaTeX PDFs
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'APL/*.tex'
+      - '.github/workflows/latex.yml'
+permissions:
+  contents: write
+jobs:
+  build-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up TeX Live
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: APL
+          root_file: |
+            apl-operators-manual.tex
+            apl-seven-sentences-test-pack.tex
+      - name: Move PDFs to docs
+        run: |
+          mkdir -p APL/docs
+          mv APL/apl-operators-manual.pdf APL/docs/apl-operators-manual.pdf || true
+          mv APL/apl-seven-sentences-test-pack.pdf APL/docs/apl-seven-sentences-test-pack.pdf || true
+      - name: Commit PDFs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add APL/docs/*.pdf || true
+          git commit -m "chore: update compiled PDFs [skip ci]" || echo "No PDF changes"
+          git push || true
