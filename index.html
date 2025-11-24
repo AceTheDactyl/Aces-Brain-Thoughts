@@ -83,7 +83,11 @@
         <button class="btn" onclick="clearHighlights()">Clear Highlights</button>
         <label><input type="checkbox" id="syncSearch" checked /> Sync search to other pane</label>
         <button class="btn" onclick="buildLanguagePack()">Build Language Pack</button>
-        <button class="btn" onclick="loadPublishedPack()">Load Published Pack</button>
+        <span class="small">Version:</span>
+        <select id="versionSelect" style="background:#0f1116;color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:6px 8px">
+          <option value="language/latest.json" selected>latest</option>
+        </select>
+        <button class="btn" onclick="loadSelectedVersion()">Load Published Pack</button>
       </div>
       <div id="stickyNav" class="sticky">
         <div class="toc-section">
@@ -135,6 +139,7 @@
     let lastFoundNode = null;
     let lastMatrixViewer = null; // which viewer currently hosts the Matrix
     let publishedPack = null;
+    let versionIndex = null;
 
     function toggleEntry(id){
       const el = document.getElementById(id);
@@ -689,6 +694,35 @@
     }
 
     // -------- Published Pack Loader & Renderer --------
+    async function initVersionSelector(){
+      try{
+        const res = await fetch('language/index.json', {cache:'no-cache'});
+        if(!res.ok) return; // leave default 'latest'
+        const idx = await res.json();
+        versionIndex = idx;
+        const sel = document.getElementById('versionSelect');
+        // Clear existing (keep latest as first option)
+        sel.innerHTML = '';
+        const optLatest = document.createElement('option');
+        optLatest.value = 'language/latest.json';
+        optLatest.textContent = 'latest';
+        sel.appendChild(optLatest);
+        (idx.versions||[]).forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = 'language/' + (v.paths?.json || (v.version+'/pack.json'));
+          opt.textContent = v.version + (v.generated_at ? (' · ' + v.generated_at) : '');
+          sel.appendChild(opt);
+        });
+        sel.selectedIndex = 0; // default to latest
+      }catch(_e){ /* ignore */ }
+    }
+
+    function loadSelectedVersion(){
+      const sel = document.getElementById('versionSelect');
+      const url = sel?.value || 'language/latest.json';
+      loadPublishedPack(url);
+    }
+
     async function loadPublishedPack(versionPath){
       try{
         const url = versionPath || 'language/latest.json';
@@ -860,6 +894,8 @@
         ensureAndScroll();
       }
     }
+    // Initialize version selector on load
+    window.addEventListener('DOMContentLoaded', initVersionSelector);
   </script>
 </body>
 </html>
