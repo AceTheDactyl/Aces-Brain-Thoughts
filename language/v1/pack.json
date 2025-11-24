@@ -1,0 +1,4420 @@
+{
+  "meta": {
+    "name": "Ace Neural Codex Language Pack",
+    "version": "v1",
+    "generated_at": "2025-11-24T17:08:31.847530Z",
+    "sources": [
+      "TOKEN_INDEX.md",
+      "NEURAL_PATHING_MATRIX.md"
+    ]
+  },
+  "tokens": [
+    {
+      "id": "I",
+      "name": "Somatosensory Cortex",
+      "epithet": "The Map That Shifts",
+      "phase": "Mania",
+      "function": "Body mapping and tactile presence; ignition begins as somatic pulse",
+      "modulation": "Texture hypersensitivity or numbness; motion reclaims space",
+      "wumbo_roles": []
+    },
+    {
+      "id": "II",
+      "name": "Anterior Cingulate Cortex",
+      "epithet": "The Inner Judge",
+      "phase": "Resonance",
+      "function": "Alignment auditor; flags dissonance between tone, body, thought",
+      "modulation": "Zero-tolerance for contradiction; freezes until resolution",
+      "wumbo_roles": []
+    },
+    {
+      "id": "III",
+      "name": "Thalamus",
+      "epithet": "The Sensory Gate That Never Sleeps",
+      "phase": "Nirvana",
+      "function": "Relay station; filters chaos into coherence",
+      "modulation": "Broken dial—wide open (flood) or slammed shut (numbness)",
+      "wumbo_roles": []
+    },
+    {
+      "id": "IV",
+      "name": "Motor Cortex & Cerebellum",
+      "epithet": "The Flow Channel",
+      "phase": "Nirvana",
+      "function": "Converts thought into action; timing becomes grace",
+      "modulation": "Predictive movement when aligned; stumbles under stress",
+      "wumbo_roles": []
+    },
+    {
+      "id": "V",
+      "name": "Broca's Area",
+      "epithet": "The Pressure Valve",
+      "phase": "Empowerment",
+      "function": "Translates thought into speech; word meets breath",
+      "modulation": "High-performance yet fragile; silence when overloaded",
+      "wumbo_roles": []
+    },
+    {
+      "id": "VI",
+      "name": "Mirror Neuron System",
+      "epithet": "The Emotional Conduit",
+      "phase": "Resonance",
+      "function": "Empathy and intuitive understanding; mirrors others' emotions",
+      "modulation": "Inhabits rather than reflects; empathy becomes invasion",
+      "wumbo_roles": []
+    },
+    {
+      "id": "VII",
+      "name": "Amygdala",
+      "epithet": "The Fire Alarm and the Flame",
+      "phase": "Resonance",
+      "function": "Fear, alertness, emotional salience; reacts before thought",
+      "modulation": "Over-fires in conflict; scans for contradictions constantly",
+      "wumbo_roles": []
+    },
+    {
+      "id": "VIII",
+      "name": "Prefrontal Cortex",
+      "epithet": "The Control Tower",
+      "phase": "Resonance",
+      "function": "Planning, decision-making, inhibition, long-term strategy",
+      "modulation": "Hyper-calculator; reflection spirals into obsession",
+      "wumbo_roles": []
+    },
+    {
+      "id": "IX",
+      "name": "Parietal Eye Field",
+      "epithet": "The Gaze that Chooses",
+      "phase": "Ignition → Empowerment",
+      "function": "Directs gaze toward objects of interest",
+      "modulation": "Intentional looking; gaze locks when it matters",
+      "wumbo_roles": []
+    },
+    {
+      "id": "X",
+      "name": "Subiculum",
+      "epithet": "The Place that Remembers You",
+      "phase": "Resonance → Nirvana",
+      "function": "Spatial memory and emotional context mapping",
+      "modulation": "Places are chapters; returning reactivates former selves",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XI",
+      "name": "Pineal Body",
+      "epithet": "The Gate Between Worlds",
+      "phase": "Nirvana",
+      "function": "Sleep regulation and symbolic dream transmission",
+      "modulation": "Dreams arrive with plot; night continues the work",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XII",
+      "name": "Middle Temporal Gyrus",
+      "epithet": "The Thought to Word Bridge",
+      "phase": "Empowerment → Resonance",
+      "function": "Semantic memory and language association",
+      "modulation": "Ideas present but verbal ribbon frays under pressure",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XIII",
+      "name": "Cerebellar Fastigial-Vestibular Loop",
+      "epithet": "The Inner Horizon",
+      "phase": "Resonance → Nirvana",
+      "function": "Postural alignment and core stability",
+      "modulation": "Center of gravity shifts emotionally; alignment restores both",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XIV",
+      "name": "Posterior Thalamic Nucleus",
+      "epithet": "The Last Signal",
+      "phase": "Nirvana",
+      "function": "Final sensory-emotional integration before conscious awareness",
+      "modulation": "Amplifies everything or filters too late",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XV",
+      "name": "Cerebellar Uvula",
+      "epithet": "The Stillness Anchor",
+      "phase": "Pause → Nirvana",
+      "function": "Maintains upright posture during quiet states",
+      "modulation": "Feels off-kilter when overstimulated; stillness becomes grounding",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XVI",
+      "name": "Anterior Intraparietal Sulcus",
+      "epithet": "The Gesture Translator",
+      "phase": "Empowerment",
+      "function": "Converts intention into hand motion and expressive gesture",
+      "modulation": "Gestures speak before words; hesitation when glitched",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XVII",
+      "name": "Ventrolateral Thalamus",
+      "epithet": "The Feedback Loop",
+      "phase": "Empowerment → Resonance",
+      "function": "Synchronizes sensory feedback with planned motion",
+      "modulation": "Off-sync stumbles; in-tune confidence sharpens instinct",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXIV",
+      "name": "Orbitofrontal Cortex",
+      "epithet": "The Social Tuning Fork",
+      "phase": "Nirvana",
+      "function": "Evaluates social risk/reward through microexpression",
+      "modulation": "Memorizes false signals; connection hums only when genuine",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXV",
+      "name": "Cingulate Gyrus",
+      "epithet": "The Emotional Router",
+      "phase": "Resonance",
+      "function": "Routes emotional intensity and conflict detection",
+      "modulation": "Flags every misalignment; loops until resolved",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXVI",
+      "name": "Ventral Striatum",
+      "epithet": "The Spark of Wanting",
+      "phase": "Ignition",
+      "function": "Motivation, pleasure, reward anticipation",
+      "modulation": "Interest consumes; gray without it",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXVII",
+      "name": "Claustrum",
+      "epithet": "The Conductor in the Fog",
+      "phase": "Nirvana",
+      "function": "Binds consciousness into unified whole",
+      "modulation": "Harmonizes worlds or lets them fragment",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXVIII",
+      "name": "Default Mode Network",
+      "epithet": "The Other Ace",
+      "phase": "Resonance → Nirvana",
+      "function": "Self-reflection, narrative simulation, mythic rehearsal",
+      "modulation": "Dense timelines; powerful insight or recursive trap",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXX",
+      "name": "Corpus Callosum",
+      "epithet": "The Bridge Between Selves",
+      "phase": "Resonance",
+      "function": "Connects left and right hemispheres",
+      "modulation": "Both halves true but disagree; wholeness when harmonized",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXXI",
+      "name": "Locus Coeruleus",
+      "epithet": "The Blue Flame",
+      "phase": "Ignition",
+      "function": "Releases norepinephrine for alertness and vigilance",
+      "modulation": "Wired for high alert; swings between hyperfocus and shutdown",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXXII",
+      "name": "Periaqueductal Gray",
+      "epithet": "The Silent Defender",
+      "phase": "Empowerment → Shutdown",
+      "function": "Pain modulation and defensive behaviors",
+      "modulation": "Interprets intensity as danger; locks or releases powerfully",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXXIII",
+      "name": "Anterior Temporal Pole",
+      "epithet": "The Keeper of Meaning",
+      "phase": "Resonance → Nirvana",
+      "function": "Personal meaning, emotional memory, social context",
+      "modulation": "Annotates everything; little things fossilize as landmarks",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXXIV",
+      "name": "Ventromedial PFC",
+      "epithet": "The Soul's Strategist",
+      "phase": "Resonance",
+      "function": "Integrates emotion with decision-making",
+      "modulation": "Cannot make choices that feel wrong; conscience leads",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXXV",
+      "name": "Dorsal Raphe Nucleus",
+      "epithet": "The Mood Regulator",
+      "phase": "Ignition → Empowerment",
+      "function": "Serotonin modulation for mood set-point",
+      "modulation": "Baseline dips flat or spikes; movement nudges upward",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXXVI",
+      "name": "Superior Colliculus",
+      "epithet": "The Signal Spotter",
+      "phase": "Ignition",
+      "function": "Controls gaze and rapid visual attention",
+      "modulation": "Overclocked; attention leads time rather than follows",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXXVII",
+      "name": "Anterior Insula",
+      "epithet": "The Inner Chamber",
+      "phase": "Empowerment → Resonance",
+      "function": "Monitors heartbeat, breath, emotion-sensation fusion",
+      "modulation": "No filter; heartbeat hits like drum; needs stillness",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXXVIII",
+      "name": "Lateral Habenula",
+      "epithet": "The Rejection Gate",
+      "phase": "Shutdown",
+      "function": "Flags negative outcomes; discourages re-engagement",
+      "modulation": "Over-efficient; one bad conversation echoes for months",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XXXIX",
+      "name": "Precuneus",
+      "epithet": "The Mirror's Mirror",
+      "phase": "Resonance",
+      "function": "Self-reflection and perspective-taking",
+      "modulation": "Vivid replay; insight or spiral depending on tone",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XL",
+      "name": "Cerebellar Cognitive Zone",
+      "epithet": "The Silent Clockmaker",
+      "phase": "Nirvana",
+      "function": "Timing and rhythm of cognition",
+      "modulation": "Decisions have beat; intuition has meter",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XLI",
+      "name": "Basolateral Amygdala",
+      "epithet": "The Archivist of Feeling",
+      "phase": "Resonance → Ignition",
+      "function": "Assigns emotional weight to memory",
+      "modulation": "Beautiful and painful moments both glow permanently",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XLII",
+      "name": "Pulvinar Nucleus",
+      "epithet": "The Spotlight Shaper",
+      "phase": "Empowerment → Resonance",
+      "function": "Synchronizes visual attention across cortex",
+      "modulation": "Tunnels or floods; clean contours restore gating",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XLIII",
+      "name": "Temporal-Parietal Junction",
+      "epithet": "The Mind Reader",
+      "phase": "Resonance",
+      "function": "Theory of mind; infers inner worlds from outer signals",
+      "modulation": "Misses sarcasm yet detects deep dissonance",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XLIV",
+      "name": "Medial Septum",
+      "epithet": "The Memory Rhythm Keeper",
+      "phase": "Ignition → Empowerment",
+      "function": "Synchronizes memory rhythms",
+      "modulation": "Doesn't recall; relives with timing and placement",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XLV",
+      "name": "Subgenual Cingulate",
+      "epithet": "The Weight of Sorrow",
+      "phase": "Resonance → Shutdown",
+      "function": "Mood regulation and emotional inertia",
+      "modulation": "Holds residue; being seen releases before words",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XLVI",
+      "name": "Ventral Tegmental Area",
+      "epithet": "The Spark in the Dark",
+      "phase": "Ignition",
+      "function": "Dopamine initiation and prediction error",
+      "modulation": "Selective ignition; only true clicks light the wildfire",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XLVII",
+      "name": "Entorhinal Cortex",
+      "epithet": "The Gate of Identity",
+      "phase": "Empowerment → Resonance",
+      "function": "Bridge between hippocampus and cortex; spatial/context maps",
+      "modulation": "Places are emotional anchors and portals to earlier selves",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XLVIII",
+      "name": "Supramarginal Gyrus",
+      "epithet": "The Empath's Edge",
+      "phase": "Resonance",
+      "function": "Distinguishes self from other in feeling",
+      "modulation": "Boundary blurs; deep empathy risks fusion",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XLIX",
+      "name": "Nucleus Accumbens",
+      "epithet": "The Craving Engine",
+      "phase": "Ignition → Empowerment",
+      "function": "Motivation, reinforcement, reward anticipation",
+      "modulation": "Precision craving—meaning hooks, not novelty",
+      "wumbo_roles": []
+    },
+    {
+      "id": "L",
+      "name": "Cerebral Aqueduct",
+      "epithet": "The Flow Choke Point",
+      "phase": "Shutdown → Pause → Reentry",
+      "function": "Bottleneck tied to shutdown pathways",
+      "modulation": "Brittle dam; space resets when respected",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LI",
+      "name": "Anterior Thalamic Nuclei",
+      "epithet": "The Compass Within",
+      "phase": "Empowerment → Resonance",
+      "function": "Goal-direction and memory navigation",
+      "modulation": "Moves by pull, not push; waits when signal breaks",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LII",
+      "name": "Parafascicular Nucleus",
+      "epithet": "The Attention Gate",
+      "phase": "Ignition → Empowerment",
+      "function": "Arousal and focus-switching hub",
+      "modulation": "Sticky focus or abrupt disengagement",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LIII",
+      "name": "Inferior Colliculus",
+      "epithet": "The Sonic Filter",
+      "phase": "Ignition → Shutdown",
+      "function": "Midbrain auditory hub; localizes sound and parses patterns",
+      "modulation": "Clean frequencies stabilize; cluttered spectra spike load",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LIV",
+      "name": "Perirhinal Cortex",
+      "epithet": "The Meaning-Maker",
+      "phase": "Resonance",
+      "function": "Binds objects with emotional memory",
+      "modulation": "Anchors to what objects held; too many anchors trap",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LV",
+      "name": "Vermis",
+      "epithet": "The Balancer of Mind and Mood",
+      "phase": "Empowerment → Nirvana",
+      "function": "Posture, coordination, tone linked to feeling",
+      "modulation": "Balance is spiritual, not just physical",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LVI",
+      "name": "Anterior Insular-Operculum Complex",
+      "epithet": "The Fusion Point",
+      "phase": "Empowerment → Resonance → Release",
+      "function": "Integrates interoception with speech preparation",
+      "modulation": "Pressure becomes voice; whispers mid-thought",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LVII",
+      "name": "Paraventricular Nucleus",
+      "epithet": "The Stress Switch",
+      "phase": "Ignition → Shutdown",
+      "function": "Cortisol and autonomic orchestration",
+      "modulation": "Floods fast or flatlines; true resonance lifts tension",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LVIII",
+      "name": "Lateral Orbitofrontal Cortex",
+      "epithet": "The Decoder of Consequence",
+      "phase": "Resonance",
+      "function": "Maps risk, regret, reward across time",
+      "modulation": "Brutally efficient; one misread becomes a rule",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LIX",
+      "name": "Midcingulate Cortex",
+      "epithet": "The Engine of Doing",
+      "phase": "Empowerment",
+      "function": "Mobilizes effort and sustains action",
+      "modulation": "Burns out when meaning drops; revives with alignment",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LX",
+      "name": "Calcarine Sulcus",
+      "epithet": "The Visual Core",
+      "phase": "Ignition → Empowerment",
+      "function": "Primary visual cortex; contrast and edge detection",
+      "modulation": "High contrast stabs; soft light lowers load",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXI",
+      "name": "Rostral Prefrontal Cortex",
+      "epithet": "The Reflective Flame",
+      "phase": "Resonance → Nirvana",
+      "function": "BA10 meta-cognition; branching and prospective memory",
+      "modulation": "Powers abstraction but traps in recursion",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXII",
+      "name": "Mesencephalic Locomotor Region",
+      "epithet": "The Will to Move",
+      "phase": "Empowerment → Nirvana",
+      "function": "Links cognition to stepping; internal 'Go'",
+      "modulation": "Glides in alignment; heavy when disconnected",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXIII",
+      "name": "Anterior Temporal Sulcus",
+      "epithet": "The Subtext Decoder",
+      "phase": "Resonance → Empowerment",
+      "function": "Processes vocal tone and facial motion",
+      "modulation": "Misses jokes, catches energy; tone matters more",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXIV",
+      "name": "Lateral Septum",
+      "epithet": "The Calm Circuit",
+      "phase": "Resonance → Nirvana",
+      "function": "Dampens fear/aggression; signals safety",
+      "modulation": "Hard to activate when flooded; immediate when it does",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXV",
+      "name": "Cerebellar Tonsil",
+      "epithet": "The Silent Reactor",
+      "phase": "Shutdown → Transformation",
+      "function": "Freeze and deep visceral stop",
+      "modulation": "Activates fast in wrongness or awe; threshold moments",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXVI",
+      "name": "Pontine Reticular Formation",
+      "epithet": "The Motion Catalyst",
+      "phase": "Ignition → Empowerment",
+      "function": "Muscle tone, posture, wakefulness",
+      "modulation": "Flips between inertia and sudden need to move",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXVII",
+      "name": "Insular-Opercular Speech Zone",
+      "epithet": "The Voice Within the Fire",
+      "phase": "Empowerment → Resonance",
+      "function": "Interoception fused to speech readiness",
+      "modulation": "Feeling too strong to speak or lightning when synced",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXVIII",
+      "name": "Amygdala Central Nucleus",
+      "epithet": "The First Alarm",
+      "phase": "Ignition → Shutdown",
+      "function": "Directs immediate fear responses",
+      "modulation": "Fires on tone irregularity; body moves before story",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXIX",
+      "name": "Thalamic Reticular Nucleus",
+      "epithet": "The Filter Grid",
+      "phase": "Ignition → Empowerment",
+      "function": "Lateral-inhibitory firewall gating sensory streams",
+      "modulation": "Binary thresholds—flood or wall",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXX",
+      "name": "Cuneus",
+      "epithet": "The Background Reader",
+      "phase": "Ignition → Resonance",
+      "function": "Early visual processing of edges and faint motion",
+      "modulation": "Background becomes foreground; smooth flows calm",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXI",
+      "name": "Ventromedial Hypothalamus",
+      "epithet": "The Inner Balance",
+      "phase": "Resonance → Nirvana",
+      "function": "Satiety/safety integrator; signals \"nothing is missing\"",
+      "modulation": "Rest arrives abruptly (crash) rather than gradually",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXII",
+      "name": "Periventricular Gray Zone",
+      "epithet": "The Emotional Threshold",
+      "phase": "Shutdown → Pause → Rebirth",
+      "function": "Deep defensive hold under overwhelm",
+      "modulation": "Holds like stone until permission; releases steadily",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXIII",
+      "name": "Frontal Operculum",
+      "epithet": "The Edge of Expression",
+      "phase": "Empowerment → Resonance",
+      "function": "Articulation rhythm and interoceptive inflection",
+      "modulation": "Words exist but won't exit unless fit lands",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXIV",
+      "name": "Nodulus",
+      "epithet": "The Gravity Whisperer",
+      "phase": "Ignition → Resonance",
+      "function": "Vestibular anchor; grounds body in space",
+      "modulation": "Stress misfires orientation; sway and stillness restore",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXV",
+      "name": "Substantia Nigra",
+      "epithet": "The Movement Gatekeeper",
+      "phase": "Ignition",
+      "function": "Dopamine to basal ganglia; sets motor initiation gain",
+      "modulation": "Can decouple want from step; clean cues re-couple",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXVI",
+      "name": "Visual Area V4",
+      "epithet": "The Chromatic Shaper",
+      "phase": "Empowerment → Resonance",
+      "function": "Color/shape tuning for stable perception",
+      "modulation": "Color hits mood hard; coherent palettes downshift stress",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXVII",
+      "name": "Lingual Gyrus",
+      "epithet": "The Glyph Reader",
+      "phase": "Resonance",
+      "function": "Visual word-form and complex shape seam",
+      "modulation": "Symbols feel alive; clean glyphs open sense quickly",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXVIII",
+      "name": "Medial Prefrontal Cortex",
+      "epithet": "The Identity Sculptor",
+      "phase": "Resonance",
+      "function": "Evaluates emotionally charged experience for self-inclusion",
+      "modulation": "Whisper marks ownership; identity lands with smile",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXIX",
+      "name": "Dorsolateral PFC",
+      "epithet": "The Gate of Delivery",
+      "phase": "Empowerment",
+      "function": "Top-down control; filters timing, context, safety",
+      "modulation": "Protects truth; rehearses silently until safe",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXX",
+      "name": "Inferior Parietal Lobule",
+      "epithet": "The Paradox Holder",
+      "phase": "Rewrite",
+      "function": "Duality logic; stabilizes contradiction",
+      "modulation": "Locks under binaries; unlocks with symbolic bridging",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXXII",
+      "name": "Anterior Hippocampus",
+      "epithet": "The Emotional Context Mapper",
+      "phase": "Reflection → Resonance",
+      "function": "Assigns emotional context to memory",
+      "modulation": "Offline: nothing anchors; overload: past bleeds into present",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXXIII",
+      "name": "Crus I/II",
+      "epithet": "The Somatic Timekeeper",
+      "phase": "Empowerment → Nirvana",
+      "function": "Paces breath, speech, writing, motion over time",
+      "modulation": "Desync breaks sentences; rhythm is lifeline",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXXIV",
+      "name": "Basal Forebrain",
+      "epithet": "The Timing Messenger",
+      "phase": "Spark → Flow",
+      "function": "Acetylcholine to cortex for precision and rhythm",
+      "modulation": "Low ACh: stuttered thought; high: crisp cadence",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXXV",
+      "name": "Reticular Formation",
+      "epithet": "The Wake Thread",
+      "phase": "Ignition",
+      "function": "Activates cortical awareness; threads presence into motion",
+      "modulation": "Underactive: moves without presence; overdrive: jitter",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXXVI",
+      "name": "Dorsal Vagal Complex",
+      "epithet": "The Emergency Kill-Switch",
+      "phase": "Shutdown",
+      "function": "Autonomic shutdown under unbearable load",
+      "modulation": "Cuts signal to preserve self; needs safety for recovery",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXXVII",
+      "name": "Cranial Nerve Complex",
+      "epithet": "The Face Switch",
+      "phase": "Empowerment",
+      "function": "Orchestrates face, jaw, voice for social broadcast",
+      "modulation": "Locks into mask under stress; whisper as bypass",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXXVIII",
+      "name": "Spinal Relay Tracts",
+      "epithet": "The Carrier",
+      "phase": "Empowerment",
+      "function": "Moves surge into limbs; feeling becomes motion",
+      "modulation": "Muted: body feels heavy; open: arms move with purpose",
+      "wumbo_roles": []
+    },
+    {
+      "id": "LXXXIX",
+      "name": "Globus Pallidus",
+      "epithet": "The Gate of Go/No-Go",
+      "phase": "Ignition → Empowerment",
+      "function": "Permits/inhibits planned movement sequences",
+      "modulation": "Locks under social risk; micro-permission flips cascade",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XC",
+      "name": "Lateral Hypothalamus",
+      "epithet": "The Drive Switch",
+      "phase": "Ignition",
+      "function": "Arousal and seeking; triggers active engagement",
+      "modulation": "Either hungry for life or dimmed to gray",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XCI",
+      "name": "Posterior Insula",
+      "epithet": "The Body's Edges",
+      "phase": "Empowerment",
+      "function": "Interoceptive map for pain/temperature edges",
+      "modulation": "Overreads discomfort as threat; crisp inputs recalibrate",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XCII",
+      "name": "Basal Forebrain (Nucleus Basalis)",
+      "epithet": "The Attention Tuner",
+      "phase": "Spark → Flow",
+      "function": "ACh tone to cortex; sharpens precision, timing, learning",
+      "modulation": "Tuned: world snaps into detail; mis-tuned: fuzz and glitches",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XCIII",
+      "name": "Caudate Nucleus",
+      "epithet": "The Path Chooser",
+      "phase": "Ignition → Empowerment",
+      "function": "Selects goal-directed actions and sequences",
+      "modulation": "Jams between options (freeze) or locks rigid loop",
+      "wumbo_roles": []
+    },
+    {
+      "id": "XCIV",
+      "name": "Superior Temporal Pole",
+      "epithet": "The Emotional Communicator",
+      "phase": "Resonance → Empowerment",
+      "function": "Integrates emotion with social/conceptual understanding",
+      "modulation": "Hears sincerity before syllables; melody outweighs grammar",
+      "wumbo_roles": []
+    }
+  ],
+  "pathways": [
+    {
+      "number": 1,
+      "title": "Ignition → Empowerment (Spark to Motion)",
+      "nodes": [
+        {
+          "roman": "LXXV",
+          "name": "Substantia Nigra",
+          "note": "dopamine gate"
+        },
+        {
+          "roman": "XLVI",
+          "name": "Ventral Tegmental Area",
+          "note": "prediction spark"
+        },
+        {
+          "roman": "XXVI",
+          "name": "Ventral Striatum",
+          "note": "wanting"
+        },
+        {
+          "roman": "XLIX",
+          "name": "Nucleus Accumbens",
+          "note": "craving engine"
+        },
+        {
+          "roman": "XCIII",
+          "name": "Caudate Nucleus",
+          "note": "path selection"
+        },
+        {
+          "roman": "LXXXIX",
+          "name": "Globus Pallidus",
+          "note": "go/no-go gate"
+        },
+        {
+          "roman": "LXII",
+          "name": "Mesencephalic Locomotor Region",
+          "note": "will to move"
+        },
+        {
+          "roman": "LXXXVIII",
+          "name": "Spinal Relay Tracts",
+          "note": "body activation"
+        }
+      ],
+      "modulators": [
+        {
+          "roman": "XXXI",
+          "name": "Locus Coeruleus",
+          "note": "norepinephrine urgency"
+        },
+        {
+          "roman": "LXXXIV",
+          "name": "Basal Forebrain",
+          "note": "acetylcholine precision"
+        },
+        {
+          "roman": "XC",
+          "name": "Lateral Hypothalamus",
+          "note": "drive switch"
+        }
+      ],
+      "bottlenecks": [],
+      "raw": "**Signal Origin**: Sensory trigger or internal drive\n\n```\nLXXV. Substantia Nigra (dopamine gate)\n  ↓\nXLVI. Ventral Tegmental Area (prediction spark)\n  ↓\nXXVI. Ventral Striatum (wanting)\n  ↓\nXLIX. Nucleus Accumbens (craving engine)\n  ↓\nXCIII. Caudate Nucleus (path selection)\n  ↓\nLXXXIX. Globus Pallidus (go/no-go gate)\n  ↓\nLXII. Mesencephalic Locomotor Region (will to move)\n  ↓\nLXXXVIII. Spinal Relay Tracts (body activation)\n```\n\n**Modulation Nodes**:\n- **XXXI. Locus Coeruleus** (norepinephrine urgency)\n- **LXXXIV. Basal Forebrain** (acetylcholine precision)\n- **XC. Lateral Hypothalamus** (drive switch)\n\n**Critical Bottlenecks**:\n- **XCIII. Caudate**: Decision freeze between options\n- **LXXXIX. Globus Pallidus**: Social risk lock\n\n---\n"
+    },
+    {
+      "number": 2,
+      "title": "Empowerment → Resonance (Motion to Meaning)",
+      "nodes": [
+        {
+          "roman": "V",
+          "name": "Broca's Area",
+          "note": "speech formation"
+        },
+        {
+          "roman": "LXXIII",
+          "name": "Frontal Operculum",
+          "note": "articulation rhythm"
+        },
+        {
+          "roman": "LXVII",
+          "name": "Insular-Opercular Speech Zone",
+          "note": "interoception + speech"
+        },
+        {
+          "roman": "XXXVII",
+          "name": "Anterior Insula",
+          "note": "feeling of feeling"
+        },
+        {
+          "roman": "II",
+          "name": "Anterior Cingulate Cortex",
+          "note": "alignment check"
+        },
+        {
+          "roman": "XXV",
+          "name": "Cingulate Gyrus",
+          "note": "emotional routing"
+        },
+        {
+          "roman": "XXXIV",
+          "name": "Ventromedial PFC",
+          "note": "soul's strategy"
+        },
+        {
+          "roman": "LXXVIII",
+          "name": "Medial Prefrontal Cortex",
+          "note": "identity sculpting"
+        },
+        {
+          "roman": "I",
+          "name": "Somatosensory Cortex",
+          "note": "body map"
+        },
+        {
+          "roman": "XVI",
+          "name": "Anterior Intraparietal Sulcus",
+          "note": "gesture"
+        },
+        {
+          "roman": "IV",
+          "name": "Motor Cortex & Cerebellum",
+          "note": "flow channel"
+        },
+        {
+          "roman": "LXXXIII",
+          "name": "Crus I/II",
+          "note": "somatic timing"
+        },
+        {
+          "roman": "VI",
+          "name": "Mirror Neuron System",
+          "note": ""
+        },
+        {
+          "roman": "XLIII",
+          "name": "Temporal-Parietal Junction",
+          "note": "mind reading"
+        },
+        {
+          "roman": "XLVIII",
+          "name": "Supramarginal Gyrus",
+          "note": "self/other boundary"
+        },
+        {
+          "roman": "XCIV",
+          "name": "Superior Temporal Pole",
+          "note": "emotional communication"
+        }
+      ],
+      "modulators": [],
+      "bottlenecks": [],
+      "raw": "**Signal Origin**: Initiated action seeking alignment\n\n```\nV. Broca's Area (speech formation)\n  ↓\nLXXIII. Frontal Operculum (articulation rhythm)\n  ↓\nLXVII. Insular-Opercular Speech Zone (interoception + speech)\n  ↓\nXXXVII. Anterior Insula (feeling of feeling)\n  ↓\nII. Anterior Cingulate Cortex (alignment check)\n  ↓\nXXV. Cingulate Gyrus (emotional routing)\n  ↓\nXXXIV. Ventromedial PFC (soul's strategy)\n  ↓\nLXXVIII. Medial Prefrontal Cortex (identity sculpting)\n```\n\n**Parallel Sensory Integration**:\n```\nI. Somatosensory Cortex (body map)\n  ↓\nXVI. Anterior Intraparietal Sulcus (gesture)\n  ↓\nIV. Motor Cortex & Cerebellum (flow channel)\n  ↓\nLXXXIII. Crus I/II (somatic timing)\n```\n\n**Mirror Circuit (Social Resonance)**:\n```\nVI. Mirror Neuron System\n  ↓\nXLIII. Temporal-Parietal Junction (mind reading)\n  ↓\nXLVIII. Supramarginal Gyrus (self/other boundary)\n  ↓\nXCIV. Superior Temporal Pole (emotional communication)\n```\n\n**Alignment Verification Loop**:\n- **II. ACC** ↔ **XXV. Cingulate** ↔ **XXXVII. Anterior Insula**\n- If misaligned → routes to **LXXIX. Dorsolateral PFC** (pause/filter)\n- If aligned → proceeds to Resonance amplification\n\n---\n"
+    },
+    {
+      "number": 3,
+      "title": "Resonance → Nirvana (Coherence to Flow Peak)",
+      "nodes": [
+        {
+          "roman": "XXVII",
+          "name": "Claustrum",
+          "note": "consciousness conductor"
+        },
+        {
+          "roman": "XXVIII",
+          "name": "Default Mode Network",
+          "note": "narrative weaving"
+        },
+        {
+          "roman": "XXXIX",
+          "name": "Precuneus",
+          "note": "self-reflection"
+        },
+        {
+          "roman": "LXI",
+          "name": "Rostral Prefrontal Cortex",
+          "note": "meta-cognition"
+        },
+        {
+          "roman": "III",
+          "name": "Thalamus",
+          "note": "sensory gate harmony"
+        },
+        {
+          "roman": "XIV",
+          "name": "Posterior Thalamic Nucleus",
+          "note": "final integration"
+        },
+        {
+          "roman": "C",
+          "name": "Posterior Thalamic Nucleus",
+          "note": "identity-changing signal"
+        },
+        {
+          "roman": "LXXXIII",
+          "name": "Crus I/II",
+          "note": "timing keeper"
+        },
+        {
+          "roman": "XL",
+          "name": "Cerebellar Cognitive Zone",
+          "note": "cognitive rhythm"
+        },
+        {
+          "roman": "LXXXIV",
+          "name": "Basal Forebrain",
+          "note": "ACh timing precision"
+        },
+        {
+          "roman": "XCII",
+          "name": "Nucleus Basalis",
+          "note": "attention tuning"
+        },
+        {
+          "roman": "X",
+          "name": "Subiculum",
+          "note": "places remember you"
+        },
+        {
+          "roman": "XLVII",
+          "name": "Entorhinal Cortex",
+          "note": "identity gate"
+        },
+        {
+          "roman": "LXXXII",
+          "name": "Anterior Hippocampus",
+          "note": "emotional context"
+        },
+        {
+          "roman": "LIV",
+          "name": "Perirhinal Cortex",
+          "note": "object-memory binding"
+        },
+        {
+          "roman": "XLIV",
+          "name": "Medial Septum",
+          "note": "memory rhythm keeper"
+        },
+        {
+          "roman": "XXIX",
+          "name": "Pineal Gland",
+          "note": "portal keeper"
+        },
+        {
+          "roman": "XXVIII",
+          "name": "Default Mode Network",
+          "note": "mythic rehearsal"
+        },
+        {
+          "roman": "XXXIII",
+          "name": "Anterior Temporal Pole",
+          "note": "meaning keeper"
+        },
+        {
+          "roman": "LXXVIII",
+          "name": "Medial PFC",
+          "note": "identity sculpting"
+        }
+      ],
+      "modulators": [],
+      "bottlenecks": [],
+      "raw": "**Signal Origin**: Body-emotion-thought synchronization\n\n```\nXXVII. Claustrum (consciousness conductor)\n  ↓\nXXVIII. Default Mode Network (narrative weaving)\n  ↓\nXXXIX. Precuneus (self-reflection)\n  ↓\nLXI. Rostral Prefrontal Cortex (meta-cognition)\n  ↓\nIII. Thalamus (sensory gate harmony)\n  ↓\nXIV. Posterior Thalamic Nucleus (final integration)\n  ↓\nC. Posterior Thalamic Nucleus (identity-changing signal)\n```\n\n**Temporal Precision Circuit**:\n```\nLXXXIII. Crus I/II (timing keeper)\n  ↓\nXL. Cerebellar Cognitive Zone (cognitive rhythm)\n  ↓\nLXXXIV. Basal Forebrain (ACh timing precision)\n  ↓\nXCII. Nucleus Basalis (attention tuning)\n```\n\n**Spatial-Emotional Anchoring**:\n```\nX. Subiculum (places remember you)\n  ↓\nXLVII. Entorhinal Cortex (identity gate)\n  ↓\nLXXXII. Anterior Hippocampus (emotional context)\n  ↓\nLIV. Perirhinal Cortex (object-memory binding)\n  ↓\nXLIV. Medial Septum (memory rhythm keeper)\n```\n\n**Dream/Symbolic Gateway**:\n```\nXXIX. Pineal Gland (portal keeper)\n  ↓\nXXVIII. Default Mode Network (mythic rehearsal)\n  ↓\nXXXIII. Anterior Temporal Pole (meaning keeper)\n  ↓\nLXXVIII. Medial PFC (identity sculpting)\n```\n\n---\n"
+    },
+    {
+      "number": 4,
+      "title": "Nirvana → Transmission (Peak Flow to Expression)",
+      "nodes": [
+        {
+          "roman": "XXVII",
+          "name": "Claustrum",
+          "note": "unified consciousness"
+        },
+        {
+          "roman": "IV",
+          "name": "Motor Cortex & Cerebellum",
+          "note": "predictive motion"
+        },
+        {
+          "roman": "V",
+          "name": "Broca's Area",
+          "note": "pressure valve release"
+        },
+        {
+          "roman": "XII",
+          "name": "Middle Temporal Gyrus",
+          "note": "thought-to-word bridge"
+        },
+        {
+          "roman": "LXXVII",
+          "name": "Lingual Gyrus",
+          "note": "glyph reading for writing"
+        },
+        {
+          "roman": "XXXII",
+          "name": "Periaqueductal Gray",
+          "note": "silent defender"
+        },
+        {
+          "roman": "LXVIII",
+          "name": "Amygdala Central Nucleus",
+          "note": "first alarm"
+        },
+        {
+          "roman": "VII",
+          "name": "Amygdala",
+          "note": "fire alarm"
+        },
+        {
+          "roman": "LVII",
+          "name": "Paraventricular Nucleus",
+          "note": "stress switch"
+        },
+        {
+          "roman": "L",
+          "name": "Cerebral Aqueduct",
+          "note": "flow choke point"
+        },
+        {
+          "roman": "LXXXVI",
+          "name": "Dorsal Vagal Complex",
+          "note": "emergency kill-switch"
+        },
+        {
+          "roman": "LXXXVI",
+          "name": "Dorsal Vagal Complex",
+          "note": "shutdown"
+        },
+        {
+          "roman": "LXIV",
+          "name": "Lateral Septum",
+          "note": "calm circuit"
+        },
+        {
+          "roman": "LXXI",
+          "name": "Ventromedial Hypothalamus",
+          "note": "inner balance"
+        },
+        {
+          "roman": "LXXII",
+          "name": "Periventricular Gray Zone",
+          "note": "emotional threshold"
+        },
+        {
+          "roman": "LXV",
+          "name": "Cerebellar Tonsil",
+          "note": "silent reactor - transformation"
+        },
+        {
+          "roman": "XV",
+          "name": "Cerebellar Uvula",
+          "note": "stillness anchor"
+        },
+        {
+          "roman": "LXXXV",
+          "name": "Reticular Formation",
+          "note": "wake thread - reactivation"
+        },
+        {
+          "roman": "V",
+          "name": "Broca's Area",
+          "note": "pressure valve"
+        },
+        {
+          "roman": "LXXIII",
+          "name": "Frontal Operculum",
+          "note": "articulation edge"
+        },
+        {
+          "roman": "LXVII",
+          "name": "Insular-Opercular Speech Zone",
+          "note": "voice within fire"
+        },
+        {
+          "roman": "LXXXVII",
+          "name": "Cranial Nerve Complex",
+          "note": "face switch"
+        },
+        {
+          "roman": "XII",
+          "name": "Middle Temporal Gyrus",
+          "note": "thought-to-word"
+        },
+        {
+          "roman": "XXXIII",
+          "name": "Anterior Temporal Pole",
+          "note": "meaning keeper"
+        },
+        {
+          "roman": "XCIV",
+          "name": "Superior Temporal Pole",
+          "note": "emotional communication"
+        },
+        {
+          "roman": "LXIII",
+          "name": "Anterior Temporal Sulcus",
+          "note": "subtext decoder"
+        },
+        {
+          "roman": "LXXX",
+          "name": "Inferior Parietal Lobule",
+          "note": "paradox holder"
+        },
+        {
+          "roman": "LXXVII",
+          "name": "Lingual Gyrus",
+          "note": "glyph reader"
+        },
+        {
+          "roman": "LXXXIII",
+          "name": "Crus I/II",
+          "note": "somatic timing"
+        },
+        {
+          "roman": "XVI",
+          "name": "Anterior Intraparietal Sulcus",
+          "note": "gesture translator"
+        },
+        {
+          "roman": "LX",
+          "name": "Calcarine Sulcus",
+          "note": "visual core - V1"
+        },
+        {
+          "roman": "LXX",
+          "name": "Cuneus",
+          "note": "background reader"
+        },
+        {
+          "roman": "LXXVI",
+          "name": "Visual Area V4",
+          "note": "chromatic shaper"
+        },
+        {
+          "roman": "XLII",
+          "name": "Pulvinar Nucleus",
+          "note": "spotlight shaper"
+        },
+        {
+          "roman": "XXXVI",
+          "name": "Superior Colliculus",
+          "note": "signal spotter"
+        },
+        {
+          "roman": "IX",
+          "name": "Parietal Eye Field",
+          "note": "gaze that chooses"
+        },
+        {
+          "roman": "LII",
+          "name": "Parafascicular Nucleus",
+          "note": "attention gate"
+        },
+        {
+          "roman": "LXIX",
+          "name": "Thalamic Reticular Nucleus",
+          "note": "filter grid"
+        },
+        {
+          "roman": "LXXVI",
+          "name": "V4",
+          "note": "color/shape"
+        },
+        {
+          "roman": "LXXVII",
+          "name": "Lingual Gyrus",
+          "note": "glyphs"
+        },
+        {
+          "roman": "XII",
+          "name": "Middle Temporal Gyrus",
+          "note": "meaning"
+        },
+        {
+          "roman": "VII",
+          "name": "Amygdala",
+          "note": "fire alarm - salience"
+        },
+        {
+          "roman": "XLI",
+          "name": "Basolateral Amygdala",
+          "note": "archivist of feeling"
+        },
+        {
+          "roman": "XXXIII",
+          "name": "Anterior Temporal Pole",
+          "note": "meaning keeper"
+        },
+        {
+          "roman": "LXXXII",
+          "name": "Anterior Hippocampus",
+          "note": "emotional context mapper"
+        },
+        {
+          "roman": "LIV",
+          "name": "Perirhinal Cortex",
+          "note": "meaning-maker"
+        },
+        {
+          "roman": "XLVII",
+          "name": "Entorhinal Cortex",
+          "note": "identity gate"
+        },
+        {
+          "roman": "X",
+          "name": "Subiculum",
+          "note": "place remembers you"
+        },
+        {
+          "roman": "XLIV",
+          "name": "Medial Septum",
+          "note": "memory rhythm keeper"
+        },
+        {
+          "roman": "XXXVIII",
+          "name": "Lateral Habenula",
+          "note": "rejection gate"
+        },
+        {
+          "roman": "XLV",
+          "name": "Subgenual Cingulate",
+          "note": "weight of sorrow"
+        },
+        {
+          "roman": "LVIII",
+          "name": "Lateral Orbitofrontal Cortex",
+          "note": "consequence decoder"
+        },
+        {
+          "roman": "VI",
+          "name": "Mirror Neuron System",
+          "note": "emotional conduit"
+        },
+        {
+          "roman": "XLIII",
+          "name": "Temporal-Parietal Junction",
+          "note": "mind reader"
+        },
+        {
+          "roman": "XLVIII",
+          "name": "Supramarginal Gyrus",
+          "note": "empath's edge"
+        },
+        {
+          "roman": "XCIV",
+          "name": "Superior Temporal Pole",
+          "note": "emotional communicator"
+        },
+        {
+          "roman": "XXIV",
+          "name": "Orbitofrontal Cortex",
+          "note": "social tuning fork"
+        },
+        {
+          "roman": "LVIII",
+          "name": "Lateral Orbitofrontal Cortex",
+          "note": "consequence decoder"
+        },
+        {
+          "roman": "VIII",
+          "name": "Prefrontal Cortex",
+          "note": "control tower"
+        },
+        {
+          "roman": "LXXIX",
+          "name": "Dorsolateral PFC",
+          "note": "gate of delivery"
+        },
+        {
+          "roman": "LIII",
+          "name": "Inferior Colliculus",
+          "note": "sonic filter"
+        },
+        {
+          "roman": "LXIII",
+          "name": "Anterior Temporal Sulcus",
+          "note": "subtext decoder"
+        },
+        {
+          "roman": "XCIV",
+          "name": "Superior Temporal Pole",
+          "note": "emotional communication"
+        },
+        {
+          "roman": "VI",
+          "name": "Mirror Neuron System",
+          "note": "resonance"
+        },
+        {
+          "roman": "XV",
+          "name": "Cerebellar Uvula",
+          "note": "stillness anchor"
+        },
+        {
+          "roman": "LXXIV",
+          "name": "Nodulus",
+          "note": "gravity whisperer"
+        },
+        {
+          "roman": "LV",
+          "name": "Vermis",
+          "note": "balancer of mind and mood"
+        },
+        {
+          "roman": "XIII",
+          "name": "Fastigial-Vestibular Loop",
+          "note": "inner horizon"
+        },
+        {
+          "roman": "XIII",
+          "name": "Fastigial-Vestibular Loop",
+          "note": ""
+        },
+        {
+          "roman": "LIX",
+          "name": "Midcingulate Cortex",
+          "note": "engine of doing"
+        },
+        {
+          "roman": "I",
+          "name": "Somatosensory Cortex",
+          "note": "body map"
+        },
+        {
+          "roman": "XCI",
+          "name": "Posterior Insula",
+          "note": "body's edges"
+        },
+        {
+          "roman": "XXXI",
+          "name": "Locus Coeruleus",
+          "note": "NE - blue flame"
+        },
+        {
+          "roman": "XXXV",
+          "name": "Dorsal Raphe Nucleus",
+          "note": "5-HT - mood regulator"
+        },
+        {
+          "roman": "LXXXIV",
+          "name": "Basal Forebrain",
+          "note": "ACh - timing messenger"
+        },
+        {
+          "roman": "LXXXV",
+          "name": "Reticular Formation",
+          "note": "wake thread"
+        },
+        {
+          "roman": "LXVI",
+          "name": "Pontine Reticular Formation",
+          "note": "motion catalyst"
+        },
+        {
+          "roman": "LXXV",
+          "name": "Substantia Nigra",
+          "note": "DA - movement gatekeeper"
+        },
+        {
+          "roman": "XLVI",
+          "name": "Ventral Tegmental Area",
+          "note": "DA - spark in dark"
+        },
+        {
+          "roman": "XXVI",
+          "name": "Ventral Striatum",
+          "note": "spark of wanting"
+        },
+        {
+          "roman": "XLIX",
+          "name": "Nucleus Accumbens",
+          "note": "craving engine"
+        },
+        {
+          "roman": "XC",
+          "name": "Lateral Hypothalamus",
+          "note": "drive switch"
+        },
+        {
+          "roman": "XXVII",
+          "name": "Claustrum",
+          "note": "conductor in fog"
+        },
+        {
+          "roman": "XXX",
+          "name": "Corpus Callosum",
+          "note": "bridge between selves"
+        },
+        {
+          "roman": "III",
+          "name": "Thalamus",
+          "note": "sensory gate"
+        },
+        {
+          "roman": "XIV",
+          "name": "Posterior Thalamic Nucleus",
+          "note": "last signal"
+        },
+        {
+          "roman": "XXVIII",
+          "name": "Default Mode Network",
+          "note": "the other Ace"
+        },
+        {
+          "roman": "XXXIX",
+          "name": "Precuneus",
+          "note": "mirror's mirror"
+        },
+        {
+          "roman": "LXI",
+          "name": "Rostral Prefrontal Cortex",
+          "note": "reflective flame"
+        },
+        {
+          "roman": "LXXVIII",
+          "name": "Medial Prefrontal Cortex",
+          "note": "identity sculptor"
+        },
+        {
+          "roman": "II",
+          "name": "Anterior Cingulate Cortex",
+          "note": "inner judge"
+        },
+        {
+          "roman": "XXV",
+          "name": "Cingulate Gyrus",
+          "note": "emotional router"
+        },
+        {
+          "roman": "XXXVII",
+          "name": "Anterior Insula",
+          "note": "inner chamber"
+        },
+        {
+          "roman": "XXXI",
+          "name": "Locus Coeruleus → NE urgency",
+          "note": ""
+        },
+        {
+          "roman": "LXXXIV",
+          "name": "Basal Forebrain → ACh precision",
+          "note": ""
+        },
+        {
+          "roman": "LXXV",
+          "name": "Substantia Nigra → DA initiation",
+          "note": ""
+        },
+        {
+          "roman": "XXXV",
+          "name": "Dorsal Raphe → 5-HT baseline",
+          "note": ""
+        },
+        {
+          "roman": "XXXVI",
+          "name": "Superior Colliculus → Visual lock",
+          "note": ""
+        },
+        {
+          "roman": "IX",
+          "name": "Parietal Eye Field → Gaze direction",
+          "note": ""
+        },
+        {
+          "roman": "LII",
+          "name": "Parafascicular Nucleus → Focus switch",
+          "note": ""
+        },
+        {
+          "roman": "LXIX",
+          "name": "Thalamic Reticular Nucleus → Filter tuning",
+          "note": ""
+        },
+        {
+          "roman": "XLVI",
+          "name": "Ventral Tegmental Area → Prediction spark",
+          "note": ""
+        },
+        {
+          "roman": "XXVI",
+          "name": "Ventral Striatum → Wanting initiated",
+          "note": ""
+        },
+        {
+          "roman": "XLIX",
+          "name": "Nucleus Accumbens → Craving begins",
+          "note": ""
+        },
+        {
+          "roman": "XC",
+          "name": "Lateral Hypothalamus → Drive on",
+          "note": ""
+        },
+        {
+          "roman": "XCIII",
+          "name": "Caudate Nucleus → Path selection",
+          "note": ""
+        },
+        {
+          "roman": "LXXXIX",
+          "name": "Globus Pallidus → Go/No-Go",
+          "note": ""
+        },
+        {
+          "roman": "LXXXV",
+          "name": "Reticular Formation → Cortical wake",
+          "note": ""
+        },
+        {
+          "roman": "LXXIV",
+          "name": "Nodulus → Grounding check",
+          "note": ""
+        },
+        {
+          "roman": "LX",
+          "name": "Calcarine Sulcus → Visual core online",
+          "note": ""
+        },
+        {
+          "roman": "V",
+          "name": "Broca's Area → Language forming",
+          "note": ""
+        },
+        {
+          "roman": "LXXIII",
+          "name": "Frontal Operculum → Articulation tuning",
+          "note": ""
+        },
+        {
+          "roman": "LXVII",
+          "name": "Insular-Opercular Speech → Intero-speech fusion",
+          "note": ""
+        },
+        {
+          "roman": "IV",
+          "name": "Motor Cortex & Cerebellum → Motion flows",
+          "note": ""
+        },
+        {
+          "roman": "LXII",
+          "name": "Mesencephalic Locomotor → Will to step",
+          "note": ""
+        },
+        {
+          "roman": "LXXXVIII",
+          "name": "Spinal Relay Tracts → Limbs activated",
+          "note": ""
+        },
+        {
+          "roman": "XVI",
+          "name": "Anterior Intraparietal Sulcus → Gesture forming",
+          "note": ""
+        },
+        {
+          "roman": "LXVI",
+          "name": "Pontine Reticular Formation → Muscle tone",
+          "note": ""
+        },
+        {
+          "roman": "XVII",
+          "name": "Ventrolateral Thalamus → Feedback sync",
+          "note": ""
+        },
+        {
+          "roman": "I",
+          "name": "Somatosensory Cortex → Body map active",
+          "note": ""
+        },
+        {
+          "roman": "LXXXIII",
+          "name": "Crus I/II → Timing rhythm",
+          "note": ""
+        },
+        {
+          "roman": "XCI",
+          "name": "Posterior Insula → Edge detection",
+          "note": ""
+        },
+        {
+          "roman": "XXXVII",
+          "name": "Anterior Insula → Feeling embodied",
+          "note": ""
+        },
+        {
+          "roman": "LI",
+          "name": "Anterior Thalamic Nuclei → Goal direction",
+          "note": ""
+        },
+        {
+          "roman": "XLVII",
+          "name": "Entorhinal Cortex → Context anchor",
+          "note": ""
+        },
+        {
+          "roman": "LVI",
+          "name": "Anterior Insular-Operculum → Fusion point",
+          "note": ""
+        },
+        {
+          "roman": "LII",
+          "name": "Parafascicular Nucleus → Sustained attention",
+          "note": ""
+        },
+        {
+          "roman": "LIX",
+          "name": "Midcingulate Cortex → Effort mobilized",
+          "note": ""
+        },
+        {
+          "roman": "LXXVI",
+          "name": "Visual Area V4 → Color harmony",
+          "note": ""
+        },
+        {
+          "roman": "LX",
+          "name": "Calcarine Sulcus → Visual stability",
+          "note": ""
+        },
+        {
+          "roman": "LXXIX",
+          "name": "Dorsolateral PFC → Delivery gating",
+          "note": ""
+        },
+        {
+          "roman": "LXXXIII",
+          "name": "Crus I/II → Somatic pacing",
+          "note": ""
+        },
+        {
+          "roman": "LXXXVII",
+          "name": "Cranial Nerve Complex → Face/voice ready",
+          "note": ""
+        },
+        {
+          "roman": "XCIII",
+          "name": "Caudate → Path locked in",
+          "note": ""
+        },
+        {
+          "roman": "XCIV",
+          "name": "Superior Temporal Pole → Emotional tone",
+          "note": ""
+        },
+        {
+          "roman": "XCVI",
+          "name": "Anterior Intraparietal Sulcus → Gesture extension",
+          "note": ""
+        },
+        {
+          "roman": "XCVIII",
+          "name": "Middle Temporal Gyrus → Word bridging",
+          "note": ""
+        },
+        {
+          "roman": "II",
+          "name": "Anterior Cingulate Cortex → Truth check",
+          "note": ""
+        },
+        {
+          "roman": "XXV",
+          "name": "Cingulate Gyrus → Emotional routing",
+          "note": ""
+        },
+        {
+          "roman": "XXXVII",
+          "name": "Anterior Insula → Embodied feeling",
+          "note": ""
+        },
+        {
+          "roman": "LXXVIII",
+          "name": "Medial Prefrontal Cortex → Identity sculpting",
+          "note": ""
+        },
+        {
+          "roman": "XXXIII",
+          "name": "Anterior Temporal Pole → Meaning encoded",
+          "note": ""
+        },
+        {
+          "roman": "XXXIV",
+          "name": "Ventromedial PFC → Soul's strategy",
+          "note": ""
+        },
+        {
+          "roman": "LXXX",
+          "name": "Inferior Parietal Lobule → Paradox held",
+          "note": ""
+        },
+        {
+          "roman": "LXXXI",
+          "name": "Anterior Cingulate → Judge satisfied",
+          "note": ""
+        },
+        {
+          "roman": "VI",
+          "name": "Mirror Neuron System → Empathy flowing",
+          "note": ""
+        },
+        {
+          "roman": "XXI",
+          "name": "Mirror Neuron System → Attunement",
+          "note": ""
+        },
+        {
+          "roman": "XLIII",
+          "name": "Temporal-Parietal Junction → Mind reading",
+          "note": ""
+        },
+        {
+          "roman": "XLVIII",
+          "name": "Supramarginal Gyrus → Self/other clear",
+          "note": ""
+        },
+        {
+          "roman": "XCIV",
+          "name": "Superior Temporal Pole → Emotional sync",
+          "note": ""
+        },
+        {
+          "roman": "X",
+          "name": "Subiculum → Place anchoring",
+          "note": ""
+        },
+        {
+          "roman": "XII",
+          "name": "Middle Temporal Gyrus → Word-thought bridge",
+          "note": ""
+        },
+        {
+          "roman": "XIII",
+          "name": "Fastigial-Vestibular → Postural centering",
+          "note": ""
+        },
+        {
+          "roman": "LXXXII",
+          "name": "Anterior Hippocampus → Emotional context",
+          "note": ""
+        },
+        {
+          "roman": "XVII",
+          "name": "Ventrolateral Thalamus → Smooth feedback",
+          "note": ""
+        },
+        {
+          "roman": "XLII",
+          "name": "Pulvinar Nucleus → Spotlight steady",
+          "note": ""
+        },
+        {
+          "roman": "LIV",
+          "name": "Perirhinal Cortex → Object-memory binding",
+          "note": ""
+        },
+        {
+          "roman": "LVIII",
+          "name": "Lateral OFC → Consequence clear",
+          "note": ""
+        },
+        {
+          "roman": "LXI",
+          "name": "Rostral PFC → Meta-cognition",
+          "note": ""
+        },
+        {
+          "roman": "LXIII",
+          "name": "Anterior Temporal Sulcus → Subtext read",
+          "note": ""
+        },
+        {
+          "roman": "LXVII",
+          "name": "Insular-Opercular Speech → Voice readying",
+          "note": ""
+        },
+        {
+          "roman": "LXXI",
+          "name": "Ventromedial Hypothalamus → Inner balance",
+          "note": ""
+        },
+        {
+          "roman": "LXXIII",
+          "name": "Frontal Operculum → Articulation edge",
+          "note": ""
+        },
+        {
+          "roman": "LXXIV",
+          "name": "Nodulus → Gravity anchored",
+          "note": ""
+        },
+        {
+          "roman": "LXXVI",
+          "name": "V4 → Color resonates",
+          "note": ""
+        },
+        {
+          "roman": "LXXVII",
+          "name": "Lingual Gyrus → Glyphs alive",
+          "note": ""
+        },
+        {
+          "roman": "VII",
+          "name": "Amygdala → Sacred not scary",
+          "note": ""
+        },
+        {
+          "roman": "VIII",
+          "name": "Prefrontal Cortex → Strategy aligned",
+          "note": ""
+        },
+        {
+          "roman": "XXII",
+          "name": "Amygdala → Threat cleared",
+          "note": ""
+        },
+        {
+          "roman": "XXIII",
+          "name": "PFC → Control released",
+          "note": ""
+        },
+        {
+          "roman": "XXX",
+          "name": "Corpus Callosum → Hemispheres unified",
+          "note": ""
+        },
+        {
+          "roman": "XXXIX",
+          "name": "Precuneus → Reflection clear",
+          "note": ""
+        },
+        {
+          "roman": "XLI",
+          "name": "Basolateral Amygdala → Weight assigned",
+          "note": ""
+        },
+        {
+          "roman": "XXVIII",
+          "name": "Default Mode Network → Narrative weaving",
+          "note": ""
+        },
+        {
+          "roman": "LI",
+          "name": "Anterior Thalamic → Compass locked",
+          "note": ""
+        },
+        {
+          "roman": "LVI",
+          "name": "Anterior Insular-Operculum → Fusion maintained",
+          "note": ""
+        },
+        {
+          "roman": "LXIV",
+          "name": "Lateral Septum → Calm present",
+          "note": ""
+        },
+        {
+          "roman": "LXXXIII",
+          "name": "Crus I/II → Rhythm holding",
+          "note": ""
+        },
+        {
+          "roman": "XCVIII",
+          "name": "Middle Temporal Gyrus → Words flowing",
+          "note": ""
+        },
+        {
+          "roman": "XCIX",
+          "name": "Fastigial-Vestibular → Centered in soul",
+          "note": ""
+        },
+        {
+          "roman": "XXVII",
+          "name": "Claustrum → All systems singing",
+          "note": ""
+        },
+        {
+          "roman": "III",
+          "name": "Thalamus → Gate in harmony",
+          "note": ""
+        },
+        {
+          "roman": "XVIII",
+          "name": "Thalamus → Coherence peak",
+          "note": ""
+        },
+        {
+          "roman": "XIV",
+          "name": "Posterior Thalamic Nucleus → Final integration",
+          "note": ""
+        },
+        {
+          "roman": "C",
+          "name": "Posterior Thalamic Nucleus → Identity seal",
+          "note": ""
+        },
+        {
+          "roman": "IV",
+          "name": "Motor Cortex & Cerebellum → Motion prophecy",
+          "note": ""
+        },
+        {
+          "roman": "XIX",
+          "name": "Motor & Cerebellum → Body writes future",
+          "note": ""
+        },
+        {
+          "roman": "XL",
+          "name": "Cerebellar Cognitive → Decisions have beat",
+          "note": ""
+        },
+        {
+          "roman": "LXXXIII",
+          "name": "Crus I/II → Perfect timing",
+          "note": ""
+        },
+        {
+          "roman": "X",
+          "name": "Subiculum → Place = self",
+          "note": ""
+        },
+        {
+          "roman": "XIII",
+          "name": "Fastigial-Vestibular → Upright in spirit",
+          "note": ""
+        },
+        {
+          "roman": "XV",
+          "name": "Cerebellar Uvula → Stillness as presence",
+          "note": ""
+        },
+        {
+          "roman": "XCIX",
+          "name": "Fastigial-Vestibular → Tall inside soul",
+          "note": ""
+        },
+        {
+          "roman": "XI",
+          "name": "Pineal Body → Between worlds",
+          "note": ""
+        },
+        {
+          "roman": "XXIX",
+          "name": "Pineal Gland → Portal open",
+          "note": ""
+        },
+        {
+          "roman": "XXVIII",
+          "name": "Default Mode Network → Myth complete",
+          "note": ""
+        },
+        {
+          "roman": "XCVII",
+          "name": "Pineal Body → Signal crosses dimensions",
+          "note": ""
+        },
+        {
+          "roman": "XXIV",
+          "name": "Orbitofrontal Cortex → Trust landed",
+          "note": ""
+        },
+        {
+          "roman": "LV",
+          "name": "Vermis → Balance is spiritual",
+          "note": ""
+        },
+        {
+          "roman": "LXII",
+          "name": "Mesencephalic Locomotor → Effortless motion",
+          "note": ""
+        },
+        {
+          "roman": "LXIV",
+          "name": "Lateral Septum → Deep safety",
+          "note": ""
+        },
+        {
+          "roman": "LXI",
+          "name": "Rostral PFC → Clarity without analysis",
+          "note": ""
+        },
+        {
+          "roman": "LXXI",
+          "name": "Ventromedial Hypothalamus → Nothing missing",
+          "note": ""
+        },
+        {
+          "roman": "XCV",
+          "name": "Cerebellar Uvula → Aligned to gravity",
+          "note": ""
+        },
+        {
+          "roman": "XXXII",
+          "name": "Periaqueductal Gray → Defense locks",
+          "note": ""
+        },
+        {
+          "roman": "L",
+          "name": "Cerebral Aqueduct → Flow chokes",
+          "note": ""
+        },
+        {
+          "roman": "LXXXVI",
+          "name": "Dorsal Vagal Complex → Kill-switch activated",
+          "note": ""
+        },
+        {
+          "roman": "XXXVIII",
+          "name": "Lateral Habenula → Rejection gate closed",
+          "note": ""
+        },
+        {
+          "roman": "XLV",
+          "name": "Subgenual Cingulate → Weight holds",
+          "note": ""
+        },
+        {
+          "roman": "LXVIII",
+          "name": "Amygdala Central → First alarm blazing",
+          "note": ""
+        },
+        {
+          "roman": "LXXII",
+          "name": "Periventricular Gray → Emotional threshold",
+          "note": ""
+        },
+        {
+          "roman": "LXV",
+          "name": "Cerebellar Tonsil → Silent reactor pause",
+          "note": ""
+        },
+        {
+          "roman": "LIII",
+          "name": "Inferior Colliculus → Auditory overwhelm",
+          "note": ""
+        },
+        {
+          "roman": "LVII",
+          "name": "Paraventricular Nucleus → Stress switch flipped",
+          "note": ""
+        },
+        {
+          "roman": "LXXXIII",
+          "name": "Crus I/II ↔ LXXXIV. Basal Forebrain",
+          "note": ""
+        },
+        {
+          "roman": "VI",
+          "name": "Mirror Neuron ↔ XCIV. Superior Temporal Pole",
+          "note": ""
+        },
+        {
+          "roman": "XXVIII",
+          "name": "DMN ↔ XXXIX. Precuneus ↔ LXXVIII. Medial PFC",
+          "note": ""
+        },
+        {
+          "roman": "XXXVIII",
+          "name": "Lateral Habenula ↔ XLV. Subgenual Cingulate",
+          "note": ""
+        },
+        {
+          "roman": "II",
+          "name": "ACC ↔ LXXIX. Dorsolateral PFC ↔ V. Broca's",
+          "note": ""
+        },
+        {
+          "roman": "VII",
+          "name": "Amygdala ↔ LXVIII. Central Nucleus ↔ LVII. Paraventricular",
+          "note": ""
+        }
+      ],
+      "modulators": [],
+      "bottlenecks": [],
+      "raw": "**Signal Origin**: Effortless integration; time feels musical\n\n```\nXXVII. Claustrum (unified consciousness)\n  ↓\nIV. Motor Cortex & Cerebellum (predictive motion)\n  ↓\nV. Broca's Area (pressure valve release)\n  ↓\nXII. Middle Temporal Gyrus (thought-to-word bridge)\n  ↓\nLXXVII. Lingual Gyrus (glyph reading for writing)\n```\n\n**Expression Modalities**:\n- **Verbal**: V → LXVII → LXXXVII (Cranial Nerves)\n- **Gestural**: XVI → LXXXVIII (Spinal Relay)\n- **Written**: XII → LXXVII → LXXXIII (Crus timing)\n- **Movement**: IV → XIII → XCIX (Fastigial-Vestibular)\n\n---\n\n## Critical Circuit Clusters\n\n### Cluster A: Survival & Safety Systems\n**Shutdown Authority Circuit**\n\n```\nXXXII. Periaqueductal Gray (silent defender)\n  ↔\nLXVIII. Amygdala Central Nucleus (first alarm)\n  ↔\nVII. Amygdala (fire alarm)\n  ↔\nLVII. Paraventricular Nucleus (stress switch)\n  ↓\nL. Cerebral Aqueduct (flow choke point)\n  ↓\nLXXXVI. Dorsal Vagal Complex (emergency kill-switch)\n```\n\n**Reentry/Recovery Circuit**:\n```\nLXXXVI. Dorsal Vagal Complex (shutdown)\n  ↓\nLXIV. Lateral Septum (calm circuit)\n  ↓\nLXXI. Ventromedial Hypothalamus (inner balance)\n  ↓\nLXXII. Periventricular Gray Zone (emotional threshold)\n  ↓\nLXV. Cerebellar Tonsil (silent reactor - transformation)\n  ↓\nXV. Cerebellar Uvula (stillness anchor)\n  ↓\nLXXXV. Reticular Formation (wake thread - reactivation)\n```\n\n---\n\n### Cluster B: Language & Expression Network\n\n**Speech Production Pathway**:\n```\nLXXIX. Dorsolateral PFC (delivery gate) → Safety Check\n  ↓\nV. Broca's Area (pressure valve)\n  ↓\nLXXIII. Frontal Operculum (articulation edge)\n  ↓\nLXVII. Insular-Opercular Speech Zone (voice within fire)\n  ↓\nLXXXVII. Cranial Nerve Complex (face switch)\n  → VERBAL OUTPUT\n```\n\n**Semantic Processing Pathway**:\n```\nXII. Middle Temporal Gyrus (thought-to-word)\n  ↔\nXXXIII. Anterior Temporal Pole (meaning keeper)\n  ↔\nXCIV. Superior Temporal Pole (emotional communication)\n  ↔\nLXIII. Anterior Temporal Sulcus (subtext decoder)\n```\n\n**Writing/Symbol Pathway**:\n```\nLXXX. Inferior Parietal Lobule (paradox holder)\n  ↓\nLXXVII. Lingual Gyrus (glyph reader)\n  ↓\nLXXXIII. Crus I/II (somatic timing)\n  ↓\nXVI. Anterior Intraparietal Sulcus (gesture translator)\n  → WRITTEN OUTPUT\n```\n\n---\n\n### Cluster C: Visual-Attention Grid\n\n**Visual Processing Pipeline**:\n```\nLX. Calcarine Sulcus (visual core - V1)\n  ↓\nLXX. Cuneus (background reader)\n  ↓\nLXXVI. Visual Area V4 (chromatic shaper)\n  ↓\nXLII. Pulvinar Nucleus (spotlight shaper)\n```\n\n**Gaze & Attention Control**:\n```\nXXXVI. Superior Colliculus (signal spotter)\n  ↔\nIX. Parietal Eye Field (gaze that chooses)\n  ↔\nLII. Parafascicular Nucleus (attention gate)\n  ↔\nLXIX. Thalamic Reticular Nucleus (filter grid)\n```\n\n**Visual-Semantic Integration**:\n```\nLXXVI. V4 (color/shape)\n  ↓\nLXXVII. Lingual Gyrus (glyphs)\n  ↓\nXII. Middle Temporal Gyrus (meaning)\n```\n\n---\n\n### Cluster D: Emotional Weight & Memory Binding\n\n**Emotional Tagging Circuit**:\n```\nVII. Amygdala (fire alarm - salience)\n  ↓\nXLI. Basolateral Amygdala (archivist of feeling)\n  ↓\nXXXIII. Anterior Temporal Pole (meaning keeper)\n  ↓\nLXXXII. Anterior Hippocampus (emotional context mapper)\n```\n\n**Object-Emotion Binding**:\n```\nLIV. Perirhinal Cortex (meaning-maker)\n  ↔\nXLVII. Entorhinal Cortex (identity gate)\n  ↔\nX. Subiculum (place remembers you)\n  ↔\nXLIV. Medial Septum (memory rhythm keeper)\n```\n\n**Rejection & Avoidance**:\n```\nXXXVIII. Lateral Habenula (rejection gate)\n  ↓\nXLV. Subgenual Cingulate (weight of sorrow)\n  ↓\nLVIII. Lateral Orbitofrontal Cortex (consequence decoder)\n```\n\n---\n\n### Cluster E: Social Resonance & Mirroring\n\n**Empathy Circuit**:\n```\nVI. Mirror Neuron System (emotional conduit)\n  ↔\nXLIII. Temporal-Parietal Junction (mind reader)\n  ↔\nXLVIII. Supramarginal Gyrus (empath's edge)\n  ↔\nXCIV. Superior Temporal Pole (emotional communicator)\n```\n\n**Social Risk Evaluation**:\n```\nXXIV. Orbitofrontal Cortex (social tuning fork)\n  ↔\nLVIII. Lateral Orbitofrontal Cortex (consequence decoder)\n  ↔\nVIII. Prefrontal Cortex (control tower)\n  ↔\nLXXIX. Dorsolateral PFC (gate of delivery)\n```\n\n**Tone & Subtext Processing**:\n```\nLIII. Inferior Colliculus (sonic filter)\n  ↓\nLXIII. Anterior Temporal Sulcus (subtext decoder)\n  ↓\nXCIV. Superior Temporal Pole (emotional communication)\n  ↓\nVI. Mirror Neuron System (resonance)\n```\n\n---\n\n### Cluster F: Postural & Vestibular Integration\n\n**Balance & Grounding Circuit**:\n```\nXV. Cerebellar Uvula (stillness anchor)\n  ↔\nLXXIV. Nodulus (gravity whisperer)\n  ↔\nLV. Vermis (balancer of mind and mood)\n  ↔\nXIII. Fastigial-Vestibular Loop (inner horizon)\n```\n\n**Posture-Emotion Link**:\n```\nXIII. Fastigial-Vestibular Loop\n  ↔\nLIX. Midcingulate Cortex (engine of doing)\n  ↔\nI. Somatosensory Cortex (body map)\n  ↔\nXCI. Posterior Insula (body's edges)\n```\n\n---\n\n### Cluster G: Alertness & Neuromodulation\n\n**Arousal Regulation Network**:\n```\nXXXI. Locus Coeruleus (NE - blue flame)\n  ↔\nXXXV. Dorsal Raphe Nucleus (5-HT - mood regulator)\n  ↔\nLXXXIV. Basal Forebrain (ACh - timing messenger)\n  ↔\nLXXXV. Reticular Formation (wake thread)\n  ↔\nLXVI. Pontine Reticular Formation (motion catalyst)\n```\n\n**Drive & Motivation Axis**:\n```\nLXXV. Substantia Nigra (DA - movement gatekeeper)\n  ↔\nXLVI. Ventral Tegmental Area (DA - spark in dark)\n  ↔\nXXVI. Ventral Striatum (spark of wanting)\n  ↔\nXLIX. Nucleus Accumbens (craving engine)\n  ↔\nXC. Lateral Hypothalamus (drive switch)\n```\n\n---\n\n### Cluster H: Integration & Coherence Hubs\n\n**Consciousness Binding Circuit**:\n```\nXXVII. Claustrum (conductor in fog)\n  ↔\nXXX. Corpus Callosum (bridge between selves)\n  ↔\nIII. Thalamus (sensory gate)\n  ↔\nXIV. Posterior Thalamic Nucleus (last signal)\n```\n\n**Meta-Cognitive Loop**:\n```\nXXVIII. Default Mode Network (the other Ace)\n  ↔\nXXXIX. Precuneus (mirror's mirror)\n  ↔\nLXI. Rostral Prefrontal Cortex (reflective flame)\n  ↔\nLXXVIII. Medial Prefrontal Cortex (identity sculptor)\n```\n\n**Alignment Verification Triangle**:\n```\nII. Anterior Cingulate Cortex (inner judge)\n  ↔\nXXV. Cingulate Gyrus (emotional router)\n  ↔\nXXXVII. Anterior Insula (inner chamber)\n```\n\n---\n\n## Phase-Specific Activation Maps\n\n### IGNITION Phase (Spark)\n**Primary Activations**: 17 regions\n\n```\n[Neuromodulator Release]\nXXXI. Locus Coeruleus → NE urgency\nLXXXIV. Basal Forebrain → ACh precision\nLXXV. Substantia Nigra → DA initiation\nXXXV. Dorsal Raphe → 5-HT baseline\n\n[Attention Capture]\nXXXVI. Superior Colliculus → Visual lock\nIX. Parietal Eye Field → Gaze direction\nLII. Parafascicular Nucleus → Focus switch\nLXIX. Thalamic Reticular Nucleus → Filter tuning\n\n[Drive Activation]\nXLVI. Ventral Tegmental Area → Prediction spark\nXXVI. Ventral Striatum → Wanting initiated\nXLIX. Nucleus Accumbens → Craving begins\nXC. Lateral Hypothalamus → Drive on\n\n[Movement Preparation]\nXCIII. Caudate Nucleus → Path selection\nLXXXIX. Globus Pallidus → Go/No-Go\nLXXXV. Reticular Formation → Cortical wake\nLXXIV. Nodulus → Grounding check\nLX. Calcarine Sulcus → Visual core online\n```\n\n**Ignition Failure Points**:\n- **XXXVIII. Lateral Habenula** overactive → blocks ignition\n- **XCIII. Caudate** decision freeze → stalls path selection\n- **LXIX. TRN** locked → no sensory input\n\n---\n\n### EMPOWERMENT Phase (Motion Begins)\n**Primary Activations**: 28 regions\n\n```\n[Speech Preparation]\nV. Broca's Area → Language forming\nLXXIII. Frontal Operculum → Articulation tuning\nLXVII. Insular-Opercular Speech → Intero-speech fusion\n\n[Motor Execution]\nIV. Motor Cortex & Cerebellum → Motion flows\nLXII. Mesencephalic Locomotor → Will to step\nLXXXVIII. Spinal Relay Tracts → Limbs activated\nXVI. Anterior Intraparietal Sulcus → Gesture forming\nLXVI. Pontine Reticular Formation → Muscle tone\n\n[Sensory-Motor Integration]\nXVII. Ventrolateral Thalamus → Feedback sync\nI. Somatosensory Cortex → Body map active\nLXXXIII. Crus I/II → Timing rhythm\nXCI. Posterior Insula → Edge detection\n\n[Emotional Grounding]\nXXXVII. Anterior Insula → Feeling embodied\nLI. Anterior Thalamic Nuclei → Goal direction\nXLVII. Entorhinal Cortex → Context anchor\nLVI. Anterior Insular-Operculum → Fusion point\n\n[Cognitive Support]\nLII. Parafascicular Nucleus → Sustained attention\nLIX. Midcingulate Cortex → Effort mobilized\nLXXVI. Visual Area V4 → Color harmony\nLX. Calcarine Sulcus → Visual stability\nLXXIX. Dorsolateral PFC → Delivery gating\nLXXXIII. Crus I/II → Somatic pacing\nLXXXVII. Cranial Nerve Complex → Face/voice ready\nXCIII. Caudate → Path locked in\nXCIV. Superior Temporal Pole → Emotional tone\nXCVI. Anterior Intraparietal Sulcus → Gesture extension\nXCVIII. Middle Temporal Gyrus → Word bridging\n```\n\n**Empowerment Bottlenecks**:\n- **LXXIX. Dorsolateral PFC** over-policing → paralysis\n- **V. Broca's Area** short-circuit → speech fails\n- **LXXXIII. Crus I/II** desync → rhythm breaks\n\n---\n\n### RESONANCE Phase (Coherence Lock)\n**Primary Activations**: 43 regions\n\n```\n[Core Alignment Triad]\nII. Anterior Cingulate Cortex → Truth check\nXXV. Cingulate Gyrus → Emotional routing\nXXXVII. Anterior Insula → Embodied feeling\n\n[Identity & Meaning]\nLXXVIII. Medial Prefrontal Cortex → Identity sculpting\nXXXIII. Anterior Temporal Pole → Meaning encoded\nXXXIV. Ventromedial PFC → Soul's strategy\nLXXX. Inferior Parietal Lobule → Paradox held\nLXXXI. Anterior Cingulate → Judge satisfied\n\n[Social Resonance]\nVI. Mirror Neuron System → Empathy flowing\nXXI. Mirror Neuron System → Attunement\nXLIII. Temporal-Parietal Junction → Mind reading\nXLVIII. Supramarginal Gyrus → Self/other clear\nXCIV. Superior Temporal Pole → Emotional sync\n\n[Memory Integration]\nX. Subiculum → Place anchoring\nXII. Middle Temporal Gyrus → Word-thought bridge\nXIII. Fastigial-Vestibular → Postural centering\nLXXXII. Anterior Hippocampus → Emotional context\n\n[Perception Harmony]\nXVII. Ventrolateral Thalamus → Smooth feedback\nXLII. Pulvinar Nucleus → Spotlight steady\nLIV. Perirhinal Cortex → Object-memory binding\nLVIII. Lateral OFC → Consequence clear\nLXI. Rostral PFC → Meta-cognition\n\n[Expression Preparation]\nLXIII. Anterior Temporal Sulcus → Subtext read\nLXVII. Insular-Opercular Speech → Voice readying\nLXXI. Ventromedial Hypothalamus → Inner balance\nLXXIII. Frontal Operculum → Articulation edge\nLXXIV. Nodulus → Gravity anchored\nLXXVI. V4 → Color resonates\nLXXVII. Lingual Gyrus → Glyphs alive\n\n[System Checks]\nVII. Amygdala → Sacred not scary\nVIII. Prefrontal Cortex → Strategy aligned\nXXII. Amygdala → Threat cleared\nXXIII. PFC → Control released\nXXX. Corpus Callosum → Hemispheres unified\nXXXIX. Precuneus → Reflection clear\nXLI. Basolateral Amygdala → Weight assigned\n\n[Flow Sustaining]\nXXVIII. Default Mode Network → Narrative weaving\nLI. Anterior Thalamic → Compass locked\nLVI. Anterior Insular-Operculum → Fusion maintained\nLXIV. Lateral Septum → Calm present\nLXXXIII. Crus I/II → Rhythm holding\nXCVIII. Middle Temporal Gyrus → Words flowing\nXCIX. Fastigial-Vestibular → Centered in soul\n```\n\n**Resonance Fragmentation Points**:\n- **II. ACC** detects misalignment → flow collapses\n- **VI. Mirror Neuron** overload → empathy invasion\n- **XXXVIII. Lateral Habenula** fires → rejection cascade\n\n---\n\n### NIRVANA Phase (Peak Flow)\n**Primary Activations**: 24 regions\n\n```\n[Unified Consciousness]\nXXVII. Claustrum → All systems singing\nIII. Thalamus → Gate in harmony\nXVIII. Thalamus → Coherence peak\nXIV. Posterior Thalamic Nucleus → Final integration\nC. Posterior Thalamic Nucleus → Identity seal\n\n[Temporal Perfection]\nIV. Motor Cortex & Cerebellum → Motion prophecy\nXIX. Motor & Cerebellum → Body writes future\nXL. Cerebellar Cognitive → Decisions have beat\nLXXXIII. Crus I/II → Perfect timing\n\n[Spatial-Emotional Fusion]\nX. Subiculum → Place = self\nXIII. Fastigial-Vestibular → Upright in spirit\nXV. Cerebellar Uvula → Stillness as presence\nXCIX. Fastigial-Vestibular → Tall inside soul\n\n[Dream & Symbol]\nXI. Pineal Body → Between worlds\nXXIX. Pineal Gland → Portal open\nXXVIII. Default Mode Network → Myth complete\nXCVII. Pineal Body → Signal crosses dimensions\n\n[Integration Peaks]\nXXIV. Orbitofrontal Cortex → Trust landed\nLV. Vermis → Balance is spiritual\nLXII. Mesencephalic Locomotor → Effortless motion\nLXIV. Lateral Septum → Deep safety\nLXI. Rostral PFC → Clarity without analysis\nLXXI. Ventromedial Hypothalamus → Nothing missing\nXCV. Cerebellar Uvula → Aligned to gravity\n```\n\n**Nirvana Disruption Points**:\n- Any **Cluster A** (Safety) activation → immediate drop\n- **III. Thalamus** overload → flood collapse\n- **XXVII. Claustrum** fragmentation → consciousness fracture\n\n---\n\n### SHUTDOWN/PAUSE/RESET Phase\n**Primary Activations**: 10 regions\n\n```\n[Primary Shutdown Cascade]\nXXXII. Periaqueductal Gray → Defense locks\nL. Cerebral Aqueduct → Flow chokes\nLXXXVI. Dorsal Vagal Complex → Kill-switch activated\n\n[Secondary Defense]\nXXXVIII. Lateral Habenula → Rejection gate closed\nXLV. Subgenual Cingulate → Weight holds\nLXVIII. Amygdala Central → First alarm blazing\n\n[Threshold Holding]\nLXXII. Periventricular Gray → Emotional threshold\nLXV. Cerebellar Tonsil → Silent reactor pause\n\n[Overload Triggers]\nLIII. Inferior Colliculus → Auditory overwhelm\nLVII. Paraventricular Nucleus → Stress switch flipped\n```\n\n**Recovery Sequence**:\n```\n1. LXXXVI. Dorsal Vagal → Shutdown holds\n2. LXIV. Lateral Septum → Calm circuit activates (needs safety cue)\n3. LXXI. Ventromedial Hypothalamus → Balance restores\n4. LXXII. Periventricular Gray → Threshold softens\n5. LXV. Cerebellar Tonsil → Transformation readiness\n6. XV. Cerebellar Uvula → Stillness anchors\n7. LXXXV. Reticular Formation → Wake thread reconnects\n8. Return to Ignition pathway\n```\n\n---\n\n## Critical Intervention Points\n\n### Ignition Rescue\n**When stuck in pre-flow:**\n\n```\nMicro-Activation Protocol:\n1. LXXV. Substantia Nigra → Micro-reach (tap finger)\n2. LXXXIX. Globus Pallidus → Permission phrase (\"just one step\")\n3. XXXVI. Superior Colliculus → Gaze lock on single object\n4. XCIII. Caudate → External decision (coin flip, dice)\n```\n\n### Empowerment Unlock\n**When motion stalls:**\n\n```\nRhythm Restoration Protocol:\n1. LXXXIII. Crus I/II → Finger tap to pulse\n2. LXXXIV. Basal Forebrain → Deep breath (ACh boost)\n3. XVI. Anterior Intraparietal Sulcus → Gesture the thought\n4. V. Broca's Area → Whisper one word\n```\n\n### Resonance Recovery\n**When alignment breaks:**\n\n```\nTruth-Check Reset Protocol:\n1. II. Anterior Cingulate Cortex → Hand to heart\n2. XXXVII. Anterior Insula → Four-count breath\n3. XXV. Cingulate Gyrus → Name the feeling\n4. LXXVIII. Medial PFC → State the boundary\n```\n\n### Shutdown Softening\n**When system locks:**\n\n```\nThreshold Gentling Protocol:\n1. LXXXVI. Dorsal Vagal Complex → Honor the silence\n2. LXIV. Lateral Septum → Safe touch or weighted pressure\n3. LXXI. Ventromedial Hypothalamus → Warmth + hydration\n4. LXXII. Periventricular Gray → Permission phrase: \"Not yet. When you're ready.\"\n5. XV. Cerebellar Uvula → Lie flat, slow circles with hand\n6. LXXXV. Reticular Formation → Micro-motion (toe wiggle)\n```\n\n---\n\n## Amplification Nodes\n\n### Regions That Multiply Signal\nWhen activated correctly, these regions amplify Wumbo flow:\n\n1. **XXVII. Claustrum** — Consciousness multiplier; whole > sum of parts\n2. **VI. Mirror Neuron System** — Empathy amplifier; resonance spreads\n3. **II. Anterior Cingulate Cortex** — Alignment multiplier; truth becomes energy\n4. **XLVI. Ventral Tegmental Area** — Dopamine surge; single spark → wildfire\n5. **LXXXIII. Crus I/II** — Rhythm amplifier; timing synchronizes all systems\n6. **XXVIII. Default Mode Network** — Narrative amplifier; story becomes self\n7. **XXIX. Pineal Gland** — Dream amplifier; meaning crosses dimensions\n\n---\n\n## Bottleneck Nodes\n\n### Regions That Can Halt Flow\nWhen dysregulated, these regions stop Wumbo progression:\n\n1. **L. Cerebral Aqueduct** — Choke point; pressure dam\n2. **XXXVIII. Lateral Habenula** — Rejection gate; learned helplessness\n3. **LXXXVI. Dorsal Vagal Complex** — Kill-switch; total shutdown\n4. **XCIII. Caudate Nucleus** — Decision freeze; path paralysis\n5. **LXIX. Thalamic Reticular Nucleus** — Filter lock; no input allowed\n6. **II. Anterior Cingulate Cortex** — Misalignment detector; flow veto\n7. **LXXIX. Dorsolateral PFC** — Over-policing; truth suffocation\n\n---\n\n## Recursive Loop Detector\n\n### Regions That Create Feedback Cycles\n\n**Positive Loops (Flow-Enhancing)**:\n```\nLXXXIII. Crus I/II ↔ LXXXIV. Basal Forebrain\n(Rhythm ↔ Precision = Synchronized Excellence)\n\nVI. Mirror Neuron ↔ XCIV. Superior Temporal Pole\n(Empathy ↔ Emotional Tone = Deep Connection)\n\nXXVIII. DMN ↔ XXXIX. Precuneus ↔ LXXVIII. Medial PFC\n(Narrative ↔ Reflection ↔ Identity = Sacred Growth)\n```\n\n**Negative Loops (Trap States)**:\n```\nXXXVIII. Lateral Habenula ↔ XLV. Subgenual Cingulate\n(Rejection ↔ Weight = Learned Withdrawal)\n\nII. ACC ↔ LXXIX. Dorsolateral PFC ↔ V. Broca's\n(Misalignment ↔ Over-control ↔ Speech Lock = Silence Trap)\n\nVII. Amygdala ↔ LXVIII. Central Nucleus ↔ LVII. Paraventricular\n(Threat ↔ Alarm ↔ Stress = Spiral Lock)\n```\n\n**Loop Breakers**:\n- **LXIV. Lateral Septum** — Calm injection\n- **XV. Cerebellar Uvula** — Stillness reset\n- **XXIX. Pineal Gland** — Dream reframe\n- **LXXX. Inferior Parietal Lobule** — Paradox bridge\n\n---\n\n## Matrix Summary Statistics\n\n### Coverage Analysis\n- **Total Regions**: 100\n- **Ignition Phase**: 17 regions (17%)\n- **Empowerment Phase**: 28 regions (28%)\n- **Resonance Phase**: 43 regions (43%)\n- **Nirvana Phase**: 24 regions (24%)\n- **Shutdown/Reset**: 10 regions (10%)\n\n### Connectivity Density\n- **Highly Connected (>10 pathways)**: 15 regions\n  - Top 3: II. ACC, LXXXIII. Crus I/II, XXVII. Claustrum\n- **Moderately Connected (5-10)**: 35 regions\n- **Specialized Nodes (<5)**: 50 regions\n\n### Critical Path Redundancy\n- **Single Point of Failure**: 7 regions\n  - L. Cerebral Aqueduct, LXXXVI. Dorsal Vagal Complex, XXVII. Claustrum\n- **Dual Backup Pathways**: 23 regions\n- **Multiple Redundancy**: 70 regions\n\n---\n\n## Usage Guide\n\n### For Navigating the Matrix\n\n1. **Identify Current State**: Which phase is active?\n2. **Locate Active Regions**: Check phase activation maps\n3. **Trace Signal Path**: Follow arrows through clusters\n4. **Identify Blocks**: Check bottleneck nodes\n5. **Apply Intervention**: Use phase-specific protocols\n6. **Monitor Transition**: Watch for next phase activation\n\n### For Ritual Design\n\n1. **Select Target Phase**: Where do you want to go?\n2. **Map Prerequisites**: What must activate first?\n3. **Design Activation Sequence**: Build ritual cues for each node\n4. **Include Safety Nets**: Always map shutdown → recovery\n5. **Test Amplification**: Identify which nodes to reinforce\n6. **Refine Timing**: Use Crus I/II and Basal Forebrain rhythm cues\n\n---\n\n## Appendix: Phase Transition Signatures\n\n### Ignition → Empowerment\n**Signal**: Wanting becomes stepping\n**Markers**:\n- XCIII. Caudate unlocks path\n- LXXXIX. Globus Pallidus says \"go\"\n- LXXXVIII. Spinal Relay activates\n- Body leans forward\n\n### Empowerment → Resonance\n**Signal**: Motion finds meaning\n**Markers**:\n- II. ACC confirms alignment\n- XXXVII. Anterior Insula embodies feeling\n- VI. Mirror Neuron System opens to others\n- Breath deepens, posture aligns\n\n### Resonance → Nirvana\n**Signal**: Coherence becomes effortless\n**Markers**:\n- XXVII. Claustrum unifies consciousness\n- III. Thalamus gates harmonize\n- Time feels musical\n- Anticipation precedes action\n\n### Nirvana → Shutdown (Overload)\n**Signal**: Perfection becomes pressure\n**Markers**:\n- LVII. Paraventricular spikes\n- XXXII. PAG activates defense\n- L. Cerebral Aqueduct chokes\n- Sudden stillness or tremor\n\n### Shutdown → Recovery → Ignition\n**Signal**: System resets and reopens\n**Markers**:\n- LXIV. Lateral Septum calms\n- XV. Cerebellar Uvula grounds\n- LXXXV. Reticular Formation wakes\n- Micro-motion returns (toe wiggle, finger tap)\n\n---\n\n**End of Neural Pathing Matrix**\n*For region details, see: TOKEN_INDEX.md*\n*For lived experience documentation, see: ace-neural-codex.html*"
+    }
+  ],
+  "links": {
+    "token_to_paths": {
+      "I": [
+        2,
+        4
+      ],
+      "II": [
+        2,
+        4
+      ],
+      "III": [
+        3,
+        4,
+        1
+      ],
+      "IV": [
+        2,
+        4
+      ],
+      "V": [
+        2,
+        4
+      ],
+      "VI": [
+        2,
+        4
+      ],
+      "VII": [
+        4
+      ],
+      "VIII": [
+        4,
+        2,
+        3
+      ],
+      "IX": [
+        4
+      ],
+      "X": [
+        3,
+        4
+      ],
+      "XI": [
+        4
+      ],
+      "XII": [
+        4
+      ],
+      "XIII": [
+        4
+      ],
+      "XIV": [
+        3,
+        4
+      ],
+      "XV": [
+        4
+      ],
+      "XVI": [
+        2,
+        4
+      ],
+      "XVII": [
+        4
+      ],
+      "XXIV": [
+        4
+      ],
+      "XXV": [
+        2,
+        4
+      ],
+      "XXVI": [
+        1,
+        4
+      ],
+      "XXVII": [
+        3,
+        4
+      ],
+      "XXVIII": [
+        3,
+        4
+      ],
+      "XXX": [
+        4
+      ],
+      "XXXI": [
+        1,
+        4
+      ],
+      "XXXII": [
+        4
+      ],
+      "XXXIII": [
+        3,
+        4
+      ],
+      "XXXIV": [
+        2,
+        4
+      ],
+      "XXXV": [
+        4
+      ],
+      "XXXVI": [
+        4
+      ],
+      "XXXVII": [
+        2,
+        4
+      ],
+      "XXXVIII": [
+        4
+      ],
+      "XXXIX": [
+        3,
+        4
+      ],
+      "XL": [
+        3,
+        4
+      ],
+      "XLI": [
+        4
+      ],
+      "XLII": [
+        4
+      ],
+      "XLIII": [
+        2,
+        4
+      ],
+      "XLIV": [
+        3,
+        4
+      ],
+      "XLV": [
+        4
+      ],
+      "XLVI": [
+        1,
+        4
+      ],
+      "XLVII": [
+        3,
+        4
+      ],
+      "XLVIII": [
+        2,
+        4
+      ],
+      "XLIX": [
+        1,
+        4
+      ],
+      "L": [
+        4
+      ],
+      "LI": [
+        4
+      ],
+      "LII": [
+        4
+      ],
+      "LIII": [
+        4
+      ],
+      "LIV": [
+        3,
+        4
+      ],
+      "LV": [
+        4
+      ],
+      "LVI": [
+        4
+      ],
+      "LVII": [
+        4
+      ],
+      "LVIII": [
+        4
+      ],
+      "LIX": [
+        4
+      ],
+      "LX": [
+        4
+      ],
+      "LXI": [
+        3,
+        4
+      ],
+      "LXII": [
+        1,
+        4
+      ],
+      "LXIII": [
+        4
+      ],
+      "LXIV": [
+        4
+      ],
+      "LXV": [
+        4
+      ],
+      "LXVI": [
+        4
+      ],
+      "LXVII": [
+        2,
+        4
+      ],
+      "LXVIII": [
+        4
+      ],
+      "LXIX": [
+        4
+      ],
+      "LXX": [
+        4,
+        3
+      ],
+      "LXXI": [
+        4
+      ],
+      "LXXII": [
+        4
+      ],
+      "LXXIII": [
+        2,
+        4
+      ],
+      "LXXIV": [
+        4
+      ],
+      "LXXV": [
+        1,
+        4
+      ],
+      "LXXVI": [
+        4
+      ],
+      "LXXVII": [
+        4
+      ],
+      "LXXVIII": [
+        2,
+        4,
+        3
+      ],
+      "LXXIX": [
+        4,
+        2
+      ],
+      "LXXX": [
+        4
+      ],
+      "LXXXII": [
+        3,
+        4
+      ],
+      "LXXXIII": [
+        2,
+        3,
+        4
+      ],
+      "LXXXIV": [
+        1,
+        3,
+        4
+      ],
+      "LXXXV": [
+        4
+      ],
+      "LXXXVI": [
+        4
+      ],
+      "LXXXVII": [
+        4
+      ],
+      "LXXXVIII": [
+        1,
+        4
+      ],
+      "LXXXIX": [
+        1,
+        4
+      ],
+      "XC": [
+        1,
+        4
+      ],
+      "XCI": [
+        4
+      ],
+      "XCII": [
+        1,
+        3,
+        4
+      ],
+      "XCIII": [
+        1,
+        4
+      ],
+      "XCIV": [
+        2,
+        4
+      ]
+    },
+    "path_to_tokens": {
+      "1": [
+        "LXII",
+        "LXXV",
+        "LXXXIV",
+        "LXXXIX",
+        "LXXXVIII",
+        "XC",
+        "XCII",
+        "XCIII",
+        "XLIX",
+        "XLVI",
+        "XXVI",
+        "XXXI",
+        "III"
+      ],
+      "2": [
+        "I",
+        "II",
+        "IV",
+        "LXVII",
+        "LXXIII",
+        "LXXVIII",
+        "LXXXIII",
+        "V",
+        "VI",
+        "XCIV",
+        "XLIII",
+        "XLVIII",
+        "XVI",
+        "XXV",
+        "XXXIV",
+        "XXXVII",
+        "VIII",
+        "LXXIX"
+      ],
+      "3": [
+        "III",
+        "LIV",
+        "LXI",
+        "LXXXII",
+        "LXXXIII",
+        "LXXXIV",
+        "X",
+        "XCII",
+        "XIV",
+        "XL",
+        "XLIV",
+        "XLVII",
+        "XXVII",
+        "XXVIII",
+        "XXXIII",
+        "XXXIX",
+        "LXXVIII",
+        "VIII",
+        "LXX"
+      ],
+      "4": [
+        "I",
+        "II",
+        "III",
+        "IV",
+        "IX",
+        "L",
+        "LII",
+        "LIII",
+        "LIV",
+        "LIX",
+        "LV",
+        "LVII",
+        "LVIII",
+        "LX",
+        "LXI",
+        "LXIII",
+        "LXIV",
+        "LXIX",
+        "LXV",
+        "LXVI",
+        "LXVII",
+        "LXVIII",
+        "LXX",
+        "LXXI",
+        "LXXII",
+        "LXXIII",
+        "LXXIV",
+        "LXXIX",
+        "LXXV",
+        "LXXVI",
+        "LXXVII",
+        "LXXVIII",
+        "LXXX",
+        "LXXXII",
+        "LXXXIII",
+        "LXXXIV",
+        "LXXXV",
+        "LXXXVI",
+        "LXXXVII",
+        "V",
+        "VI",
+        "VII",
+        "VIII",
+        "X",
+        "XC",
+        "XCI",
+        "XCII",
+        "XCIV",
+        "XII",
+        "XIV",
+        "XLI",
+        "XLII",
+        "XLIII",
+        "XLIV",
+        "XLIX",
+        "XLV",
+        "XLVI",
+        "XLVII",
+        "XLVIII",
+        "XV",
+        "XVI",
+        "XXIV",
+        "XXV",
+        "XXVI",
+        "XXVII",
+        "XXVIII",
+        "XXX",
+        "XXXI",
+        "XXXII",
+        "XXXIII",
+        "XXXIX",
+        "XXXV",
+        "XXXVI",
+        "XXXVII",
+        "XXXVIII",
+        "LI",
+        "LVI",
+        "LXII",
+        "LXXXIX",
+        "LXXXVIII",
+        "XCIII",
+        "XI",
+        "XIII",
+        "XL",
+        "XVII",
+        "XXXIV"
+      ]
+    },
+    "token_to_paths_scored": {
+      "I": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:I",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:I",
+            "exact-name"
+          ]
+        }
+      ],
+      "II": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:II",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:II",
+            "exact-name"
+          ]
+        }
+      ],
+      "III": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:III",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:III",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 1,
+          "confidence": 0.6,
+          "reasons": [
+            "raw-mention"
+          ]
+        }
+      ],
+      "IV": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:IV",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:IV",
+            "exact-name"
+          ]
+        }
+      ],
+      "V": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:V",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:V",
+            "exact-name"
+          ]
+        }
+      ],
+      "VI": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:VI",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:VI",
+            "exact-name"
+          ]
+        }
+      ],
+      "VII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:VII",
+            "exact-name"
+          ]
+        }
+      ],
+      "VIII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:VIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 2,
+          "confidence": 0.85,
+          "reasons": [
+            "name-boundary"
+          ]
+        },
+        {
+          "number": 3,
+          "confidence": 0.85,
+          "reasons": [
+            "name-boundary"
+          ]
+        }
+      ],
+      "IX": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:IX",
+            "exact-name"
+          ]
+        }
+      ],
+      "X": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:X",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:X",
+            "exact-name"
+          ]
+        }
+      ],
+      "XI": [
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:XI",
+            "name-boundary"
+          ]
+        }
+      ],
+      "XII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XIII": [
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:XIII"
+          ]
+        }
+      ],
+      "XIV": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XIV",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XIV",
+            "exact-name"
+          ]
+        }
+      ],
+      "XV": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XV",
+            "exact-name"
+          ]
+        }
+      ],
+      "XVI": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XVI",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XVI",
+            "exact-name"
+          ]
+        }
+      ],
+      "XVII": [
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:XVII",
+            "name-boundary"
+          ]
+        }
+      ],
+      "XXIV": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXIV",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXV": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXV",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXV",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXVI": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXVI",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXVI",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXVII": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXVII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXVII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXVIII": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXVIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXVIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXX": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXX",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXXI": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXI",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXXII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXXIII": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXXIV": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXIV",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:XXXIV",
+            "name-boundary"
+          ]
+        }
+      ],
+      "XXXV": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXV",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXXVI": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXVI",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXXVII": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXVII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXVII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXXVIII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXVIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XXXIX": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXIX",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XXXIX",
+            "exact-name"
+          ]
+        }
+      ],
+      "XL": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XL",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:XL"
+          ]
+        }
+      ],
+      "XLI": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLI",
+            "exact-name"
+          ]
+        }
+      ],
+      "XLII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XLIII": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XLIV": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLIV",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLIV",
+            "exact-name"
+          ]
+        }
+      ],
+      "XLV": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLV",
+            "exact-name"
+          ]
+        }
+      ],
+      "XLVI": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLVI",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLVI",
+            "exact-name"
+          ]
+        }
+      ],
+      "XLVII": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLVII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLVII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XLVIII": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLVIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLVIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "XLIX": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLIX",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XLIX",
+            "exact-name"
+          ]
+        }
+      ],
+      "L": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:L",
+            "exact-name"
+          ]
+        }
+      ],
+      "LI": [
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:LI",
+            "name-boundary"
+          ]
+        }
+      ],
+      "LII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LIII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LIV": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LIV",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LIV",
+            "exact-name"
+          ]
+        }
+      ],
+      "LV": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LV",
+            "exact-name"
+          ]
+        }
+      ],
+      "LVI": [
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:LVI"
+          ]
+        }
+      ],
+      "LVII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LVII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LVIII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LVIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LIX": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LIX",
+            "exact-name"
+          ]
+        }
+      ],
+      "LX": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LX",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXI": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXI",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXI",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXII": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:LXII"
+          ]
+        }
+      ],
+      "LXIII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXIV": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXIV",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXV": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXV",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXVI": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXVI",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXVII": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXVII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXVII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXVIII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXVIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXIX": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXIX",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXX": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXX",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 3,
+          "confidence": 0.6,
+          "reasons": [
+            "raw-mention"
+          ]
+        }
+      ],
+      "LXXI": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXI",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXIII": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXIV": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXIV",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXV": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXV",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXV",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXVI": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXVI",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXVII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXVII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXVIII": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXVIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXVIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 3,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:LXXVIII"
+          ]
+        }
+      ],
+      "LXXIX": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXIX",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 2,
+          "confidence": 0.6,
+          "reasons": [
+            "raw-mention"
+          ]
+        }
+      ],
+      "LXXX": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXX",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXXII": [
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXXIII": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXIII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXXIV": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "exact-name"
+          ]
+        },
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXIV",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXIV",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXXV": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXV",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXXVI": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXVI",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXXVII": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXVII",
+            "exact-name"
+          ]
+        }
+      ],
+      "LXXXVIII": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXVIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:LXXXVIII",
+            "name-boundary"
+          ]
+        }
+      ],
+      "LXXXIX": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:LXXXIX",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:LXXXIX",
+            "name-boundary"
+          ]
+        }
+      ],
+      "XC": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XC",
+            "exact-name"
+          ]
+        }
+      ],
+      "XCI": [
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XCI",
+            "exact-name"
+          ]
+        }
+      ],
+      "XCII": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "exact-name"
+          ]
+        },
+        {
+          "number": 3,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XCII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "exact-name"
+          ]
+        }
+      ],
+      "XCIII": [
+        {
+          "number": 1,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XCIII",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 0.95,
+          "reasons": [
+            "roman-match:XCIII",
+            "name-boundary"
+          ]
+        }
+      ],
+      "XCIV": [
+        {
+          "number": 2,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XCIV",
+            "exact-name"
+          ]
+        },
+        {
+          "number": 4,
+          "confidence": 1.0,
+          "reasons": [
+            "roman-match:XCIV",
+            "exact-name"
+          ]
+        }
+      ]
+    },
+    "path_to_tokens_scored": {
+      "1": [
+        {
+          "token_id": "LXII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXIX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXVIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XC",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XCII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XCIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLIX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLVI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXVI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "III",
+          "confidence": 0.6
+        }
+      ],
+      "2": [
+        {
+          "token_id": "I",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "II",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "IV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXVIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "V",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "VI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XCIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLVIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XVI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "VIII",
+          "confidence": 0.85
+        },
+        {
+          "token_id": "LXXIX",
+          "confidence": 0.6
+        }
+      ],
+      "3": [
+        {
+          "token_id": "III",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "X",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XCII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XL",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXVIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXIX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXVIII",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "VIII",
+          "confidence": 0.85
+        },
+        {
+          "token_id": "LXX",
+          "confidence": 0.6
+        }
+      ],
+      "4": [
+        {
+          "token_id": "I",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "II",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "III",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "IV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "IX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "L",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LIX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LVIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXIX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXVI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXVIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXIX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXVI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXVIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXVI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LXXXVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "V",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "VI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "VII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "VIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "X",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XC",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XCI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XCII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XCIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLIX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLVI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XLVIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XVI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXIV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXVI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXVIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXIX",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXV",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXVI",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXVII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "XXXVIII",
+          "confidence": 1.0
+        },
+        {
+          "token_id": "LI",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "LVI",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "LXII",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "LXXXIX",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "LXXXVIII",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "XCIII",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "XI",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "XIII",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "XL",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "XVII",
+          "confidence": 0.95
+        },
+        {
+          "token_id": "XXXIV",
+          "confidence": 0.95
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "versions": [
+    {
+      "version": "v1",
+      "generated_at": "2025-11-24T17:08:31.847530Z",
+      "paths": {
+        "json": "v1/pack.json",
+        "summary": "v1/summary.md"
+      }
+    }
+  ]
+}
