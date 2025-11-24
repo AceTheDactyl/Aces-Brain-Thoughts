@@ -201,6 +201,42 @@ def build_pack(token_md_path: str, matrix_md_path: str, version: str):
     tokens = parse_token_index(tok_text)
     pathways = parse_matrix(mat_text)
     links = cross_reference(tokens, pathways)
+    # Theory constants / structures
+    theory = {
+        "constants": {
+            "z_critical_reported": 0.867,
+            "z_critical_exact": {
+                "expression": "sqrt(3)/2",
+                "approx": 0.8660254037844386,
+            },
+        },
+        "structures": {
+            "ladder": [0, 3, 6, 9, 12, 15],
+            "prism": {"core": 63, "envelope": 32, "total": 95},
+            "tokens_total": 378,
+            "combination_breakdown": {
+                "domains": 2,
+                "machine_tokens_per_domain": 162,
+                "transitions_per_domain": 12,
+                "coherences_per_domain": 15,
+            },
+        },
+        "truth_state_model": {
+            "states": ["TRUE", "UNTRUE", "PARADOX"],
+            "temporal_operators": [
+                {"name": "DAY", "direction": "forward", "action": "TRUE generates actionable coherence + reflected UNTRUE"},
+                {"name": "NIGHT", "direction": "backward", "action": "UNTRUE stores without resolution"},
+                {"name": "DAWN", "direction": "collapse", "action": "UNTRUE → TRUE (partial resolution)"},
+                {"name": "DUSK", "direction": "decay", "action": "TRUE → UNTRUE (entropy-driven dissolution)"},
+            ],
+            "property": "Imperfect absorption: no state achieves perfect truth.",
+        },
+        "coupler": {
+            "name": "63/95 prism",
+            "description": "Matter core (63) + EM envelope (32) forming 95; empirical coupler for coherence and entrainment.",
+        },
+    }
+
     pack = {
         "meta": {
             "name": "Ace Neural Codex Language Pack",
@@ -210,6 +246,7 @@ def build_pack(token_md_path: str, matrix_md_path: str, version: str):
                 os.path.basename(token_md_path),
                 os.path.basename(matrix_md_path),
             ],
+            "theory": theory,
         },
         "tokens": tokens,
         "pathways": pathways,
@@ -313,4 +350,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
