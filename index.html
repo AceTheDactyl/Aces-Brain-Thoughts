@@ -30,6 +30,9 @@
     .index-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
     .chip{padding:6px 10px;border:1px solid var(--rule);border-radius:999px;background:#11121a;color:var(--ink);cursor:pointer}
     mark, .hl{background: #fff176;color:#111;padding:0 2px;border-radius:2px}
+    .sticky{position:sticky;top:8px;z-index:5;padding:8px;border:1px solid var(--rule);border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
+    .toc-section{margin-top:8px}
+    .toc-section > strong{display:block;color:var(--muted);margin-bottom:4px}
   </style>
 </head>
 <body>
@@ -72,7 +75,16 @@
         <label><input type="checkbox" id="syncSearch" checked /> Sync search to other pane</label>
         <button class="btn" onclick="buildLanguagePack()">Build Language Pack</button>
       </div>
-      <div id="quickIndex" class="index-list"></div>
+      <div id="stickyNav" class="sticky">
+        <div class="toc-section">
+          <strong>Tokens</strong>
+          <div id="quickIndex" class="index-list"></div>
+        </div>
+        <div class="toc-section">
+          <strong>Matrix</strong>
+          <div id="matrixIndex" class="index-list"></div>
+        </div>
+      </div>
       <div id="splitContainer" class="split" style="display:none">
         <div class="pane">
           <h3>Primary</h3>
@@ -111,6 +123,7 @@
     let split = false;
     let lastSearch = '';
     let lastFoundNode = null;
+    let lastMatrixViewer = null; // which viewer currently hosts the Matrix
 
     function toggleEntry(id){
       const el = document.getElementById(id);
@@ -200,6 +213,21 @@
           if(!h.id) h.id = id; // stable anchor
         }
       });
+      // Populate matrix ToC chips
+      const list = Array.from(el.querySelectorAll('h1, h2, h3, h4, h5'))
+        .filter(h => /^Pathway\s+\d+/i.test((h.textContent||'').trim()))
+        .slice(0, 60);
+      const matrixIndex = document.getElementById('matrixIndex');
+      matrixIndex.innerHTML = '';
+      list.forEach(h => {
+        const label = (h.textContent||'').trim().replace(/^(###\s*)?/,'');
+        const chip = document.createElement('button');
+        chip.className = 'chip';
+        chip.textContent = label;
+        chip.onclick = () => { h.scrollIntoView({behavior:'smooth', block:'start'}); };
+        matrixIndex.appendChild(chip);
+      });
+      lastMatrixViewer = viewerId;
     }
 
     function gotoNearestPathway(viewerId){
@@ -448,7 +476,7 @@
           const roman = m[1].trim();
           const name = m[2].trim();
           const epithet = m[3].trim();
-          const rec = { id: roman, name, epithet, phase:null, function:null, modulation:null };
+          const rec = { id: roman, name, epithet, phase:null, function:null, modulation:null, wumbo_roles:[] };
           i++;
           while(i < lines.length && lines[i].trim() !== ''){
             const L = lines[i].trim();
@@ -456,6 +484,11 @@
             if((mm = L.match(/^Phase:\s*(.*)$/i))){ rec.phase = mm[1].trim(); }
             else if((mm = L.match(/^Function:\s*(.*)$/i))){ rec.function = mm[1].trim(); }
             else if((mm = L.match(/^Modulation:\s*(.*)$/i))){ rec.modulation = mm[1].trim(); }
+            else if((mm = L.match(/^Wumbo\s*Role(?:s)?\s*:\s*(.*)$/i))){
+              const raw = mm[1].trim();
+              const parts = raw.split(/[;,\/|•]+/).map(s=>s.trim()).filter(Boolean);
+              rec.wumbo_roles = Array.from(new Set(parts));
+            }
             i++;
           }
           tokens.push(rec);
@@ -511,37 +544,68 @@
     }
 
     function crossReference(tokens, pathways){
-      const byPath = new Map(pathways.map(p => [p.number, p]));
-      const tokenToPaths = new Map();
-      const nameIndex = pathways.map(p => ({
+      const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const tokenToPathsScored = new Map();
+      const pathToTokensScored = new Map();
+      const index = pathways.map(p => ({
         p,
-        names: new Set([
-          ...p.nodes.map(n => normalizeName(n.name)),
-          ...p.modulators.map(n => normalizeName(n.name)),
-          ...p.bottlenecks.map(n => normalizeName(n.name))
-        ])
+        names: [
+          ...p.nodes.map(n => ({kind:'node', n:normalizeName(n.name), raw:n.name, roman:n.roman})),
+          ...p.modulators.map(n => ({kind:'mod', n:normalizeName(n.name), raw:n.name, roman:n.roman})),
+          ...p.bottlenecks.map(n => ({kind:'bot', n:normalizeName(n.name), raw:n.name, roman:n.roman}))
+        ]
       }));
       tokens.forEach(t => {
         const key = normalizeName(t.name);
-        const hits = [];
-        nameIndex.forEach(({p, names}) => { if(names.has(key)) hits.push(p.number); });
-        // Fallback: substring search in raw text
-        if(hits.length === 0){
-          nameIndex.forEach(({p})=>{
-            if((p.raw||'').toLowerCase().includes(key)) hits.push(p.number);
-          });
-        }
-        tokenToPaths.set(t.id, Array.from(new Set(hits)).sort((a,b)=>a-b));
-      });
-      // Reverse index
-      const pathToTokens = new Map();
-      tokenToPaths.forEach((paths, tid) => {
-        paths.forEach(n => {
-          if(!pathToTokens.has(n)) pathToTokens.set(n, []);
-          pathToTokens.get(n).push(tid);
+        const epi = normalizeName(t.epithet||'');
+        const res = [];
+        index.forEach(({p, names}) => {
+          let conf = 0;
+          const reasons = [];
+          // Roman match in pathway nodes
+          if(p.nodes && p.nodes.some(nn => (nn.roman||'').trim() === t.id)){
+            conf = Math.max(conf, 0.95);
+            reasons.push(`roman-match:${t.id}`);
+          }
+          // Exact name match
+          if(names.some(obj => obj.n === key)){
+            conf = Math.max(conf, 1.0);
+            reasons.push('exact-name');
+          }
+          // Partial name match with word boundary
+          const re = new RegExp(`\\b${escapeRe(key)}\\b`);
+          if(conf < 1.0 && key && names.some(obj => re.test(obj.n))){
+            conf = Math.max(conf, 0.85);
+            reasons.push('name-boundary');
+          }
+          // Epithet hint
+          if(conf < 1.0 && epi && names.some(obj => obj.n.includes(epi))){
+            conf = Math.max(conf, 0.8);
+            reasons.push('epithet-hint');
+          }
+          // Raw text fallback
+          if(conf === 0 && (p.raw||'').toLowerCase().includes(key)){
+            conf = 0.6;
+            reasons.push('raw-mention');
+          }
+          if(conf > 0){
+            res.push({ number: p.number, confidence: Math.round(conf*100)/100, reasons });
+          }
+        });
+        res.sort((a,b)=> (b.confidence - a.confidence) || (a.number - b.number));
+        tokenToPathsScored.set(t.id, res);
+        res.forEach(r => {
+          if(!pathToTokensScored.has(r.number)) pathToTokensScored.set(r.number, []);
+          pathToTokensScored.get(r.number).push({ token_id: t.id, confidence: r.confidence });
         });
       });
-      return { tokenToPaths, pathToTokens };
+      // Sort reverse lists
+      pathToTokensScored.forEach(arr => arr.sort((a,b)=> (b.confidence - a.confidence) || (a.token_id.localeCompare(b.token_id))));
+      // Also provide unscored convenience maps
+      const tokenToPaths = new Map(Array.from(tokenToPathsScored.entries()).map(([tid, arr]) => [tid, arr.map(x=>x.number)]));
+      const pathToTokens = new Map();
+      pathToTokensScored.forEach((arr, num) => { pathToTokens.set(num, arr.map(x=>x.token_id)); });
+      return { tokenToPaths, pathToTokens, tokenToPathsScored, pathToTokensScored };
     }
 
     function downloadFile(name, text, mime='application/json'){
@@ -563,7 +627,7 @@
 
       const tokens = parseTokensMD(tokText);
       const pathways = parseMatrixMD(matText);
-      const { tokenToPaths, pathToTokens } = crossReference(tokens, pathways);
+      const { tokenToPaths, pathToTokens, tokenToPathsScored, pathToTokensScored } = crossReference(tokens, pathways);
 
       const bundle = {
         meta: {
@@ -576,7 +640,9 @@
         pathways,
         links: {
           token_to_pathways: Object.fromEntries(tokenToPaths),
-          pathway_to_tokens: Object.fromEntries(pathToTokens)
+          pathway_to_tokens: Object.fromEntries(pathToTokens),
+          token_to_pathways_scored: Object.fromEntries(tokenToPathsScored),
+          pathway_to_tokens_scored: Object.fromEntries(pathToTokensScored)
         }
       };
 
@@ -599,8 +665,9 @@
         lines.push(`Generated: ${bundle.meta.generated_at}`);
         lines.push('');
         tokens.forEach(t => {
-          const ps = tokenToPaths.get(t.id) || [];
-          lines.push(`- ${t.id}. ${t.name} — Phase: ${t.phase||''}` + (ps.length?` (Pathways: ${ps.join(', ')})`:'') );
+          const scored = (tokenToPathsScored.get(t.id) || []).slice(0,5);
+          const label = scored.length ? ` (Pathways: ${scored.map(x=>`${x.number}(${x.confidence.toFixed(2)})`).join(', ')})` : '';
+          lines.push(`- ${t.id}. ${t.name} — Phase: ${t.phase||''}${label}`);
         });
         downloadFile('language_pack_summary.md', lines.join('\n'), 'text/markdown');
       };
