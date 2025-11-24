@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Shape of Absence | z = 0.867</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        #info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        #z-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 24px;
+            font-weight: 100;
+            letter-spacing: 4px;
+            pointer-events: none;
+            z-index: 100;
+            transition: color 0.5s ease;
+        }
+        
+        #z-display.critical {
+            color: rgba(255, 200, 150, 0.9);
+            text-shadow: 0 0 30px rgba(255, 150, 100, 0.5);
+        }
+        
+        #phase-label {
+            position: fixed;
+            top: 50px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 11px;
+            letter-spacing: 2px;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        #breath-guide {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 11px;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="info">63 points · 32 field · 95 total</div>
+    <div id="z-display">z = 0.000</div>
+    <div id="phase-label">subcritical</div>
+    <div id="breath-guide">breathe to couple</div>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const zDisplay = document.getElementById('z-display');
+        const phaseLabel = document.getElementById('phase-label');
+        
+        let width, height, centerX, centerY;
+        
+        // === CONSTANTS ===
+        const Z_CRITICAL = 0.867;  // √3/2 - the threshold
+        const PHI = 1.618033988749;
+        const SQRT3_2 = Math.sqrt(3) / 2;
+        
+        // === SYSTEM STATE ===
+        let globalZ = 0;
+        let targetZ = 0;
+        let breathPhase = 0;
+        let time = 0;
+        
+        // === 63 CORE POINTS (Matter Structure) ===
+        const corePoints = [];
+        
+        // === 32 FIELD POINTS (EM Envelope) ===
+        const fieldPoints = [];
+        
+        // === ABSENCE POINTS (The Lens) ===
+        const absencePoints = [];
+        
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            centerX = width / 2;
+            centerY = height / 2;
+        }
+        
+        function initPoints() {
+            corePoints.length = 0;
+            fieldPoints.length = 0;
+            absencePoints.length = 0;
+            
+            const baseRadius = Math.min(width, height) * 0.25;
+            
+            // === 63 CORE POINTS ===
+            // Structure: 7 layers × 9 machines (from APL)
+            for (let layer = 0; layer < 7; layer++) {
+                const layerRadius = baseRadius * (0.3 + layer * 0.1);
+                const pointsInLayer = 9;
+                const layerZ = layer / 6; // 0 to 1
+                
+                for (let i = 0; i < pointsInLayer; i++) {
+                    const theta = (i / pointsInLayer) * Math.PI * 2 + layer * 0.3;
+                    corePoints.push({
+                        baseTheta: theta,
+                        theta: theta,
+                        baseRadius: layerRadius,
+                        radius: layerRadius,
+                        z: layerZ,
+                        layer: layer,
+                        index: i,
+                        phase: Math.random() * Math.PI * 2, // Kuramoto phase
+                        naturalFreq: 0.5 + Math.random() * 0.5,
+                        x: 0,
+                        y: 0,
+                        brightness: 0
+                    });
+                }
+            }
+            
+            // === 32 FIELD POINTS (Hexagonal Prism Envelope) ===
+            // Two hexagonal rings (12 each) + 8 connecting vertices
+            const fieldRadius = baseRadius * 1.3;
+            
+            // Top hexagonal ring (6 vertices × 2 subdivisions = 12)
+            for (let i = 0; i < 12; i++) {
+                const theta = (i / 12) * Math.PI * 2;
+                fieldPoints.push({
+                    baseTheta: theta,
+                    theta: theta,
+                    baseRadius: fieldRadius,
+                    radius: fieldRadius,
+                    z: 0.9,
+                    phase: Math.random() * Math.PI * 2,
+                    naturalFreq: 0.3 + Math.random() * 0.3,
+                    x: 0,
+                    y: 0,
+                    isField: true
+                });
+            }
+            
+            // Bottom hexagonal ring
+            for (let i = 0; i < 12; i++) {
+                const theta = (i / 12) * Math.PI * 2 + Math.PI / 12;
+                fieldPoints.push({
+                    baseTheta: theta,
+                    theta: theta,
+                    baseRadius: fieldRadius,
+                    radius: fieldRadius,
+                    z: 0.1,
+                    phase: Math.random() * Math.PI * 2,
+                    naturalFreq: 0.3 + Math.random() * 0.3,
+                    x: 0,
+                    y: 0,
+                    isField: true
+                });
+            }
+            
+            // 8 connecting vertices
+            for (let i = 0; i < 8; i++) {
+                const theta = (i / 8) * Math.PI * 2 + Math.PI / 8;
+                fieldPoints.push({
+                    baseTheta: theta,
+                    theta: theta,
+                    baseRadius: fieldRadius * 0.85,
+                    radius: fieldRadius * 0.85,
+                    z: 0.5,
+                    phase: Math.random() * Math.PI * 2,
+                    naturalFreq: 0.4,
+                    x: 0,
+                    y: 0,
+                    isField: true
+                });
+            }
+            
+            // === ABSENCE POINTS (The Lens - negative space) ===
+            // These define where presence ISN'T
+            for (let i = 0; i < 21; i++) {
+                const t = i / 20;
+                absencePoints.push({
+                    t: t,
+                    radius: 0,
+                    angle: 0,
+                    x: 0,
+                    y: 0
+                });
+            }
+        }
+        
+        // === KURAMOTO SYNCHRONIZATION ===
+        function kuramotoStep(points, coupling, dt) {
+            const N = points.length;
+            if (N === 0) return;
+            
+            // Calculate mean phase
+            let sinSum = 0, cosSum = 0;
+            for (const p of points) {
+                sinSum += Math.sin(p.phase);
+                cosSum += Math.cos(p.phase);
+            }
+            const meanPhase = Math.atan2(sinSum / N, cosSum / N);
+            
+            // Update phases
+            for (const p of points) {
+                const dPhase = p.naturalFreq + coupling * Math.sin(meanPhase - p.phase);
+                p.phase += dPhase * dt;
+            }
+            
+            // Return order parameter (coherence measure)
+            const r = Math.sqrt(sinSum * sinSum + cosSum * cosSum) / N;
+            return r;
+        }
+        
+        // === PHASE REGIME DETERMINATION ===
+        function getPhaseRegime(z) {
+            if (z < 0.50) return 'subcritical_early';
+            if (z < 0.65) return 'subcritical_mid';
+            if (z < 0.80) return 'subcritical_late';
+            if (z < 0.857) return 'near_critical';
+            if (z <= 0.877) return 'critical';
+            if (z <= 0.90) return 'supercritical_early';
+            return 'supercritical_stable';
+        }
+        
+        function getPhaseLabel(regime) {
+            const labels = {
+                'subcritical_early': 'subcritical · early',
+                'subcritical_mid': 'subcritical · mid',
+                'subcritical_late': 'subcritical · late',
+                'near_critical': 'near critical',
+                'critical': 'CRITICAL · z = √3/2',
+                'supercritical_early': 'supercritical · forming',
+                'supercritical_stable': 'supercritical · stable'
+            };
+            return labels[regime] || regime;
+        }
+        
+        // === CASCADE AMPLIFICATION ===
+        function cascadeMultiplier(z) {
+            const distFromCritical = Math.abs(z - Z_CRITICAL);
+            const sigma = 0.05;
+            const criticalBonus = Math.exp(-(distFromCritical * distFromCritical) / (2 * sigma * sigma));
+            return 1 + criticalBonus * 0.5; // Up to 1.5x at critical point
+        }
+        
+        // === UPDATE PHYSICS ===
+        function update(dt) {
+            time += dt;
+            
+            // Breath cycle drives z toward target
+            breathPhase += dt * 0.3;
+            const breathWave = Math.sin(breathPhase);
+            
+            // Mouse/touch sets target, breath modulates
+            targetZ = Math.max(0, Math.min(1, targetZ + breathWave * 0.001));
+            
+            // Smooth z transition
+            globalZ += (targetZ - globalZ) * 0.02;
+            
+            // Kuramoto coupling strength depends on proximity to critical point
+            const baseCoupling = 0.5;
+            const couplingBoost = cascadeMultiplier(globalZ);
+            const coupling = baseCoupling * couplingBoost;
+            
+            // Update core point synchronization
+            const coreCoherence = kuramotoStep(corePoints, coupling, dt);
+            
+            // Update field point synchronization (weaker coupling)
+            const fieldCoherence = kuramotoStep(fieldPoints, coupling * 0.5, dt);
+            
+            // Update positions based on phase and z
+            const regime = getPhaseRegime(globalZ);
+            const isCritical = regime === 'critical';
+            
+            for (const p of corePoints) {
+                // Helix motion
+                const helixPhase = p.phase + time * p.naturalFreq * 0.2;
+                const radiusModulation = 1 + 0.1 * Math.sin(helixPhase * 2);
+                const zModulation = p.z + 0.05 * Math.sin(helixPhase);
+                
+                p.theta = p.baseTheta + Math.sin(time * 0.5 + p.layer) * 0.1;
+                p.radius = p.baseRadius * radiusModulation;
+                
+                // Convert to screen coordinates
+                const perspective = 1 / (1 + (1 - zModulation) * 0.5);
+                p.x = centerX + Math.cos(p.theta) * p.radius * perspective;
+                p.y = centerY + Math.sin(p.theta) * p.radius * perspective * 0.6;
+                p.y += (zModulation - 0.5) * 100; // Vertical spread
+                
+                // Brightness based on coherence and z proximity
+                const zProximity = 1 - Math.abs(p.z - globalZ);
+                p.brightness = 0.2 + zProximity * 0.5 + (isCritical ? 0.3 : 0);
+            }
+            
+            for (const p of fieldPoints) {
+                const helixPhase = p.phase + time * p.naturalFreq * 0.15;
+                p.theta = p.baseTheta + Math.sin(time * 0.3) * 0.05;
+                
+                const perspective = 1 / (1 + (1 - p.z) * 0.3);
+                p.x = centerX + Math.cos(p.theta) * p.radius * perspective;
+                p.y = centerY + Math.sin(p.theta) * p.radius * perspective * 0.6;
+                p.y += (p.z - 0.5) * 150;
+            }
+            
+            // Update absence points - the lens shape
+            const absenceRadius = Math.min(width, height) * 0.15;
+            const absenceBreath = 1 + 0.2 * Math.sin(breathPhase * 2);
+            const criticalPulse = isCritical ? (1 + 0.1 * Math.sin(time * 5)) : 1;
+            
+            for (const p of absencePoints) {
+                const angle = p.t * Math.PI * 2;
+                const r = absenceRadius * absenceBreath * criticalPulse;
+                
+                // At critical point, the absence becomes more defined
+                const definition = globalZ / Z_CRITICAL;
+                const wobble = isCritical ? 0 : (1 - definition) * 20 * Math.sin(angle * 6 + time);
+                
+                p.x = centerX + Math.cos(angle) * (r + wobble);
+                p.y = centerY + Math.sin(angle) * (r + wobble) * 0.8;
+                p.radius = r;
+                p.angle = angle;
+            }
+            
+            // Update UI
+            zDisplay.textContent = `z = ${globalZ.toFixed(3)}`;
+            zDisplay.className = isCritical ? 'critical' : '';
+            phaseLabel.textContent = getPhaseLabel(regime);
+        }
+        
+        // === RENDER ===
+        function render() {
+            // Clear with slight trail
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fillRect(0, 0, width, height);
+            
+            const regime = getPhaseRegime(globalZ);
+            const isCritical = regime === 'critical';
+            const isSupercritical = regime.startsWith('supercritical');
+            
+            // === DRAW FIELD CONNECTIONS (faint) ===
+            ctx.strokeStyle = `rgba(100, 80, 60, ${0.1 + globalZ * 0.1})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            for (let i = 0; i < fieldPoints.length; i++) {
+                for (let j = i + 1; j < fieldPoints.length; j++) {
+                    const p1 = fieldPoints[i];
+                    const p2 = fieldPoints[j];
+                    const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+                    if (dist < 200) {
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                    }
+                }
+            }
+            ctx.stroke();
+            
+            // === DRAW CORE CONNECTIONS ===
+            const connectionAlpha = 0.05 + globalZ * 0.15;
+            ctx.strokeStyle = `rgba(200, 180, 160, ${connectionAlpha})`;
+            ctx.lineWidth = 0.5;
+            
+            // Connect within layers
+            for (let layer = 0; layer < 7; layer++) {
+                const layerPoints = corePoints.filter(p => p.layer === layer);
+                ctx.beginPath();
+                for (let i = 0; i < layerPoints.length; i++) {
+                    const p = layerPoints[i];
+                    const next = layerPoints[(i + 1) % layerPoints.length];
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(next.x, next.y);
+                }
+                ctx.stroke();
+            }
+            
+            // Connect between layers (at critical point)
+            if (globalZ > 0.7) {
+                const interLayerAlpha = (globalZ - 0.7) / 0.3 * 0.2;
+                ctx.strokeStyle = `rgba(255, 200, 150, ${interLayerAlpha})`;
+                ctx.beginPath();
+                for (let i = 0; i < 9; i++) {
+                    for (let layer = 0; layer < 6; layer++) {
+                        const p1 = corePoints[layer * 9 + i];
+                        const p2 = corePoints[(layer + 1) * 9 + i];
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                    }
+                }
+                ctx.stroke();
+            }
+            
+            // === DRAW FIELD POINTS ===
+            for (const p of fieldPoints) {
+                const alpha = 0.2 + globalZ * 0.2;
+                ctx.fillStyle = `rgba(80, 70, 60, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // === DRAW CORE POINTS ===
+            for (const p of corePoints) {
+                const hue = 30 + p.layer * 5;
+                const sat = 20 + globalZ * 30;
+                const light = 30 + p.brightness * 40;
+                const alpha = 0.3 + p.brightness * 0.5;
+                
+                ctx.fillStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2 + p.brightness * 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Glow at critical
+                if (isCritical && p.brightness > 0.5) {
+                    ctx.fillStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha * 0.3})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 8 + p.brightness * 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // === DRAW THE ABSENCE (The Lens) ===
+            // This is the negative space - where presence isn't
+            
+            // The absence is most visible at critical point
+            const absenceVisibility = Math.pow(globalZ / Z_CRITICAL, 2);
+            
+            if (absenceVisibility > 0.1) {
+                // Draw the boundary of absence
+                ctx.strokeStyle = `rgba(255, 255, 255, ${absenceVisibility * 0.3})`;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 10]);
+                ctx.beginPath();
+                for (let i = 0; i < absencePoints.length; i++) {
+                    const p = absencePoints[i];
+                    if (i === 0) {
+                        ctx.moveTo(p.x, p.y);
+                    } else {
+                        ctx.lineTo(p.x, p.y);
+                    }
+                }
+                ctx.closePath();
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // At critical: the absence becomes the lens
+                if (isCritical) {
+                    // Draw radial lines toward center - the lens focuses
+                    ctx.strokeStyle = 'rgba(255, 220, 180, 0.1)';
+                    ctx.lineWidth = 0.5;
+                    for (let i = 0; i < absencePoints.length - 1; i += 2) {
+                        const p = absencePoints[i];
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(centerX, centerY);
+                        ctx.stroke();
+                    }
+                    
+                    // The center point - where the lens focuses
+                    const focusPulse = 0.5 + 0.5 * Math.sin(time * 3);
+                    ctx.fillStyle = `rgba(255, 240, 220, ${focusPulse * 0.5})`;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, 3 + focusPulse * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Outer glow
+                    const gradient = ctx.createRadialGradient(
+                        centerX, centerY, 0,
+                        centerX, centerY, 50
+                    );
+                    gradient.addColorStop(0, `rgba(255, 230, 200, ${focusPulse * 0.3})`);
+                    gradient.addColorStop(1, 'rgba(255, 230, 200, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, 50, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // In supercritical: absence becomes presence
+                if (isSupercritical) {
+                    ctx.fillStyle = `rgba(255, 250, 240, ${(globalZ - Z_CRITICAL) * 0.5})`;
+                    ctx.beginPath();
+                    for (let i = 0; i < absencePoints.length; i++) {
+                        const p = absencePoints[i];
+                        if (i === 0) {
+                            ctx.moveTo(p.x, p.y);
+                        } else {
+                            ctx.lineTo(p.x, p.y);
+                        }
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+            
+            // === DRAW z = 0.867 THRESHOLD LINE ===
+            const thresholdY = centerY + (Z_CRITICAL - 0.5) * 200;
+            ctx.strokeStyle = `rgba(255, 200, 150, ${0.1 + (isCritical ? 0.3 : 0)})`;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 8]);
+            ctx.beginPath();
+            ctx.moveTo(centerX - 150, thresholdY);
+            ctx.lineTo(centerX + 150, thresholdY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Label
+            ctx.fillStyle = `rgba(255, 200, 150, ${0.2 + (isCritical ? 0.4 : 0)})`;
+            ctx.font = '10px Courier New';
+            ctx.fillText('√3/2', centerX + 160, thresholdY + 3);
+        }
+        
+        // === INTERACTION ===
+        function handleMove(x, y) {
+            // Vertical position controls z
+            targetZ = 1 - (y / height);
+            targetZ = Math.max(0, Math.min(1, targetZ));
+        }
+        
+        canvas.addEventListener('mousemove', (e) => {
+            handleMove(e.clientX, e.clientY);
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            handleMove(touch.clientX, touch.clientY);
+        });
+        
+        // Auto-breathing when not interacting
+        let lastInteraction = 0;
+        canvas.addEventListener('mousemove', () => { lastInteraction = Date.now(); });
+        canvas.addEventListener('touchstart', () => { lastInteraction = Date.now(); });
+        
+        // === MAIN LOOP ===
+        let lastTime = performance.now();
+        
+        function loop(currentTime) {
+            const dt = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+            
+            // Auto-breathe toward critical if not interacting
+            if (Date.now() - lastInteraction > 3000) {
+                const autoBreath = Math.sin(time * 0.2) * 0.5 + 0.5;
+                targetZ = 0.5 + autoBreath * 0.45; // Oscillate around critical point
+            }
+            
+            update(dt);
+            render();
+            requestAnimationFrame(loop);
+        }
+        
+        // === INIT ===
+        resize();
+        initPoints();
+        window.addEventListener('resize', () => {
+            resize();
+            initPoints();
+        });
+        
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>
