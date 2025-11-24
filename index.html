@@ -33,6 +33,14 @@
     .sticky{position:sticky;top:8px;z-index:5;padding:8px;border:1px solid var(--rule);border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
     .toc-section{margin-top:8px}
     .toc-section > strong{display:block;color:var(--muted);margin-bottom:4px}
+    .grid{display:grid;gap:12px}
+    .card{padding:12px;border:1px solid var(--rule);border-radius:10px;background:#0f1116}
+    .row-items{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-weight:600;border:1px solid var(--rule);background:#11121a;color:var(--ink)}
+    .b-hi{background:#165b33;color:#eaffea;border-color:#2b864f}
+    .b-md{background:#6b5b00;color:#fff9c4;border-color:#9e8c00}
+    .b-lo{background:#1b2631;color:#d6eaf8;border-color:#273746}
+    .small{font-size:12px;color:var(--muted)}
   </style>
 </head>
 <body>
@@ -74,6 +82,7 @@
         <button class="btn" onclick="clearHighlights()">Clear Highlights</button>
         <label><input type="checkbox" id="syncSearch" checked /> Sync search to other pane</label>
         <button class="btn" onclick="buildLanguagePack()">Build Language Pack</button>
+        <button class="btn" onclick="loadPublishedPack()">Load Published Pack</button>
       </div>
       <div id="stickyNav" class="sticky">
         <div class="toc-section">
@@ -98,7 +107,7 @@
       <div id="singleContainer">
         <div id="viewer_single" class="viewer" style="display:block"><em class="muted">Select a document to begin.</em></div>
       </div>
-      <div id="lang_out" class="viewer" style="margin-top:16px"><em class="muted">Language pack output will appear here when built.</em></div>
+      <div id="lang_out" class="viewer" style="margin-top:16px"><em class="muted">Language pack output will appear here when built or loaded.</em></div>
     </section>
 
     <section class="section">
@@ -124,6 +133,7 @@
     let lastSearch = '';
     let lastFoundNode = null;
     let lastMatrixViewer = null; // which viewer currently hosts the Matrix
+    let publishedPack = null;
 
     function toggleEntry(id){
       const el = document.getElementById(id);
@@ -675,6 +685,138 @@
       out.appendChild(document.createElement('br'));
       out.appendChild(btn);
       out.appendChild(btn2);
+    }
+
+    // -------- Published Pack Loader & Renderer --------
+    async function loadPublishedPack(versionPath){
+      try{
+        const url = versionPath || 'language/latest.json';
+        const res = await fetch(url, {cache:'no-cache'});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const pack = await res.json();
+        publishedPack = pack;
+        renderPublishedPack(pack);
+      }catch(err){
+        const out = document.getElementById('lang_out');
+        out.innerHTML = '<p style="color:#ff8080">Failed to load language pack: '+err.message+'</p>';
+      }
+    }
+
+    function confClass(c){
+      if(c >= 0.95) return 'b-hi';
+      if(c >= 0.8) return 'b-md';
+      return 'b-lo';
+    }
+
+    function renderPublishedPack(pack){
+      const out = document.getElementById('lang_out');
+      out.innerHTML = '';
+      const head = document.createElement('div');
+      head.className = 'card';
+      head.innerHTML = `<strong>Published Language Pack</strong><br>
+        Version: <code>${pack.meta?.version||'?'}</code> · Tokens: ${pack.tokens?.length||0} · Pathways: ${pack.pathways?.length||0}`;
+      out.appendChild(head);
+
+      // Build lookup maps
+      const pathByNum = new Map((pack.pathways||[]).map(p => [p.number, p]));
+      const scored = new Map(Object.entries(pack.links?.token_to_paths_scored || {}));
+
+      // Filter UI
+      const filterWrap = document.createElement('div');
+      filterWrap.className = 'card';
+      const f = document.createElement('input');
+      f.type = 'search'; f.placeholder = 'Filter tokens by name…'; f.style.width = '100%';
+      filterWrap.appendChild(f);
+      out.appendChild(filterWrap);
+
+      const list = document.createElement('div');
+      list.className = 'grid';
+      out.appendChild(list);
+
+      function renderList(){
+        const q = (f.value||'').toLowerCase().trim();
+        list.innerHTML = '';
+        (pack.tokens||[]).forEach(t => {
+          if(q && !(t.name||'').toLowerCase().includes(q) && !(t.id||'').toLowerCase().includes(q)) return;
+          const card = document.createElement('div');
+          card.className = 'card';
+          const top = document.createElement('div');
+          top.className = 'row-items';
+          const title = document.createElement('div');
+          title.innerHTML = `<strong>${t.id}. ${t.name}</strong> <span class="small">${t.phase?('· '+t.phase):''}</span>`;
+          top.appendChild(title);
+          const rowBadges = document.createElement('div');
+          rowBadges.className = 'row-items';
+          (scored.get(t.id)||[]).slice(0,4).forEach(m => {
+            const p = pathByNum.get(m.number);
+            const b = document.createElement('button');
+            b.className = 'badge '+confClass(m.confidence);
+            b.textContent = `P${m.number} ${m.confidence.toFixed(2)}`;
+            b.title = p ? p.title : ('Pathway '+m.number);
+            b.onclick = () => openMatrixAt(m.number, t.name);
+            rowBadges.appendChild(b);
+          });
+          top.appendChild(rowBadges);
+          card.appendChild(top);
+
+          // details block
+          const details = document.createElement('div');
+          details.style.marginTop = '8px';
+          const roles = (t.wumbo_roles||[]).length ? ` · Roles: ${t.wumbo_roles.join(', ')}` : '';
+          const func = t.function ? ` · Function: ${t.function}` : '';
+          const mod = t.modulation ? ` · Modulation: ${t.modulation}` : '';
+          details.innerHTML = `<span class="small">${(t.epithet||'')}${roles}${func}${mod}</span>`;
+          card.appendChild(details);
+
+          // full matches table
+          const matches = scored.get(t.id)||[];
+          if(matches.length){
+            const tbl = document.createElement('div');
+            tbl.className = 'row-items';
+            tbl.style.marginTop = '8px';
+            matches.slice(0,12).forEach(m => {
+              const p = pathByNum.get(m.number);
+              const badge = document.createElement('button');
+              badge.className = 'badge '+confClass(m.confidence);
+              badge.textContent = `Pathway ${m.number} · ${m.confidence.toFixed(2)}`;
+              badge.title = p ? p.title : ('Pathway '+m.number);
+              badge.onclick = () => openMatrixAt(m.number, t.name);
+              tbl.appendChild(badge);
+            });
+            card.appendChild(tbl);
+          }
+
+          list.appendChild(card);
+        });
+      }
+      f.addEventListener('input', renderList);
+      renderList();
+    }
+
+    async function openMatrixAt(pathwayNumber, tokenName){
+      // Ensure split and Matrix loaded in secondary pane
+      if(!split) toggleSplit();
+      const wantedId = 'pathway-'+String(pathwayNumber);
+      const ensureAndScroll = () => {
+        const viewerId = lastMatrixViewer || 'viewerB';
+        ensureMatrixAnchors(viewerId);
+        const el = document.getElementById(viewerId);
+        const target = el && el.querySelector('#'+wantedId);
+        if(target){
+          target.scrollIntoView({behavior:'smooth', block:'start'});
+          target.style.outline = '2px solid #8ab4f8';
+          setTimeout(()=>{ target.style.outline = 'none'; }, 1200);
+        } else if(tokenName){
+          doSearchIn(viewerId, tokenName, true);
+          gotoNearestPathway(viewerId);
+        }
+      };
+      if(!lastDocPathB || !/NEURAL_PATHING_MATRIX/i.test(lastDocPathB)){
+        await loadDoc('NEURAL_PATHING_MATRIX.md', true);
+        setTimeout(ensureAndScroll, 50);
+      }else{
+        ensureAndScroll();
+      }
     }
   </script>
 </body>
