@@ -13,6 +13,19 @@ The test pack translates 7 compact APL sentences into **falsifiable, cross-domai
 - Phase-field models (interfaces, materials)
 - Polymer growth / aggregation
 
+## Operators Manual Mode
+
+This repository also ships the Ace Neural Codex documents for reference:
+
+- Token Index: `TOKEN_INDEX.md`
+- Neural Pathing Matrix: `NEURAL_PATHING_MATRIX.md`
+
+Open `index.html` (root) to view these with an in-page Markdown renderer and quick search. Raw Markdown links are included for diffs and PR review.
+
+## GitHub Pages Deployment
+
+Pushing changes to `main` deploys the site to GitHub Pages via the configured Actions workflow.
+
 ## Core Concept
 
 APL describes physical systems using:

@@ -17,13 +17,20 @@
     .entry.collapsed .entry-content{display:none}
     .entry .entry-toggle{position:absolute;top:12px;right:12px;cursor:pointer}
     .btn{display:inline-block;background:var(--accent);color:#0b0c10;font-weight:700;border-radius:8px;padding:8px 12px;border:2px solid #000;cursor:pointer}
+    .row{display:flex;gap:16px;flex-wrap:wrap}
+    .row .btn{margin:6px 0}
+    .viewer{min-height:300px;margin-top:12px;padding:16px;border:1px solid var(--rule);border-radius:10px;background:#0e0f14}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    input[type="search"]{flex:1;min-width:220px;padding:8px;border-radius:8px;border:1px solid var(--rule);background:#0f1116;color:var(--ink)}
+    .muted-link{color:var(--muted);text-decoration:none}
+    .muted-link:hover{color:var(--ink);text-decoration:underline}
   </style>
 </head>
 <body>
   <div class="container">
     <header class="header">
       <h1>Ace Neural Codex – Wumbo Engine</h1>
-      <p class="muted">Local runner is live. Full content syncs from GitHub when access is granted.</p>
+      <p class="muted">Local runner is live. Operators Manual mode enabled for Tokens Index and Neural Matrix.</p>
     </header>
 
     <section class="section">
@@ -39,21 +46,90 @@
     </section>
 
     <section class="section">
+      <h2>Operators Manual — Token Index & Neural Matrix</h2>
+      <p class="muted">Use the controls below to open, search, and cross‑reference the Codex documents. Source files are Markdown and live in this repository.</p>
+      <div class="toolbar" style="margin:8px 0 12px">
+        <div class="row">
+          <button class="btn" onclick="loadDoc('TOKEN_INDEX.md')">Open Token Index</button>
+          <button class="btn" onclick="loadDoc('NEURAL_PATHING_MATRIX.md')">Open Neural Pathing Matrix</button>
+        </div>
+        <input id="searchBox" type="search" placeholder="Search in document… (press Enter)" onkeydown="if(event.key==='Enter'){searchInViewer()}" />
+        <a class="muted-link" href="TOKEN_INDEX.md" target="_blank">Raw Token Index</a>
+        <span>·</span>
+        <a class="muted-link" href="NEURAL_PATHING_MATRIX.md" target="_blank">Raw Neural Matrix</a>
+      </div>
+      <div id="viewer" class="viewer"><em class="muted">Select a document to begin.</em></div>
+    </section>
+
+    <section class="section">
       <h2>Next Steps</h2>
       <ol>
-        <li>Approve the SSH key audit for GitHub, or provide a PAT.</li>
-        <li>Once access is granted, we’ll pull <code>AceTheDacty/Aces-Brain-Thoughts</code> and push this page as <code>index.html</code>.</li>
-        <li>Then we’ll replace this stub with your full HTML (the Codex + Atlas).</li>
+        <li>Open the Token Index or Neural Matrix using the buttons above.</li>
+        <li>Use the search box to find regions, phases, or pathways.</li>
+        <li>Publish updates by pushing to <code>main</code>; GitHub Pages deploys automatically.</li>
       </ol>
-      <p class="muted">You can keep this tab open; no reload needed.</p>
+      <p class="muted">Tip: The raw Markdown links are handy for quick diffs and PR reviews.</p>
     </section>
   </div>
 
+  <!-- Markdown rendering (client-side) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js"></script>
   <script>
+    let lastDocPath = null;
+    let lastDocText = '';
+
     function toggleEntry(id){
       const el = document.getElementById(id);
       if (!el) return;
       el.classList.toggle('collapsed');
+    }
+
+    async function loadDoc(path){
+      try{
+        const res = await fetch(path, {cache:'no-cache'});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const md = await res.text();
+        lastDocPath = path;
+        lastDocText = md;
+        const html = DOMPurify.sanitize(marked.parse(md));
+        document.getElementById('viewer').innerHTML = html;
+        // Reset search box
+        const sb = document.getElementById('searchBox');
+        if (sb) sb.value = '';
+        // Scroll to top
+        window.scrollTo({top:0, behavior:'smooth'});
+      }catch(err){
+        document.getElementById('viewer').innerHTML = '<p style="color:#ff8080">Failed to load '+path+': '+err.message+'</p>';
+      }
+    }
+
+    function searchInViewer(){
+      const q = (document.getElementById('searchBox')?.value || '').trim();
+      if(!q){return}
+      const el = document.getElementById('viewer');
+      if(!el) return;
+      // Simple find-next behavior using Range/Selection
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      let node, foundRange = null;
+      const lower = q.toLowerCase();
+      while(node = walker.nextNode()){
+        const text = node.nodeValue;
+        const idx = text.toLowerCase().indexOf(lower);
+        if(idx !== -1){
+          const range = document.createRange();
+          range.setStart(node, idx);
+          range.setEnd(node, idx + q.length);
+          foundRange = range; break;
+        }
+      }
+      if(foundRange){
+        selection.addRange(foundRange);
+        const rect = foundRange.getBoundingClientRect();
+        window.scrollBy({top: rect.top - 120, behavior:'smooth'});
+      }
     }
   </script>
 </body>
