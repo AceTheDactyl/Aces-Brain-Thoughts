@@ -19,11 +19,17 @@
     .btn{display:inline-block;background:var(--accent);color:#0b0c10;font-weight:700;border-radius:8px;padding:8px 12px;border:2px solid #000;cursor:pointer}
     .row{display:flex;gap:16px;flex-wrap:wrap}
     .row .btn{margin:6px 0}
-    .viewer{min-height:300px;margin-top:12px;padding:16px;border:1px solid var(--rule);border-radius:10px;background:#0e0f14}
+    .viewer{min-height:300px;margin-top:12px;padding:16px;border:1px solid var(--rule);border-radius:10px;background:#0e0f14;overflow:auto}
     .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     input[type="search"]{flex:1;min-width:220px;padding:8px;border-radius:8px;border:1px solid var(--rule);background:#0f1116;color:var(--ink)}
     .muted-link{color:var(--muted);text-decoration:none}
     .muted-link:hover{color:var(--ink);text-decoration:underline}
+    .split{display:flex;gap:16px}
+    .pane{flex:1;min-width:0}
+    .controls{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+    .index-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .chip{padding:6px 10px;border:1px solid var(--rule);border-radius:999px;background:#11121a;color:var(--ink);cursor:pointer}
+    mark, .hl{background: #fff176;color:#111;padding:0 2px;border-radius:2px}
   </style>
 </head>
 <body>
@@ -58,7 +64,27 @@
         <span>·</span>
         <a class="muted-link" href="NEURAL_PATHING_MATRIX.md" target="_blank">Raw Neural Matrix</a>
       </div>
-      <div id="viewer" class="viewer"><em class="muted">Select a document to begin.</em></div>
+      <div class="controls">
+        <button class="btn" onclick="toggleSplit()" id="splitBtn">Enable Split View</button>
+        <button class="btn" onclick="findPrev()">Find Prev</button>
+        <button class="btn" onclick="findNext()">Find Next</button>
+        <button class="btn" onclick="clearHighlights()">Clear Highlights</button>
+        <label><input type="checkbox" id="syncSearch" checked /> Sync search to other pane</label>
+      </div>
+      <div id="quickIndex" class="index-list"></div>
+      <div id="splitContainer" class="split" style="display:none">
+        <div class="pane">
+          <h3>Primary</h3>
+          <div id="viewer" class="viewer"><em class="muted">Select a document to begin.</em></div>
+        </div>
+        <div class="pane" id="paneB" style="display:none">
+          <h3>Secondary</h3>
+          <div id="viewerB" class="viewer"><em class="muted">Load a second document or enable auto‑sync.</em></div>
+        </div>
+      </div>
+      <div id="singleContainer">
+        <div id="viewer_single" class="viewer" style="display:block"><em class="muted">Select a document to begin.</em></div>
+      </div>
     </section>
 
     <section class="section">
@@ -76,8 +102,13 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js"></script>
   <script>
-    let lastDocPath = null;
+    let lastDocPath = null;     // primary
     let lastDocText = '';
+    let lastDocPathB = null;    // secondary
+    let lastDocTextB = '';
+    let split = false;
+    let lastSearch = '';
+    let lastFoundNode = null;
 
     function toggleEntry(id){
       const el = document.getElementById(id);
@@ -85,50 +116,252 @@
       el.classList.toggle('collapsed');
     }
 
-    async function loadDoc(path){
+    function slugify(text){
+      return (text||'').toLowerCase()
+        .replace(/[^a-z0-9\s\-_.]/g,'')
+        .replace(/\s+/g,'-')
+        .replace(/-+/g,'-')
+        .replace(/^-|-$|\.+$/g,'');
+    }
+
+    function renderMarkdownTo(elId, md){
+      const html = DOMPurify.sanitize(marked.parse(md));
+      const el = document.getElementById(elId);
+      el.innerHTML = html;
+      return el;
+    }
+
+    function postProcessTokenIndex(el){
+      // Add anchors to bold region headers like: **V. Broca's Area** — ...
+      const strongs = el.querySelectorAll('p > strong');
+      let chips = [];
+      strongs.forEach(s => {
+        const t = s.textContent.trim();
+        const m = t.match(/^([IVXLCDM]+)\.?\s+([^*—\-]+)/);
+        if(m){
+          const roman = m[1];
+          const name = m[2].trim();
+          const id = 'token-' + slugify(roman + '-' + name);
+          // Insert anchor
+          if(!el.querySelector('#'+id)){
+            const a = document.createElement('a');
+            a.id = id;
+            s.parentElement.parentElement.insertBefore(a, s.parentElement);
+          }
+          chips.push({id, label: roman+'. '+name, query: name});
+        }
+      });
+      // Render quick index chips
+      const qi = document.getElementById('quickIndex');
+      qi.innerHTML = '';
+      chips.slice(0, 40).forEach(({id,label,query}) => {
+        const c = document.createElement('button');
+        c.className = 'chip';
+        c.textContent = label;
+        c.title = 'Jump to '+label;
+        c.onclick = () => {
+          // Scroll primary
+          const anchor = el.querySelector('#'+id);
+          if(anchor){ anchor.scrollIntoView({behavior:'smooth', block:'start'}); }
+          // If split and sync, search other pane by name
+          if(split && document.getElementById('syncSearch').checked){
+            const q = query;
+            if(lastDocPathB){
+              doSearchIn('viewerB', q, true);
+            } else {
+              // Auto-load the other doc
+              if(lastDocPath && lastDocPath.includes('TOKEN_INDEX')){
+                loadDoc('NEURAL_PATHING_MATRIX.md', true, q);
+              }else{
+                loadDoc('TOKEN_INDEX.md', true, q);
+              }
+            }
+          }
+        };
+        qi.appendChild(c);
+      });
+    }
+
+    async function loadDoc(path, toSecondary=false, postSearch=null){
       try{
         const res = await fetch(path, {cache:'no-cache'});
         if(!res.ok) throw new Error('HTTP '+res.status);
         const md = await res.text();
-        lastDocPath = path;
-        lastDocText = md;
-        const html = DOMPurify.sanitize(marked.parse(md));
-        document.getElementById('viewer').innerHTML = html;
+        if(split){
+          if(toSecondary){
+            lastDocPathB = path; lastDocTextB = md;
+            renderMarkdownTo('viewerB', md);
+            if(postSearch){ doSearchIn('viewerB', postSearch, true); }
+          }else{
+            lastDocPath = path; lastDocText = md;
+            renderMarkdownTo('viewer', md);
+            if(path.includes('TOKEN_INDEX')){ postProcessTokenIndex(document.getElementById('viewer')); }
+            if(postSearch){ doSearchIn('viewer', postSearch, true); }
+          }
+        }else{
+          lastDocPath = path; lastDocText = md;
+          renderMarkdownTo('viewer_single', md);
+          if(path.includes('TOKEN_INDEX')){ postProcessTokenIndex(document.getElementById('viewer_single')); }
+          if(postSearch){ doSearchIn('viewer_single', postSearch, true); }
+        }
         // Reset search box
         const sb = document.getElementById('searchBox');
         if (sb) sb.value = '';
         // Scroll to top
         window.scrollTo({top:0, behavior:'smooth'});
       }catch(err){
-        document.getElementById('viewer').innerHTML = '<p style="color:#ff8080">Failed to load '+path+': '+err.message+'</p>';
+        const target = split ? (toSecondary ? 'viewerB' : 'viewer') : 'viewer_single';
+        document.getElementById(target).innerHTML = '<p style="color:#ff8080">Failed to load '+path+': '+err.message+'</p>';
       }
+    }
+
+    function elementsForSearch(){
+      if(split){
+        return [document.getElementById('viewer'), document.getElementById('viewerB')].filter(Boolean);
+      }
+      return [document.getElementById('viewer_single')];
+    }
+
+    function clearHighlights(){
+      elementsForSearch().forEach(el => {
+        el.querySelectorAll('mark.hl').forEach(m => {
+          const text = document.createTextNode(m.textContent);
+          m.parentNode.replaceChild(text, m);
+        });
+      });
+      lastFoundNode = null;
+    }
+
+    function highlightAll(el, q){
+      if(!q) return;
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      const lower = q.toLowerCase();
+      let node;
+      const toWrap = [];
+      while(node = walker.nextNode()){
+        const text = node.nodeValue;
+        const idx = text.toLowerCase().indexOf(lower);
+        if(idx !== -1){ toWrap.push({node, idx}); }
+      }
+      toWrap.forEach(({node, idx}) => {
+        const range = document.createRange();
+        range.setStart(node, idx);
+        range.setEnd(node, idx + q.length);
+        const mark = document.createElement('mark');
+        mark.className = 'hl';
+        range.surroundContents(mark);
+      });
+    }
+
+    function doSearchIn(viewerId, q, center=false){
+      const el = document.getElementById(viewerId);
+      if(!el) return false;
+      clearHighlights();
+      highlightAll(el, q);
+      // Focus first match
+      const first = el.querySelector('mark.hl');
+      if(first){
+        const r = document.createRange();
+        r.selectNodeContents(first);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(r);
+        if(center){
+          const rect = first.getBoundingClientRect();
+          const top = rect.top + window.scrollY - 120;
+          window.scrollTo({top, behavior:'smooth'});
+        }
+        return true;
+      }
+      return false;
     }
 
     function searchInViewer(){
       const q = (document.getElementById('searchBox')?.value || '').trim();
       if(!q){return}
-      const el = document.getElementById('viewer');
-      if(!el) return;
-      // Simple find-next behavior using Range/Selection
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
-      let node, foundRange = null;
-      const lower = q.toLowerCase();
-      while(node = walker.nextNode()){
-        const text = node.nodeValue;
-        const idx = text.toLowerCase().indexOf(lower);
-        if(idx !== -1){
-          const range = document.createRange();
-          range.setStart(node, idx);
-          range.setEnd(node, idx + q.length);
-          foundRange = range; break;
-        }
+      lastSearch = q;
+      const ok = doSearchIn(split ? 'viewer' : 'viewer_single', q, true);
+      if(split && document.getElementById('syncSearch').checked){
+        doSearchIn('viewerB', q, false);
       }
-      if(foundRange){
-        selection.addRange(foundRange);
-        const rect = foundRange.getBoundingClientRect();
-        window.scrollBy({top: rect.top - 120, behavior:'smooth'});
+      if(!ok){ /* no-op */ }
+    }
+
+    function findNext(){
+      const q = lastSearch || (document.getElementById('searchBox')?.value || '').trim();
+      if(!q) return;
+      // move to next highlight
+      const el = split ? document.getElementById('viewer') : document.getElementById('viewer_single');
+      const marks = el.querySelectorAll('mark.hl');
+      if(marks.length === 0){ doSearchIn(el.id, q, true); return; }
+      let idx = 0;
+      if(lastFoundNode){
+        idx = Array.from(marks).indexOf(lastFoundNode) + 1;
+        if(idx >= marks.length) idx = 0;
+      }
+      const m = marks[idx];
+      lastFoundNode = m;
+      const r = document.createRange(); r.selectNodeContents(m);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      const rect = m.getBoundingClientRect();
+      window.scrollBy({top: rect.top - 120, behavior:'smooth'});
+      if(split && document.getElementById('syncSearch').checked){
+        doSearchIn('viewerB', q, false);
+      }
+    }
+
+    function findPrev(){
+      const q = lastSearch || (document.getElementById('searchBox')?.value || '').trim();
+      if(!q) return;
+      const el = split ? document.getElementById('viewer') : document.getElementById('viewer_single');
+      const marks = el.querySelectorAll('mark.hl');
+      if(marks.length === 0){ doSearchIn(el.id, q, true); return; }
+      let idx = marks.length - 1;
+      if(lastFoundNode){
+        idx = Array.from(marks).indexOf(lastFoundNode) - 1;
+        if(idx < 0) idx = marks.length - 1;
+      }
+      const m = marks[idx];
+      lastFoundNode = m;
+      const r = document.createRange(); r.selectNodeContents(m);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      const rect = m.getBoundingClientRect();
+      window.scrollBy({top: rect.top - 120, behavior:'smooth'});
+      if(split && document.getElementById('syncSearch').checked){
+        doSearchIn('viewerB', q, false);
+      }
+    }
+
+    function toggleSplit(){
+      split = !split;
+      const splitEl = document.getElementById('splitContainer');
+      const singleEl = document.getElementById('singleContainer');
+      const paneB = document.getElementById('paneB');
+      const btn = document.getElementById('splitBtn');
+      if(split){
+        splitEl.style.display = 'flex';
+        singleEl.style.display = 'none';
+        paneB.style.display = 'block';
+        btn.textContent = 'Disable Split View';
+        // populate viewer from single if present
+        if(lastDocText){
+          renderMarkdownTo('viewer', lastDocText);
+          if(lastDocPath && lastDocPath.includes('TOKEN_INDEX')){ postProcessTokenIndex(document.getElementById('viewer')); }
+        }
+        // auto-load the counterpart doc
+        if(lastDocPath){
+          const other = lastDocPath.includes('TOKEN_INDEX') ? 'NEURAL_PATHING_MATRIX.md' : 'TOKEN_INDEX.md';
+          loadDoc(other, true);
+        }
+      }else{
+        splitEl.style.display = 'none';
+        singleEl.style.display = 'block';
+        btn.textContent = 'Enable Split View';
+        // sync content back to single
+        const base = document.getElementById('viewer');
+        document.getElementById('viewer_single').innerHTML = base ? base.innerHTML : '<em class="muted">Select a document to begin.</em>';
+        // reset secondary
+        lastDocPathB = null; lastDocTextB = '';
       }
     }
   </script>
