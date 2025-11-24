@@ -70,6 +70,7 @@
         <button class="btn" onclick="findNext()">Find Next</button>
         <button class="btn" onclick="clearHighlights()">Clear Highlights</button>
         <label><input type="checkbox" id="syncSearch" checked /> Sync search to other pane</label>
+        <button class="btn" onclick="buildLanguagePack()">Build Language Pack</button>
       </div>
       <div id="quickIndex" class="index-list"></div>
       <div id="splitContainer" class="split" style="display:none">
@@ -85,6 +86,7 @@
       <div id="singleContainer">
         <div id="viewer_single" class="viewer" style="display:block"><em class="muted">Select a document to begin.</em></div>
       </div>
+      <div id="lang_out" class="viewer" style="margin-top:16px"><em class="muted">Language pack output will appear here when built.</em></div>
     </section>
 
     <section class="section">
@@ -424,6 +426,188 @@
         // reset secondary
         lastDocPathB = null; lastDocTextB = '';
       }
+    }
+
+    // -------- Language Pack Builder --------
+    function normalizeName(s){
+      return (s||'')
+        .toLowerCase()
+        .replace(/\(.*?\)/g,'')
+        .replace(/[^a-z0-9\s]/g,' ')
+        .replace(/\s+/g,' ') 
+        .trim();
+    }
+
+    function parseTokensMD(md){
+      const lines = md.split(/\r?\n/);
+      const tokens = [];
+      let i = 0;
+      while(i < lines.length){
+        const m = lines[i].match(/^\*\*([IVXLCDM]+)\.\s+([^*]+)\*\*\s+—\s+\*([^*]+)\*/);
+        if(m){
+          const roman = m[1].trim();
+          const name = m[2].trim();
+          const epithet = m[3].trim();
+          const rec = { id: roman, name, epithet, phase:null, function:null, modulation:null };
+          i++;
+          while(i < lines.length && lines[i].trim() !== ''){
+            const L = lines[i].trim();
+            let mm;
+            if((mm = L.match(/^Phase:\s*(.*)$/i))){ rec.phase = mm[1].trim(); }
+            else if((mm = L.match(/^Function:\s*(.*)$/i))){ rec.function = mm[1].trim(); }
+            else if((mm = L.match(/^Modulation:\s*(.*)$/i))){ rec.modulation = mm[1].trim(); }
+            i++;
+          }
+          tokens.push(rec);
+        } else {
+          i++;
+        }
+      }
+      return tokens;
+    }
+
+    function parseMatrixMD(md){
+      const lines = md.split(/\r?\n/);
+      const pathways = [];
+      let i = 0;
+      while(i < lines.length){
+        const h = lines[i].match(/^###\s+Pathway\s+(\d+):\s*(.*)$/i);
+        if(h){
+          const num = parseInt(h[1],10);
+          const title = h[2].trim();
+          const start = i+1;
+          // Capture section until next ### Pathway or end
+          let j = start;
+          const section = [];
+          while(j < lines.length && !/^###\s+Pathway\s+\d+:/i.test(lines[j])){ section.push(lines[j]); j++; }
+          // Parse nodes in code blocks and bullet sections
+          const text = section.join("\n");
+          const nodes = [];
+          const modulators = [];
+          const bottlenecks = [];
+          // Roman numeral nodes inside code blocks
+          text.split(/\n/).forEach(L => {
+            const mm = L.match(/^([IVXLCDM]+)\.\s+([^()]+?)(?:\s*\(([^)]+)\))?\s*$/);
+            if(mm){ nodes.push({ roman:mm[1], name:mm[2].trim(), note:(mm[3]||'').trim() }); }
+          });
+          // Bullet lists for Modulation Nodes / Critical Bottlenecks
+          let currentList = null;
+          section.forEach(L => {
+            if(/^\*\*Modulation Nodes\*\*/i.test(L) || /^\-\s*\*\*Modulation Nodes\*\*/i.test(L)){ currentList = 'mod'; }
+            else if(/^\*\*Critical Bottlenecks\*\*/i.test(L) || /^\-\s*\*\*Critical Bottlenecks\*\*/i.test(L)){ currentList = 'bot'; }
+            const bm = L.match(/^\-\s*\*\*([IVXLCDM]+)\.\s*([^*]+)\*\*\s*\(([^)]+)\)/);
+            if(bm){
+              const item = { roman: bm[1], name: bm[2].trim(), note: bm[3].trim() };
+              if(currentList === 'mod') modulators.push(item);
+              else if(currentList === 'bot') bottlenecks.push(item);
+            }
+          });
+          pathways.push({ number:num, title, nodes, modulators, bottlenecks, raw:text });
+          i = j; continue;
+        }
+        i++;
+      }
+      return pathways.sort((a,b)=>a.number-b.number);
+    }
+
+    function crossReference(tokens, pathways){
+      const byPath = new Map(pathways.map(p => [p.number, p]));
+      const tokenToPaths = new Map();
+      const nameIndex = pathways.map(p => ({
+        p,
+        names: new Set([
+          ...p.nodes.map(n => normalizeName(n.name)),
+          ...p.modulators.map(n => normalizeName(n.name)),
+          ...p.bottlenecks.map(n => normalizeName(n.name))
+        ])
+      }));
+      tokens.forEach(t => {
+        const key = normalizeName(t.name);
+        const hits = [];
+        nameIndex.forEach(({p, names}) => { if(names.has(key)) hits.push(p.number); });
+        // Fallback: substring search in raw text
+        if(hits.length === 0){
+          nameIndex.forEach(({p})=>{
+            if((p.raw||'').toLowerCase().includes(key)) hits.push(p.number);
+          });
+        }
+        tokenToPaths.set(t.id, Array.from(new Set(hits)).sort((a,b)=>a-b));
+      });
+      // Reverse index
+      const pathToTokens = new Map();
+      tokenToPaths.forEach((paths, tid) => {
+        paths.forEach(n => {
+          if(!pathToTokens.has(n)) pathToTokens.set(n, []);
+          pathToTokens.get(n).push(tid);
+        });
+      });
+      return { tokenToPaths, pathToTokens };
+    }
+
+    function downloadFile(name, text, mime='application/json'){
+      const blob = new Blob([text], {type:mime});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url), 1500);
+    }
+
+    async function buildLanguagePack(){
+      // Ensure we have source texts
+      const tokText = lastDocPath && lastDocPath.includes('TOKEN_INDEX') ? lastDocText :
+                      lastDocPathB && lastDocPathB.includes('TOKEN_INDEX') ? lastDocTextB :
+                      await (await fetch('TOKEN_INDEX.md', {cache:'no-cache'})).text();
+      const matText = lastDocPath && /NEURAL_PATHING_MATRIX/.test(lastDocPath) ? lastDocText :
+                      lastDocPathB && /NEURAL_PATHING_MATRIX/.test(lastDocPathB) ? lastDocTextB :
+                      await (await fetch('NEURAL_PATHING_MATRIX.md', {cache:'no-cache'})).text();
+
+      const tokens = parseTokensMD(tokText);
+      const pathways = parseMatrixMD(matText);
+      const { tokenToPaths, pathToTokens } = crossReference(tokens, pathways);
+
+      const bundle = {
+        meta: {
+          name: 'Ace Neural Codex Language Pack',
+          version: 1,
+          generated_at: new Date().toISOString(),
+          sources: ['TOKEN_INDEX.md', 'NEURAL_PATHING_MATRIX.md']
+        },
+        tokens,
+        pathways,
+        links: {
+          token_to_pathways: Object.fromEntries(tokenToPaths),
+          pathway_to_tokens: Object.fromEntries(pathToTokens)
+        }
+      };
+
+      const out = document.getElementById('lang_out');
+      out.innerHTML = '';
+      const summary = document.createElement('div');
+      summary.innerHTML = `<strong>Language Pack Built.</strong><br>Tokens: ${tokens.length} · Pathways: ${pathways.length}`;
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = 'Download JSON';
+      btn.onclick = () => downloadFile('language_pack.json', JSON.stringify(bundle, null, 2));
+      const btn2 = document.createElement('button');
+      btn2.className = 'btn';
+      btn2.style.marginLeft = '8px';
+      btn2.textContent = 'Download Markdown Summary';
+      btn2.onclick = () => {
+        const lines = [];
+        lines.push('# Language Pack Summary');
+        lines.push('');
+        lines.push(`Generated: ${bundle.meta.generated_at}`);
+        lines.push('');
+        tokens.forEach(t => {
+          const ps = tokenToPaths.get(t.id) || [];
+          lines.push(`- ${t.id}. ${t.name} — Phase: ${t.phase||''}` + (ps.length?` (Pathways: ${ps.join(', ')})`:'') );
+        });
+        downloadFile('language_pack_summary.md', lines.join('\n'), 'text/markdown');
+      };
+      out.appendChild(summary);
+      out.appendChild(document.createElement('br'));
+      out.appendChild(btn);
+      out.appendChild(btn2);
     }
   </script>
 </body>
