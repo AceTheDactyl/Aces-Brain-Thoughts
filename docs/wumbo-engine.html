@@ -170,20 +170,72 @@
     // Link to the Manual Index anchors (stable site root)
     const APL = 'index.html';
 
+    // Per‑entry deep map: prioritize APL anchors per Roman numeral.
+    // Extend/adjust as needed. Fallback uses GROUPS above.
+    const PER_ENTRY = {
+      1:  ['#fields','#operations','#states','#machines'],        // Somatosensory
+      2:  ['#states','#operations','#machines','#fields'],        // ACC
+      3:  ['#fields','#states','#operations','#machines'],        // Thalamus
+      4:  ['#machines','#operations','#fields','#states'],        // Motor & Cerebellum
+      5:  ['#operations','#machines','#states','#fields'],        // Broca's
+      6:  ['#states','#operations','#fields','#machines'],        // Mirror Neuron
+      7:  ['#states','#operations','#machines','#fields'],        // Amygdala
+      8:  ['#operations','#states','#machines','#fields'],        // Prefrontal Cortex
+      9:  ['#fields','#operations','#machines','#states'],        // Parietal Eye Field
+      10: ['#fields','#states','#operations','#machines'],        // Subiculum
+      11: ['#states','#fields','#machines','#operations'],        // Pineal (revisited)
+      12: ['#operations','#machines','#fields','#states'],        // MTG
+      13: ['#machines','#fields','#states','#operations'],        // Fastigial‑Vestibular Loop
+      14: ['#fields','#states','#operations','#machines'],        // Posterior Thalamic Nucleus
+      15: ['#states','#machines','#fields','#operations'],        // Cerebellar Uvula
+      16: ['#operations','#machines','#fields','#states'],        // AIPS
+      17: ['#fields','#machines','#operations','#states'],        // Ventrolateral Thalamus
+      18: ['#fields','#states','#operations','#machines'],        // Thalamus (again)
+      19: ['#machines','#operations','#fields','#states'],        // Motor & Cerebellum
+      20: ['#operations','#machines','#states','#fields'],        // Broca's
+      21: ['#states','#operations','#fields','#machines'],        // Mirror Neuron
+      22: ['#states','#operations','#machines','#fields'],        // Amygdala
+      23: ['#operations','#states','#machines','#fields'],        // PFC
+      24: ['#fields','#states','#operations','#machines'],        // Orbitofrontal
+      25: ['#states','#operations','#fields','#machines'],        // Cingulate Gyrus
+      26: ['#operations','#states','#machines','#fields'],        // Ventral Striatum
+      27: ['#states','#fields','#operations','#machines'],        // Claustrum
+      28: ['#states','#fields','#operations','#machines'],        // DMN
+      29: ['#states','#fields','#machines','#operations'],        // Pineal
+      30: ['#operations','#states','#machines','#fields']         // Corpus Callosum / sculpting
+    };
+
+    function labelFor(anchor){
+      switch(anchor){
+        case '#machines': return 'Machines';
+        case '#fields': return 'Domains/Fields';
+        case '#operations': return 'Operators';
+        case '#states': return 'States';
+        default: return anchor;
+      }
+    }
+
     GROUPS.forEach(g => {
       for(let i=g.range[0]; i<=g.range[1]; i++){
         const div = document.createElement('div');
         div.className = 'item';
         const rn = toRoman(i);
-        const a1 = document.createElement('a'); a1.href = `${APL}${g.anchors[0]}`; a1.textContent = 'Machines';
-        const a2 = document.createElement('a'); a2.href = `${APL}${g.anchors[1]}`; a2.textContent = 'Domains/Fields';
-        const a3 = document.createElement('a'); a3.href = `${APL}${g.anchors[2]}`; a3.textContent = 'Operators';
-        const a4 = document.createElement('a'); a4.href = `${APL}${g.anchors[3]}`; a4.textContent = 'States';
+        const anchors = PER_ENTRY[i] || g.anchors;
+        const a1 = document.createElement('a'); a1.href = `${APL}${anchors[0]}`; a1.textContent = labelFor(anchors[0]);
+        const a2 = document.createElement('a'); a2.href = `${APL}${anchors[1]}`; a2.textContent = labelFor(anchors[1]);
+        const a3 = document.createElement('a'); a3.href = `${APL}${anchors[2]}`; a3.textContent = labelFor(anchors[2]);
+        const a4 = document.createElement('a'); a4.href = `${APL}${anchors[3]}`; a4.textContent = labelFor(anchors[3]);
         const p = document.createElement('p'); p.className='muted';
         p.append('Manual: ', a1, ' · ', a2, ' · ', a3, ' · ', a4);
         const h = document.createElement('strong'); h.textContent = `${rn}. Atlas Entry`;
         div.appendChild(h);
         div.appendChild(p);
+        // Quick “focus” chips to signal top priorities per entry
+        const chips = document.createElement('div'); chips.className = 'chips';
+        const top1 = document.createElement('a'); top1.className='chip'; top1.href = `${APL}${anchors[0]}`; top1.textContent = `Focus: ${labelFor(anchors[0])}`;
+        const top2 = document.createElement('a'); top2.className='chip'; top2.href = `${APL}${anchors[1]}`; top2.textContent = labelFor(anchors[1]);
+        chips.appendChild(top1); chips.appendChild(top2);
+        div.appendChild(chips);
         container.appendChild(div);
       }
     });
