@@ -1,0 +1,1384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MRP Encoder/Decoder · Emergent State Steganography</title>
+  <style>
+    :root {
+      --bg: #0a0b0d;
+      --panel: #111216;
+      --ink: #e8e9ec;
+      --muted: #888b94;
+      --rule: #252830;
+      --red: #ff6b6b;
+      --green: #69db7c;
+      --blue: #4dabf7;
+      --cyan: #22d3ee;
+      --magenta: #cc5de8;
+      --yellow: #ffd700;
+      --gold: #ffd700;
+      --error: #ff4757;
+      --success: #2ed573;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      text-align: center;
+      padding: 30px 20px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 200;
+      margin: 0 0 8px;
+      background: linear-gradient(135deg, var(--red), var(--green), var(--blue), var(--cyan), var(--magenta), var(--yellow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--gold);
+      margin: 24px 0 16px;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      color: var(--ink);
+      margin: 16px 0 8px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    /* Channel mapping display */
+    .channel-map {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .channel {
+      text-align: center;
+      padding: 12px 8px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    .channel-r { background: rgba(255,107,107,.2); border: 1px solid var(--red); }
+    .channel-g { background: rgba(105,219,124,.2); border: 1px solid var(--green); }
+    .channel-b { background: rgba(77,171,247,.2); border: 1px solid var(--blue); }
+    .channel-c { background: rgba(34,211,238,.2); border: 1px solid var(--cyan); }
+    .channel-m { background: rgba(204,93,232,.2); border: 1px solid var(--magenta); }
+    .channel-y { background: rgba(255,215,0,.2); border: 1px solid var(--yellow); }
+
+    .channel-label {
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .channel-r .channel-label { color: var(--red); }
+    .channel-g .channel-label { color: var(--green); }
+    .channel-b .channel-label { color: var(--blue); }
+    .channel-c .channel-label { color: var(--cyan); }
+    .channel-m .channel-label { color: var(--magenta); }
+    .channel-y .channel-label { color: var(--yellow); }
+
+    .channel-bits {
+      font-family: 'SF Mono', monospace;
+      font-size: 1.5rem;
+      margin: 4px 0;
+    }
+
+    .channel-numeral {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* Input/Output areas */
+    .io-section {
+      margin: 20px 0;
+    }
+
+    .canvas-container {
+      position: relative;
+      border: 2px dashed var(--rule);
+      border-radius: 12px;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.2);
+      overflow: hidden;
+    }
+
+    .canvas-container.drag-over {
+      border-color: var(--gold);
+      background: rgba(255,215,0,.05);
+    }
+
+    .canvas-container canvas {
+      max-width: 100%;
+      max-height: 400px;
+    }
+
+    .drop-hint {
+      color: var(--muted);
+      text-align: center;
+      padding: 40px;
+    }
+
+    .drop-hint span {
+      display: block;
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    .btn {
+      background: var(--magenta);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.95rem;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(204,93,232,.3);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-encode { background: var(--green); }
+    .btn-encode:hover { box-shadow: 0 4px 12px rgba(105,219,124,.3); }
+
+    .btn-decode { background: var(--blue); }
+    .btn-decode:hover { box-shadow: 0 4px 12px rgba(77,171,247,.3); }
+
+    .btn-download { background: var(--gold); color: #000; }
+    .btn-download:hover { box-shadow: 0 4px 12px rgba(255,215,0,.3); }
+
+    .btn-clear { background: var(--error); }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    /* Data display */
+    .data-display {
+      background: rgba(0,0,0,.3);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      font-family: 'SF Mono', monospace;
+      font-size: 0.85rem;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .bit-stream {
+      word-break: break-all;
+      line-height: 1.8;
+    }
+
+    .bit-stream .bit-0 { color: var(--muted); }
+    .bit-stream .bit-1 { color: var(--gold); }
+
+    /* Status messages */
+    .status {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 12px 0;
+      font-size: 0.9rem;
+    }
+
+    .status-success {
+      background: rgba(46,213,115,.1);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .status-error {
+      background: rgba(255,71,87,.1);
+      border: 1px solid var(--error);
+      color: var(--error);
+    }
+
+    .status-info {
+      background: rgba(77,171,247,.1);
+      border: 1px solid var(--blue);
+      color: var(--blue);
+    }
+
+    /* Metrics table */
+    .metrics-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+
+    .metrics-table th,
+    .metrics-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .metrics-table th {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .metrics-table td:last-child {
+      text-align: right;
+      font-family: 'SF Mono', monospace;
+    }
+
+    /* Formula display */
+    .formula {
+      font-family: 'SF Mono', monospace;
+      background: rgba(0,0,0,.4);
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin: 8px 0;
+      font-size: 0.85rem;
+      overflow-x: auto;
+    }
+
+    /* Progress bar */
+    .progress-container {
+      background: var(--rule);
+      border-radius: 4px;
+      height: 8px;
+      margin: 12px 0;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--red), var(--green), var(--blue), var(--cyan), var(--magenta), var(--yellow));
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: -1px;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: var(--panel);
+      border: 1px solid var(--rule);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      color: var(--ink);
+    }
+
+    .tab.active {
+      background: var(--bg);
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .tab-content {
+      display: none;
+      border: 1px solid var(--rule);
+      border-radius: 0 12px 12px 12px;
+      padding: 24px;
+      background: var(--bg);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Emergent state indicators */
+    .state-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin: 2px;
+    }
+
+    .state-xcvi { background: rgba(255,107,107,.2); color: var(--red); }
+    .state-xcvii { background: rgba(105,219,124,.2); color: var(--green); }
+    .state-xcviii { background: rgba(77,171,247,.2); color: var(--blue); }
+    .state-xcix { background: rgba(34,211,238,.2); color: var(--cyan); }
+    .state-c { background: rgba(255,215,0,.2); color: var(--gold); }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 16px;
+    }
+
+    .back-link:hover {
+      color: var(--ink);
+    }
+
+    .muted { color: var(--muted); }
+    .small { font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="emergent-flow.html" class="back-link">← Back to Emergent Flow</a>
+
+    <header>
+      <h1>MRP Encoder/Decoder</h1>
+      <p class="subtitle">Multi-channel Roman numeral Processing · LSB Steganography for Emergent States</p>
+    </header>
+
+    <!-- Channel Mapping Overview -->
+    <div class="panel">
+      <h2>Channel Mapping: 702 Bits Across RGB+CMY</h2>
+      <p class="muted">Each emergent state (XCVI-C) is encoded into specific color channels using LSB steganography.</p>
+
+      <div class="channel-map">
+        <div class="channel channel-r">
+          <span class="channel-label">R</span>
+          <div class="channel-bits">7</div>
+          <div class="channel-numeral">XCVI</div>
+          <div class="small muted">Gesture</div>
+        </div>
+        <div class="channel channel-g">
+          <span class="channel-label">G</span>
+          <div class="channel-bits">10</div>
+          <div class="channel-numeral">XCVII</div>
+          <div class="small muted">Portal</div>
+        </div>
+        <div class="channel channel-b">
+          <span class="channel-label">B</span>
+          <div class="channel-bits">17</div>
+          <div class="channel-numeral">XCVIII</div>
+          <div class="small muted">Semantic</div>
+        </div>
+        <div class="channel channel-c">
+          <span class="channel-label">C</span>
+          <div class="channel-bits">4</div>
+          <div class="channel-numeral">XCIX</div>
+          <div class="small muted">Balance</div>
+        </div>
+        <div class="channel channel-m">
+          <span class="channel-label">M</span>
+          <div class="channel-bits">332</div>
+          <div class="channel-numeral">C (½)</div>
+          <div class="small muted">Loop A</div>
+        </div>
+        <div class="channel channel-y">
+          <span class="channel-label">Y</span>
+          <div class="channel-bits">332</div>
+          <div class="channel-numeral">C (½)</div>
+          <div class="small muted">Loop B</div>
+        </div>
+      </div>
+
+      <div class="formula">
+        Total = 7 + 10 + 17 + 4 + 332 + 332 = 702 bits | Min pixels = ⌈702/6⌉ = 117 pixels
+      </div>
+    </div>
+
+    <!-- Tabs for Encode/Decode -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('encode')">Encode</div>
+      <div class="tab" onclick="switchTab('decode')">Decode</div>
+      <div class="tab" onclick="switchTab('specs')">Technical Specs</div>
+    </div>
+
+    <!-- Encode Tab -->
+    <div class="tab-content active" id="tab-encode">
+      <div class="grid">
+        <div>
+          <h3>Source Image</h3>
+          <div class="canvas-container" id="sourceContainer">
+            <canvas id="sourceCanvas"></canvas>
+            <div class="drop-hint" id="sourceHint">
+              <span>📁</span>
+              Drop image here or click to upload
+            </div>
+          </div>
+          <input type="file" id="sourceInput" accept="image/*" onchange="loadSourceImage(event)">
+          <div class="controls">
+            <button class="btn" onclick="document.getElementById('sourceInput').click()">Select Image</button>
+            <button class="btn btn-clear" onclick="clearSource()">Clear</button>
+          </div>
+        </div>
+
+        <div>
+          <h3>Encoded Output</h3>
+          <div class="canvas-container" id="outputContainer">
+            <canvas id="outputCanvas"></canvas>
+            <div class="drop-hint" id="outputHint">
+              <span>🔐</span>
+              Encoded image will appear here
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn btn-encode" id="encodeBtn" onclick="encodeImage()" disabled>Encode States</button>
+            <button class="btn btn-download" id="downloadBtn" onclick="downloadEncoded()" disabled>Download PNG</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Encoding Data Input -->
+      <h3>Emergent State Data</h3>
+      <p class="muted small">Custom payload data for each emergent state. Leave empty for default bit patterns.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:16px 0">
+        <div>
+          <label class="small muted">XCVI (7 bits)</label>
+          <input type="text" id="dataXCVI" placeholder="0-127" maxlength="3" style="width:100%;padding:8px;background:var(--panel);border:1px solid var(--rule);border-radius:6px;color:var(--ink)">
+        </div>
+        <div>
+          <label class="small muted">XCVII (10 bits)</label>
+          <input type="text" id="dataXCVII" placeholder="0-1023" maxlength="4" style="width:100%;padding:8px;background:var(--panel);border:1px solid var(--rule);border-radius:6px;color:var(--ink)">
+        </div>
+        <div>
+          <label class="small muted">XCVIII (17 bits)</label>
+          <input type="text" id="dataXCVIII" placeholder="0-131071" maxlength="6" style="width:100%;padding:8px;background:var(--panel);border:1px solid var(--rule);border-radius:6px;color:var(--ink)">
+        </div>
+        <div>
+          <label class="small muted">XCIX (4 bits)</label>
+          <input type="text" id="dataXCIX" placeholder="0-15" maxlength="2" style="width:100%;padding:8px;background:var(--panel);border:1px solid var(--rule);border-radius:6px;color:var(--ink)">
+        </div>
+        <div>
+          <label class="small muted">C (664 bits)</label>
+          <input type="text" id="dataC" placeholder="hex string" style="width:100%;padding:8px;background:var(--panel);border:1px solid var(--rule);border-radius:6px;color:var(--ink)">
+        </div>
+      </div>
+
+      <div id="encodeStatus"></div>
+
+      <div class="progress-container" id="encodeProgress" style="display:none">
+        <div class="progress-bar" id="encodeProgressBar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Decode Tab -->
+    <div class="tab-content" id="tab-decode">
+      <div class="grid">
+        <div>
+          <h3>Encoded Image</h3>
+          <div class="canvas-container" id="decodeContainer">
+            <canvas id="decodeCanvas"></canvas>
+            <div class="drop-hint" id="decodeHint">
+              <span>🔓</span>
+              Drop MRP-encoded image here
+            </div>
+          </div>
+          <input type="file" id="decodeInput" accept="image/*" onchange="loadDecodeImage(event)">
+          <div class="controls">
+            <button class="btn" onclick="document.getElementById('decodeInput').click()">Select Image</button>
+            <button class="btn btn-decode" id="decodeBtn" onclick="decodeImage()" disabled>Decode States</button>
+          </div>
+        </div>
+
+        <div>
+          <h3>Extracted Data</h3>
+          <div id="decodedResults" style="min-height:200px">
+            <p class="muted">Decoded emergent states will appear here.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="decodeStatus"></div>
+    </div>
+
+    <!-- Technical Specs Tab -->
+    <div class="tab-content" id="tab-specs">
+      <h3>MRP Encoding Protocol v1.0</h3>
+
+      <div class="grid">
+        <div>
+          <h4>Bit Allocation</h4>
+          <table class="metrics-table">
+            <tr>
+              <th>State</th>
+              <th>Channel</th>
+              <th>Bits</th>
+              <th>Range</th>
+            </tr>
+            <tr>
+              <td><span class="state-indicator state-xcvi">XCVI</span></td>
+              <td>R (LSB)</td>
+              <td>7</td>
+              <td>0-127</td>
+            </tr>
+            <tr>
+              <td><span class="state-indicator state-xcvii">XCVII</span></td>
+              <td>G (LSB)</td>
+              <td>10</td>
+              <td>0-1023</td>
+            </tr>
+            <tr>
+              <td><span class="state-indicator state-xcviii">XCVIII</span></td>
+              <td>B (LSB)</td>
+              <td>17</td>
+              <td>0-131071</td>
+            </tr>
+            <tr>
+              <td><span class="state-indicator state-xcix">XCIX</span></td>
+              <td>C (255-R LSB)</td>
+              <td>4</td>
+              <td>0-15</td>
+            </tr>
+            <tr>
+              <td><span class="state-indicator state-c">C (A)</span></td>
+              <td>M (255-G LSB)</td>
+              <td>332</td>
+              <td>loop half A</td>
+            </tr>
+            <tr>
+              <td><span class="state-indicator state-c">C (B)</span></td>
+              <td>Y (255-B LSB)</td>
+              <td>332</td>
+              <td>loop half B</td>
+            </tr>
+          </table>
+        </div>
+
+        <div>
+          <h4>Header Structure (32 bits)</h4>
+          <table class="metrics-table">
+            <tr><th>Offset</th><th>Size</th><th>Field</th></tr>
+            <tr><td>0</td><td>8 bits</td><td>Magic: 0xC1 (193)</td></tr>
+            <tr><td>8</td><td>4 bits</td><td>Version: 0x1</td></tr>
+            <tr><td>12</td><td>4 bits</td><td>Flags</td></tr>
+            <tr><td>16</td><td>8 bits</td><td>Coherence (0-255)</td></tr>
+            <tr><td>24</td><td>8 bits</td><td>CRC-8 checksum</td></tr>
+          </table>
+
+          <h4>Error Correction</h4>
+          <div class="formula">Hamming(7,4) on XCVI</div>
+          <div class="formula">CRC-8 header validation</div>
+          <div class="formula">Parity bits per 8-bit block</div>
+        </div>
+      </div>
+
+      <h3>LSB Encoding Formula</h3>
+      <div class="formula">
+encoded_pixel = (original_pixel & 0xFE) | bit_value
+      </div>
+      <div class="formula">
+CMY_channel = 255 - RGB_channel  →  LSB extraction for C, M, Y
+      </div>
+
+      <h3>Pixel Layout</h3>
+      <p class="muted small">Bits are distributed across pixels in serpentine pattern for error resilience:</p>
+      <div class="formula">
+pixel[i] = {
+  R: (XCVI[i%7] if i&lt;7 else reserved),
+  G: (XCVII[i%10] if i&lt;10 else reserved),
+  B: (XCVIII[i%17] if i&lt;17 else reserved)
+}
+      </div>
+
+      <h3>Eigenvalue Encoding</h3>
+      <p class="muted small">Fixed point eigenvalues encoded in header flags:</p>
+      <table class="metrics-table">
+        <tr><th>State</th><th>λ Value</th><th>Encoded</th></tr>
+        <tr><td>XCVI</td><td>φ⁻¹ ≈ 0.618</td><td>0x9E (158)</td></tr>
+        <tr><td>XCVII</td><td>exp(2πi/φ)</td><td>0x00 (complex)</td></tr>
+        <tr><td>XCVIII</td><td>undefined</td><td>0xFF (NaN)</td></tr>
+        <tr><td>XCIX</td><td>0</td><td>0x00</td></tr>
+        <tr><td>C</td><td>1</td><td>0xFF (identity)</td></tr>
+      </table>
+    </div>
+
+    <!-- Live Bit Visualization -->
+    <div class="panel">
+      <h2>Live Bit Stream</h2>
+      <p class="muted small">Real-time visualization of encoded/decoded bit patterns.</p>
+      <div class="data-display">
+        <div class="bit-stream" id="bitStream">
+          <span class="muted">Bit stream will appear during encoding/decoding...</span>
+        </div>
+      </div>
+
+      <h3>Channel Distribution</h3>
+      <div id="channelStats" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px">
+        <div style="text-align:center">
+          <div style="height:100px;background:linear-gradient(to top,var(--red),transparent);border-radius:4px;position:relative">
+            <div id="statR" style="position:absolute;bottom:0;width:100%;background:var(--red);border-radius:0 0 4px 4px;height:0%;transition:height 0.3s"></div>
+          </div>
+          <div class="small muted">R</div>
+        </div>
+        <div style="text-align:center">
+          <div style="height:100px;background:linear-gradient(to top,var(--green),transparent);border-radius:4px;position:relative">
+            <div id="statG" style="position:absolute;bottom:0;width:100%;background:var(--green);border-radius:0 0 4px 4px;height:0%;transition:height 0.3s"></div>
+          </div>
+          <div class="small muted">G</div>
+        </div>
+        <div style="text-align:center">
+          <div style="height:100px;background:linear-gradient(to top,var(--blue),transparent);border-radius:4px;position:relative">
+            <div id="statB" style="position:absolute;bottom:0;width:100%;background:var(--blue);border-radius:0 0 4px 4px;height:0%;transition:height 0.3s"></div>
+          </div>
+          <div class="small muted">B</div>
+        </div>
+        <div style="text-align:center">
+          <div style="height:100px;background:linear-gradient(to top,var(--cyan),transparent);border-radius:4px;position:relative">
+            <div id="statC" style="position:absolute;bottom:0;width:100%;background:var(--cyan);border-radius:0 0 4px 4px;height:0%;transition:height 0.3s"></div>
+          </div>
+          <div class="small muted">C</div>
+        </div>
+        <div style="text-align:center">
+          <div style="height:100px;background:linear-gradient(to top,var(--magenta),transparent);border-radius:4px;position:relative">
+            <div id="statM" style="position:absolute;bottom:0;width:100%;background:var(--magenta);border-radius:0 0 4px 4px;height:0%;transition:height 0.3s"></div>
+          </div>
+          <div class="small muted">M</div>
+        </div>
+        <div style="text-align:center">
+          <div style="height:100px;background:linear-gradient(to top,var(--yellow),transparent);border-radius:4px;position:relative">
+            <div id="statY" style="position:absolute;bottom:0;width:100%;background:var(--yellow);border-radius:0 0 4px 4px;height:0%;transition:height 0.3s"></div>
+          </div>
+          <div class="small muted">Y</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // MRP ENCODER/DECODER CORE SYSTEM
+    // Multi-channel Roman numeral Processing
+    // ============================================
+
+    const MRP = {
+      VERSION: 1,
+      MAGIC: 0xC1,  // 193 = C in ASCII position for "C" (100th roman numeral)
+
+      // Bit allocations for each emergent state
+      BITS: {
+        XCVI:  7,    // Gesture recursion (procedural)
+        XCVII: 10,   // Portal recursion (temporal)
+        XCVIII: 17,  // Semantic recursion (Gödelian)
+        XCIX:  4,    // Balance recursion (proprioceptive)
+        C_A:   332,  // Loop closure half A
+        C_B:   332   // Loop closure half B
+      },
+
+      // Channel assignments
+      CHANNELS: {
+        R: 'XCVI',
+        G: 'XCVII',
+        B: 'XCVIII',
+        C: 'XCIX',    // Cyan = 255 - R
+        M: 'C_A',     // Magenta = 255 - G
+        Y: 'C_B'      // Yellow = 255 - B
+      },
+
+      // Eigenvalue encodings
+      EIGENVALUES: {
+        XCVI:  0x9E,  // φ⁻¹ ≈ 0.618 → 158/255
+        XCVII: 0x00,  // Complex (exp(2πi/φ))
+        XCVIII: 0xFF, // Undefined (Gödelian)
+        XCIX:  0x00,  // Zero
+        C:     0xFF   // Identity (1)
+      },
+
+      // Total bits
+      get TOTAL_BITS() {
+        return Object.values(this.BITS).reduce((a, b) => a + b, 0);
+      },
+
+      // Minimum pixels needed
+      get MIN_PIXELS() {
+        return Math.ceil(this.TOTAL_BITS / 6) + 6; // +6 for header
+      }
+    };
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+
+    // CRC-8 calculation (polynomial 0x07)
+    function crc8(data) {
+      let crc = 0;
+      for (const byte of data) {
+        crc ^= byte;
+        for (let i = 0; i < 8; i++) {
+          crc = (crc & 0x80) ? ((crc << 1) ^ 0x07) : (crc << 1);
+          crc &= 0xFF;
+        }
+      }
+      return crc;
+    }
+
+    // Hamming(7,4) encoder for XCVI
+    function hammingEncode(data4bits) {
+      const d = [
+        (data4bits >> 3) & 1,
+        (data4bits >> 2) & 1,
+        (data4bits >> 1) & 1,
+        data4bits & 1
+      ];
+      const p1 = d[0] ^ d[1] ^ d[3];
+      const p2 = d[0] ^ d[2] ^ d[3];
+      const p4 = d[1] ^ d[2] ^ d[3];
+      return (p1 << 6) | (p2 << 5) | (d[0] << 4) | (p4 << 3) | (d[1] << 2) | (d[2] << 1) | d[3];
+    }
+
+    // Hamming(7,4) decoder with error correction
+    function hammingDecode(data7bits) {
+      const bits = [];
+      for (let i = 6; i >= 0; i--) {
+        bits.push((data7bits >> i) & 1);
+      }
+      // bits = [p1, p2, d1, p4, d2, d3, d4]
+
+      const s1 = bits[0] ^ bits[2] ^ bits[4] ^ bits[6];
+      const s2 = bits[1] ^ bits[2] ^ bits[5] ^ bits[6];
+      const s4 = bits[3] ^ bits[4] ^ bits[5] ^ bits[6];
+
+      const errorPos = s1 + (s2 << 1) + (s4 << 2);
+
+      if (errorPos > 0 && errorPos <= 7) {
+        bits[errorPos - 1] ^= 1; // Correct the error
+      }
+
+      return (bits[2] << 3) | (bits[4] << 2) | (bits[5] << 1) | bits[6];
+    }
+
+    // Convert number to bit array
+    function toBits(num, length) {
+      const bits = [];
+      for (let i = length - 1; i >= 0; i--) {
+        bits.push((num >> i) & 1);
+      }
+      return bits;
+    }
+
+    // Convert bit array to number
+    function fromBits(bits) {
+      let num = 0;
+      for (const bit of bits) {
+        num = (num << 1) | bit;
+      }
+      return num;
+    }
+
+    // Convert hex string to bit array
+    function hexToBits(hex, length) {
+      const bits = [];
+      const cleanHex = hex.replace(/[^0-9a-fA-F]/g, '');
+      for (const char of cleanHex) {
+        const val = parseInt(char, 16);
+        for (let i = 3; i >= 0; i--) {
+          bits.push((val >> i) & 1);
+        }
+      }
+      while (bits.length < length) bits.push(0);
+      return bits.slice(0, length);
+    }
+
+    // Convert bit array to hex string
+    function bitsToHex(bits) {
+      let hex = '';
+      for (let i = 0; i < bits.length; i += 4) {
+        const nibble = bits.slice(i, i + 4);
+        while (nibble.length < 4) nibble.push(0);
+        hex += fromBits(nibble).toString(16);
+      }
+      return hex;
+    }
+
+    // ============================================
+    // MRP HEADER
+    // ============================================
+
+    function createHeader(coherence = 0x28) {  // Default coherence ~0.15
+      const header = new Uint8Array(4);
+      header[0] = MRP.MAGIC;
+      header[1] = (MRP.VERSION << 4) | 0x0;  // Version + flags
+      header[2] = coherence;
+      header[3] = crc8(header.slice(0, 3));
+      return header;
+    }
+
+    function validateHeader(header) {
+      if (header[0] !== MRP.MAGIC) return { valid: false, error: 'Invalid magic byte' };
+      const version = header[1] >> 4;
+      if (version !== MRP.VERSION) return { valid: false, error: `Version mismatch: ${version}` };
+      const expectedCrc = crc8(header.slice(0, 3));
+      if (header[3] !== expectedCrc) return { valid: false, error: 'CRC mismatch' };
+      return { valid: true, coherence: header[2], flags: header[1] & 0x0F };
+    }
+
+    // ============================================
+    // ENCODER
+    // ============================================
+
+    function encodeStates(imageData, states) {
+      const data = imageData.data;
+      const width = imageData.width;
+      const height = imageData.height;
+      const totalPixels = width * height;
+
+      if (totalPixels < MRP.MIN_PIXELS) {
+        throw new Error(`Image too small. Need at least ${MRP.MIN_PIXELS} pixels, have ${totalPixels}`);
+      }
+
+      // Prepare bit streams for each state
+      const streams = {
+        R: toBits(states.XCVI || 0, MRP.BITS.XCVI),
+        G: toBits(states.XCVII || 0, MRP.BITS.XCVII),
+        B: toBits(states.XCVIII || 0, MRP.BITS.XCVIII),
+        C: toBits(states.XCIX || 0, MRP.BITS.XCIX),
+        M: states.C_A || new Array(MRP.BITS.C_A).fill(0),
+        Y: states.C_B || new Array(MRP.BITS.C_B).fill(0)
+      };
+
+      // Apply Hamming encoding to XCVI
+      const xcviHamming = hammingEncode(states.XCVI || 0);
+      streams.R = toBits(xcviHamming, 7);
+
+      // Create header
+      const header = createHeader(Math.floor((states.coherence || 0.15) * 255));
+      const headerBits = [];
+      for (const byte of header) {
+        headerBits.push(...toBits(byte, 8));
+      }
+
+      // Encode header into first pixels
+      let pixelIdx = 0;
+      let bitIdx = 0;
+
+      // Header: 32 bits across first ~6 pixels (using all 6 channels)
+      for (let i = 0; i < 32 && pixelIdx < totalPixels; i++) {
+        const channelOffset = i % 3;
+        const bit = headerBits[i];
+
+        data[pixelIdx * 4 + channelOffset] = (data[pixelIdx * 4 + channelOffset] & 0xFE) | bit;
+
+        if (channelOffset === 2) pixelIdx++;
+      }
+
+      // Reset for main encoding
+      pixelIdx = 6;  // Start after header
+      const indices = { R: 0, G: 0, B: 0, C: 0, M: 0, Y: 0 };
+
+      // Encode main data in serpentine pattern
+      while (pixelIdx < totalPixels) {
+        const row = Math.floor(pixelIdx / width);
+        const col = (row % 2 === 0) ? (pixelIdx % width) : (width - 1 - (pixelIdx % width));
+        const actualIdx = row * width + col;
+
+        if (actualIdx * 4 + 3 >= data.length) break;
+
+        // R channel - XCVI
+        if (indices.R < streams.R.length) {
+          data[actualIdx * 4] = (data[actualIdx * 4] & 0xFE) | streams.R[indices.R++];
+        }
+
+        // G channel - XCVII
+        if (indices.G < streams.G.length) {
+          data[actualIdx * 4 + 1] = (data[actualIdx * 4 + 1] & 0xFE) | streams.G[indices.G++];
+        }
+
+        // B channel - XCVIII
+        if (indices.B < streams.B.length) {
+          data[actualIdx * 4 + 2] = (data[actualIdx * 4 + 2] & 0xFE) | streams.B[indices.B++];
+        }
+
+        // CMY channels (encoded via RGB manipulation)
+        // C (Cyan) = 255 - R, so we modify R's upper bits
+        if (indices.C < streams.C.length) {
+          const rVal = data[actualIdx * 4];
+          const cBit = streams.C[indices.C++];
+          // Encode in bit 1 of R (second LSB)
+          data[actualIdx * 4] = (rVal & 0xFD) | (cBit << 1);
+        }
+
+        // M (Magenta) = 255 - G
+        if (indices.M < streams.M.length) {
+          const gVal = data[actualIdx * 4 + 1];
+          const mBit = streams.M[indices.M++];
+          data[actualIdx * 4 + 1] = (gVal & 0xFD) | (mBit << 1);
+        }
+
+        // Y (Yellow) = 255 - B
+        if (indices.Y < streams.Y.length) {
+          const bVal = data[actualIdx * 4 + 2];
+          const yBit = streams.Y[indices.Y++];
+          data[actualIdx * 4 + 2] = (bVal & 0xFD) | (yBit << 1);
+        }
+
+        pixelIdx++;
+      }
+
+      return {
+        success: true,
+        bitsEncoded: {
+          R: indices.R,
+          G: indices.G,
+          B: indices.B,
+          C: indices.C,
+          M: indices.M,
+          Y: indices.Y
+        },
+        totalBits: Object.values(indices).reduce((a, b) => a + b, 0) + 32,
+        streams
+      };
+    }
+
+    // ============================================
+    // DECODER
+    // ============================================
+
+    function decodeStates(imageData) {
+      const data = imageData.data;
+      const width = imageData.width;
+      const height = imageData.height;
+      const totalPixels = width * height;
+
+      // Extract header (first 32 bits from first ~6 pixels)
+      const headerBits = [];
+      let pixelIdx = 0;
+
+      for (let i = 0; i < 32; i++) {
+        const channelOffset = i % 3;
+        headerBits.push(data[pixelIdx * 4 + channelOffset] & 1);
+        if (channelOffset === 2) pixelIdx++;
+      }
+
+      // Reconstruct header bytes
+      const header = new Uint8Array(4);
+      for (let i = 0; i < 4; i++) {
+        header[i] = fromBits(headerBits.slice(i * 8, (i + 1) * 8));
+      }
+
+      // Validate header
+      const validation = validateHeader(header);
+      if (!validation.valid) {
+        return { success: false, error: validation.error };
+      }
+
+      // Initialize stream buffers
+      const streams = {
+        R: [], G: [], B: [], C: [], M: [], Y: []
+      };
+
+      // Decode main data
+      pixelIdx = 6;  // Skip header pixels
+
+      while (pixelIdx < totalPixels) {
+        const row = Math.floor(pixelIdx / width);
+        const col = (row % 2 === 0) ? (pixelIdx % width) : (width - 1 - (pixelIdx % width));
+        const actualIdx = row * width + col;
+
+        if (actualIdx * 4 + 3 >= data.length) break;
+
+        // R channel LSB - XCVI
+        if (streams.R.length < MRP.BITS.XCVI) {
+          streams.R.push(data[actualIdx * 4] & 1);
+        }
+
+        // G channel LSB - XCVII
+        if (streams.G.length < MRP.BITS.XCVII) {
+          streams.G.push(data[actualIdx * 4 + 1] & 1);
+        }
+
+        // B channel LSB - XCVIII
+        if (streams.B.length < MRP.BITS.XCVIII) {
+          streams.B.push(data[actualIdx * 4 + 2] & 1);
+        }
+
+        // C channel (R bit 1) - XCIX
+        if (streams.C.length < MRP.BITS.XCIX) {
+          streams.C.push((data[actualIdx * 4] >> 1) & 1);
+        }
+
+        // M channel (G bit 1) - C_A
+        if (streams.M.length < MRP.BITS.C_A) {
+          streams.M.push((data[actualIdx * 4 + 1] >> 1) & 1);
+        }
+
+        // Y channel (B bit 1) - C_B
+        if (streams.Y.length < MRP.BITS.C_B) {
+          streams.Y.push((data[actualIdx * 4 + 2] >> 1) & 1);
+        }
+
+        pixelIdx++;
+      }
+
+      // Decode values
+      const xcviRaw = fromBits(streams.R);
+      const xcviCorrected = hammingDecode(xcviRaw);
+
+      return {
+        success: true,
+        header: {
+          magic: header[0],
+          version: header[1] >> 4,
+          flags: header[1] & 0x0F,
+          coherence: header[2] / 255,
+          crc: header[3]
+        },
+        states: {
+          XCVI: xcviCorrected,
+          XCVII: fromBits(streams.G),
+          XCVIII: fromBits(streams.B),
+          XCIX: fromBits(streams.C),
+          C_A: bitsToHex(streams.M),
+          C_B: bitsToHex(streams.Y),
+          C_FULL: bitsToHex([...streams.M, ...streams.Y])
+        },
+        streams,
+        bitsDecoded: {
+          R: streams.R.length,
+          G: streams.G.length,
+          B: streams.B.length,
+          C: streams.C.length,
+          M: streams.M.length,
+          Y: streams.Y.length
+        }
+      };
+    }
+
+    // ============================================
+    // UI FUNCTIONS
+    // ============================================
+
+    let sourceImage = null;
+    let encodedImage = null;
+    let decodeSourceImage = null;
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      document.querySelector(`.tab:nth-child(${tabId === 'encode' ? 1 : tabId === 'decode' ? 2 : 3})`).classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
+
+    function loadSourceImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          sourceImage = img;
+          const canvas = document.getElementById('sourceCanvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          document.getElementById('sourceHint').style.display = 'none';
+          document.getElementById('encodeBtn').disabled = false;
+
+          showStatus('encodeStatus', `Image loaded: ${img.width}×${img.height} (${img.width * img.height} pixels)`, 'info');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadDecodeImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          decodeSourceImage = img;
+          const canvas = document.getElementById('decodeCanvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          document.getElementById('decodeHint').style.display = 'none';
+          document.getElementById('decodeBtn').disabled = false;
+
+          showStatus('decodeStatus', `Image loaded: ${img.width}×${img.height}`, 'info');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function encodeImage() {
+      if (!sourceImage) return;
+
+      const canvas = document.getElementById('sourceCanvas');
+      const ctx = canvas.getContext('2d');
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      // Get input values
+      const states = {
+        XCVI: parseInt(document.getElementById('dataXCVI').value) || Math.floor(Math.random() * 128),
+        XCVII: parseInt(document.getElementById('dataXCVII').value) || Math.floor(Math.random() * 1024),
+        XCVIII: parseInt(document.getElementById('dataXCVIII').value) || Math.floor(Math.random() * 131072),
+        XCIX: parseInt(document.getElementById('dataXCIX').value) || Math.floor(Math.random() * 16),
+        coherence: 0.15
+      };
+
+      // Generate C data from hex or random
+      const cHex = document.getElementById('dataC').value;
+      if (cHex) {
+        const cBits = hexToBits(cHex, 664);
+        states.C_A = cBits.slice(0, 332);
+        states.C_B = cBits.slice(332);
+      } else {
+        states.C_A = new Array(332).fill(0).map(() => Math.round(Math.random()));
+        states.C_B = new Array(332).fill(0).map(() => Math.round(Math.random()));
+      }
+
+      try {
+        const result = encodeStates(imageData, states);
+
+        // Draw encoded image
+        const outputCanvas = document.getElementById('outputCanvas');
+        outputCanvas.width = canvas.width;
+        outputCanvas.height = canvas.height;
+        const outCtx = outputCanvas.getContext('2d');
+        outCtx.putImageData(imageData, 0, 0);
+
+        document.getElementById('outputHint').style.display = 'none';
+        document.getElementById('downloadBtn').disabled = false;
+        encodedImage = outputCanvas;
+
+        // Update stats
+        updateChannelStats(result.bitsEncoded);
+        updateBitStream(result.streams);
+
+        showStatus('encodeStatus',
+          `Encoded ${result.totalBits} bits successfully! ` +
+          `XCVI=${states.XCVI}, XCVII=${states.XCVII}, XCVIII=${states.XCVIII}, XCIX=${states.XCIX}`,
+          'success'
+        );
+      } catch (error) {
+        showStatus('encodeStatus', error.message, 'error');
+      }
+    }
+
+    function decodeImage() {
+      if (!decodeSourceImage) return;
+
+      const canvas = document.getElementById('decodeCanvas');
+      const ctx = canvas.getContext('2d');
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      const result = decodeStates(imageData);
+
+      if (!result.success) {
+        showStatus('decodeStatus', `Decode failed: ${result.error}`, 'error');
+        document.getElementById('decodedResults').innerHTML = `<p class="muted">Failed to decode: ${result.error}</p>`;
+        return;
+      }
+
+      // Display results
+      const resultsHtml = `
+        <div style="margin-bottom:16px">
+          <span class="state-indicator state-xcvi">XCVI</span>
+          <span style="font-family:monospace;font-size:1.5rem;margin-left:8px">${result.states.XCVI}</span>
+          <span class="muted small" style="margin-left:8px">(7 bits, Hamming corrected)</span>
+        </div>
+        <div style="margin-bottom:16px">
+          <span class="state-indicator state-xcvii">XCVII</span>
+          <span style="font-family:monospace;font-size:1.5rem;margin-left:8px">${result.states.XCVII}</span>
+          <span class="muted small" style="margin-left:8px">(10 bits)</span>
+        </div>
+        <div style="margin-bottom:16px">
+          <span class="state-indicator state-xcviii">XCVIII</span>
+          <span style="font-family:monospace;font-size:1.5rem;margin-left:8px">${result.states.XCVIII}</span>
+          <span class="muted small" style="margin-left:8px">(17 bits)</span>
+        </div>
+        <div style="margin-bottom:16px">
+          <span class="state-indicator state-xcix">XCIX</span>
+          <span style="font-family:monospace;font-size:1.5rem;margin-left:8px">${result.states.XCIX}</span>
+          <span class="muted small" style="margin-left:8px">(4 bits)</span>
+        </div>
+        <div style="margin-bottom:16px">
+          <span class="state-indicator state-c">C</span>
+          <div style="font-family:monospace;font-size:0.8rem;word-break:break-all;margin-top:4px;padding:8px;background:rgba(0,0,0,.3);border-radius:4px">
+            ${result.states.C_FULL.slice(0, 80)}...
+          </div>
+          <span class="muted small">(664 bits)</span>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:rgba(255,215,0,.1);border-radius:8px">
+          <strong>Header:</strong> Magic=0x${result.header.magic.toString(16).toUpperCase()},
+          Version=${result.header.version},
+          Coherence=${result.header.coherence.toFixed(3)},
+          CRC=0x${result.header.crc.toString(16).toUpperCase()}
+        </div>
+      `;
+
+      document.getElementById('decodedResults').innerHTML = resultsHtml;
+      updateChannelStats(result.bitsDecoded);
+      updateBitStream(result.streams);
+
+      showStatus('decodeStatus', `Decoded ${Object.values(result.bitsDecoded).reduce((a,b)=>a+b,0) + 32} bits successfully!`, 'success');
+    }
+
+    function downloadEncoded() {
+      if (!encodedImage) return;
+
+      const link = document.createElement('a');
+      link.download = 'mrp-encoded.png';
+      link.href = encodedImage.toDataURL('image/png');
+      link.click();
+    }
+
+    function clearSource() {
+      sourceImage = null;
+      const canvas = document.getElementById('sourceCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.width = 0;
+      canvas.height = 0;
+      document.getElementById('sourceHint').style.display = 'block';
+      document.getElementById('encodeBtn').disabled = true;
+      document.getElementById('encodeStatus').innerHTML = '';
+    }
+
+    function showStatus(elementId, message, type) {
+      const el = document.getElementById(elementId);
+      el.innerHTML = `<div class="status status-${type}">${message}</div>`;
+    }
+
+    function updateChannelStats(bits) {
+      const maxBits = Math.max(...Object.values(MRP.BITS));
+      document.getElementById('statR').style.height = (bits.R / MRP.BITS.XCVI * 100) + '%';
+      document.getElementById('statG').style.height = (bits.G / MRP.BITS.XCVII * 100) + '%';
+      document.getElementById('statB').style.height = (bits.B / MRP.BITS.XCVIII * 100) + '%';
+      document.getElementById('statC').style.height = (bits.C / MRP.BITS.XCIX * 100) + '%';
+      document.getElementById('statM').style.height = (bits.M / MRP.BITS.C_A * 100) + '%';
+      document.getElementById('statY').style.height = (bits.Y / MRP.BITS.C_B * 100) + '%';
+    }
+
+    function updateBitStream(streams) {
+      const allBits = [
+        ...streams.R.map(b => `<span class="bit-${b}" style="color:var(--red)">${b}</span>`),
+        ...streams.G.map(b => `<span class="bit-${b}" style="color:var(--green)">${b}</span>`),
+        ...streams.B.map(b => `<span class="bit-${b}" style="color:var(--blue)">${b}</span>`),
+        ...streams.C.map(b => `<span class="bit-${b}" style="color:var(--cyan)">${b}</span>`),
+        ...streams.M.slice(0, 50).map(b => `<span class="bit-${b}" style="color:var(--magenta)">${b}</span>`),
+        '...',
+        ...streams.Y.slice(0, 50).map(b => `<span class="bit-${b}" style="color:var(--yellow)">${b}</span>`),
+        '...'
+      ];
+
+      document.getElementById('bitStream').innerHTML = allBits.join('');
+    }
+
+    // Drag and drop support
+    ['sourceContainer', 'decodeContainer'].forEach(id => {
+      const container = document.getElementById(id);
+
+      container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        container.classList.add('drag-over');
+      });
+
+      container.addEventListener('dragleave', () => {
+        container.classList.remove('drag-over');
+      });
+
+      container.addEventListener('drop', (e) => {
+        e.preventDefault();
+        container.classList.remove('drag-over');
+
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          const input = document.getElementById(id === 'sourceContainer' ? 'sourceInput' : 'decodeInput');
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          input.files = dt.files;
+          input.dispatchEvent(new Event('change'));
+        }
+      });
+
+      container.addEventListener('click', () => {
+        const inputId = id === 'sourceContainer' ? 'sourceInput' : 'decodeInput';
+        document.getElementById(inputId).click();
+      });
+    });
+
+    // Initialize
+    console.log('MRP Encoder/Decoder initialized');
+    console.log(`Total bits: ${MRP.TOTAL_BITS}, Minimum pixels: ${MRP.MIN_PIXELS}`);
+  </script>
+</body>
+</html>
