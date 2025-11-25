@@ -1,24 +1,28 @@
 # Group Visualizer — Minimal WebSocket Server
 
-This is a tiny WS broadcast server to test `group_visualizer.html` locally.
+This folder contains two servers to test `group_visualizer.html` locally.
 
 ## Quick Start
 
-1) Install dependency:
+1) Install dependencies:
 
 ```
-npm i ws
+npm i express ws timesync
 ```
 
-2) Run the server (default port 8080):
+2a) Minimal WS relay (no rooms, no timesync):
 
 ```
 node Aces-Brain-Thoughts/examples/ws-server.js
-# or
-PORT=8080 node Aces-Brain-Thoughts/examples/ws-server.js
 ```
 
-3) Open the visualizer (via any static server) and set WS URL to:
+2b) Full rhythm server (rooms + timesync endpoint):
+
+```
+node Aces-Brain-Thoughts/examples/rhythm-server.js
+```
+
+3) Open the visualizer (via any static server) and set WS URL to, for example:
 
 ```
 ws://localhost:8080
@@ -44,7 +48,7 @@ Outbound/inbound JSON payload:
 - `orderParam`: mean-field coherence r in [0, 1]
 - `from`: optional sender id
 
-The server relays `phase_update` messages to all other connected clients.
+Servers relay messages to other clients. `rhythm-server.js` supports rooms via `?room=NAME` and exposes `/timesync` for full clock alignment.
 
 ## Optional Time Info
 
@@ -53,5 +57,4 @@ The server exposes:
 - `GET /now` → `{ now: <ms epoch> }` (basic clock peek)
 - `GET /healthz` → health JSON
 
-For true NTP-style sync, pair this WS with a proper `timesync` server. The visualizer can still function without it; messages are rendered as they arrive.
-
+For NTP-style sync, use `rhythm-server.js` and point the visualizer at `ws://localhost:8080/rhythm-sync?room=latest` (or another room). The visualizer derives the `/timesync` URL from the WS host automatically on Connect.

@@ -21,7 +21,11 @@
   <a class="btn" href="index.html">← Back</a>
   <div class="bar">
     <span class="small">Name</span><input id="name" placeholder="anon" value="anon" />
-    <span class="small">WS</span><input id="wsUrl" placeholder="ws://localhost:8000/rhythm-sync" style="min-width:320px"/>
+    <span class="small">WS</span><input id="wsUrl" placeholder="ws://localhost:8080/rhythm-sync" value="ws://localhost:8080/rhythm-sync" style="min-width:320px"/>
+    <span class="small">Version</span>
+    <select id="verSelect" style="background:#0f1116;color:var(--ink);border:1px solid var(--rule);padding:6px 8px;border-radius:8px">
+      <option value="latest" selected>latest</option>
+    </select>
     <button id="connect">Connect</button>
     <span class="small">Phase</span><input id="phase" type="range" min="0" max="6.283" step="0.001" value="0" style="flex:1"/>
   </div>
@@ -32,12 +36,49 @@
     function resize(){ canvas.width=innerWidth; canvas.height=innerHeight-50; } addEventListener('resize', resize); resize();
     const peers=new Map(); // id -> {name, phase, r, t}
     let myId=Math.random().toString(36).slice(2), myName='anon', myPhase=0;
+    let tsInstance=null; // timesync instance per-WS
     const bc = new BroadcastChannel('wumbo-pulsecheck');
-    bc.onmessage = ev => { const m=ev.data; if(m && m.type==='pulse'){ peers.set(m.id,{name:m.name, phase:m.phase, r:m.r, t:Date.now()}); } };
-    function bcSend(){ bc.postMessage({ type:'pulse', id:myId, name:myName, phase:myPhase, r:1.0 }); }
+    function now(){ return tsInstance ? tsInstance.now() : Date.now(); }
+    bc.onmessage = ev => { const m=ev.data; if(m && m.type==='pulse'){ peers.set(m.id,{name:m.name, phase:m.phase, r:m.r, t:now()}); } };
+    function bcSend(){ bc.postMessage({ type:'pulse', id:myId, name:myName, phase:myPhase, r:1.0, timestamp: now() }); }
 
     let ws=null; function wsSend(payload){ if(ws && ws.readyState===1) ws.send(JSON.stringify(payload)); }
-    function connectWS(url){ try{ ws=new WebSocket(url); ws.onopen=()=>console.log('WS open'); ws.onmessage=(ev)=>{ try{ const m=JSON.parse(ev.data); if(m.type==='pulse'){ peers.set(m.id,{name:m.name, phase:m.phase, r:m.r, t:Date.now()}); } }catch{} }; ws.onclose=()=>console.log('WS closed'); }catch(e){ console.warn('WS connect failed', e); } }
+    function connectWS(urlStr){
+      try{
+        const u = new URL(urlStr);
+        // Init timesync pointing to same host
+        const tsUrl = `${u.protocol === 'wss:' ? 'https:' : 'http:'}//${u.host}/timesync`;
+        tsInstance = timesync.create({ server: tsUrl, interval: 10000 });
+        ws=new WebSocket(u.toString()); ws.onopen=()=>console.log('WS open');
+        ws.onmessage=(ev)=>{ try{ const m=JSON.parse(ev.data);
+            if(m.type==='pulse' || m.type==='phase_update'){
+              const pid = m.id || m.from || Math.random().toString(36).slice(2);
+              peers.set(pid,{name:(m.name||pid.slice(0,4)), phase:Number(m.phase)||0, r:Number(m.r||m.orderParam)||0, t: now()});
+            }
+          }catch(_e){} };
+        ws.onclose=()=>console.log('WS closed');
+      }catch(e){ console.warn('WS connect failed', e); }
+    }
+
+    // Populate version selector and bind to WS URL as room param
+    async function initVersionSelector(){
+      try{
+        const sel=document.getElementById('verSelect');
+        const res = await fetch('language/index.json', {cache:'no-cache'});
+        if(!res.ok) return;
+        const idx = await res.json();
+        // reset
+        sel.innerHTML = '';
+        const optLatest=document.createElement('option'); optLatest.value='latest'; optLatest.textContent='latest'; sel.appendChild(optLatest);
+        (idx.versions||[]).forEach(v=>{ const opt=document.createElement('option'); opt.value=v.version; opt.textContent=v.version; sel.appendChild(opt); });
+      }catch(_e){ /* no-op */ }
+    }
+    initVersionSelector();
+    document.getElementById('verSelect').addEventListener('change', ()=>{
+      const ver=document.getElementById('verSelect').value||'latest';
+      const base=(document.getElementById('wsUrl').value||'ws://localhost:8080/rhythm-sync').replace(/\?.*$/,'');
+      document.getElementById('wsUrl').value = base + `?room=${encodeURIComponent(ver)}`;
+    });
 
     document.getElementById('connect').onclick=()=>{ const url = (document.getElementById('wsUrl').value||'').trim(); myName = (document.getElementById('name').value||'anon').trim(); if(url){ connectWS(url); } };
     document.getElementById('phase').oninput=(e)=>{ myPhase=parseFloat(e.target.value); };
