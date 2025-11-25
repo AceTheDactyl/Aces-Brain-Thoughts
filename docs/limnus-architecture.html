@@ -1113,8 +1113,10 @@
 
                     // Self-referential B evolution (error correction)
                     // B tries to restore stability: ∂J_B/∂t = -β·(J_B - target) + correction
-                    const target_B = muField.mrp.parity_ok ? 1.0 : 0.5;
-                    const dJB_dt = -SACRED.beta * (J_B - target_B) + SACRED.alpha * (1 - this.mrp.parity);
+                    // Use previous frame's parity_ok (safe reference)
+                    const target_B = this.mrp.parity_ok ? 1.0 : 0.5;
+                    const prevParity = this.mrp.parity || 0;
+                    const dJB_dt = -SACRED.beta * (J_B - target_B) + SACRED.alpha * (1 - prevParity);
 
                     B_sum += J_B;
                     p.mrp_B = J_B;
@@ -2850,6 +2852,22 @@
                 document.getElementById('k-indicator').textContent = '· · ·';
                 document.getElementById('k-val').textContent = '—';
                 document.getElementById('k-label').style.color = 'rgba(150,130,110,0.3)';
+                // Reset MRP channel displays
+                document.getElementById('mrp-r-bar').textContent = '· · · · ·';
+                document.getElementById('mrp-r-val').textContent = '—';
+                document.getElementById('mrp-g-bar').textContent = '· · · · ·';
+                document.getElementById('mrp-g-val').textContent = '—';
+                document.getElementById('mrp-b-bar').textContent = '· · · · ·';
+                document.getElementById('mrp-b-val').textContent = '—';
+                document.getElementById('parity-indicator').textContent = '· · ·';
+                document.getElementById('parity-val').textContent = '—';
+                document.getElementById('parity-label').style.color = 'rgba(150,130,110,0.3)';
+                // Reset self-referential displays
+                document.getElementById('j-total-bar').textContent = '· · · · ·';
+                document.getElementById('j-total-val').textContent = '—';
+                document.getElementById('w-bar').textContent = '· · · · ·';
+                document.getElementById('w-val').textContent = '—';
+                document.getElementById('w-label').style.color = 'rgba(150,130,110,0.3)';
                 return;
             }
 
