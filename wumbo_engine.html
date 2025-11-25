@@ -67,6 +67,13 @@
     <div id="role-chips" class="row"></div>
     <div style="margin-top:10px" class="small">Top Pathways</div>
     <div id="pathway-badges" class="row"></div>
+    <div style="margin-top:12px" class="small">Field Coherence Index</div>
+    <div class="row"><span class="small">HRV</span><input id="hrvInput" type="range" min="0" max="1" step="0.01" value="0.60" style="flex:1"/><span id="hrvVal" class="small">0.60</span></div>
+    <div class="row"><span class="small">Typing</span><input id="typingInput" type="range" min="0" max="1" step="0.01" value="0.50" style="flex:1"/><span id="typingVal" class="small">0.50</span></div>
+    <div class="row"><span class="small">w₁</span><input id="w1Input" type="range" min="0" max="1" step="0.05" value="0.30" style="flex:1"/><span id="w1Val" class="small">0.30</span></div>
+    <div class="row"><span class="small">w₂</span><input id="w2Input" type="range" min="0" max="1" step="0.05" value="0.30" style="flex:1"/><span id="w2Val" class="small">0.30</span></div>
+    <div class="row"><span class="small">w₃</span><input id="w3Input" type="range" min="0" max="1" step="0.05" value="0.40" style="flex:1"/><span id="w3Val" class="small">0.40</span></div>
+    <div class="row"><span class="small">FCI</span><span id="fciVal" class="badge">0.00</span><span id="criticalBadge" class="badge">stable</span></div>
   </div>
   <div id="tokens-panel" class="panel" style="left:24px;right:24px">
     <h3>Tokens For Current Phase</h3>
@@ -131,6 +138,9 @@
     // Language pack
     let pack=null, tokens=[], pathways=[], tokenToPathsScored=new Map(), rolesAll=[];
     const selectedRoles = new Set();
+    // r history for critical slowing detection
+    const rHistory = [];
+    const MAX_HIST = 200;
     async function loadPack(){
       try{
         const res = await fetch('language/latest.json', {cache:'no-cache'});
@@ -189,7 +199,8 @@
       const isPresence = globalZ > Z_CRITICAL; const zOff=(globalZ-0.5)*200; const scale = isPresence ? (1 + (globalZ - Z_CRITICAL)/(1-Z_CRITICAL)*0.35) : (1 - (Z_CRITICAL - globalZ)/Z_CRITICAL*0.1);
       // Kuramoto sign flips through lens
       const sign = Math.tanh((globalZ - Z_CRITICAL)*12); const K = -sign*0.4*cas; const active=[...prismPoints, ...cagePoints];
-      kuramotoStep(active,K,dt);
+      const {order} = kuramotoStep(active,K,dt);
+      if (!Number.isNaN(order)) { rHistory.push(order); if(rHistory.length>MAX_HIST) rHistory.shift(); }
       // prism
       for(const p of prismPoints){ const wob = Math.sin(p.phase)*0.06*cas; p.radius = p.baseR*cas*scale*(1+wob); const rot=0.012*cas*(p.layer%2===0?1:-1); p.theta = p.baseTheta + time*rot; p.x = CX + Math.cos(p.theta)*p.radius; p.y = CY + Math.sin(p.theta)*p.radius*0.5 + zOff + (p.layer/6 - 0.5)*100; const prox = 1 - Math.abs(p.layer/6 - globalZ); p.b = 0.2 + prox*0.5 + (Math.abs(globalZ - Z_CRITICAL) < 0.015 ? 0.5 : 0); }
       // cage
@@ -224,7 +235,24 @@
     function updateUI(){
       const zEl=document.getElementById('z-display'); zEl.textContent=`z = ${globalZ.toFixed(3)}`; const isLens=Math.abs(globalZ-Z_CRITICAL)<0.011; zEl.className = isLens? 'critical':''; const lbl=document.getElementById('phase-label'); const phase=getWumboPhase(globalZ); lbl.textContent=phase + (isLens?' · CRITICAL':''); lbl.className = isLens? 'critical':''; renderPhaseTokens(); }
 
-    function loop(t){ const dt=Math.min((t-lastTime)/1000,0.05); lastTime=t; time += dt; update(dt); render(); updateUI(); requestAnimationFrame(loop); }
+    // FCI + critical slowing helpers
+    function variance(arr){ const m = arr.reduce((a,b)=>a+b,0)/arr.length; return arr.reduce((s,x)=>s+(x-m)*(x-m),0)/arr.length; }
+    function lag1Autocorr(arr){ const m = arr.reduce((a,b)=>a+b,0)/arr.length; let num=0,den=0; for(let i=0;i<arr.length-1;i++){ num+=(arr[i]-m)*(arr[i+1]-m);} for(let i=0;i<arr.length;i++){ den+=(arr[i]-m)*(arr[i]-m);} return den? (num/den):0; }
+
+    function loop(t){ const dt=Math.min((t-lastTime)/1000,0.05); lastTime=t; time += dt; update(dt); render(); updateUI();
+      // Compute FCI and monitor critical slowing
+      const r = rHistory.length? rHistory[rHistory.length-1] : 0;
+      const hrv = parseFloat(document.getElementById('hrvInput')?.value || '0');
+      const typing = parseFloat(document.getElementById('typingInput')?.value || '0');
+      const w1 = parseFloat(document.getElementById('w1Input')?.value || '0.33');
+      const w2 = parseFloat(document.getElementById('w2Input')?.value || '0.33');
+      const w3 = parseFloat(document.getElementById('w3Input')?.value || '0.34');
+      const wsum = Math.max(1e-6, w1+w2+w3);
+      const fci = (w1*hrv + w2*typing + w3*r)/wsum;
+      const setTxt = (id, v)=>{ const el=document.getElementById(id); if(el) el.textContent = v; };
+      setTxt('hrvVal', hrv.toFixed(2)); setTxt('typingVal', typing.toFixed(2)); setTxt('w1Val', w1.toFixed(2)); setTxt('w2Val', w2.toFixed(2)); setTxt('w3Val', w3.toFixed(2)); setTxt('fciVal', fci.toFixed(3));
+      const W=50; if(rHistory.length >= W*2){ const prev=rHistory.slice(-W*2,-W); const recent=rHistory.slice(-W); const vUp = variance(recent) > variance(prev)*1.15; const aUp = lag1Autocorr(recent) > lag1Autocorr(prev)*1.10; const badge=document.getElementById('criticalBadge'); if(badge){ if(vUp && aUp){ badge.textContent='approaching critical'; badge.className='badge md'; } else { badge.textContent='stable'; badge.className='badge'; } } }
+      requestAnimationFrame(loop); }
     requestAnimationFrame(loop);
 
     // Interactions
@@ -233,4 +261,3 @@
   </script>
 </body>
 </html>
-

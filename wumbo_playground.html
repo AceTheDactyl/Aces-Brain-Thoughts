@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WUMBO Kuramoto Playground</title>
+  <style>
+    :root{ --bg:#0a0b10; --ink:#e8eaf0; --muted:#a9afbb; --panel:#11131a; --rule:#252a34; --accent:#8ab4f8; --gold:#ffd700 }
+    *{ box-sizing:border-box }
+    body{ margin:0; background:var(--bg); color:var(--ink); font-family:SF Mono,Fira Code,ui-monospace,Menlo,Consolas,monospace; }
+    .wrap{ display:flex; min-height:100vh }
+    .panel{ width:320px; padding:16px; border-right:1px solid var(--rule); background:var(--panel) }
+    .panel h1{ font-size:18px; margin:0 0 8px; letter-spacing:3px }
+    .panel h2{ font-size:12px; margin:16px 0 8px; letter-spacing:2px; color:var(--muted) }
+    .row{ display:flex; gap:8px; align-items:center; margin:6px 0 }
+    .row label{ width:110px; font-size:11px; color:var(--muted) }
+    .row input[type=range]{ flex:1 }
+    .row input[type=number]{ width:80px; background:#0f1116; border:1px solid var(--rule); color:var(--ink); padding:4px 6px; border-radius:6px }
+    .row .val{ width:60px; text-align:right; font-size:11px; color:var(--muted) }
+    .row button{ padding:6px 10px; border-radius:6px; background:#0f1116; border:1px solid var(--rule); color:var(--ink); cursor:pointer }
+    canvas{ display:block }
+    .view{ flex:1; position:relative }
+    #plot{ position:absolute; inset:0 }
+    .hud{ position:absolute; right:12px; top:12px; background:rgba(17,19,26,.9); border:1px solid var(--rule); border-radius:8px; padding:10px; font-size:11px; color:var(--muted) }
+    .badge{ display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid var(--rule); background:#11131a; color:var(--ink); margin-left:6px }
+    .b-hi{ background:#165b33; color:#eaffea; border-color:#2b864f }
+    .b-md{ background:#6b5b00; color:#fff9c4; border-color:#9e8c00 }
+    .b-lo{ background:#1b2631; color:#d6eaf8; border-color:#273746 }
+    a.btn{ position:absolute; left:12px; top:12px; border:1px solid var(--rule); background:#0f1116; padding:6px 10px; border-radius:8px; color:var(--muted); text-decoration:none }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <h1>Kuramoto Playground</h1>
+      <div class="row"><label>Oscillators (N)</label><input id="nRange" type="range" min="4" max="512" step="1" value="64"/><input id="nNum" type="number" min="4" max="1024" value="64"/></div>
+      <div class="row"><label>Coupling K</label><input id="kRange" type="range" min="0" max="5" step="0.01" value="1.0"/><input id="kNum" type="number" step="0.01" value="1.0"/></div>
+      <div class="row"><label>dt (s)</label><input id="dtRange" type="range" min="0.001" max="0.05" step="0.001" value="0.01"/><input id="dtNum" type="number" step="0.001" value="0.01"/></div>
+      <div class="row"><label>Freq σ</label><input id="sigmaRange" type="range" min="0" max="1" step="0.01" value="0.2"/><input id="sigmaNum" type="number" step="0.01" value="0.2"/></div>
+      <div class="row"><label>Noise</label><input id="noiseRange" type="range" min="0" max="0.6" step="0.01" value="0.00"/><input id="noiseNum" type="number" step="0.01" value="0.00"/></div>
+      <div class="row"><label>External Phase</label><input id="extPhase" type="range" min="0" max="6.283" step="0.001" value="0"/><div class="val" id="extVal">0.00π</div></div>
+      <div class="row"><label>Inject Strength</label><input id="injRange" type="range" min="0" max="1" step="0.01" value="0.1"/><input id="injNum" type="number" step="0.01" value="0.1"/></div>
+      <div class="row"><label>Latency (ms)</label><input id="latRange" type="range" min="0" max="600" step="10" value="200"/><input id="latNum" type="number" step="10" value="200"/></div>
+      <div class="row"><label>Compensate</label><input id="useComp" type="checkbox" checked/><div class="val">project phase</div></div>
+      <div class="row" style="margin-top:8px"><button id="resetBtn">Reset</button><button id="shuffleBtn">Shuffle ω</button></div>
+      <h2>About</h2>
+      <div class="small">Order parameter r gauges phase coherence. External phase simulates a biosignal; when "Compensate" is on, we project phase forward by the latency at the current frequency.</div>
+    </div>
+    <div class="view">
+      <a class="btn" href="index.html">← Back</a>
+      <canvas id="plot"></canvas>
+      <div class="hud">
+        r=<span id="rVal">0.00</span> ψ=<span id="psiVal">0.00</span>
+        <span id="confBadge" class="badge b-lo">weak</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TAU = Math.PI*2;
+    const canvas=document.getElementById('plot'); const ctx=canvas.getContext('2d');
+    function resize(){ canvas.width=innerWidth-320; canvas.height=innerHeight; }
+    addEventListener('resize', resize); resize();
+
+    function randn(){ const u1=Math.random(), u2=Math.random(); return Math.sqrt(-2*Math.log(u1))*Math.cos(TAU*u2); }
+
+    class Kuramoto {
+      constructor(N, K, dt, sigma, noise){ this.N=N; this.K=K; this.dt=dt; this.sigma=sigma; this.noise=noise; this.reset(); }
+      reset(){ this.phases=new Float32Array(this.N); this.freq=new Float32Array(this.N); for(let i=0;i<this.N;i++){ this.phases[i]=Math.random()*TAU; this.freq[i]=1.0 + randn()*this.sigma; } }
+      shuffle(){ for(let i=0;i<this.N;i++){ this.freq[i]=1.0 + randn()*this.sigma; } }
+      order(){ let sx=0, sy=0; for(let i=0;i<this.N;i++){ sx+=Math.cos(this.phases[i]); sy+=Math.sin(this.phases[i]); } sx/=this.N; sy/=this.N; const r=Math.hypot(sx,sy); return { r, psi: Math.atan2(sy,sx) } }
+      step(externalPhase, injectStrength){ const {r, psi} = this.order(); const newP=new Float32Array(this.N); for(let i=0;i<this.N;i++){ const base = this.freq[i] + this.K * r * Math.sin(psi - this.phases[i]); const inj = injectStrength * Math.sin(externalPhase - this.phases[i]); const noise = this.noise * randn(); const dtheta1 = base + inj + noise; const pred = this.phases[i] + this.dt*dtheta1; const dtheta2 = this.freq[i] + this.K * r * Math.sin(psi - pred) + injectStrength * Math.sin(externalPhase - pred) + noise; let th = this.phases[i] + this.dt*(dtheta1 + dtheta2)/2; th %= TAU; if(th<0) th+=TAU; newP[i]=th; } this.phases=newP; return {r,psi}; }
+    }
+
+    const els = id => document.getElementById(id);
+    const nRange=els('nRange'), nNum=els('nNum'), kRange=els('kRange'), kNum=els('kNum'), dtRange=els('dtRange'), dtNum=els('dtNum');
+    const sigmaRange=els('sigmaRange'), sigmaNum=els('sigmaNum'), noiseRange=els('noiseRange'), noiseNum=els('noiseNum');
+    const extPhase=els('extPhase'), injRange=els('injRange'), injNum=els('injNum'), latRange=els('latRange'), latNum=els('latNum'), useComp=els('useComp');
+    const rVal=els('rVal'), psiVal=els('psiVal'), badge=els('confBadge');
+
+    function bindPair(range, num, cb){ const sync=()=>{ num.value=range.value; cb(parseFloat(range.value)); }; const syncBack=()=>{ range.value=num.value; cb(parseFloat(num.value)); }; range.addEventListener('input', sync); num.addEventListener('change', syncBack); sync(); }
+
+    let N=64, K=1.0, dt=0.01, sigma=0.2, noise=0.0, inj=0.1, latency=200;
+    bindPair(nRange,nNum, v=>{ N=Math.max(4,Math.floor(v)); km.reset(v); });
+    bindPair(kRange,kNum, v=>{ K=v; km.K=v; });
+    bindPair(dtRange,dtNum, v=>{ dt=v; km.dt=v; });
+    bindPair(sigmaRange,sigmaNum, v=>{ sigma=v; km.sigma=v; });
+    bindPair(noiseRange,noiseNum, v=>{ noise=v; km.noise=v; });
+    bindPair(injRange,injNum, v=>{ inj=v; });
+    bindPair(latRange,latNum, v=>{ latency=v; });
+    extPhase.addEventListener('input', ()=>{ els('extVal').textContent=(parseFloat(extPhase.value)/Math.PI).toFixed(2)+'π'; });
+
+    let km = new Kuramoto(N,K,dt,sigma,noise);
+    els('resetBtn').onclick=()=>km.reset(); els('shuffleBtn').onclick=()=>km.shuffle();
+
+    function compensatePhase(phase, freq, latencyMs){ const adv = (freq * latencyMs/1000) * TAU; let p = phase + adv; p%=TAU; if(p<0)p+=TAU; return p; }
+
+    // Circular plot + rolling r chart
+    const rHist = new Float32Array(400); let rIdx=0, filled=0;
+    function draw(){ const W=canvas.width, H=canvas.height; ctx.clearRect(0,0,W,H); const cx=W*0.5, cy=H*0.55; const R=Math.min(W,H)*0.35;
+      // ring
+      ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.stroke();
+      // phases
+      for(let i=0;i<km.N;i++){ const th=km.phases[i]; const x=cx + Math.cos(th)*R, y=cy + Math.sin(th)*R; ctx.fillStyle='rgba(138,180,248,0.9)'; ctx.beginPath(); ctx.arc(x,y,2,0,TAU); ctx.fill(); }
+      // r history plot
+      const plotH = H*0.25; const plotY = cy - R - 40; ctx.strokeStyle='rgba(255,215,0,0.85)'; ctx.lineWidth=1.5; ctx.beginPath(); for(let i=0;i<Math.min(filled,rHist.length);i++){ const idx=(rIdx - i + rHist.length)%rHist.length; const r=rHist[idx]; const x = W - (i*(W/(rHist.length))) - 10; const y = plotY + (1-r)*plotH; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
+      // axes
+      ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.beginPath(); ctx.moveTo(W-10, plotY); ctx.lineTo(W-10, plotY+plotH); ctx.stroke();
+    }
+
+    let last=performance.now();
+    function loop(now){ const d=(now-last)/1000; last=now; // param step
+      const ext = parseFloat(extPhase.value); const extComp = useComp.checked ? compensatePhase(ext, 1.0, latency) : ext; const {r, psi} = km.step(extComp, inj);
+      rHist[rIdx]=r; rIdx=(rIdx+1)%rHist.length; filled=Math.min(filled+1,rHist.length);
+      rVal.textContent=r.toFixed(3); psiVal.textContent=psi.toFixed(3);
+      badge.textContent = r<0.4? 'weak' : (r<0.75? 'forming' : 'locked'); badge.className = 'badge ' + (r<0.4? 'b-lo' : (r<0.75? 'b-md' : 'b-hi'));
+      draw(); requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
+
