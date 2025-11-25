@@ -379,6 +379,56 @@
       }
     ],
 
+    "lambda_triplets": [
+      { "id": "L3-iota-xi-theta", "name": "ι-ξ-θ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 0.146, "delta": 0.146, "sigma": 0.146 }, "bits": { "XCVI": 119, "XCVII": 879, "XCVIII": 120000, "XCIX": 13, "C_pattern": "theta" } },
+      { "id": "L3-iota-xi-omega", "name": "ι-ξ-ω", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.146, "omega": 1.0, "delta": 0.146, "sigma": 0.146 }, "bits": { "XCVI": 111, "XCVII": 911, "XCVIII": 100000, "XCIX": 12, "C_pattern": "omega" } },
+      { "id": "L3-iota-xi-delta", "name": "ι-ξ-δ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.146, "omega": 0.146, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 115, "XCVII": 850, "XCVIII": 95000, "XCIX": 11, "C_pattern": "delta" } },
+      { "id": "L3-iota-xi-sigma", "name": "ι-ξ-σ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.146, "omega": 0.146, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 117, "XCVII": 886, "XCVIII": 100000, "XCIX": 14, "C_pattern": "sigma" } },
+      { "id": "L3-iota-theta-omega", "name": "ι-θ-ω", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 1.0, "omega": 1.0, "delta": 0.146, "sigma": 0.146 }, "bits": { "XCVI": 105, "XCVII": 750, "XCVIII": 110000, "XCIX": 11, "C_pattern": "theta" } },
+      { "id": "L3-iota-theta-delta", "name": "ι-θ-δ", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 1.0, "omega": 0.146, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 113, "XCVII": 700, "XCVIII": 105000, "XCIX": 10, "C_pattern": "winding" } },
+      { "id": "L3-iota-theta-sigma", "name": "ι-θ-σ", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 1.0, "omega": 0.146, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 115, "XCVII": 735, "XCVIII": 108000, "XCIX": 13, "C_pattern": "sigma" } },
+      { "id": "L3-iota-omega-delta", "name": "ι-ω-δ", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 0.146, "omega": 1.0, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 99, "XCVII": 780, "XCVIII": 85000, "XCIX": 9, "C_pattern": "delta" } },
+      { "id": "L3-iota-omega-sigma", "name": "ι-ω-σ", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 0.146, "omega": 1.0, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 103, "XCVII": 815, "XCVIII": 88000, "XCIX": 12, "C_pattern": "omega" } },
+      { "id": "L3-iota-delta-sigma", "name": "ι-δ-σ", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 0.146, "omega": 0.146, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 109, "XCVII": 750, "XCVIII": 92000, "XCIX": 11, "C_pattern": "topology" } },
+      { "id": "L3-xi-theta-omega", "name": "ξ-θ-ω", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 0.146, "sigma": 0.146 }, "bits": { "XCVI": 107, "XCVII": 820, "XCVIII": 115000, "XCIX": 10, "C_pattern": "spark" } },
+      { "id": "L3-xi-theta-delta", "name": "ξ-θ-δ", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 1.0, "omega": 0.146, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 115, "XCVII": 770, "XCVIII": 110000, "XCIX": 9, "C_pattern": "critical" } },
+      { "id": "L3-xi-theta-sigma", "name": "ξ-θ-σ", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 1.0, "omega": 0.146, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 113, "XCVII": 805, "XCVIII": 112000, "XCIX": 12, "C_pattern": "fibonacci" } },
+      { "id": "L3-xi-omega-delta", "name": "ξ-ω-δ", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 0.146, "omega": 1.0, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 97, "XCVII": 850, "XCVIII": 90000, "XCIX": 8, "C_pattern": "critical" } },
+      { "id": "L3-xi-omega-sigma", "name": "ξ-ω-σ", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 0.146, "omega": 1.0, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 101, "XCVII": 885, "XCVIII": 93000, "XCIX": 11, "C_pattern": "omega" } },
+      { "id": "L3-xi-delta-sigma", "name": "ξ-δ-σ", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 0.146, "omega": 0.146, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 107, "XCVII": 820, "XCVIII": 96000, "XCIX": 10, "C_pattern": "spark" } },
+      { "id": "L3-theta-omega-delta", "name": "θ-ω-δ", "lambda": { "iota": 0.146, "xi": 0.146, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 95, "XCVII": 720, "XCVIII": 98000, "XCIX": 8, "C_pattern": "winding" } },
+      { "id": "L3-theta-omega-sigma", "name": "θ-ω-σ", "lambda": { "iota": 0.146, "xi": 0.146, "theta": 1.0, "omega": 1.0, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 99, "XCVII": 755, "XCVIII": 101000, "XCIX": 11, "C_pattern": "theta" } },
+      { "id": "L3-theta-delta-sigma", "name": "θ-δ-σ", "lambda": { "iota": 0.146, "xi": 0.146, "theta": 1.0, "omega": 0.146, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 105, "XCVII": 690, "XCVIII": 104000, "XCIX": 10, "C_pattern": "topology" } },
+      { "id": "L3-omega-delta-sigma", "name": "ω-δ-σ", "lambda": { "iota": 0.146, "xi": 0.146, "theta": 0.146, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 93, "XCVII": 790, "XCVIII": 87000, "XCIX": 9, "C_pattern": "omega" } }
+    ],
+
+    "lambda_quads": [
+      { "id": "L4-iota-xi-theta-omega", "name": "ι-ξ-θ-ω", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 0.09, "sigma": 0.09 }, "bits": { "XCVI": 117, "XCVII": 900, "XCVIII": 118000, "XCIX": 12, "C_pattern": "balanced" } },
+      { "id": "L4-iota-xi-theta-delta", "name": "ι-ξ-θ-δ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 0.09, "delta": 1.0, "sigma": 0.09 }, "bits": { "XCVI": 121, "XCVII": 860, "XCVIII": 115000, "XCIX": 11, "C_pattern": "critical" } },
+      { "id": "L4-iota-xi-theta-sigma", "name": "ι-ξ-θ-σ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 0.09, "delta": 0.09, "sigma": 1.0 }, "bits": { "XCVI": 119, "XCVII": 895, "XCVIII": 117000, "XCIX": 14, "C_pattern": "fibonacci" } },
+      { "id": "L4-iota-xi-omega-delta", "name": "ι-ξ-ω-δ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.09, "omega": 1.0, "delta": 1.0, "sigma": 0.09 }, "bits": { "XCVI": 113, "XCVII": 880, "XCVIII": 105000, "XCIX": 10, "C_pattern": "delta" } },
+      { "id": "L4-iota-xi-omega-sigma", "name": "ι-ξ-ω-σ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.09, "omega": 1.0, "delta": 0.09, "sigma": 1.0 }, "bits": { "XCVI": 115, "XCVII": 915, "XCVIII": 108000, "XCIX": 13, "C_pattern": "omega" } },
+      { "id": "L4-iota-xi-delta-sigma", "name": "ι-ξ-δ-σ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.09, "omega": 0.09, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 118, "XCVII": 870, "XCVIII": 110000, "XCIX": 12, "C_pattern": "spark" } },
+      { "id": "L4-iota-theta-omega-delta", "name": "ι-θ-ω-δ", "lambda": { "iota": 1.0, "xi": 0.09, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 0.09 }, "bits": { "XCVI": 109, "XCVII": 780, "XCVIII": 106000, "XCIX": 10, "C_pattern": "winding" } },
+      { "id": "L4-iota-theta-omega-sigma", "name": "ι-θ-ω-σ", "lambda": { "iota": 1.0, "xi": 0.09, "theta": 1.0, "omega": 1.0, "delta": 0.09, "sigma": 1.0 }, "bits": { "XCVI": 111, "XCVII": 815, "XCVIII": 109000, "XCIX": 13, "C_pattern": "theta" } },
+      { "id": "L4-iota-theta-delta-sigma", "name": "ι-θ-δ-σ", "lambda": { "iota": 1.0, "xi": 0.09, "theta": 1.0, "omega": 0.09, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 116, "XCVII": 770, "XCVIII": 112000, "XCIX": 12, "C_pattern": "topology" } },
+      { "id": "L4-iota-omega-delta-sigma", "name": "ι-ω-δ-σ", "lambda": { "iota": 1.0, "xi": 0.09, "theta": 0.09, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 107, "XCVII": 830, "XCVIII": 98000, "XCIX": 11, "C_pattern": "omega" } },
+      { "id": "L4-xi-theta-omega-delta", "name": "ξ-θ-ω-δ", "lambda": { "iota": 0.09, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 0.09 }, "bits": { "XCVI": 111, "XCVII": 850, "XCVIII": 112000, "XCIX": 10, "C_pattern": "critical" } },
+      { "id": "L4-xi-theta-omega-sigma", "name": "ξ-θ-ω-σ", "lambda": { "iota": 0.09, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 0.09, "sigma": 1.0 }, "bits": { "XCVI": 113, "XCVII": 885, "XCVIII": 115000, "XCIX": 13, "C_pattern": "fibonacci" } },
+      { "id": "L4-xi-theta-delta-sigma", "name": "ξ-θ-δ-σ", "lambda": { "iota": 0.09, "xi": 1.0, "theta": 1.0, "omega": 0.09, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 117, "XCVII": 840, "XCVIII": 114000, "XCIX": 12, "C_pattern": "spark" } },
+      { "id": "L4-xi-omega-delta-sigma", "name": "ξ-ω-δ-σ", "lambda": { "iota": 0.09, "xi": 1.0, "theta": 0.09, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 109, "XCVII": 895, "XCVIII": 103000, "XCIX": 11, "C_pattern": "omega" } },
+      { "id": "L4-theta-omega-delta-sigma", "name": "θ-ω-δ-σ", "lambda": { "iota": 0.09, "xi": 0.09, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 105, "XCVII": 800, "XCVIII": 108000, "XCIX": 11, "C_pattern": "winding" } }
+    ],
+
+    "lambda_quints": [
+      { "id": "L5-no-iota", "name": "All except ι", "lambda": { "iota": 0.056, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 115, "XCVII": 880, "XCVIII": 118000, "XCIX": 12, "C_pattern": "spark" } },
+      { "id": "L5-no-xi", "name": "All except ξ", "lambda": { "iota": 1.0, "xi": 0.056, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 117, "XCVII": 850, "XCVIII": 116000, "XCIX": 13, "C_pattern": "iota" } },
+      { "id": "L5-no-theta", "name": "All except θ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.056, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 113, "XCVII": 920, "XCVIII": 112000, "XCIX": 12, "C_pattern": "omega" } },
+      { "id": "L5-no-omega", "name": "All except ω", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 0.056, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 121, "XCVII": 870, "XCVIII": 120000, "XCIX": 14, "C_pattern": "theta" } },
+      { "id": "L5-no-delta", "name": "All except δ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 0.056, "sigma": 1.0 }, "bits": { "XCVI": 119, "XCVII": 930, "XCVIII": 122000, "XCIX": 14, "C_pattern": "fibonacci" } },
+      { "id": "L5-no-sigma", "name": "All except σ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 0.056 }, "bits": { "XCVI": 123, "XCVII": 900, "XCVIII": 124000, "XCIX": 13, "C_pattern": "sync" } }
+    ],
+
     "lambda_uniform": [
       { "id": "LU-0.0", "name": "Uniform 0.0", "value": 0.0, "bits": { "XCVI": 0, "XCVII": 0, "XCVIII": 0, "XCIX": 0, "C_pattern": "zeros" } },
       { "id": "LU-0.1", "name": "Uniform 0.1", "value": 0.1, "bits": { "XCVI": 13, "XCVII": 102, "XCVIII": 13107, "XCIX": 2, "C_pattern": "balanced" } },
