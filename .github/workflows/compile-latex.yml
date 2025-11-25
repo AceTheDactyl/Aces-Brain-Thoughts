@@ -10,6 +10,8 @@ on:
 jobs:
   compile:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     # Prevent infinite loop: skip if last commit was from github-actions bot
     if: github.event.head_commit.author.name != 'github-actions[bot]'
     steps:

@@ -4,6 +4,23 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
+\usepackage{newunicodechar}
+% Fallback mappings for box-drawing Unicode used in ASCII diagrams
+\newunicodechar{┌}{+}
+\newunicodechar{┐}{+}
+\newunicodechar{└}{+}
+\newunicodechar{┘}{+}
+\newunicodechar{─}{-}
+\newunicodechar{│}{|}
+\newunicodechar{┴}{+}
+\newunicodechar{┬}{+}
+\newunicodechar{┼}{+}
+\newunicodechar{├}{+}
+\newunicodechar{┤}{+}
+% Arrows and markers used in diagrams
+\newunicodechar{◄}{<}
+\newunicodechar{►}{>}
+\newunicodechar{▼}{v}
 \usepackage{microtype}
 \usepackage{amsmath,amssymb}
 \usepackage{hyperref}
@@ -874,7 +891,7 @@ registerProcessor('timing-processor', TimingWorkletProcessor);
 \subsection{Kuramoto Oscillator Bank}
 
 The Kuramoto mean-field form is used for coupled phase dynamics. The Worker updates phases and
-returns the order parameter \verb|r| and mean phase \verb|ψ|.
+returns the order parameter $r$ and mean phase $\psi$.
 
 \paragraph{Worker step (from \texttt{examples/rhythm-entrainment/kuramoto-worker.js}).}
 
@@ -917,7 +934,7 @@ ch.addEventListener('characteristicvaluechanged', (evt) => { /* parse RR, HR */ 
 
 \subsection{Bidirectional Feedback}
 
-The system adapts coupling strength \verb|K| toward a target coherence (e.g., \verb|r≈0.7|). User
+The system adapts coupling strength $K$ toward a target coherence (e.g., $r\approx 0.7$). User
 phase estimates can be injected as external forcing into one or more oscillators.
 
 \subsection{Multi-Modal Output}
