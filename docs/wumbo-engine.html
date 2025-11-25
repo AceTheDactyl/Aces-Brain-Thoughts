@@ -25,6 +25,7 @@
     .mapping{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
     .mapping .card h4{margin:0 0 6px}
     .small{font-size:.92rem}
+    .reason{margin-top:6px;color:var(--muted);font-size:.9rem}
     a{color:var(--accent);text-decoration:none}
     a:hover{text-decoration:underline}
     @media print{
@@ -305,6 +306,16 @@
       }
     }
 
+    function meaningFor(anchor){
+      switch(anchor){
+        case '#machines': return 'execution/clock';
+        case '#fields': return 'sensory/context';
+        case '#operations': return 'transformation/sculpt';
+        case '#states': return 'regime/alignment';
+        default: return anchor.replace('#','');
+      }
+    }
+
     GROUPS.forEach(g => {
       for(let i=g.range[0]; i<=g.range[1]; i++){
         const div = document.createElement('div');
@@ -326,6 +337,9 @@
         const top2 = document.createElement('a'); top2.className='chip'; top2.href = `${APL}${anchors[1]}`; top2.textContent = labelFor(anchors[1]);
         chips.appendChild(top1); chips.appendChild(top2);
         div.appendChild(chips);
+        const r = document.createElement('div'); r.className='reason';
+        r.textContent = `Why: ${meaningFor(anchors[0])} → ${meaningFor(anchors[1])}`;
+        div.appendChild(r);
         container.appendChild(div);
       }
     });
