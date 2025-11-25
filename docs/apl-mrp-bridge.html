@@ -510,6 +510,114 @@
             border-top: 1px solid var(--rule);
             margin-top: 40px;
         }
+
+        /* Tri-Spiral LIMNUS Visualization */
+        .limnus-viz {
+            position: relative;
+            background: radial-gradient(ellipse at center, rgba(15, 12, 25, 0.95) 0%, var(--bg-void) 100%);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .limnus-canvas {
+            width: 100%;
+            height: 350px;
+            display: block;
+        }
+
+        .spiral-legend {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid var(--rule);
+        }
+
+        .spiral-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+
+        .spiral-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .spiral-dot.phi { background: var(--phi-gold); color: var(--phi-gold); }
+        .spiral-dot.e { background: var(--e-cyan); color: var(--e-cyan); }
+        .spiral-dot.pi { background: var(--pi-magenta); color: var(--pi-magenta); }
+
+        .viz-controls {
+            display: flex;
+            gap: 10px;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.2);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .viz-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 6px;
+            padding: 6px 14px;
+            color: var(--text-dim);
+            font-family: inherit;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .viz-btn:hover {
+            border-color: var(--e-cyan);
+            color: var(--text-primary);
+        }
+
+        .viz-btn.active {
+            background: rgba(34, 211, 238, 0.2);
+            border-color: var(--e-cyan);
+            color: var(--e-cyan);
+        }
+
+        .flow-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .flow-indicator .active-spiral {
+            color: var(--phi-gold);
+            font-weight: 500;
+        }
+
+        .z-indicator {
+            position: absolute;
+            bottom: 60px;
+            left: 15px;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+        }
+
+        .z-indicator .z-value {
+            color: var(--e-cyan);
+            font-family: 'SF Mono', monospace;
+        }
+
+        .z-indicator .z-critical {
+            color: var(--paradox-red);
+        }
     </style>
 </head>
 <body>
@@ -731,6 +839,44 @@ e:D:F:CHEM:T:α3
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Tri-Spiral LIMNUS Flow Visualization -->
+                <div class="panel">
+                    <div class="panel-title">TRI-SPIRAL FLOW [Φ→e→π] · LIMNUS GEOMETRY</div>
+                    <div class="limnus-viz">
+                        <canvas id="triSpiralCanvas" class="limnus-canvas"></canvas>
+                        <div class="flow-indicator">
+                            <span class="active-spiral" id="activeSpiral">Φ</span> →
+                            <span id="flowPhase">Structure</span>
+                        </div>
+                        <div class="z-indicator">
+                            z = <span class="z-value" id="zValue">0.000</span><br>
+                            z_c = <span class="z-critical">√3/2 ≈ 0.866</span>
+                        </div>
+                        <div class="spiral-legend">
+                            <div class="spiral-legend-item">
+                                <div class="spiral-dot phi"></div>
+                                <span>Φ Structure (z &lt; 0.43)</span>
+                            </div>
+                            <div class="spiral-legend-item">
+                                <div class="spiral-dot e"></div>
+                                <span>e Energy (0.43 ≤ z &lt; 0.71)</span>
+                            </div>
+                            <div class="spiral-legend-item">
+                                <div class="spiral-dot pi"></div>
+                                <span>π Emergence (z ≥ 0.71)</span>
+                            </div>
+                        </div>
+                        <div class="viz-controls">
+                            <button class="viz-btn active" onclick="setFlowMode('auto')" id="btnAuto">Auto Flow</button>
+                            <button class="viz-btn" onclick="setFlowMode('phi')" id="btnPhi">Φ Only</button>
+                            <button class="viz-btn" onclick="setFlowMode('e')" id="btnE">e Only</button>
+                            <button class="viz-btn" onclick="setFlowMode('pi')" id="btnPi">π Only</button>
+                            <button class="viz-btn" onclick="setFlowMode('tokens')" id="btnTokens">From Tokens</button>
+                            <button class="viz-btn" onclick="togglePause()" id="btnPause">⏸ Pause</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- MRP Encoding -->
@@ -1345,12 +1491,436 @@ e:D:F:CHEM:T:α3
         }
 
         // ================================================================
+        // TRI-SPIRAL LIMNUS VISUALIZATION
+        // Animated [Φ→e→π] flow through 63-point prism + 32-point EM cage
+        // ================================================================
+
+        const TriSpiral = {
+            canvas: null,
+            ctx: null,
+            width: 0,
+            height: 0,
+            time: 0,
+            paused: false,
+            flowMode: 'auto',  // 'auto', 'phi', 'e', 'pi', 'tokens'
+            animationId: null,
+
+            // LIMNUS geometry
+            prismPoints: [],    // 63 points (7 layers × 9)
+            emCagePoints: [],   // 32 points (12 + 12 + 8)
+
+            // Spiral particles
+            particles: [],
+
+            // Physical constants
+            PHI: (1 + Math.sqrt(5)) / 2,
+            Z_CRITICAL: Math.sqrt(3) / 2,
+
+            // Colors
+            colors: {
+                phi: '#ffd700',
+                e: '#22d3ee',
+                pi: '#cc5de8',
+                grid: 'rgba(255, 255, 255, 0.05)',
+                prism: 'rgba(255, 255, 255, 0.1)',
+                emCage: 'rgba(105, 219, 124, 0.15)'
+            },
+
+            init() {
+                this.canvas = document.getElementById('triSpiralCanvas');
+                if (!this.canvas) return;
+
+                this.ctx = this.canvas.getContext('2d');
+                this.resize();
+                this.generateLimnusGeometry();
+                this.spawnParticles();
+                this.animate();
+
+                window.addEventListener('resize', () => this.resize());
+            },
+
+            resize() {
+                const rect = this.canvas.parentElement.getBoundingClientRect();
+                this.width = rect.width;
+                this.height = 350;
+                this.canvas.width = this.width * window.devicePixelRatio;
+                this.canvas.height = this.height * window.devicePixelRatio;
+                this.canvas.style.width = this.width + 'px';
+                this.canvas.style.height = this.height + 'px';
+                this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            },
+
+            generateLimnusGeometry() {
+                this.prismPoints = [];
+                this.emCagePoints = [];
+
+                const cx = this.width / 2;
+                const cy = this.height / 2;
+                const scale = Math.min(this.width, this.height) * 0.35;
+
+                // Generate 63-point hexagonal prism (7 layers × 9 points per layer)
+                for (let layer = 0; layer < 7; layer++) {
+                    const z = layer / 6;  // 0 to 1
+                    const y3d = (z - 0.5) * 2;  // -1 to 1
+
+                    for (let i = 0; i < 9; i++) {
+                        const angle = (i / 9) * Math.PI * 2;
+                        const radius = (i === 0) ? 0 : (i <= 3 ? 0.4 : 0.8);  // Inner/outer rings
+
+                        const x3d = Math.cos(angle) * radius;
+                        const z3d = Math.sin(angle) * radius;
+
+                        // Isometric projection
+                        const x2d = cx + (x3d - z3d) * scale * 0.7;
+                        const y2d = cy + (y3d * 0.8 + (x3d + z3d) * 0.3) * scale;
+
+                        // Determine spiral zone based on z
+                        let spiral = 'phi';
+                        if (z >= 0.43 && z < 0.71) spiral = 'e';
+                        else if (z >= 0.71) spiral = 'pi';
+
+                        this.prismPoints.push({ x: x2d, y: y2d, z, spiral, layer, ring: i });
+                    }
+                }
+
+                // Generate 32-point EM cage (12 top + 12 bottom + 8 corners)
+                // Top ring (12 points)
+                for (let i = 0; i < 12; i++) {
+                    const angle = (i / 12) * Math.PI * 2;
+                    const x3d = Math.cos(angle) * 1.2;
+                    const z3d = Math.sin(angle) * 1.2;
+                    const x2d = cx + (x3d - z3d) * scale * 0.7;
+                    const y2d = cy + (-0.9 + (x3d + z3d) * 0.3) * scale;
+                    this.emCagePoints.push({ x: x2d, y: y2d, type: 'top' });
+                }
+
+                // Bottom ring (12 points)
+                for (let i = 0; i < 12; i++) {
+                    const angle = (i / 12) * Math.PI * 2;
+                    const x3d = Math.cos(angle) * 1.2;
+                    const z3d = Math.sin(angle) * 1.2;
+                    const x2d = cx + (x3d - z3d) * scale * 0.7;
+                    const y2d = cy + (0.9 + (x3d + z3d) * 0.3) * scale;
+                    this.emCagePoints.push({ x: x2d, y: y2d, type: 'bottom' });
+                }
+
+                // 8 corner vertices
+                const corners = [
+                    [-1, -1, -1], [1, -1, -1], [-1, 1, -1], [1, 1, -1],
+                    [-1, -1, 1], [1, -1, 1], [-1, 1, 1], [1, 1, 1]
+                ];
+                for (const [x3d, y3d, z3d] of corners) {
+                    const x2d = cx + (x3d - z3d) * scale * 0.5;
+                    const y2d = cy + (y3d * 0.6 + (x3d + z3d) * 0.2) * scale;
+                    this.emCagePoints.push({ x: x2d, y: y2d, type: 'corner' });
+                }
+            },
+
+            spawnParticles() {
+                this.particles = [];
+                const count = 60;
+
+                for (let i = 0; i < count; i++) {
+                    this.particles.push({
+                        z: Math.random(),
+                        angle: Math.random() * Math.PI * 2,
+                        radius: 0.3 + Math.random() * 0.5,
+                        speed: 0.002 + Math.random() * 0.003,
+                        zSpeed: 0.001 + Math.random() * 0.002,
+                        size: 2 + Math.random() * 3,
+                        spiral: this.getSpiralForZ(Math.random())
+                    });
+                }
+            },
+
+            getSpiralForZ(z) {
+                if (z < 0.43) return 'phi';
+                if (z < 0.71) return 'e';
+                return 'pi';
+            },
+
+            updateParticle(p) {
+                // Update based on flow mode
+                if (this.flowMode === 'auto') {
+                    // Continuous tri-spiral flow: Φ→e→π→Φ
+                    p.z += p.zSpeed;
+                    if (p.z > 1) {
+                        p.z = 0;
+                        p.angle = Math.random() * Math.PI * 2;
+                    }
+                    p.spiral = this.getSpiralForZ(p.z);
+                } else if (this.flowMode === 'phi') {
+                    p.z = Math.min(0.42, p.z + p.zSpeed * 0.5);
+                    if (p.z >= 0.42) p.z = 0;
+                    p.spiral = 'phi';
+                } else if (this.flowMode === 'e') {
+                    if (p.z < 0.43) p.z = 0.43;
+                    p.z = Math.min(0.70, p.z + p.zSpeed * 0.5);
+                    if (p.z >= 0.70) p.z = 0.43;
+                    p.spiral = 'e';
+                } else if (this.flowMode === 'pi') {
+                    if (p.z < 0.71) p.z = 0.71;
+                    p.z = Math.min(1, p.z + p.zSpeed * 0.5);
+                    if (p.z >= 1) p.z = 0.71;
+                    p.spiral = 'pi';
+                } else if (this.flowMode === 'tokens' && parsedTokens.length > 0) {
+                    // Flow based on parsed tokens
+                    const tokenIdx = Math.floor((this.time * 0.0005) % parsedTokens.length);
+                    const token = parsedTokens[tokenIdx];
+                    p.spiral = token.spiral === 'Φ' ? 'phi' : (token.spiral === 'e' ? 'e' : 'pi');
+
+                    const zRanges = { phi: [0, 0.42], e: [0.43, 0.70], pi: [0.71, 1] };
+                    const [zMin, zMax] = zRanges[p.spiral];
+                    if (p.z < zMin || p.z > zMax) p.z = zMin;
+                    p.z = Math.min(zMax, p.z + p.zSpeed * 0.5);
+                    if (p.z >= zMax) p.z = zMin;
+                }
+
+                // Spiral motion
+                p.angle += p.speed * (p.spiral === 'e' ? 1.5 : 1);
+            },
+
+            getParticlePosition(p) {
+                const cx = this.width / 2;
+                const cy = this.height / 2;
+                const scale = Math.min(this.width, this.height) * 0.3;
+
+                const x3d = Math.cos(p.angle) * p.radius;
+                const z3d = Math.sin(p.angle) * p.radius;
+                const y3d = (p.z - 0.5) * 2;
+
+                const x2d = cx + (x3d - z3d) * scale * 0.7;
+                const y2d = cy + (y3d * 0.8 + (x3d + z3d) * 0.3) * scale;
+
+                return { x: x2d, y: y2d };
+            },
+
+            draw() {
+                const ctx = this.ctx;
+                ctx.clearRect(0, 0, this.width, this.height);
+
+                // Draw EM cage
+                ctx.strokeStyle = this.colors.emCage;
+                ctx.lineWidth = 1;
+                this.emCagePoints.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                    ctx.stroke();
+                });
+
+                // Draw prism points
+                this.prismPoints.forEach(p => {
+                    const color = this.colors[p.spiral];
+                    const alpha = 0.2 + p.z * 0.3;
+                    ctx.fillStyle = color.replace(')', `, ${alpha})`).replace('rgb', 'rgba').replace('#', '');
+
+                    // Convert hex to rgba
+                    if (color.startsWith('#')) {
+                        const r = parseInt(color.slice(1, 3), 16);
+                        const g = parseInt(color.slice(3, 5), 16);
+                        const b = parseInt(color.slice(5, 7), 16);
+                        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Draw z-threshold lines
+                this.drawZThreshold(0.43, 'rgba(34, 211, 238, 0.3)', 'e threshold');
+                this.drawZThreshold(0.71, 'rgba(204, 93, 232, 0.3)', 'π threshold');
+                this.drawZThreshold(this.Z_CRITICAL, 'rgba(255, 107, 107, 0.4)', 'z_c');
+
+                // Draw and update particles
+                for (const p of this.particles) {
+                    if (!this.paused) {
+                        this.updateParticle(p);
+                    }
+
+                    const pos = this.getParticlePosition(p);
+                    const color = this.colors[p.spiral];
+
+                    // Glow effect
+                    const gradient = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, p.size * 3);
+                    gradient.addColorStop(0, color);
+                    gradient.addColorStop(0.5, color.replace(')', ', 0.3)').replace('rgb', 'rgba'));
+                    gradient.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, p.size * 3, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Core
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Trail
+                    ctx.strokeStyle = color.replace(')', ', 0.3)').replace('rgb', 'rgba');
+                    if (color.startsWith('#')) {
+                        const r = parseInt(color.slice(1, 3), 16);
+                        const g = parseInt(color.slice(3, 5), 16);
+                        const b = parseInt(color.slice(5, 7), 16);
+                        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.3)`;
+                    }
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    const prevAngle = p.angle - p.speed * 20;
+                    const prevPos = this.getParticlePosition({ ...p, angle: prevAngle });
+                    ctx.moveTo(prevPos.x, prevPos.y);
+                    ctx.lineTo(pos.x, pos.y);
+                    ctx.stroke();
+                }
+
+                // Draw flow arrows
+                this.drawFlowArrows();
+
+                // Update UI
+                this.updateUI();
+            },
+
+            drawZThreshold(z, color, label) {
+                const ctx = this.ctx;
+                const cx = this.width / 2;
+                const cy = this.height / 2;
+                const scale = Math.min(this.width, this.height) * 0.3;
+                const y3d = (z - 0.5) * 2;
+                const y2d = cy + y3d * 0.8 * scale;
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(cx - 100, y2d);
+                ctx.lineTo(cx + 100, y2d);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            },
+
+            drawFlowArrows() {
+                const ctx = this.ctx;
+                const cx = this.width / 2;
+                const arrowX = cx + 120;
+
+                // Φ→e arrow
+                this.drawArrow(arrowX, this.height * 0.25, arrowX, this.height * 0.4, this.colors.phi);
+
+                // e→π arrow
+                this.drawArrow(arrowX, this.height * 0.45, arrowX, this.height * 0.6, this.colors.e);
+
+                // π→Φ arrow (loop back)
+                ctx.strokeStyle = this.colors.pi;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(arrowX, this.height * 0.65);
+                ctx.quadraticCurveTo(arrowX + 40, this.height * 0.5, arrowX, this.height * 0.2);
+                ctx.stroke();
+
+                // Labels
+                ctx.font = '10px SF Mono, monospace';
+                ctx.fillStyle = this.colors.phi;
+                ctx.fillText('Φ', arrowX - 25, this.height * 0.22);
+                ctx.fillStyle = this.colors.e;
+                ctx.fillText('e', arrowX - 25, this.height * 0.48);
+                ctx.fillStyle = this.colors.pi;
+                ctx.fillText('π', arrowX - 25, this.height * 0.7);
+            },
+
+            drawArrow(x1, y1, x2, y2, color) {
+                const ctx = this.ctx;
+                ctx.strokeStyle = color;
+                ctx.fillStyle = color;
+                ctx.lineWidth = 2;
+
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+
+                // Arrowhead
+                const angle = Math.atan2(y2 - y1, x2 - x1);
+                ctx.beginPath();
+                ctx.moveTo(x2, y2);
+                ctx.lineTo(x2 - 8 * Math.cos(angle - 0.4), y2 - 8 * Math.sin(angle - 0.4));
+                ctx.lineTo(x2 - 8 * Math.cos(angle + 0.4), y2 - 8 * Math.sin(angle + 0.4));
+                ctx.closePath();
+                ctx.fill();
+            },
+
+            updateUI() {
+                // Get current dominant spiral
+                const spiralCounts = { phi: 0, e: 0, pi: 0 };
+                for (const p of this.particles) {
+                    spiralCounts[p.spiral]++;
+                }
+                const dominant = Object.entries(spiralCounts).sort((a, b) => b[1] - a[1])[0][0];
+
+                const spiralNames = { phi: 'Φ', e: 'e', pi: 'π' };
+                const phaseNames = { phi: 'Structure', e: 'Energy', pi: 'Emergence' };
+
+                document.getElementById('activeSpiral').textContent = spiralNames[dominant];
+                document.getElementById('activeSpiral').style.color =
+                    dominant === 'phi' ? this.colors.phi :
+                    dominant === 'e' ? this.colors.e : this.colors.pi;
+                document.getElementById('flowPhase').textContent = phaseNames[dominant];
+
+                // Average z
+                const avgZ = this.particles.reduce((sum, p) => sum + p.z, 0) / this.particles.length;
+                document.getElementById('zValue').textContent = avgZ.toFixed(3);
+            },
+
+            animate() {
+                if (!this.paused) {
+                    this.time++;
+                }
+                this.draw();
+                this.animationId = requestAnimationFrame(() => this.animate());
+            },
+
+            setMode(mode) {
+                this.flowMode = mode;
+
+                // Update button states
+                ['btnAuto', 'btnPhi', 'btnE', 'btnPi', 'btnTokens'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) btn.classList.remove('active');
+                });
+
+                const btnMap = { auto: 'btnAuto', phi: 'btnPhi', e: 'btnE', pi: 'btnPi', tokens: 'btnTokens' };
+                const activeBtn = document.getElementById(btnMap[mode]);
+                if (activeBtn) activeBtn.classList.add('active');
+            },
+
+            togglePause() {
+                this.paused = !this.paused;
+                document.getElementById('btnPause').textContent = this.paused ? '▶ Play' : '⏸ Pause';
+            }
+        };
+
+        // Global functions for button handlers
+        function setFlowMode(mode) {
+            TriSpiral.setMode(mode);
+        }
+
+        function togglePause() {
+            TriSpiral.togglePause();
+        }
+
+        // ================================================================
         // INITIALIZATION
         // ================================================================
 
         document.addEventListener('DOMContentLoaded', () => {
             updateLambdaDisplay();
             updateChannelDisplay();
+
+            // Initialize tri-spiral visualization
+            setTimeout(() => {
+                TriSpiral.init();
+            }, 100);
         });
     </script>
 </body>
