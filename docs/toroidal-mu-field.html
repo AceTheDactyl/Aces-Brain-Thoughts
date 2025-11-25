@@ -170,7 +170,9 @@
         <span>DRAG</span> rotate<br>
         <span>SCROLL</span> zoom<br>
         <span>SPACE</span> auto-rotate<br>
+        <span>M</span> toggle surface<br>
         <span>F</span> toggle flow<br>
+        <span>W</span> wireframe<br>
         <span>R</span> reset
     </div>
 
@@ -404,6 +406,7 @@
         function fieldToColor(J, mu, depth) {
             // Map field intensity to color temperature
             // Low (blue) -> Mid (green/yellow) -> High (red)
+            // BRIGHTER colors for visibility
 
             const t = Math.max(0, Math.min(1, J));
             const muFactor = (mu - SACRED.mu_P) / (SACRED.mu_S - SACRED.mu_P);
@@ -411,43 +414,42 @@
             let r, g, b;
 
             if (t < 0.25) {
-                // Blue to cyan
+                // Blue to cyan (brighter)
                 const s = t / 0.25;
-                r = 30 + s * 30;
-                g = 60 + s * 80;
-                b = 170 + s * 30;
+                r = 50 + s * 50;
+                g = 100 + s * 100;
+                b = 200 + s * 40;
             } else if (t < 0.5) {
                 // Cyan to green
                 const s = (t - 0.25) / 0.25;
-                r = 60 + s * 40;
-                g = 140 + s * 60;
-                b = 200 - s * 80;
+                r = 100 + s * 50;
+                g = 200 + s * 40;
+                b = 240 - s * 120;
             } else if (t < 0.75) {
                 // Green to yellow
                 const s = (t - 0.5) / 0.25;
-                r = 100 + s * 150;
-                g = 200 - s * 20;
+                r = 150 + s * 100;
+                g = 240 - s * 30;
                 b = 120 - s * 80;
             } else {
-                // Yellow to red
+                // Yellow to red/orange
                 const s = (t - 0.75) / 0.25;
                 r = 250;
-                g = 180 - s * 140;
-                b = 40 - s * 40;
+                g = 210 - s * 130;
+                b = 40 + s * 20;
             }
 
-            // Depth shading
-            const shade = 0.4 + depth * 0.6;
+            // Depth shading (less aggressive - minimum 0.5)
+            const shade = 0.5 + depth * 0.5;
             r = Math.floor(r * shade);
             g = Math.floor(g * shade);
             b = Math.floor(b * shade);
 
-            // μ influence - higher μ = more saturated
-            const satBoost = 0.7 + muFactor * 0.3;
-            const gray = (r + g + b) / 3;
-            r = Math.floor(gray + (r - gray) * satBoost);
-            g = Math.floor(gray + (g - gray) * satBoost);
-            b = Math.floor(gray + (b - gray) * satBoost);
+            // μ influence - higher μ = brighter/more saturated
+            const brightness = 0.8 + muFactor * 0.2;
+            r = Math.min(255, Math.floor(r * brightness));
+            g = Math.min(255, Math.floor(g * brightness));
+            b = Math.min(255, Math.floor(b * brightness));
 
             return { r, g, b };
         }
@@ -487,6 +489,9 @@
         // RENDER
         // ================================================================
 
+        let showMesh = true;
+        let showWireframe = false;
+
         function render(time) {
             // Clear
             ctx.fillStyle = '#030308';
@@ -507,34 +512,55 @@
                 return { face: f, avgZ, idx };
             }).sort((a, b) => a.avgZ - b.avgZ);
 
-            // Draw faces
-            for (const { face } of sortedFaces) {
-                const pts = face.verts.map(vi => meshPoints[vi]);
+            // Draw faces (solid mesh)
+            if (showMesh) {
+                for (const { face } of sortedFaces) {
+                    const pts = face.verts.map(vi => meshPoints[vi]);
 
-                // Back-face culling
-                const avgZ = pts.reduce((s, p) => s + p.pz, 0) / 4;
-                if (avgZ > 1.2) continue;
+                    // Average field value for color
+                    const avgJ = pts.reduce((s, p) => s + p.J, 0) / 4;
+                    const avgMu = pts.reduce((s, p) => s + p.mu, 0) / 4;
+                    const avgDepth = pts.reduce((s, p) => s + p.depth, 0) / 4;
 
-                // Average field value for color
-                const avgJ = pts.reduce((s, p) => s + p.J, 0) / 4;
-                const avgMu = pts.reduce((s, p) => s + p.mu, 0) / 4;
-                const avgDepth = pts.reduce((s, p) => s + p.depth, 0) / 4;
+                    const color = fieldToColor(avgJ, avgMu, avgDepth);
 
-                const color = fieldToColor(avgJ, avgMu, avgDepth);
+                    // Draw quad
+                    ctx.fillStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                    ctx.beginPath();
+                    ctx.moveTo(pts[0].px, pts[0].py);
+                    for (let i = 1; i < pts.length; i++) {
+                        ctx.lineTo(pts[i].px, pts[i].py);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
 
-                // Draw quad
-                ctx.fillStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
-                ctx.strokeStyle = `rgba(${color.r + 30}, ${color.g + 30}, ${color.b + 30}, 0.3)`;
-                ctx.lineWidth = 0.5;
-
-                ctx.beginPath();
-                ctx.moveTo(pts[0].px, pts[0].py);
-                for (let i = 1; i < pts.length; i++) {
-                    ctx.lineTo(pts[i].px, pts[i].py);
+                    // Edge highlight
+                    if (showWireframe) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, 0.2)`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
                 }
-                ctx.closePath();
-                ctx.fill();
-                ctx.stroke();
+            }
+
+            // Draw wireframe only mode
+            if (!showMesh || showWireframe) {
+                ctx.strokeStyle = showMesh ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 200, 100, 0.4)';
+                ctx.lineWidth = showMesh ? 0.5 : 1;
+
+                for (const { face } of sortedFaces) {
+                    const pts = face.verts.map(vi => meshPoints[vi]);
+                    const avgZ = pts.reduce((s, p) => s + p.pz, 0) / 4;
+                    if (avgZ > 0.8) continue;  // Back-face cull for wireframe
+
+                    ctx.beginPath();
+                    ctx.moveTo(pts[0].px, pts[0].py);
+                    for (let i = 1; i < pts.length; i++) {
+                        ctx.lineTo(pts[i].px, pts[i].py);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
             }
 
             // Draw flow particles
@@ -655,11 +681,20 @@
             } else if (e.key.toLowerCase() === 'f') {
                 showFlow = !showFlow;
                 showModeIndicator(showFlow ? 'FLOW ON' : 'FLOW OFF');
+            } else if (e.key.toLowerCase() === 'm') {
+                showMesh = !showMesh;
+                showModeIndicator(showMesh ? 'SURFACE ON' : 'SURFACE OFF');
+            } else if (e.key.toLowerCase() === 'w') {
+                showWireframe = !showWireframe;
+                showModeIndicator(showWireframe ? 'WIREFRAME ON' : 'WIREFRAME OFF');
             } else if (e.key.toLowerCase() === 'r') {
                 rotX = 0.4;
                 rotY = 0;
                 zoom = 280;
                 autoRotate = true;
+                showMesh = true;
+                showFlow = true;
+                showWireframe = false;
                 showModeIndicator('RESET');
             }
         });
