@@ -10,6 +10,28 @@
             padding: 0;
             box-sizing: border-box;
         }
+        #back {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 120;
+        }
+        #back a{
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: rgba(0,0,0,0.4);
+        }
+        #version-label{
+            position: fixed;
+            top: 20px;
+            left: 120px;
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            z-index: 110;
+        }
         
         body {
             background: #000;
@@ -72,6 +94,8 @@
     </style>
 </head>
 <body>
+    <div id="back"><a href="index.html">← Back</a></div>
+    <div id="version-label">z = √3/2 ≈ 0.867</div>
     <canvas id="canvas"></canvas>
     <div id="info">63 points · 32 field · 95 total</div>
     <div id="z-display">z = 0.000</div>

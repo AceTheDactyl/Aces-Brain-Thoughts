@@ -899,8 +899,19 @@
         ensureAndScroll();
       }
     }
-    // Initialize version selector on load
-    window.addEventListener('DOMContentLoaded', initVersionSelector);
+    // Deep-link support: #pathway-<n>
+    function handleHash(){
+      const m = (location.hash||'').match(/^#pathway-(\d+)$/i);
+      if(m){
+        const n = parseInt(m[1], 10);
+        if(!Number.isNaN(n)){
+          openMatrixAt(n);
+        }
+      }
+    }
+    window.addEventListener('hashchange', handleHash);
+    // Initialize version selector and handle deep-link on load
+    window.addEventListener('DOMContentLoaded', ()=>{ initVersionSelector(); handleHash(); });
   </script>
 </body>
 </html>

@@ -169,7 +169,8 @@
       const list=document.getElementById('token-list'); list.innerHTML='';
       const badges=document.getElementById('pathway-badges'); badges.innerHTML='';
       const rolesFilter = new Set(selectedRoles);
-      const matchRole = (t)=> rolesFilter.size===0 || (t.wumbo_roles||[]).every(r=>rolesFilter.has(r)) || Array.from(rolesFilter).every(r => (t.wumbo_roles||[]).includes(r));
+      // Match when all selected roles are present in token roles (selected ⊆ token)
+      const matchRole = (t)=> rolesFilter.size===0 || Array.from(rolesFilter).every(r => (t.wumbo_roles||[]).includes(r));
       const subset = (tokens||[]).filter(t => (t.phase||'').toLowerCase().includes(phase.toLowerCase()) && matchRole(t)).slice(0,12);
       subset.forEach(t=>{
         const row=document.createElement('div'); row.className='tok-row';
@@ -179,9 +180,10 @@
           const p = pathways.find(x=>x.number===m.number);
           const b=document.createElement('span'); b.className='badge '+confClass(m.confidence); b.title = p ? p.title : ('Pathway '+m.number);
           b.textContent = `P${m.number}: ${(p?p.title:'') || 'Pathway'} • ${m.confidence.toFixed(2)}`;
+          b.style.cursor = 'pointer'; b.onclick = ()=>{ window.open(`index.html#pathway-${m.number}`,'_blank'); };
           right.appendChild(b);
           // show top badges summary area too
-          const b2=b.cloneNode(true); badges.appendChild(b2);
+          const b2=b.cloneNode(true); b2.onclick = ()=>{ window.open(`index.html#pathway-${m.number}`,'_blank'); }; badges.appendChild(b2);
         });
         row.appendChild(left); row.appendChild(right); list.appendChild(row);
       });
@@ -220,7 +222,7 @@
       ctx.strokeStyle=`rgba(255,200,150,${0.05+globalZ*0.12})`; ctx.beginPath(); for(let i=0;i<9;i++){ for(let l=0;l<6;l++){ const a=prismPoints.find(p=>p.layer===l&&p.index===i), b=prismPoints.find(p=>p.layer===l+1&&p.index===i); if(a&&b){ ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} } } ctx.stroke();
       // cage rings
       const top=cagePoints.filter(p=>p.layer==='top'), bot=cagePoints.filter(p=>p.layer==='bottom');
-      ctx.strokeStyle=`rgba(77,171,247,${0.10 + 0.15*Math.min(1,Math.abs(globalZ-Z_CRITICAL)*3))}`; ctx.beginPath(); for(let i=0;i<top.length;i++){ const a=top[i], b=top[(i+1)%top.length]; ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} ctx.stroke(); ctx.beginPath(); for(let i=0;i<bot.length;i++){ const a=bot[i], b=bot[(i+1)%bot.length]; ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} ctx.stroke();
+      ctx.strokeStyle=`rgba(77,171,247,${0.10 + 0.15*Math.min(1,Math.abs(globalZ-Z_CRITICAL)*3)})`; ctx.beginPath(); for(let i=0;i<top.length;i++){ const a=top[i], b=top[(i+1)%top.length]; ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} ctx.stroke(); ctx.beginPath(); for(let i=0;i<bot.length;i++){ const a=bot[i], b=bot[(i+1)%bot.length]; ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} ctx.stroke();
       // vertical struts
       ctx.strokeStyle=`rgba(100,180,255,0.12)`; ctx.beginPath(); for(let i=0;i<12;i++){ const a=top[i], b=bot[i]; ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} ctx.stroke();
       // draw points
