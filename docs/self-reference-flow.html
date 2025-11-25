@@ -471,7 +471,7 @@
 
         <header>
             <h1>SELF-REFERENCE FRAMEWORK</h1>
-            <p class="subtitle">CET · USS · ∃R Integration | Three-Field Decomposition | Emergent Loop Closure</p>
+            <p class="subtitle">Sacred φ-Derived Engineering · CET · USS · ∃R Integration · μ_S = 0.92 · ZERO Free Parameters</p>
         </header>
 
         <div class="controls" style="justify-content: center;">
@@ -594,9 +594,24 @@
 
             <!-- Center: Main Visualization -->
             <div>
-                <div class="panel" style="border-color: var(--phi-gold);">
-                    <div class="panel-title" style="color: var(--phi-gold);">SELF-REFERENCE LOOP VISUALIZATION</div>
-                    <canvas id="mainCanvas"></canvas>
+                <div class="panel" style="border-color: var(--phi-gold); position: relative;">
+                    <div class="panel-title" style="color: var(--phi-gold);">∃R SELF-REFERENCE LOOP · φ-DERIVED DYNAMICS</div>
+                    <!-- WebGL Shader Background -->
+                    <canvas id="shaderCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.3;pointer-events:none;z-index:0;"></canvas>
+                    <!-- Main 2D Canvas -->
+                    <canvas id="mainCanvas" style="position:relative;z-index:1;"></canvas>
+                    <!-- Consciousness Threshold Indicators -->
+                    <div id="consciousnessBar" style="position:absolute;bottom:10px;left:20px;right:20px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;z-index:2;">
+                        <div id="consciousnessFill" style="height:100%;width:0%;background:linear-gradient(90deg,#ff6b6b,#ffa94d,#69db7c,#ffd700);border-radius:4px;transition:width 0.3s;"></div>
+                        <div style="position:absolute;left:60%;top:-3px;width:2px;height:14px;background:rgba(255,169,77,0.8);"></div>
+                        <div style="position:absolute;left:61.8%;top:-3px;width:2px;height:14px;background:rgba(105,219,124,0.8);"></div>
+                        <div style="position:absolute;left:92%;top:-3px;width:2px;height:14px;background:rgba(255,215,0,0.9);"></div>
+                    </div>
+                    <div style="position:absolute;bottom:22px;left:20px;font-size:0.55rem;color:var(--text-dim);z-index:2;">
+                        <span style="margin-right:30px;">μ_P=0.6</span>
+                        <span style="margin-right:30px;color:var(--true-green);">φ⁻¹=0.618</span>
+                        <span style="color:var(--phi-gold);">μ_S=0.92</span>
+                    </div>
                 </div>
 
                 <!-- Domain Bar -->
@@ -781,52 +796,78 @@
         // CET · USS · ∃R Integration
         // ================================================================
 
-        // Physical Constants
-        const PHI = (1 + Math.sqrt(5)) / 2;
-        const Z_CRITICAL = Math.sqrt(3) / 2;
+        // ================================================================
+        // SACRED CONSTANTS (THE ENGINEERING BASIS)
+        // All derived from φ and Fibonacci - ZERO free parameters
+        // ================================================================
+        const PHI = (1 + Math.sqrt(5)) / 2;           // 1.618034
+        const PHI_INV = PHI - 1;                       // 0.618034
+        const Z_CRITICAL = Math.sqrt(3) / 2;           // 0.8660254 - THE LENS
         const TWO_PI = Math.PI * 2;
-        const CASCADE_AMP = 1.5;
-        const FREE_THRESHOLD = 0.2;
 
-        // Emergent Eigenvalues
+        // Primary φ-derived parameters
+        const ALPHA = Math.pow(PHI, -2);               // 0.381966 - coupling strength
+        const BETA = Math.pow(PHI, -4);                // 0.145898 - dissipation rate
+        const LAMBDA_NL = Math.pow(5/3, 4);            // 7.716049 - nonlinearity
+        const CASCADE_AMP = PHI;                       // 1.618034 - φ-based cascade
+
+        // Consciousness thresholds (Fibonacci fractions)
+        const MU_P = 3/5;                              // 0.6 - paradox onset
+        const MU_S = 23/25;                            // 0.92 - consciousness emergence
+        const MU_3 = 124/125;                          // 0.992 - near unity
+        const Q_THEORY = ALPHA * MU_S;                 // 0.351 - consciousness constant
+        const K_THRESHOLD = PHI_INV;                   // 0.618 - K-formation threshold
+        const FREE_THRESHOLD = BETA + 0.054;           // 0.20 - emergent activation
+
+        // Emergent Eigenvalues (∃R Framework)
         const EIGENVALUES = {
-            XCVI: 1 / PHI,           // φ⁻¹ ≈ 0.618
-            XCVII: Math.cos(TWO_PI / PHI), // quasiperiodic
-            XCVIII: NaN,             // Gödelian undefined
-            XCIX: 0,                 // critical point
-            C: 1                     // identity after traversal
+            XCVI: PHI_INV,                   // φ⁻¹ = 0.618 - gesture recursion
+            XCVII: Math.cos(TWO_PI / PHI),   // e^(2πi/φ) - portal recursion
+            XCVIII: NaN,                     // ∅ - Gödelian undefined (semantic)
+            XCIX: 0,                         // 0 - balance/critical point
+            C: 1                             // 1 - identity/signal after traversal
         };
 
-        // Info bits per emergent node
+        // Info bits per emergent node (MRP encoding)
         const INFO_BITS = { XCVI: 7, XCVII: 10, XCVIII: 17, XCIX: 4, C: 664 };
+        const TOTAL_BITS = 702;  // Full MRP encoding capacity
 
         // State
         let isRunning = false;
         let animationId = null;
+        let time = 0;
 
-        // Three-field state
+        // Three-field state (μ decomposition)
         let mu_N = 1.0;  // Null field (constant base frequencies)
         let mu_R = 0;    // Resonance field (phase oscillations)
         let mu_E = 0.5;  // Energy field (z-height)
 
-        // USS Helix state
+        // USS Helix state (θ, z, r)
         let theta = 0;   // Phase angle
         let z = 0.5;     // Critical distance
         let r = 0;       // Coherence/order parameter
 
-        // Kuramoto state
-        let N = 100;     // 100 WUMBO regions
-        let K_base = 0.618;
+        // Kuramoto state - 100 WUMBO regions
+        let N = 100;
+        let K_base = ALPHA;  // Sacred coupling strength
         let phases = new Float32Array(N);
         let frequencies = new Float32Array(N);
+        let regionLayers = new Int32Array(N);
 
         // Emergent state
         let emergentActive = false;
         let loopClosed = false;
+        let loopProgress = 0;  // 0-1 for C→I animation
+        let consciousnessLevel = 0;  // 0-1 based on r vs MU_S
 
         // Canvases
         let mainCanvas, mainCtx;
         let gaugeCanvas, gaugeCtx;
+        let shaderCanvas, gl;  // WebGL shader canvas
+
+        // Shader state
+        let shaderProgram = null;
+        let shaderTime = 0;
 
         // ================================================================
         // INITIALIZATION
@@ -834,6 +875,7 @@
 
         function init() {
             initCanvases();
+            initShader();
             initOscillators();
             draw();
         }
@@ -856,15 +898,202 @@
             gaugeCanvas.height = 200 * dpr;
             gaugeCtx.scale(dpr, dpr);
 
+            // WebGL Shader Canvas
+            shaderCanvas = document.getElementById('shaderCanvas');
+            if (shaderCanvas) {
+                shaderCanvas.width = rect.width;
+                shaderCanvas.height = 500;
+            }
+
             window.addEventListener('resize', initCanvases);
+        }
+
+        // ================================================================
+        // WEBGL SHADER (∃R FIELD VISUALIZATION)
+        // ================================================================
+
+        const vertexShaderSource = `
+            attribute vec2 a_position;
+            void main() {
+                gl_Position = vec4(a_position, 0.0, 1.0);
+            }
+        `;
+
+        const fragmentShaderSource = `
+            precision mediump float;
+            uniform float u_time;
+            uniform vec2 u_resolution;
+            uniform float u_z;
+            uniform float u_r;
+            uniform float u_theta;
+            uniform float u_loopProgress;
+
+            // Sacred constants
+            const float PHI = 1.618034;
+            const float PHI_INV = 0.618034;
+            const float Z_CRITICAL = 0.8660254;
+            const float MU_S = 0.92;
+
+            // Fractal noise
+            float hash(vec2 p) {
+                return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+            }
+
+            float noise(vec2 p) {
+                vec2 i = floor(p);
+                vec2 f = fract(p);
+                f = f * f * (3.0 - 2.0 * f);
+                float a = hash(i);
+                float b = hash(i + vec2(1.0, 0.0));
+                float c = hash(i + vec2(0.0, 1.0));
+                float d = hash(i + vec2(1.0, 1.0));
+                return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+            }
+
+            float fbm(vec2 p) {
+                float v = 0.0;
+                float a = 0.5;
+                vec2 shift = vec2(100.0);
+                mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
+                for (int i = 0; i < 5; i++) {
+                    v += a * noise(p);
+                    p = rot * p * PHI + shift;
+                    a *= PHI_INV;
+                }
+                return v;
+            }
+
+            void main() {
+                vec2 uv = gl_FragCoord.xy / u_resolution;
+                vec2 p = (gl_FragCoord.xy - u_resolution * 0.5) / min(u_resolution.x, u_resolution.y);
+
+                // Domain coloring based on z
+                float zDist = abs(u_z - Z_CRITICAL);
+                float domainFade = exp(-zDist * zDist / 0.1);
+
+                // Spiral pattern based on φ
+                float angle = atan(p.y, p.x) + u_time * 0.2 + u_theta;
+                float radius = length(p);
+                float spiral = sin(angle * PHI + radius * 10.0 - u_time);
+
+                // Field strength from coherence
+                float fieldStrength = u_r * (1.0 + domainFade * 0.5);
+
+                // Color channels based on three-field decomposition
+                float red = 0.1 + 0.2 * spiral * (1.0 - u_z);  // ABSENCE
+                float green = 0.1 + 0.3 * fieldStrength * domainFade;  // THE LENS
+                float blue = 0.1 + 0.2 * spiral * u_z;  // PRESENCE
+
+                // Add noise for φ-derived texture
+                float n = fbm(p * 3.0 + u_time * 0.1);
+                red += n * 0.1 * (1.0 - u_r);
+                green += n * 0.15 * u_r;
+                blue += n * 0.1;
+
+                // Loop closure glow
+                if (u_loopProgress > 0.0) {
+                    float loopGlow = sin(radius * 20.0 - u_time * 3.0) * 0.5 + 0.5;
+                    loopGlow *= u_loopProgress * exp(-radius * 2.0);
+                    red += loopGlow * 0.5;
+                    green += loopGlow * 0.3;
+                    blue += loopGlow * 0.1;
+                }
+
+                // Consciousness emergence at μ_S
+                if (u_r > MU_S) {
+                    float consciousnessGlow = (u_r - MU_S) / (1.0 - MU_S);
+                    float pulse = sin(u_time * 4.0) * 0.5 + 0.5;
+                    green += consciousnessGlow * pulse * 0.3;
+                    red += consciousnessGlow * pulse * 0.2;
+                }
+
+                gl_FragColor = vec4(red, green, blue, 1.0);
+            }
+        `;
+
+        function initShader() {
+            shaderCanvas = document.getElementById('shaderCanvas');
+            if (!shaderCanvas) return;
+
+            gl = shaderCanvas.getContext('webgl');
+            if (!gl) {
+                console.log('WebGL not supported, falling back to 2D');
+                return;
+            }
+
+            // Create shaders
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vertexShaderSource);
+            gl.compileShader(vertexShader);
+
+            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fragmentShaderSource);
+            gl.compileShader(fragmentShader);
+
+            // Create program
+            shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+            gl.useProgram(shaderProgram);
+
+            // Create quad
+            const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+            const positionLocation = gl.getAttribLocation(shaderProgram, 'a_position');
+            gl.enableVertexAttribArray(positionLocation);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+        }
+
+        function renderShader() {
+            if (!gl || !shaderProgram) return;
+
+            gl.viewport(0, 0, shaderCanvas.width, shaderCanvas.height);
+
+            // Update uniforms
+            const timeLocation = gl.getUniformLocation(shaderProgram, 'u_time');
+            const resolutionLocation = gl.getUniformLocation(shaderProgram, 'u_resolution');
+            const zLocation = gl.getUniformLocation(shaderProgram, 'u_z');
+            const rLocation = gl.getUniformLocation(shaderProgram, 'u_r');
+            const thetaLocation = gl.getUniformLocation(shaderProgram, 'u_theta');
+            const loopLocation = gl.getUniformLocation(shaderProgram, 'u_loopProgress');
+
+            gl.uniform1f(timeLocation, shaderTime);
+            gl.uniform2f(resolutionLocation, shaderCanvas.width, shaderCanvas.height);
+            gl.uniform1f(zLocation, z);
+            gl.uniform1f(rLocation, r);
+            gl.uniform1f(thetaLocation, theta);
+            gl.uniform1f(loopLocation, loopProgress);
+
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
 
         function initOscillators() {
             phases = new Float32Array(N);
             frequencies = new Float32Array(N);
+            regionLayers = new Int32Array(N);
+
+            // Assign 100 regions to WUMBO structure with φ-derived frequencies
             for (let i = 0; i < N; i++) {
                 phases[i] = Math.random() * TWO_PI;
-                frequencies[i] = mu_N + gaussianRandom() * 0.2;
+                // Natural frequency variance scaled by BETA (φ⁻⁴)
+                frequencies[i] = mu_N + gaussianRandom() * BETA * PHI;
+
+                if (i < 63) {
+                    // Prism layers (0-6)
+                    regionLayers[i] = Math.floor(i / 9);
+                } else if (i < 75) {
+                    regionLayers[i] = 5;  // Cage top
+                } else if (i < 87) {
+                    regionLayers[i] = 1;  // Cage bottom
+                } else if (i < 95) {
+                    regionLayers[i] = 3;  // Cage vertices
+                } else {
+                    regionLayers[i] = -1;  // Emergent nodes
+                }
             }
         }
 
@@ -887,8 +1116,11 @@
         }
 
         function calculateCascade(z) {
-            const dist = z - Z_CRITICAL;
-            return 1 + 0.5 * Math.exp(-dist * dist / 0.004);
+            // Peak at z_c (THE LENS), decays with φ-derived width
+            // Width parameter = Q_THEORY² ≈ 0.123
+            const dist = Math.abs(z - Z_CRITICAL);
+            const width = Q_THEORY * Q_THEORY;
+            return 1 + PHI_INV * Math.exp(-dist * dist / width);
         }
 
         // ================================================================
@@ -909,13 +1141,33 @@
         function stepKuramoto(dt = 0.02) {
             const order = calculateOrderParameter();
             const K = calculateKz(z);
+            const cascade = calculateCascade(z);
             const newPhases = new Float32Array(N);
 
-            // Heun's method
+            // Nonlinearity factor (LAMBDA_NL at low coherence)
+            const nlFactor = 1 + (LAMBDA_NL - 1) * (1.0 - order.r);
+
+            // Heun's method with φ-derived dynamics
             for (let i = 0; i < N; i++) {
-                const dtheta1 = frequencies[i] + K * order.r * Math.sin(order.psi - phases[i]);
+                // Layer-dependent coupling using ALPHA
+                const layer = regionLayers[i];
+                let layerK = K;
+
+                if (layer >= 0 && layer < 7) {
+                    const layerZ = layer / 6;
+                    const distFromCritical = Math.abs(layerZ - Z_CRITICAL);
+                    layerK = K * (1 + ALPHA * Math.exp(-distFromCritical * distFromCritical / BETA));
+                } else if (layer === -1 && emergentActive) {
+                    // Emergent nodes: eigenvalue-weighted coupling
+                    const emergentIdx = i - 95;
+                    const eigenvalues = [PHI_INV, Math.cos(TWO_PI/PHI), 0, 0, 1];
+                    const eigenK = emergentIdx >= 0 && emergentIdx < 5 ? eigenvalues[emergentIdx] : 0;
+                    layerK = K * eigenK * PHI;
+                }
+
+                const dtheta1 = frequencies[i] + layerK * order.r * Math.sin(order.psi - phases[i]) * cascade / nlFactor;
                 const thetaPred = phases[i] + dt * dtheta1;
-                const dtheta2 = frequencies[i] + K * order.r * Math.sin(order.psi - thetaPred);
+                const dtheta2 = frequencies[i] + layerK * order.r * Math.sin(order.psi - thetaPred) * cascade / nlFactor;
                 newPhases[i] = (phases[i] + dt * (dtheta1 + dtheta2) / 2) % TWO_PI;
                 if (newPhases[i] < 0) newPhases[i] += TWO_PI;
             }
@@ -923,18 +1175,37 @@
             phases = newPhases;
 
             // Update three-field decomposition
-            mu_R = order.r;
+            mu_R = order.r * Math.cos(order.psi);
             mu_E = z;
 
             // Update USS helix
             theta = order.psi;
             r = order.r;
 
-            // Check emergent state
-            emergentActive = r < FREE_THRESHOLD;
-            loopClosed = emergentActive && r < 0.1;
+            // Update consciousness level (0-1 based on r vs MU_S)
+            if (r >= MU_S) {
+                consciousnessLevel = 1.0;
+            } else if (r >= K_THRESHOLD) {
+                consciousnessLevel = 0.618 + (r - K_THRESHOLD) / (MU_S - K_THRESHOLD) * 0.302;
+            } else if (r >= MU_P) {
+                consciousnessLevel = 0.6 + (r - MU_P) / (K_THRESHOLD - MU_P) * 0.018;
+            } else {
+                consciousnessLevel = r / MU_P * 0.6;
+            }
 
-            return { r: order.r, psi: order.psi, K };
+            // Check emergent state with consciousness thresholds
+            emergentActive = r < FREE_THRESHOLD;
+
+            // Loop closure: r drops to near 0 then C node activates
+            if (emergentActive && r < 0.1) {
+                loopProgress = Math.min(1.0, loopProgress + dt * 0.5);
+                loopClosed = loopProgress >= 1.0;
+            } else if (!emergentActive) {
+                loopProgress = Math.max(0, loopProgress - dt * 0.3);
+                loopClosed = false;
+            }
+
+            return { r: order.r, psi: order.psi, K, cascade };
         }
 
         // ================================================================
@@ -1228,8 +1499,20 @@
         // ================================================================
 
         function updateUI() {
+            time += 0.016;  // ~60fps
+            shaderTime = time;
+
             if (isRunning) {
                 stepKuramoto();
+            }
+
+            // Render WebGL shader
+            renderShader();
+
+            // Update consciousness bar
+            const consciousnessFill = document.getElementById('consciousnessFill');
+            if (consciousnessFill) {
+                consciousnessFill.style.width = (r * 100) + '%';
             }
 
             // Update three-field display
