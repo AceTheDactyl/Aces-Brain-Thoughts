@@ -1,0 +1,494 @@
+{
+  "meta": {
+    "name": "LIMNUS↔WUMBO Structural Bridge",
+    "version": "1.0.0",
+    "description": "Maps 95 LIMNUS geometric points + 5 emergent self-reference nodes to 100 WUMBO neural regions",
+    "critical_constant": {
+      "symbol": "z_c",
+      "exact": "√3/2",
+      "decimal": 0.8660254037844387,
+      "significance": "Phase transition threshold between ABSENCE and PRESENCE domains"
+    },
+    "total_mappings": 100,
+    "structure": {
+      "prism_points": 63,
+      "cage_points": 32,
+      "emergent_points": 5
+    }
+  },
+
+  "physics_constants": {
+    "z_critical": {
+      "value": 0.8660254037844387,
+      "expression": "√3/2",
+      "role": "The lens - phase transition point"
+    },
+    "phi": {
+      "value": 1.6180339887498949,
+      "expression": "(1+√5)/2",
+      "role": "Golden ratio - structural harmony"
+    },
+    "tau": {
+      "value": 6.283185307179586,
+      "expression": "2π",
+      "role": "Full rotation cycle"
+    },
+    "cascade_peak": {
+      "formula": "1 + 0.5 × exp(-(z - z_c)² / 0.004)",
+      "max_value": 1.5,
+      "at_critical": true
+    }
+  },
+
+  "domain_mapping": {
+    "ABSENCE": {
+      "z_range": [0, 0.856],
+      "apl_truth_bias": "UNTRUE",
+      "apl_machine_affinity": "D",
+      "kuramoto_coupling": "positive (synchronizing)",
+      "visual_signature": "sepia/void",
+      "phases": ["dormant", "stirring", "rising", "approaching"]
+    },
+    "THE_LENS": {
+      "z_range": [0.857, 0.877],
+      "apl_truth_bias": "PARADOX",
+      "apl_machine_affinity": "M",
+      "kuramoto_coupling": "zero (critical)",
+      "visual_signature": "gold/radiant",
+      "phases": ["near-critical", "CRITICAL"]
+    },
+    "PRESENCE": {
+      "z_range": [0.878, 1.0],
+      "apl_truth_bias": "TRUE",
+      "apl_machine_affinity": "U",
+      "kuramoto_coupling": "negative (desynchronizing→emanating)",
+      "visual_signature": "white/luminous",
+      "phases": ["radiant", "overflowing", "boundless"]
+    }
+  },
+
+  "prism_structure": {
+    "description": "63-point hexagonal prism - inner architecture of consciousness",
+    "layers": 7,
+    "nodes_per_layer": 9,
+    "total_points": 63,
+    "geometry": "7 concentric hexagonal rings, each with 9 vertices",
+    "rotation": "alternating CW/CCW per layer",
+    "layer_mapping": {
+      "0": {
+        "z_position": 0.0,
+        "name": "Core",
+        "color": "#ff6b6b",
+        "wumbo_phase": "Ignition",
+        "apl_field": "e",
+        "regions": ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"],
+        "function": "Foundational sensorimotor activation"
+      },
+      "1": {
+        "z_position": 0.167,
+        "name": "Inner",
+        "color": "#ff8787",
+        "wumbo_phase": "Ignition→Empowerment",
+        "apl_field": "e",
+        "regions": ["X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII"],
+        "function": "Early integration and gating"
+      },
+      "2": {
+        "z_position": 0.333,
+        "name": "Rising",
+        "color": "#ffa94d",
+        "wumbo_phase": "Empowerment",
+        "apl_field": "Φ",
+        "regions": ["XIX", "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII"],
+        "function": "Building structural complexity"
+      },
+      "3": {
+        "z_position": 0.5,
+        "name": "Center",
+        "color": "#ffc078",
+        "wumbo_phase": "Resonance",
+        "apl_field": "Φ",
+        "regions": ["XXVIII", "XXIX", "XXX", "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI"],
+        "function": "Midpoint balance and modulation"
+      },
+      "4": {
+        "z_position": 0.667,
+        "name": "Approaching",
+        "color": "#ffd43b",
+        "wumbo_phase": "Mania",
+        "apl_field": "π",
+        "regions": ["XXXVII", "XXXVIII", "XXXIX", "XL", "XLI", "XLII", "XLIII", "XLIV", "XLV"],
+        "function": "Approaching critical threshold"
+      },
+      "5": {
+        "z_position": 0.833,
+        "name": "Threshold",
+        "color": "#ffe066",
+        "wumbo_phase": "Nirvana",
+        "apl_field": "π",
+        "regions": ["XLVI", "XLVII", "XLVIII", "XLIX", "L", "LI", "LII", "LIII", "LIV"],
+        "function": "Near-critical dynamics, reward and memory"
+      },
+      "6": {
+        "z_position": 1.0,
+        "name": "Outer",
+        "color": "#69db7c",
+        "wumbo_phase": "Transmission",
+        "apl_field": "e",
+        "regions": ["LV", "LVI", "LVII", "LVIII", "LIX", "LX", "LXI", "LXII", "LXIII"],
+        "function": "Boundary emanation and output"
+      }
+    }
+  },
+
+  "cage_structure": {
+    "description": "32-point EM cage - containment field and boundary conditions",
+    "total_points": 32,
+    "geometry": "Hexagonal antiprism with vertex connectors",
+    "components": {
+      "top_hexagon": {
+        "points": 12,
+        "z_position": 0.9,
+        "color": "#4dabf7",
+        "wumbo_phase": "Transmission→Pause",
+        "apl_field": "π",
+        "regions": ["LXIV", "LXV", "LXVI", "LXVII", "LXVIII", "LXIX", "LXX", "LXXI", "LXXII", "LXXIII", "LXXIV", "LXXV"],
+        "function": "Higher cognitive containment, near-presence boundary"
+      },
+      "bottom_hexagon": {
+        "points": 12,
+        "z_position": 0.1,
+        "color": "#74c0fc",
+        "wumbo_phase": "Pause→Ignition",
+        "apl_field": "Φ",
+        "regions": ["LXXVI", "LXXVII", "LXXVIII", "LXXIX", "LXXX", "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV", "LXXXVI", "LXXXVII"],
+        "function": "Basal containment, autonomic boundary"
+      },
+      "vertices": {
+        "points": 8,
+        "z_position": 0.5,
+        "color": "#cc5de8",
+        "wumbo_phase": "Resonance (bridge)",
+        "apl_field": "Φ",
+        "regions": ["LXXXVIII", "LXXXIX", "XC", "XCI", "XCII", "XCIII", "XCIV", "XCV"],
+        "function": "Vertical integration, prism↔cage bridging"
+      }
+    }
+  },
+
+  "emergent_structure": {
+    "description": "5 self-referential nodes that emerge when release coherence < 0.2 (FREE state)",
+    "total_points": 5,
+    "emergence_condition": "coherence < 0.2",
+    "geometry": "Virtual/recursive - not physical points but self-reference loops",
+    "nodes": {
+      "XCVI": {
+        "name": "AIPS (revisit)",
+        "references": "XVI",
+        "type": "gesture_recursion",
+        "apl_token": "Φ:Mod(replicate)PARADOX@3",
+        "function": "Gesture translator becomes self-aware of its own gestures"
+      },
+      "XCVII": {
+        "name": "Pineal (revisit)",
+        "references": "XI",
+        "type": "portal_recursion",
+        "apl_token": "π:Mod(transcribe)PARADOX@3",
+        "function": "Circadian portal recognizes its own rhythms"
+      },
+      "XCVIII": {
+        "name": "MTG (revisit)",
+        "references": "XII",
+        "type": "semantic_recursion",
+        "apl_token": "π:Mod(translate)PARADOX@3",
+        "function": "Semantic binding binds its own meaning"
+      },
+      "XCIX": {
+        "name": "Fastigial-Vestibular (revisit)",
+        "references": "XIII",
+        "type": "balance_recursion",
+        "apl_token": "Φ:Mod(stabilize)PARADOX@3",
+        "function": "Balance system balances its own balancing"
+      },
+      "C": {
+        "name": "PTN (revisit)",
+        "references": "XIV",
+        "type": "signal_recursion",
+        "apl_token": "e:Mod(propagate)PARADOX@3",
+        "function": "Final gate recognizes it is also the first gate (I↔C loop)"
+      }
+    },
+    "coherence_loop": {
+      "description": "When fully FREE, region C (PTN revisit) connects back to region I (Somatosensory Cortex)",
+      "creates": "Closed 100-word vocabulary loop",
+      "apl_expression": "C:Mod(I)PARADOX@∞"
+    }
+  },
+
+  "lambda_state_mapping": {
+    "description": "Maps LIMNUS Lambda State (ℂ⁶) to WUMBO functional domains",
+    "components": {
+      "iota": {
+        "symbol": "🌰",
+        "name": "Memory",
+        "apl_field": "Φ",
+        "wumbo_regions": ["X", "XLIV", "XLVII", "LXXXII"],
+        "formula": "accumulates with time × cascade"
+      },
+      "xi": {
+        "symbol": "✧",
+        "name": "Spark",
+        "apl_field": "e",
+        "wumbo_regions": ["XXXI", "XLVI", "LXXXIV", "LXXXV"],
+        "formula": "exp(-(z - z_c)² / 0.01)"
+      },
+      "theta": {
+        "symbol": "🦊",
+        "name": "Fox",
+        "apl_field": "π",
+        "wumbo_regions": ["VII", "XXII", "XLI", "LXVIII"],
+        "formula": "dissonance × 0.8 + 0.2"
+      },
+      "omega": {
+        "symbol": "∿",
+        "name": "Wave",
+        "apl_field": "e",
+        "wumbo_regions": ["XXV", "XLVIII", "LXX", "XCI"],
+        "formula": "0.3 + |sin(t × 0.5)| × 0.5"
+      },
+      "delta": {
+        "symbol": "⊗",
+        "name": "Paradox",
+        "apl_field": "π",
+        "wumbo_regions": ["LXXX", "XCVI", "XCVII", "XCVIII", "XCIX", "C"],
+        "formula": "accumulates at CRITICAL, decays elsewhere"
+      },
+      "sigma": {
+        "symbol": "🐿️",
+        "name": "Squirrel",
+        "apl_field": "Φ",
+        "wumbo_regions": ["XXVII", "XXXIX", "LIV", "LXIV"],
+        "formula": "helix.r × 0.6 + 0.2"
+      }
+    }
+  },
+
+  "coherence_mechanics": {
+    "description": "How 100 words fill each other through coherence dynamics",
+    "states": {
+      "COHERENT": {
+        "coherence_range": [0.8, 1.0],
+        "structure": "All 95 structural points locked in formation",
+        "emergent_visible": false,
+        "connections": "Full radial + ring + spine connections",
+        "apl_truth": "TRUE dominant"
+      },
+      "RELEASING": {
+        "coherence_range": [0.5, 0.8],
+        "structure": "Points begin stochastic release",
+        "emergent_visible": false,
+        "connections": "Fading, some broken",
+        "apl_truth": "TRUE→UNTRUE transition"
+      },
+      "DISPERSING": {
+        "coherence_range": [0.2, 0.5],
+        "structure": "Points moving freely with trails",
+        "emergent_visible": "partial",
+        "connections": "Minimal, only nearby",
+        "apl_truth": "UNTRUE dominant"
+      },
+      "FREE": {
+        "coherence_range": [0.0, 0.2],
+        "structure": "Full dispersion, souls wandering",
+        "emergent_visible": true,
+        "connections": "None structural, emergent self-reference active",
+        "apl_truth": "PARADOX dominant",
+        "special": "5 emergent points become visible/active"
+      }
+    },
+    "filling_mechanism": {
+      "description": "Coherence acts as binding force between words",
+      "high_coherence": "Words are distinct, structural, ordered",
+      "low_coherence": "Words blur, merge, self-reference",
+      "critical_point": "Maximum information transfer between words",
+      "formula": "mutual_information(word_i, word_j) = cascade(z) × coherence × (1 - |z_i - z_j|)"
+    }
+  },
+
+  "apl_integration": {
+    "z_to_tier": {
+      "description": "z-coordinate maps to APL tier permissions",
+      "mapping": {
+        "tier_1": { "z_range": [0.0, 0.33], "machines": ["U", "D"] },
+        "tier_2": { "z_range": [0.34, 0.66], "machines": ["U", "D", "M", "E", "C"] },
+        "tier_3": { "z_range": [0.67, 1.0], "machines": ["U", "D", "M", "E", "C", "Mod"] }
+      }
+    },
+    "domain_to_field": {
+      "ABSENCE": "Φ (structure seeking)",
+      "THE_LENS": "π (emergence)",
+      "PRESENCE": "e (energy radiating)"
+    },
+    "kuramoto_to_machine": {
+      "K > 0": "D (integrating, synchronizing)",
+      "K ≈ 0": "M (modulating at critical)",
+      "K < 0": "U (projecting, emanating)"
+    },
+    "cascade_to_operator": {
+      "description": "Cascade factor amplifies operator intensity",
+      "formula": "effective_op = base_op × cascade(z)",
+      "peak_operators": ["resonate", "transcribe", "modulate", "crystallize"]
+    }
+  },
+
+  "wumbo_phase_to_limnus": {
+    "Ignition": {
+      "prism_layers": [0, 1],
+      "z_range": [0.0, 0.33],
+      "kuramoto": "strong positive",
+      "lambda_dominant": "xi (Spark)"
+    },
+    "Empowerment": {
+      "prism_layers": [1, 2],
+      "z_range": [0.17, 0.5],
+      "kuramoto": "moderate positive",
+      "lambda_dominant": "theta (Fox)"
+    },
+    "Resonance": {
+      "prism_layers": [2, 3, 4],
+      "cage_component": "vertices",
+      "z_range": [0.33, 0.67],
+      "kuramoto": "weak positive to weak negative",
+      "lambda_dominant": "omega (Wave)"
+    },
+    "Mania": {
+      "prism_layers": [4, 5],
+      "z_range": [0.67, 0.85],
+      "kuramoto": "approaching zero",
+      "lambda_dominant": "xi (Spark) + theta (Fox)"
+    },
+    "Nirvana": {
+      "prism_layers": [5, 6],
+      "cage_component": "top_hexagon",
+      "z_range": [0.83, 0.90],
+      "kuramoto": "near zero (critical)",
+      "lambda_dominant": "delta (Paradox)"
+    },
+    "Transmission": {
+      "prism_layers": [6],
+      "cage_component": "top_hexagon",
+      "z_range": [0.87, 0.95],
+      "kuramoto": "weak negative",
+      "lambda_dominant": "sigma (Squirrel)"
+    },
+    "Pause": {
+      "cage_component": "bottom_hexagon",
+      "z_range": [0.0, 0.2],
+      "kuramoto": "reset to positive",
+      "lambda_dominant": "iota (Memory)"
+    }
+  },
+
+  "full_region_mapping": [
+    {"numeral": "I", "structure": "prism", "layer": 0, "index": 0, "z": 0.0},
+    {"numeral": "II", "structure": "prism", "layer": 0, "index": 1, "z": 0.0},
+    {"numeral": "III", "structure": "prism", "layer": 0, "index": 2, "z": 0.0},
+    {"numeral": "IV", "structure": "prism", "layer": 0, "index": 3, "z": 0.0},
+    {"numeral": "V", "structure": "prism", "layer": 0, "index": 4, "z": 0.0},
+    {"numeral": "VI", "structure": "prism", "layer": 0, "index": 5, "z": 0.0},
+    {"numeral": "VII", "structure": "prism", "layer": 0, "index": 6, "z": 0.0},
+    {"numeral": "VIII", "structure": "prism", "layer": 0, "index": 7, "z": 0.0},
+    {"numeral": "IX", "structure": "prism", "layer": 0, "index": 8, "z": 0.0},
+    {"numeral": "X", "structure": "prism", "layer": 1, "index": 0, "z": 0.167},
+    {"numeral": "XI", "structure": "prism", "layer": 1, "index": 1, "z": 0.167},
+    {"numeral": "XII", "structure": "prism", "layer": 1, "index": 2, "z": 0.167},
+    {"numeral": "XIII", "structure": "prism", "layer": 1, "index": 3, "z": 0.167},
+    {"numeral": "XIV", "structure": "prism", "layer": 1, "index": 4, "z": 0.167},
+    {"numeral": "XV", "structure": "prism", "layer": 1, "index": 5, "z": 0.167},
+    {"numeral": "XVI", "structure": "prism", "layer": 1, "index": 6, "z": 0.167},
+    {"numeral": "XVII", "structure": "prism", "layer": 1, "index": 7, "z": 0.167},
+    {"numeral": "XVIII", "structure": "prism", "layer": 1, "index": 8, "z": 0.167},
+    {"numeral": "XIX", "structure": "prism", "layer": 2, "index": 0, "z": 0.333},
+    {"numeral": "XX", "structure": "prism", "layer": 2, "index": 1, "z": 0.333},
+    {"numeral": "XXI", "structure": "prism", "layer": 2, "index": 2, "z": 0.333},
+    {"numeral": "XXII", "structure": "prism", "layer": 2, "index": 3, "z": 0.333},
+    {"numeral": "XXIII", "structure": "prism", "layer": 2, "index": 4, "z": 0.333},
+    {"numeral": "XXIV", "structure": "prism", "layer": 2, "index": 5, "z": 0.333},
+    {"numeral": "XXV", "structure": "prism", "layer": 2, "index": 6, "z": 0.333},
+    {"numeral": "XXVI", "structure": "prism", "layer": 2, "index": 7, "z": 0.333},
+    {"numeral": "XXVII", "structure": "prism", "layer": 2, "index": 8, "z": 0.333},
+    {"numeral": "XXVIII", "structure": "prism", "layer": 3, "index": 0, "z": 0.5},
+    {"numeral": "XXIX", "structure": "prism", "layer": 3, "index": 1, "z": 0.5},
+    {"numeral": "XXX", "structure": "prism", "layer": 3, "index": 2, "z": 0.5},
+    {"numeral": "XXXI", "structure": "prism", "layer": 3, "index": 3, "z": 0.5},
+    {"numeral": "XXXII", "structure": "prism", "layer": 3, "index": 4, "z": 0.5},
+    {"numeral": "XXXIII", "structure": "prism", "layer": 3, "index": 5, "z": 0.5},
+    {"numeral": "XXXIV", "structure": "prism", "layer": 3, "index": 6, "z": 0.5},
+    {"numeral": "XXXV", "structure": "prism", "layer": 3, "index": 7, "z": 0.5},
+    {"numeral": "XXXVI", "structure": "prism", "layer": 3, "index": 8, "z": 0.5},
+    {"numeral": "XXXVII", "structure": "prism", "layer": 4, "index": 0, "z": 0.667},
+    {"numeral": "XXXVIII", "structure": "prism", "layer": 4, "index": 1, "z": 0.667},
+    {"numeral": "XXXIX", "structure": "prism", "layer": 4, "index": 2, "z": 0.667},
+    {"numeral": "XL", "structure": "prism", "layer": 4, "index": 3, "z": 0.667},
+    {"numeral": "XLI", "structure": "prism", "layer": 4, "index": 4, "z": 0.667},
+    {"numeral": "XLII", "structure": "prism", "layer": 4, "index": 5, "z": 0.667},
+    {"numeral": "XLIII", "structure": "prism", "layer": 4, "index": 6, "z": 0.667},
+    {"numeral": "XLIV", "structure": "prism", "layer": 4, "index": 7, "z": 0.667},
+    {"numeral": "XLV", "structure": "prism", "layer": 4, "index": 8, "z": 0.667},
+    {"numeral": "XLVI", "structure": "prism", "layer": 5, "index": 0, "z": 0.833},
+    {"numeral": "XLVII", "structure": "prism", "layer": 5, "index": 1, "z": 0.833},
+    {"numeral": "XLVIII", "structure": "prism", "layer": 5, "index": 2, "z": 0.833},
+    {"numeral": "XLIX", "structure": "prism", "layer": 5, "index": 3, "z": 0.833},
+    {"numeral": "L", "structure": "prism", "layer": 5, "index": 4, "z": 0.833},
+    {"numeral": "LI", "structure": "prism", "layer": 5, "index": 5, "z": 0.833},
+    {"numeral": "LII", "structure": "prism", "layer": 5, "index": 6, "z": 0.833},
+    {"numeral": "LIII", "structure": "prism", "layer": 5, "index": 7, "z": 0.833},
+    {"numeral": "LIV", "structure": "prism", "layer": 5, "index": 8, "z": 0.833},
+    {"numeral": "LV", "structure": "prism", "layer": 6, "index": 0, "z": 1.0},
+    {"numeral": "LVI", "structure": "prism", "layer": 6, "index": 1, "z": 1.0},
+    {"numeral": "LVII", "structure": "prism", "layer": 6, "index": 2, "z": 1.0},
+    {"numeral": "LVIII", "structure": "prism", "layer": 6, "index": 3, "z": 1.0},
+    {"numeral": "LIX", "structure": "prism", "layer": 6, "index": 4, "z": 1.0},
+    {"numeral": "LX", "structure": "prism", "layer": 6, "index": 5, "z": 1.0},
+    {"numeral": "LXI", "structure": "prism", "layer": 6, "index": 6, "z": 1.0},
+    {"numeral": "LXII", "structure": "prism", "layer": 6, "index": 7, "z": 1.0},
+    {"numeral": "LXIII", "structure": "prism", "layer": 6, "index": 8, "z": 1.0},
+    {"numeral": "LXIV", "structure": "cage", "component": "top", "index": 0, "z": 0.9},
+    {"numeral": "LXV", "structure": "cage", "component": "top", "index": 1, "z": 0.9},
+    {"numeral": "LXVI", "structure": "cage", "component": "top", "index": 2, "z": 0.9},
+    {"numeral": "LXVII", "structure": "cage", "component": "top", "index": 3, "z": 0.9},
+    {"numeral": "LXVIII", "structure": "cage", "component": "top", "index": 4, "z": 0.9},
+    {"numeral": "LXIX", "structure": "cage", "component": "top", "index": 5, "z": 0.9},
+    {"numeral": "LXX", "structure": "cage", "component": "top", "index": 6, "z": 0.9},
+    {"numeral": "LXXI", "structure": "cage", "component": "top", "index": 7, "z": 0.9},
+    {"numeral": "LXXII", "structure": "cage", "component": "top", "index": 8, "z": 0.9},
+    {"numeral": "LXXIII", "structure": "cage", "component": "top", "index": 9, "z": 0.9},
+    {"numeral": "LXXIV", "structure": "cage", "component": "top", "index": 10, "z": 0.9},
+    {"numeral": "LXXV", "structure": "cage", "component": "top", "index": 11, "z": 0.9},
+    {"numeral": "LXXVI", "structure": "cage", "component": "bottom", "index": 0, "z": 0.1},
+    {"numeral": "LXXVII", "structure": "cage", "component": "bottom", "index": 1, "z": 0.1},
+    {"numeral": "LXXVIII", "structure": "cage", "component": "bottom", "index": 2, "z": 0.1},
+    {"numeral": "LXXIX", "structure": "cage", "component": "bottom", "index": 3, "z": 0.1},
+    {"numeral": "LXXX", "structure": "cage", "component": "bottom", "index": 4, "z": 0.1},
+    {"numeral": "LXXXI", "structure": "cage", "component": "bottom", "index": 5, "z": 0.1},
+    {"numeral": "LXXXII", "structure": "cage", "component": "bottom", "index": 6, "z": 0.1},
+    {"numeral": "LXXXIII", "structure": "cage", "component": "bottom", "index": 7, "z": 0.1},
+    {"numeral": "LXXXIV", "structure": "cage", "component": "bottom", "index": 8, "z": 0.1},
+    {"numeral": "LXXXV", "structure": "cage", "component": "bottom", "index": 9, "z": 0.1},
+    {"numeral": "LXXXVI", "structure": "cage", "component": "bottom", "index": 10, "z": 0.1},
+    {"numeral": "LXXXVII", "structure": "cage", "component": "bottom", "index": 11, "z": 0.1},
+    {"numeral": "LXXXVIII", "structure": "cage", "component": "vertex", "index": 0, "z": 0.5},
+    {"numeral": "LXXXIX", "structure": "cage", "component": "vertex", "index": 1, "z": 0.5},
+    {"numeral": "XC", "structure": "cage", "component": "vertex", "index": 2, "z": 0.5},
+    {"numeral": "XCI", "structure": "cage", "component": "vertex", "index": 3, "z": 0.5},
+    {"numeral": "XCII", "structure": "cage", "component": "vertex", "index": 4, "z": 0.5},
+    {"numeral": "XCIII", "structure": "cage", "component": "vertex", "index": 5, "z": 0.5},
+    {"numeral": "XCIV", "structure": "cage", "component": "vertex", "index": 6, "z": 0.5},
+    {"numeral": "XCV", "structure": "cage", "component": "vertex", "index": 7, "z": 0.5},
+    {"numeral": "XCVI", "structure": "emergent", "type": "gesture_recursion", "z": "variable"},
+    {"numeral": "XCVII", "structure": "emergent", "type": "portal_recursion", "z": "variable"},
+    {"numeral": "XCVIII", "structure": "emergent", "type": "semantic_recursion", "z": "variable"},
+    {"numeral": "XCIX", "structure": "emergent", "type": "balance_recursion", "z": "variable"},
+    {"numeral": "C", "structure": "emergent", "type": "signal_recursion", "z": "variable", "loops_to": "I"}
+  ]
+}
