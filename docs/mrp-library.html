@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MRP Golden Sample Library - 153 Verified Samples</title>
+  <style>
+    :root {
+      --bg-dark: #0a0b0d;
+      --bg-panel: #111216;
+      --bg-card: #1a1b1e;
+      --ink: #e8e9ec;
+      --muted: #888b94;
+      --gold: #ffd700;
+      --cyan: #22d3ee;
+      --magenta: #cc5de8;
+      --green: #69db7c;
+      --red: #ff6b6b;
+      --blue: #4dabf7;
+      --rule: #252830;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+      background: var(--bg-dark);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--rule);
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .back-link {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--gold);
+      background: rgba(255, 215, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 1.5em;
+      color: var(--gold);
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 20px;
+      font-size: 0.9em;
+    }
+
+    .header-stat {
+      color: var(--muted);
+    }
+
+    .header-stat strong {
+      color: var(--cyan);
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--rule);
+      padding: 15px 20px;
+      position: sticky;
+      top: 70px;
+      z-index: 99;
+    }
+
+    .filter-content {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .filter-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--rule);
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85em;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--gold);
+      color: var(--ink);
+    }
+
+    .filter-btn.active {
+      background: rgba(255, 215, 0, 0.15);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-box input {
+      background: var(--bg-card);
+      border: 1px solid var(--rule);
+      color: var(--ink);
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9em;
+      width: 250px;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .search-box input::placeholder {
+      color: var(--muted);
+    }
+
+    /* Main Content */
+    main {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    /* Category Section */
+    .category-section {
+      margin-bottom: 40px;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .category-header h2 {
+      color: var(--ink);
+      font-size: 1.2em;
+    }
+
+    .category-count {
+      color: var(--muted);
+      font-size: 0.9em;
+    }
+
+    /* Sample Grid */
+    .sample-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .sample-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 15px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .sample-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .sample-card.selected {
+      border-color: var(--cyan);
+      background: rgba(34, 211, 238, 0.05);
+    }
+
+    .sample-image {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .sample-image img {
+      width: 100px;
+      height: 50px;
+      image-rendering: pixelated;
+      border: 1px solid var(--rule);
+      background: var(--bg-card);
+    }
+
+    .sample-id {
+      color: var(--gold);
+      font-size: 0.9em;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .sample-name {
+      color: var(--muted);
+      font-size: 0.8em;
+      margin-bottom: 10px;
+    }
+
+    .sample-bits {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      font-size: 0.7em;
+    }
+
+    .sample-bits span {
+      background: var(--bg-card);
+      padding: 3px 6px;
+      border-radius: 3px;
+      color: var(--muted);
+    }
+
+    .sample-bits span strong {
+      color: var(--cyan);
+    }
+
+    /* Detail Panel */
+    .detail-panel {
+      position: fixed;
+      right: -400px;
+      top: 0;
+      width: 400px;
+      height: 100vh;
+      background: var(--bg-panel);
+      border-left: 1px solid var(--rule);
+      padding: 20px;
+      overflow-y: auto;
+      transition: right 0.3s;
+      z-index: 200;
+    }
+
+    .detail-panel.open {
+      right: 0;
+    }
+
+    .detail-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+
+    .detail-close:hover {
+      color: var(--ink);
+    }
+
+    .detail-header {
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .detail-header h3 {
+      color: var(--gold);
+      font-size: 1.3em;
+      margin-bottom: 5px;
+    }
+
+    .detail-header .subtitle {
+      color: var(--muted);
+      font-size: 0.9em;
+    }
+
+    .detail-image {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .detail-image img {
+      width: 200px;
+      height: 100px;
+      image-rendering: pixelated;
+      border: 2px solid var(--rule);
+    }
+
+    .detail-section {
+      margin-bottom: 20px;
+    }
+
+    .detail-section h4 {
+      color: var(--cyan);
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--rule);
+      font-size: 0.9em;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-row .label {
+      color: var(--muted);
+    }
+
+    .detail-row .value {
+      color: var(--ink);
+      font-family: 'SF Mono', monospace;
+    }
+
+    .detail-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .detail-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid var(--rule);
+      background: var(--bg-card);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .detail-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .detail-btn.primary {
+      background: var(--gold);
+      color: var(--bg-dark);
+      border-color: var(--gold);
+    }
+
+    .detail-btn.primary:hover {
+      background: #e6c200;
+    }
+
+    /* Lambda Visualization */
+    .lambda-viz {
+      display: flex;
+      justify-content: space-around;
+      margin: 15px 0;
+      padding: 15px;
+      background: var(--bg-card);
+      border-radius: 8px;
+    }
+
+    .lambda-component {
+      text-align: center;
+    }
+
+    .lambda-bar {
+      width: 30px;
+      background: var(--rule);
+      border-radius: 3px;
+      margin: 0 auto 5px;
+      position: relative;
+      height: 60px;
+    }
+
+    .lambda-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--gold);
+      border-radius: 3px;
+      transition: height 0.3s;
+    }
+
+    .lambda-label {
+      font-size: 0.8em;
+      color: var(--muted);
+    }
+
+    .lambda-value {
+      font-size: 0.7em;
+      color: var(--cyan);
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 150;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: var(--muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content { flex-direction: column; align-items: flex-start; }
+      .header-stats { flex-wrap: wrap; }
+      .filter-row { flex-wrap: wrap; }
+      .search-box input { width: 100%; }
+      .sample-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+      .detail-panel { width: 100%; right: -100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="header-left">
+        <a href="site-index.html" class="back-link">← Home</a>
+        <h1>MRP Golden Sample Library</h1>
+      </div>
+      <div class="header-stats">
+        <span class="header-stat"><strong id="totalCount">153</strong> samples</span>
+        <span class="header-stat"><strong>702</strong> bits each</span>
+        <span class="header-stat"><strong>16</strong> categories</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="filter-bar">
+    <div class="filter-content">
+      <div class="filter-row" id="categoryFilters">
+        <button class="filter-btn active" data-category="all">All</button>
+      </div>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search by ID or name...">
+      </div>
+    </div>
+  </div>
+
+  <main id="mainContent">
+    <div class="loading">Loading sample library...</div>
+  </main>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="detail-panel" id="detailPanel">
+    <button class="detail-close" onclick="closeDetail()">×</button>
+    <div id="detailContent"></div>
+  </div>
+
+  <script>
+    let library = null;
+    let allSamples = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // Load library
+    async function loadLibrary() {
+      try {
+        const response = await fetch('../language/mrp-golden-library.json');
+        library = await response.json();
+        processLibrary();
+        renderFilters();
+        renderSamples();
+      } catch (error) {
+        console.error('Failed to load library:', error);
+        document.getElementById('mainContent').innerHTML = `
+          <div class="loading">
+            Failed to load library. <br>
+            <small>${error.message}</small>
+          </div>
+        `;
+      }
+    }
+
+    // Process library into flat array
+    function processLibrary() {
+      allSamples = [];
+      const categories = Object.keys(library.samples);
+
+      categories.forEach(category => {
+        const samples = library.samples[category];
+        if (Array.isArray(samples)) {
+          samples.forEach(sample => {
+            allSamples.push({
+              ...sample,
+              category: category
+            });
+          });
+        }
+      });
+
+      document.getElementById('totalCount').textContent = allSamples.length;
+    }
+
+    // Render category filters
+    function renderFilters() {
+      const container = document.getElementById('categoryFilters');
+      const categories = Object.keys(library.samples).filter(k => Array.isArray(library.samples[k]));
+
+      const categoryLabels = {
+        'lambda_single_dominant': 'Lambda Singles',
+        'lambda_pairs': 'Lambda Pairs',
+        'lambda_triplets': 'Lambda Triplets',
+        'lambda_quads': 'Lambda Quads',
+        'lambda_quints': 'Lambda Quints',
+        'lambda_uniform': 'Lambda Uniform',
+        'eigenvalue_patterns': 'Eigenvalues',
+        'phase_lock_patterns': 'Phase Lock',
+        'kuramoto_sweep': 'Kuramoto',
+        'coherence_sweep': 'Coherence',
+        'oscillation_bands': 'Oscillation',
+        'physics_constants': 'Physics',
+        'bit_test_patterns': 'Bit Test',
+        'hamming_test': 'Hamming',
+        'topological': 'Topology',
+        'fibonacci_sequence': 'Fibonacci'
+      };
+
+      container.innerHTML = '<button class="filter-btn active" data-category="all">All</button>';
+
+      categories.forEach(cat => {
+        const label = categoryLabels[cat] || cat;
+        const count = library.samples[cat].length;
+        container.innerHTML += `
+          <button class="filter-btn" data-category="${cat}">${label} (${count})</button>
+        `;
+      });
+
+      // Add click handlers
+      container.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.category;
+          renderSamples();
+        });
+      });
+    }
+
+    // Filter samples
+    function getFilteredSamples() {
+      return allSamples.filter(sample => {
+        const matchesCategory = currentFilter === 'all' || sample.category === currentFilter;
+        const matchesSearch = searchQuery === '' ||
+          sample.id.toLowerCase().includes(searchQuery) ||
+          (sample.name && sample.name.toLowerCase().includes(searchQuery));
+        return matchesCategory && matchesSearch;
+      });
+    }
+
+    // Render samples
+    function renderSamples() {
+      const container = document.getElementById('mainContent');
+      const filtered = getFilteredSamples();
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="loading">No samples match your filter.</div>';
+        return;
+      }
+
+      // Group by category
+      const grouped = {};
+      filtered.forEach(sample => {
+        if (!grouped[sample.category]) grouped[sample.category] = [];
+        grouped[sample.category].push(sample);
+      });
+
+      const categoryLabels = {
+        'lambda_single_dominant': 'Lambda Single Dominant',
+        'lambda_pairs': 'Lambda Pairs (C(6,2) = 15)',
+        'lambda_triplets': 'Lambda Triplets (C(6,3) = 20)',
+        'lambda_quads': 'Lambda Quads (C(6,4) = 15)',
+        'lambda_quints': 'Lambda Quints (C(6,5) = 6)',
+        'lambda_uniform': 'Lambda Uniform',
+        'eigenvalue_patterns': 'Eigenvalue Patterns',
+        'phase_lock_patterns': 'Phase Lock Patterns',
+        'kuramoto_sweep': 'Kuramoto Coupling Sweep',
+        'coherence_sweep': 'Coherence Sweep',
+        'oscillation_bands': 'Oscillation Bands',
+        'physics_constants': 'Physics Constants',
+        'bit_test_patterns': 'Bit Test Patterns',
+        'hamming_test': 'Hamming Error Correction',
+        'topological': 'Topological Invariants',
+        'fibonacci_sequence': 'Fibonacci Sequence'
+      };
+
+      let html = '';
+
+      Object.keys(grouped).forEach(category => {
+        const samples = grouped[category];
+        const label = categoryLabels[category] || category;
+
+        html += `
+          <section class="category-section" data-category="${category}">
+            <div class="category-header">
+              <h2>${label}</h2>
+              <span class="category-count">${samples.length} samples</span>
+            </div>
+            <div class="sample-grid">
+              ${samples.map(sample => renderSampleCard(sample)).join('')}
+            </div>
+          </section>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      // Add click handlers
+      container.querySelectorAll('.sample-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const sampleId = card.dataset.id;
+          const sample = allSamples.find(s => s.id === sampleId);
+          if (sample) showDetail(sample);
+        });
+      });
+    }
+
+    // Render single sample card
+    function renderSampleCard(sample) {
+      const bits = sample.bits || {};
+      return `
+        <div class="sample-card" data-id="${sample.id}">
+          <div class="sample-image">
+            <img src="../assets/mrp-samples/${sample.id}.png" alt="${sample.id}"
+                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2250%22><rect fill=%22%231a1b1e%22 width=%22100%22 height=%2250%22/><text x=%2250%22 y=%2230%22 fill=%22%23888%22 text-anchor=%22middle%22 font-size=%2210%22>No image</text></svg>'">
+          </div>
+          <div class="sample-id">${sample.id}</div>
+          <div class="sample-name">${sample.name || ''}</div>
+          <div class="sample-bits">
+            <span>XCVI: <strong>${bits.XCVI !== undefined ? bits.XCVI : '-'}</strong></span>
+            <span>XCVII: <strong>${bits.XCVII !== undefined ? bits.XCVII : '-'}</strong></span>
+            <span>XCVIII: <strong>${bits.XCVIII !== undefined ? bits.XCVIII : '-'}</strong></span>
+            <span>XCIX: <strong>${bits.XCIX !== undefined ? bits.XCIX : '-'}</strong></span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Show detail panel
+    function showDetail(sample) {
+      const panel = document.getElementById('detailPanel');
+      const overlay = document.getElementById('overlay');
+      const content = document.getElementById('detailContent');
+
+      const bits = sample.bits || {};
+      const lambda = sample.lambda || {};
+
+      let lambdaViz = '';
+      if (Object.keys(lambda).length > 0) {
+        lambdaViz = `
+          <div class="detail-section">
+            <h4>Lambda State (ℂ⁶)</h4>
+            <div class="lambda-viz">
+              ${['iota', 'xi', 'theta', 'omega', 'delta', 'sigma'].map(comp => `
+                <div class="lambda-component">
+                  <div class="lambda-bar">
+                    <div class="lambda-fill" style="height: ${(lambda[comp] || 0) * 100}%"></div>
+                  </div>
+                  <div class="lambda-label">${comp.charAt(0)}</div>
+                  <div class="lambda-value">${(lambda[comp] || 0).toFixed(2)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      content.innerHTML = `
+        <div class="detail-header">
+          <h3>${sample.id}</h3>
+          <div class="subtitle">${sample.name || sample.category}</div>
+        </div>
+
+        <div class="detail-image">
+          <img src="../assets/mrp-samples/${sample.id}.png" alt="${sample.id}">
+        </div>
+
+        ${lambdaViz}
+
+        <div class="detail-section">
+          <h4>Encoded Bits</h4>
+          <div class="detail-row">
+            <span class="label">XCVI (7 bits)</span>
+            <span class="value">${bits.XCVI !== undefined ? bits.XCVI : '-'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">XCVII (10 bits)</span>
+            <span class="value">${bits.XCVII !== undefined ? bits.XCVII : '-'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">XCVIII (17 bits)</span>
+            <span class="value">${bits.XCVIII !== undefined ? bits.XCVIII : '-'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">XCIX (4 bits)</span>
+            <span class="value">${bits.XCIX !== undefined ? bits.XCIX : '-'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">C Pattern (664 bits)</span>
+            <span class="value">${bits.C_pattern || '-'}</span>
+          </div>
+        </div>
+
+        ${sample.coherence !== undefined ? `
+        <div class="detail-section">
+          <h4>Parameters</h4>
+          <div class="detail-row">
+            <span class="label">Coherence</span>
+            <span class="value">${sample.coherence}</span>
+          </div>
+          ${sample.K !== undefined ? `
+          <div class="detail-row">
+            <span class="label">Kuramoto K</span>
+            <span class="value">${sample.K}</span>
+          </div>
+          ` : ''}
+        </div>
+        ` : ''}
+
+        ${sample.physics ? `
+        <div class="detail-section">
+          <h4>Physics</h4>
+          <p style="color: var(--muted); font-size: 0.9em;">${sample.physics}</p>
+        </div>
+        ` : ''}
+
+        <div class="detail-actions">
+          <a href="../assets/mrp-samples/${sample.id}.png" download="${sample.id}.png" class="detail-btn primary">
+            Download PNG
+          </a>
+          <button class="detail-btn" onclick="loadInEncoder('${sample.id}')">
+            Open in Encoder
+          </button>
+        </div>
+      `;
+
+      panel.classList.add('open');
+      overlay.classList.add('open');
+    }
+
+    // Close detail panel
+    function closeDetail() {
+      document.getElementById('detailPanel').classList.remove('open');
+      document.getElementById('overlay').classList.remove('open');
+    }
+
+    // Load in encoder
+    function loadInEncoder(sampleId) {
+      window.location.href = `mrp-encoder.html?sample=${sampleId}`;
+    }
+
+    // Search handler
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase();
+      renderSamples();
+    });
+
+    // Overlay click closes detail
+    document.getElementById('overlay').addEventListener('click', closeDetail);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDetail();
+    });
+
+    // Load on init
+    loadLibrary();
+  </script>
+</body>
+</html>
