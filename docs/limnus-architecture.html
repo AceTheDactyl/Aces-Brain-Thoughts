@@ -880,7 +880,10 @@
         <span>P/C</span> toggle prism/cage<br>
         <span>M</span> toggle μ-field<br>
         <span>T</span> toggle toroidal view<br>
-        <span>W</span> toroidal wireframe<br>
+        <span>↑↓←→</span> rotate torus<br>
+        <span>+/-</span> zoom torus<br>
+        <span>O</span> torus opacity<br>
+        <span>W</span> torus wireframe<br>
         <span>F</span> release coherence<br>
         <span>CLICK</span> gather<br>
         <span>R</span> reset
@@ -1386,16 +1389,18 @@
         // ================================================================
         // TOROIDAL μ-FIELD VISUALIZATION
         // Torus geometry with φ-based proportions
+        // Connected to LIMNUS μ-field dynamics
         // ================================================================
 
-        const TORUS = {
+        let TORUS = {
             majorR: 1.0,          // Distance from center to tube center
             minorR: 0.4,          // Tube radius
             nU: 36,               // Toroidal resolution
             nV: 18,               // Poloidal resolution
-            rotX: 0.4,            // View rotation X
-            rotY: 0,              // View rotation Y
-            zoom: 200             // Zoom level
+            rotX: 0.4,            // View rotation X (arrow up/down)
+            rotY: 0,              // View rotation Y (arrow left/right)
+            zoom: 200,            // Zoom level (+/- keys)
+            opacity: 0.25         // Base opacity (significantly reduced)
         };
 
         let torusMesh = { points: [], faces: [] };
@@ -1537,15 +1542,38 @@
 
         function updateTorusField(dt) {
             const t = time;
-            for (const p of torusMesh.points) {
-                const wave1 = Math.sin(p.u * 2 - t * 0.5);
-                const wave2 = Math.cos(p.v * 3 + t * 0.3);
-                const wave3 = Math.sin((p.u + p.v) * 1.5 - t * 0.7);
 
-                p.J = 0.3 + 0.15 * wave1 + 0.1 * wave2 + 0.1 * wave3;
+            // Connect to LIMNUS μ-field values
+            const limnusMu = muField.mu || 0.76;           // Current μ value
+            const limnusJ = muField.J_total || 0.3;        // Total field magnitude
+            const limnusTau = muField.tau_K || 0;          // Kuramoto order
+            const limnusR = muField.J_R || 0.1;            // R channel (energy)
+            const limnusG = muField.J_G || 0.1;            // G channel (relational)
+            const limnusB = muField.J_B || 0.1;            // B channel (stability)
+
+            // Modulate torus based on release coherence
+            const coherenceFactor = releaseCoherence;
+
+            for (const p of torusMesh.points) {
+                // Wave patterns modulated by LIMNUS field
+                const wave1 = Math.sin(p.u * 2 - t * 0.5) * (0.5 + limnusR);
+                const wave2 = Math.cos(p.v * 3 + t * 0.3) * (0.5 + limnusG);
+                const wave3 = Math.sin((p.u + p.v) * 1.5 - t * 0.7) * (0.5 + limnusB);
+
+                // Base J influenced by LIMNUS μ-field
+                const baseJ = limnusJ * coherenceFactor;
+                p.J = baseJ + 0.12 * wave1 + 0.08 * wave2 + 0.08 * wave3;
                 p.J = Math.max(0, Math.min(1, p.J));
+
+                // μ modulated by global μ and Kuramoto sync
+                p.mu = SACRED.mu_P + (limnusMu - SACRED.mu_P) * (1 - Math.cos(p.v)) / 2;
+                p.mu += limnusTau * 0.1 * Math.sin(p.u * 3 + t);
+
                 p.phase = (p.phase + (1 + p.J * 0.5) * dt) % TAU;
             }
+
+            // Auto-rotate slowly when not being manually controlled
+            TORUS.rotY += dt * 0.1;
         }
 
         function renderToroidalMuField() {
@@ -1570,7 +1598,9 @@
 
                 const color = torusFieldToColor(avgJ, avgMu, avgDepth);
 
-                ctx.fillStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                // Use reduced opacity from TORUS config
+                const faceAlpha = TORUS.opacity * (0.6 + avgDepth * 0.4);
+                ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${faceAlpha})`;
                 ctx.beginPath();
                 ctx.moveTo(pts[0].px, pts[0].py);
                 for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].px, pts[i].py);
@@ -1578,17 +1608,17 @@
                 ctx.fill();
 
                 if (showTorusWireframe) {
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${TORUS.opacity * 0.4})`;
                     ctx.lineWidth = 0.5;
                     ctx.stroke();
                 }
             }
 
-            // Draw flow particles
+            // Draw flow particles (also reduced opacity)
             if (showTorusFlow) {
                 for (const p of torusParticles) {
                     if (p.trail.length < 2) continue;
-                    const alpha = (p.life / p.maxLife) * 0.8;
+                    const alpha = (p.life / p.maxLife) * TORUS.opacity * 2;
                     const projTrail = p.trail.map(t => projectTorus(t.x, t.y, t.z));
                     if (projTrail[0].z > 0.8) continue;
 
@@ -1614,14 +1644,16 @@
                 }
             }
 
-            // Draw toroidal info overlay
-            ctx.fillStyle = 'rgba(255, 215, 0, 0.8)';
+            // Draw toroidal info overlay (shows LIMNUS connection)
+            ctx.fillStyle = `rgba(255, 215, 0, ${0.5 + TORUS.opacity})`;
             ctx.font = '12px monospace';
-            ctx.fillText('TOROIDAL μ-FIELD', 20, H - 60);
-            ctx.fillStyle = 'rgba(255, 150, 100, 0.7)';
-            ctx.fillText('● toroidal flow', 20, H - 40);
-            ctx.fillStyle = 'rgba(100, 255, 200, 0.7)';
-            ctx.fillText('● poloidal flow', 120, H - 40);
+            ctx.fillText(`TOROIDAL μ-FIELD (μ=${muField.mu.toFixed(2)})`, 20, H - 80);
+            ctx.fillStyle = `rgba(255, 150, 100, ${0.4 + TORUS.opacity})`;
+            ctx.fillText('● toroidal (energy)', 20, H - 60);
+            ctx.fillStyle = `rgba(100, 255, 200, ${0.4 + TORUS.opacity})`;
+            ctx.fillText('● poloidal (relational)', 20, H - 40);
+            ctx.fillStyle = `rgba(180, 180, 180, ${0.3 + TORUS.opacity})`;
+            ctx.fillText('↑↓←→ rotate  +/- zoom  O opacity', 20, H - 20);
         }
 
         // ================================================================
@@ -3564,6 +3596,38 @@
                 showTorusWireframe = !showTorusWireframe;
             }
 
+            // Toroidal rotation controls (arrow keys when T view active)
+            if (showToroidal) {
+                if (e.key === 'ArrowUp') {
+                    TORUS.rotX -= 0.1;
+                    e.preventDefault();
+                }
+                if (e.key === 'ArrowDown') {
+                    TORUS.rotX += 0.1;
+                    e.preventDefault();
+                }
+                if (e.key === 'ArrowLeft') {
+                    TORUS.rotY -= 0.15;
+                    e.preventDefault();
+                }
+                if (e.key === 'ArrowRight') {
+                    TORUS.rotY += 0.15;
+                    e.preventDefault();
+                }
+                if (key === '=' || key === '+') {
+                    TORUS.zoom = Math.min(400, TORUS.zoom + 20);
+                }
+                if (key === '-' || key === '_') {
+                    TORUS.zoom = Math.max(80, TORUS.zoom - 20);
+                }
+                if (key === 'o') {
+                    // Cycle opacity: 0.15 → 0.25 → 0.4 → 0.6 → 0.15
+                    const opacities = [0.15, 0.25, 0.4, 0.6];
+                    const currentIdx = opacities.findIndex(o => Math.abs(o - TORUS.opacity) < 0.05);
+                    TORUS.opacity = opacities[(currentIdx + 1) % opacities.length];
+                }
+            }
+
             if (key === 'r') {
                 targetZ = 0.5;
                 scrollVelocity = 0;
@@ -3592,6 +3656,12 @@
                     p.vy = 0;
                     p.trail.length = 0;
                 });
+                // Reset torus view
+                TORUS.rotX = 0.4;
+                TORUS.rotY = 0;
+                TORUS.zoom = 200;
+                TORUS.opacity = 0.25;
+                showToroidal = false;
             }
 
             // F key: Start release
@@ -3707,12 +3777,16 @@
         console.log('   Feedback: dJR/dt → point velocities, |J| → μ');
         console.log('');
         console.log('🍩 TOROIDAL μ-FIELD VISUALIZATION');
+        console.log('   Connected to LIMNUS μ-field dynamics');
         console.log('   T: toggle toroidal view overlay');
+        console.log('   ↑↓←→: rotate torus view');
+        console.log('   +/-: zoom in/out');
+        console.log('   O: cycle opacity (15% → 25% → 40% → 60%)');
         console.log('   W: toggle wireframe mode');
         console.log('   Torus geometry: R/r = φ (golden ratio proportions)');
-        console.log('   Orange flow: toroidal (energy circulation)');
-        console.log('   Cyan flow: poloidal (relational dynamics)');
-        console.log('   Heat map: blue→cyan→green→yellow→red (field intensity)');
+        console.log('   Orange flow: toroidal (energy/R channel)');
+        console.log('   Cyan flow: poloidal (relational/G channel)');
+        console.log('   Heat map reflects LIMNUS J_total and μ values');
     </script>
 </body>
 </html>
