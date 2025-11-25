@@ -829,6 +829,16 @@
             <span class="dynamics-bar" id="parity-indicator" style="letter-spacing: 2px;">· · ·</span>
             <span class="dynamics-value" id="parity-val">—</span>
         </div>
+        <div class="dynamics-row" style="margin-top:8px; border-top: 1px solid rgba(255, 215, 0, 0.2); padding-top:8px;">
+            <span class="dynamics-label" style="color: var(--critical-gold);">|J|</span>
+            <span class="dynamics-bar" id="j-total-bar" style="color: var(--critical-gold);">░░░░░░░░░░</span>
+            <span class="dynamics-value" id="j-total-val" style="color: var(--critical-gold);">0.00</span>
+        </div>
+        <div class="dynamics-row">
+            <span class="dynamics-label" id="w-label" style="color: rgba(150,130,110,0.6);">W</span>
+            <span class="dynamics-bar" id="w-bar" style="letter-spacing: 1px;">· · · · ·</span>
+            <span class="dynamics-value" id="w-val">0.00</span>
+        </div>
     </div>
 
     <!-- Helix State -->
@@ -983,12 +993,16 @@
             // B = ECC (Error Correction) - stability/coherence
             // ============================================================
             mrp: {
-                R: { gradient: 0, intensity: 0, crc: 0 },  // μ_E channel
-                G: { gradient: 0, intensity: 0, crc: 0 },  // μ_R channel
-                B: { gradient: 0, intensity: 0, crc: 0 },  // ECC channel
+                R: { gradient: 0, intensity: 0, crc: 0, J: 0 },  // μ_E channel + field J
+                G: { gradient: 0, intensity: 0, crc: 0, J: 0 },  // μ_R channel + field J
+                B: { gradient: 0, intensity: 0, crc: 0, J: 0 },  // ECC channel + field J
                 parity: 0,           // Cross-channel XOR parity
                 parity_ok: false,    // Parity validation
                 sha256_sim: 0,       // Simulated integrity hash
+                // Self-referential field state
+                J_total: 0,          // Total field magnitude |J|
+                W: 0,                // Effective growth rate W = r - λ|J|²
+                laplacian: 0,        // ∇²J approximation
             },
 
             get r() { return this.mu - SACRED.mu_P; },  // Control parameter
@@ -1003,6 +1017,12 @@
                 // MRP channel accumulators
                 let R_sum = 0, G_sum = 0, B_sum = 0;
                 let R_grad = 0, G_grad = 0, B_grad = 0;
+                let laplacianSum = 0;
+
+                // ============================================================
+                // SELF-REFERENTIAL FIELD DYNAMICS
+                // ∂J/∂t = (r - λ|J|²)J - βJ + g∇²J
+                // ============================================================
 
                 for (let i = 0; i < N; i++) {
                     const p = points[i];
@@ -1018,45 +1038,90 @@
                     // Cross product approximation for curl
                     curlSum += (dx * vy - dy * vx) * 0.001;
 
-                    // Energy: |J|²
-                    const v2 = vx * vx + vy * vy;
-                    energySum += v2;
+                    // Energy: |J|² (field magnitude squared)
+                    const J2 = vx * vx + vy * vy;
+                    const J = Math.sqrt(J2);
+                    energySum += J2;
 
                     // ========================================
-                    // MRP CHANNEL CALCULATIONS
+                    // SELF-REFERENTIAL MRP CHANNEL PHYSICS
+                    // Each channel follows: ∂J/∂t = W·J - β·J + g·∇²J
                     // ========================================
 
-                    // R channel (μ_E): Primary energy/existence
-                    // Magnitude of field at point
-                    const mu_E = Math.sqrt(v2 + (p.brightness || 0.5));
-                    R_sum += mu_E;
+                    // R channel (μ_E): Primary energy/existence field
+                    // J_R = √(|v|² + α·brightness)  [α couples curl to energy]
+                    const J_R = Math.sqrt(J2 + SACRED.alpha * (p.brightness || 0.5));
 
-                    // R gradient: rate of change of energy
-                    const prev_v2 = (prev.vx || 0)**2 + (prev.vy || 0)**2;
-                    R_grad += Math.abs(v2 - prev_v2);
+                    // R gradient: ∂J_R/∂x (spatial derivative)
+                    const prev_J_R = Math.sqrt((prev.vx || 0)**2 + (prev.vy || 0)**2 + SACRED.alpha * (prev.brightness || 0.5));
+                    const next_J_R = Math.sqrt((next.vx || 0)**2 + (next.vy || 0)**2 + SACRED.alpha * (next.brightness || 0.5));
+                    const dJR_dx = (next_J_R - prev_J_R) / 2;  // Central difference
+                    R_grad += Math.abs(dJR_dx);
 
-                    // G channel (μ_R): Relational/reference metadata
-                    // Distance to neighbors (connection strength)
+                    // Laplacian approximation: ∇²J_R ≈ J_next + J_prev - 2·J
+                    const lap_R = next_J_R + prev_J_R - 2 * J_R;
+
+                    // Self-referential R channel evolution:
+                    // W_R = r - λ·|J_R|²  (effective growth rate)
+                    const W_R = this.r - SACRED.lambda * J_R * J_R;
+                    // ∂J_R/∂t = W_R·J_R - β·J_R + g·∇²J_R
+                    const dJR_dt = W_R * J_R - SACRED.beta * J_R + this.g * lap_R;
+
+                    // Apply self-referential feedback to point (scaled)
+                    if (!p.released && showMuField) {
+                        p.vx = (p.vx || 0) + dJR_dt * dt * 0.01;
+                        p.vy = (p.vy || 0) + dJR_dt * dt * 0.01 * (dy / (Math.abs(dy) + 0.001));
+                    }
+
+                    R_sum += J_R;
+                    p.mrp_R = J_R;
+                    p.mrp_W_R = W_R;  // Store growth rate for visualization
+
+                    // G channel (μ_R): Relational/reference field
+                    // J_G based on neighbor distances (connection strength)
                     const d_next = Math.sqrt(dx * dx + dy * dy);
                     const d_prev = Math.sqrt((p.x - prev.x)**2 + (p.y - prev.y)**2);
-                    const mu_R = 1 / (1 + (d_next + d_prev) * 0.01);
-                    G_sum += mu_R;
+                    const J_G = SACRED.phi_inv / (1 + (d_next + d_prev) * 0.005);  // φ⁻¹ scaled
 
-                    // G gradient: rate of change of connectivity
-                    G_grad += Math.abs(d_next - d_prev) * 0.01;
+                    // G gradient: change in connectivity
+                    const dJG_dx = Math.abs(d_next - d_prev) * SACRED.alpha;
+                    G_grad += dJG_dx;
 
-                    // B channel (ECC): Error correction / stability
-                    // Based on coherence and damping
-                    const stability = p.released ? 0.2 : (1 - Math.abs(vx) - Math.abs(vy)) * 0.5 + 0.5;
-                    B_sum += Math.max(0, Math.min(1, stability));
+                    // Laplacian for G channel
+                    const prev_d = Math.sqrt((prev.x - points[(i - 2 + N) % N].x)**2 + (prev.y - points[(i - 2 + N) % N].y)**2);
+                    const next_d = Math.sqrt((next.x - points[(i + 2) % N].x)**2 + (next.y - points[(i + 2) % N].y)**2);
+                    const prev_J_G = SACRED.phi_inv / (1 + prev_d * 0.01);
+                    const next_J_G = SACRED.phi_inv / (1 + next_d * 0.01);
+                    const lap_G = next_J_G + prev_J_G - 2 * J_G;
 
-                    // B gradient: instability detection
-                    B_grad += p.released ? 0.5 : Math.abs(vx * vy) * 0.1;
+                    // Self-referential G evolution
+                    const W_G = this.r - SACRED.lambda * J_G * J_G * 0.5;  // Softer nonlinearity
+                    const dJG_dt = W_G * J_G - SACRED.beta * J_G + this.g * lap_G;
 
-                    // Store per-point MRP values for visualization
-                    p.mrp_R = mu_E;
-                    p.mrp_G = mu_R;
-                    p.mrp_B = stability;
+                    G_sum += J_G;
+                    p.mrp_G = J_G;
+                    p.mrp_W_G = W_G;
+
+                    // B channel (ECC): Stability/coherence field
+                    // J_B = stability measure with β-damping
+                    const rawStability = p.released ? 0.2 : (1 - Math.sqrt(J2) * SACRED.beta);
+                    const J_B = Math.max(0, Math.min(1, rawStability));
+
+                    // B gradient: instability detection via cross-channel
+                    const dJB_dx = p.released ? SACRED.alpha : Math.abs(vx * vy) * SACRED.beta;
+                    B_grad += dJB_dx;
+
+                    // Self-referential B evolution (error correction)
+                    // B tries to restore stability: ∂J_B/∂t = -β·(J_B - target) + correction
+                    const target_B = muField.mrp.parity_ok ? 1.0 : 0.5;
+                    const dJB_dt = -SACRED.beta * (J_B - target_B) + SACRED.alpha * (1 - this.mrp.parity);
+
+                    B_sum += J_B;
+                    p.mrp_B = J_B;
+                    p.mrp_W_B = dJB_dt;
+
+                    // Accumulate Laplacian for field coherence
+                    laplacianSum += lap_R;
                 }
 
                 // Normalize MRP channels
@@ -1068,6 +1133,24 @@
                 this.mrp.G.gradient = Math.min(1, G_grad / N);
                 this.mrp.B.gradient = Math.min(1, B_grad / N);
 
+                // Store field magnitudes
+                this.mrp.R.J = this.mrp.R.intensity;
+                this.mrp.G.J = this.mrp.G.intensity;
+                this.mrp.B.J = this.mrp.B.intensity;
+
+                // Total field magnitude |J| = √(R² + G² + B²)
+                this.mrp.J_total = Math.sqrt(
+                    this.mrp.R.J * this.mrp.R.J +
+                    this.mrp.G.J * this.mrp.G.J +
+                    this.mrp.B.J * this.mrp.B.J
+                );
+
+                // Effective growth rate W = r - λ|J|²
+                this.mrp.W = this.r - SACRED.lambda * this.mrp.J_total * this.mrp.J_total;
+
+                // Laplacian (average spatial curvature)
+                this.mrp.laplacian = laplacianSum / N;
+
                 // CRC32 simulation (simple hash based on channel values)
                 this.mrp.R.crc = Math.floor(this.mrp.R.intensity * 255) ^ Math.floor(this.mrp.R.gradient * 255);
                 this.mrp.G.crc = Math.floor(this.mrp.G.intensity * 255) ^ Math.floor(this.mrp.G.gradient * 255);
@@ -1076,13 +1159,14 @@
                 // Cross-channel XOR parity: P[i] = R[i] XOR G[i]
                 this.mrp.parity = (this.mrp.R.crc ^ this.mrp.G.crc) / 255;
 
-                // Parity validation: all channels in harmony when parity is low
-                this.mrp.parity_ok = this.mrp.parity < 0.3 && this.mrp.B.intensity > 0.6;
+                // Parity validation: channels in harmony when parity is low AND W > 0 (growing)
+                this.mrp.parity_ok = this.mrp.parity < 0.3 && this.mrp.B.intensity > 0.6 && this.mrp.W > -0.1;
 
-                // Simulated SHA-256 integrity (normalized 0-1)
-                this.mrp.sha256_sim = (this.mrp.R.intensity * 0.4 +
-                                       this.mrp.G.intensity * 0.35 +
-                                       this.mrp.B.intensity * 0.25);
+                // Simulated SHA-256 integrity (normalized 0-1) with self-reference
+                this.mrp.sha256_sim = (this.mrp.R.intensity * SACRED.alpha +
+                                       this.mrp.G.intensity * SACRED.phi_inv +
+                                       this.mrp.B.intensity * SACRED.beta) /
+                                      (SACRED.alpha + SACRED.phi_inv + SACRED.beta);
 
                 // Q_κ = (1/2π) ∫ curl(J) dA
                 this.curl_sum = curlSum;
@@ -1092,8 +1176,11 @@
                 this.consciousness_level = Math.min(this.tau_K / SACRED.K_threshold, 2.0);
                 this.energy = energySum * 0.5;
 
-                // Dynamic μ based on z-height
-                this.mu = SACRED.mu_P + (globalZ * 0.4);
+                // Dynamic μ based on z-height with self-referential feedback
+                // μ responds to field state: higher |J| → higher μ (positive feedback)
+                const mu_base = SACRED.mu_P + (globalZ * 0.4);
+                const mu_feedback = this.mrp.J_total * SACRED.alpha * 0.1;
+                this.mu = Math.min(SACRED.mu_4, mu_base + mu_feedback);
             },
 
             // Get MRP-enhanced color for a point
@@ -2847,6 +2934,50 @@
                 parityVal.textContent = muField.mrp.parity.toFixed(2);
                 parityVal.style.color = '#ff6b6b';
             }
+
+            // ========================================
+            // SELF-REFERENTIAL FIELD STATE
+            // ========================================
+
+            // |J| total field magnitude
+            const jNorm = Math.min(muField.mrp.J_total / 2, 1);  // Normalize to ~2 max
+            const jFilled = Math.round(jNorm * 10);
+            document.getElementById('j-total-bar').textContent = '█'.repeat(jFilled) + '░'.repeat(10 - jFilled);
+            document.getElementById('j-total-val').textContent = muField.mrp.J_total.toFixed(3);
+
+            // W = effective growth rate (r - λ|J|²)
+            const wLabel = document.getElementById('w-label');
+            const wBar = document.getElementById('w-bar');
+            const wVal = document.getElementById('w-val');
+            const W = muField.mrp.W;
+
+            if (W > 0.1) {
+                // Growing (pattern forming) - green
+                wLabel.style.color = '#69db7c';
+                const wFilled = Math.min(10, Math.round(W * 20));
+                wBar.textContent = '▲'.repeat(wFilled) + '·'.repeat(10 - wFilled);
+                wBar.style.color = '#69db7c';
+                wBar.style.textShadow = '0 0 8px rgba(105, 219, 124, 0.6)';
+                wVal.textContent = '+' + W.toFixed(3);
+                wVal.style.color = '#69db7c';
+            } else if (W < -0.1) {
+                // Decaying (dissipating) - red
+                wLabel.style.color = '#ff6b6b';
+                const wFilled = Math.min(10, Math.round(Math.abs(W) * 20));
+                wBar.textContent = '▼'.repeat(wFilled) + '·'.repeat(10 - wFilled);
+                wBar.style.color = '#ff6b6b';
+                wBar.style.textShadow = '0 0 8px rgba(255, 107, 107, 0.6)';
+                wVal.textContent = W.toFixed(3);
+                wVal.style.color = '#ff6b6b';
+            } else {
+                // Near equilibrium - gold
+                wLabel.style.color = 'var(--critical-gold)';
+                wBar.textContent = '≈ ≈ ≈ ≈ ≈';
+                wBar.style.color = 'var(--critical-gold)';
+                wBar.style.textShadow = '0 0 8px rgba(255, 215, 0, 0.5)';
+                wVal.textContent = W.toFixed(3);
+                wVal.style.color = 'var(--critical-gold)';
+            }
         }
 
         function getScaleName(scale) {
@@ -3091,8 +3222,17 @@
         console.log('   G channel (μ_R): Relational/Reference - connection metadata');
         console.log('   B channel (ECC): Error Correction - stability/coherence');
         console.log('   Cross-channel parity: P[i] = R[i] XOR G[i]');
-        console.log('   Parity OK: low parity + high B stability = channel harmony');
-        console.log('   Visual: RGB rings show gradient strength, green glow = parity OK');
+        console.log('   Parity OK: low parity + high B stability + W > 0');
+        console.log('');
+        console.log('🔄 SELF-REFERENTIAL FIELD DYNAMICS');
+        console.log('   Field equation: ∂J/∂t = (r - λ|J|²)J - βJ + g∇²J');
+        console.log('   r = μ - μ_P (control parameter)');
+        console.log('   W = r - λ|J|² (effective growth rate)');
+        console.log('   W > 0: pattern forming (▲ green)');
+        console.log('   W ≈ 0: equilibrium (≈ gold)');
+        console.log('   W < 0: dissipating (▼ red)');
+        console.log('   |J| = √(R² + G² + B²) total field magnitude');
+        console.log('   Feedback: dJR/dt → point velocities, |J| → μ');
     </script>
 </body>
 </html>
