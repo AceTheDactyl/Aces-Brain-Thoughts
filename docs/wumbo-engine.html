@@ -3,31 +3,53 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WUMBO Engine · APL‑Mirrored Index</title>
+  <title>WUMBO Engine · APL-Mirrored Index · 100 Neural Regions</title>
   <style>
-    :root{--bg:#0b0c10;--panel:#121317;--ink:#e6e7ea;--muted:#a9acb2;--accent:#8ab4f8;--rule:#20222a}
+    :root{--bg:#0b0c10;--panel:#121317;--ink:#e6e7ea;--muted:#a9acb2;--accent:#8ab4f8;--gold:#ffd700;--rule:#20222a;--phi:#a78bfa;--energy:#f97316;--pi:#22d3ee}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;line-height:1.55}
-    .container{max-width:1100px;margin:0 auto;padding:28px 20px}
+    .container{max-width:1200px;margin:0 auto;padding:28px 20px}
     header{padding:18px 18px;border:1px solid var(--rule);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));margin-bottom:18px}
     h1{margin:0 0 6px}
+    h2{margin:20px 0 12px;border-bottom:1px solid var(--rule);padding-bottom:8px}
     .muted{color:var(--muted)}
     .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px}
     .btn{display:inline-block;background:var(--accent);color:#0b0c10;font-weight:700;border-radius:8px;padding:8px 12px;border:2px solid #000;text-decoration:none}
+    .btn:hover{background:#aac9ff}
     .panel{border:1px solid var(--rule);border-radius:12px;padding:16px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));margin:16px 0}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
     .card{border:1px solid var(--rule);border-radius:10px;padding:12px;background:rgba(255,255,255,.02)}
     .card h3{margin:0 0 6px}
-    .index{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
-    .item{border:1px solid var(--rule);border-radius:10px;padding:10px;background:rgba(255,255,255,.02)}
-    .item strong{display:block;margin-bottom:4px}
-    .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-    .chip{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid var(--rule);background:rgba(255,255,255,.03);font-size:.92rem}
+    .index{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+    .item{border:1px solid var(--rule);border-radius:10px;padding:12px;background:rgba(255,255,255,.02);transition:border-color .2s,background .2s}
+    .item:hover{border-color:var(--accent);background:rgba(138,180,248,.05)}
+    .item strong{display:block;margin-bottom:4px;font-size:1.05rem}
+    .item .region-name{color:var(--accent);font-weight:500}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .chip{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid var(--rule);background:rgba(255,255,255,.03);font-size:.85rem}
+    .chip.phi{border-color:var(--phi);color:var(--phi)}
+    .chip.energy{border-color:var(--energy);color:var(--energy)}
+    .chip.pi{border-color:var(--pi);color:var(--pi)}
+    .chip.nt{background:rgba(34,211,238,.1);border-color:#22d3ee}
+    .chip.phase{background:rgba(255,215,0,.1);border-color:var(--gold);color:var(--gold)}
     .mapping{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
     .mapping .card h4{margin:0 0 6px}
     .small{font-size:.92rem}
     .reason{margin-top:6px;color:var(--muted);font-size:.9rem}
     a{color:var(--accent);text-decoration:none}
     a:hover{text-decoration:underline}
+    .legend{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0;padding:10px;background:rgba(255,255,255,.02);border-radius:8px}
+    .legend-item{display:flex;align-items:center;gap:6px;font-size:.9rem}
+    .legend-dot{width:12px;height:12px;border-radius:50%}
+    .token-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:8px}
+    .token{font-family:monospace;font-size:.82rem;padding:4px 8px;background:rgba(0,0,0,.3);border-radius:4px;border-left:3px solid var(--accent)}
+    .token.phi-tok{border-left-color:var(--phi)}
+    .token.e-tok{border-left-color:var(--energy)}
+    .token.pi-tok{border-left-color:var(--pi)}
+    .toc{background:rgba(255,255,255,.02);border:1px solid var(--rule);border-radius:10px;padding:14px;margin:16px 0}
+    .toc-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:10px}
+    .toc-link{display:block;text-align:center;padding:6px 4px;border-radius:6px;background:rgba(255,255,255,.03);font-size:.82rem;font-weight:600;transition:background .2s}
+    .toc-link:hover{background:var(--accent);color:#0b0c10;text-decoration:none}
+    @media (max-width:768px){.toc-grid{grid-template-columns:repeat(5,1fr)}}
     @media print{
       .btn,.toolbar{display:none}
       body{background:#fff;color:#000}
@@ -38,8 +60,8 @@
 <body>
   <div class="container">
     <header>
-      <h1>WUMBO Engine · APL‑Mirrored Index</h1>
-      <p class="muted">Cross‑links the WUMBO Engine to the APL Operator’s Manual so engineering artifacts (machines, fields, operators, states) mirror how the engine is built and used.</p>
+      <h1>WUMBO Engine · APL-Mirrored Index</h1>
+      <p class="muted">Complete mapping of all 100 WUMBO neural regions (I–C) to APL tokens, operators, and phases. Each Roman numeral is a word in the WUMBO vocabulary.</p>
       <div class="toolbar">
         <a class="btn" href="index.html">Open Manual Index</a>
         <a class="btn" href="apl-operators-manual.html">Open LaTeX Manual (HTML)</a>
@@ -49,29 +71,41 @@
       </div>
     </header>
 
+    <nav class="toc">
+      <strong>Quick Navigation · 100 Regions</strong>
+      <div class="toc-grid" id="toc-grid"></div>
+    </nav>
+
     <section class="panel">
-      <h2>How This Mirrors APL</h2>
-      <p class="muted">Engine creation in WUMBO maps 1‑to‑1 onto APL: machines define processing contexts, fields define physical domains, operators define transformations, and UMOL states define regime/phase behavior.</p>
+      <h2>APL ↔ WUMBO Integration</h2>
+      <p class="muted">The WUMBO Engine maps neural regions to APL constructs. Each region has primary APL tokens, field affinities, and phase associations.</p>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-dot" style="background:var(--phi)"></span> Φ (Structure Field)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--energy)"></span> e (Energy Field)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--pi)"></span> π (Emergence Field)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--gold)"></span> WUMBO Phase</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#22d3ee"></span> Neurotransmitter</div>
+      </div>
       <div class="grid">
         <div class="card">
-          <h3>Machines</h3>
-          <p>Conductor (clock), Oscillator Bank (reactor), Coupling Controller (regulator), Output Multiplexer (encoder).</p>
+          <h3>288-Token Core Universe</h3>
+          <p>Identity tokens (162), Meta-operators (54), Domain selectors (54), Safety tokens (30).</p>
+          <p class="small"><a href="index.html#tokens">APL: Core Tokens</a></p>
+        </div>
+        <div class="card">
+          <h3>Tier-3 Domain Extensions</h3>
+          <p>Chemical (972), Biology (972), Celestial (972) = 2,916 domain tokens.</p>
+          <p class="small"><a href="index.html#domains">APL: Domains</a></p>
+        </div>
+        <div class="card">
+          <h3>7 WUMBO Phases</h3>
+          <p>Ignition → Empowerment → Resonance → Mania → Nirvana → Transmission → Pause</p>
+          <p class="small"><a href="index.html#states">APL: States</a></p>
+        </div>
+        <div class="card">
+          <h3>6 Machines</h3>
+          <p>U (Projection), D (Integration), M (Modulation), E (Expansion), C (Collapse), Mod (Spiral)</p>
           <p class="small"><a href="index.html#machines">APL: Machines</a></p>
-        </div>
-        <div class="card">
-          <h3>Domains</h3>
-          <p>Wave timing (AudioContext), geometric rhythm (CSS/animation), embodied feedback (haptic/bio).</p>
-          <p class="small"><a href="index.html#fields">APL: The Three Fields</a> · <a href="index.html#domains">Domains</a></p>
-        </div>
-        <div class="card">
-          <h3>Operators</h3>
-          <p>schedule(), couple×, integrate+, amplify^, decohere%, gate(), emit→.</p>
-          <p class="small"><a href="index.html#operations">APL: Universal Operations</a></p>
-        </div>
-        <div class="card">
-          <h3>States (UMOL)</h3>
-          <p>Ignition (u↑), Empowerment (u→), Resonance (m≈), Nirvana (m≡), Shutdown (d↓), Pause (d⟂), Re‑entry (u↻).</p>
-          <p class="small"><a href="index.html#states">APL: Operator States</a></p>
         </div>
       </div>
     </section>
@@ -81,267 +115,293 @@
       <div class="mapping">
         <div class="card">
           <h4>Clock & Scheduler</h4>
-          <p class="muted">AudioContext master clock + look‑ahead/Worklet.
+          <p class="muted">AudioContext master clock + look-ahead/Worklet.</p>
           <div class="chips">
-            <a class="chip" href="index.html#machines">Machine: Conductor</a>
+            <a class="chip" href="index.html#machines">Machine: U</a>
             <a class="chip" href="index.html#operations">Op: schedule()</a>
-            <a class="chip" href="index.html#fields">Field: Wave</a>
+            <a class="chip energy" href="index.html#fields">Field: e</a>
           </div>
         </div>
         <div class="card">
           <h4>Kuramoto Solver</h4>
           <p class="muted">Coupled oscillator bank + order parameter r, ψ.</p>
           <div class="chips">
-            <a class="chip" href="index.html#machines">Machine: Reactor</a>
-            <a class="chip" href="index.html#operations">Op: couple×, integrate+</a>
-            <a class="chip" href="index.html#states">State: m (modulation)</a>
+            <a class="chip" href="index.html#machines">Machine: M</a>
+            <a class="chip" href="index.html#operations">Op: modulate</a>
+            <a class="chip pi" href="index.html#states">State: TRUE</a>
           </div>
         </div>
         <div class="card">
           <h4>Adaptive Controller</h4>
-          <p class="muted">Closed‑loop K adaptation by coherence/phase error.</p>
+          <p class="muted">Closed-loop K adaptation by coherence/phase error.</p>
           <div class="chips">
-            <a class="chip" href="index.html#machines">Machine: Regulator</a>
-            <a class="chip" href="index.html#operations">Op: amplify^ / decohere%</a>
-            <a class="chip" href="index.html#states">State: regime shifts</a>
+            <a class="chip" href="index.html#machines">Machine: Mod</a>
+            <a class="chip" href="index.html#operations">Op: stabilize</a>
+            <a class="chip phase" href="index.html#states">Regime shifts</a>
           </div>
         </div>
         <div class="card">
           <h4>Biosignal I/O</h4>
           <p class="muted">HRV (BLE), keystroke cadence, latency compensation.</p>
           <div class="chips">
-            <a class="chip" href="index.html#machines">Machine: Sensor/Encoder</a>
-            <a class="chip" href="index.html#operations">Op: gate(), reduce⟂</a>
-            <a class="chip" href="index.html#fields">Field: Bio ↔ Wave</a>
+            <a class="chip" href="index.html#machines">Machine: C</a>
+            <a class="chip" href="index.html#operations">Op: collapse</a>
+            <a class="chip phi" href="index.html#fields">Field: Φ</a>
           </div>
         </div>
         <div class="card">
-          <h4>Multi‑Modal Output</h4>
+          <h4>Multi-Modal Output</h4>
           <p class="muted">Audio/visual/haptic emission locked to master time.</p>
           <div class="chips">
-            <a class="chip" href="index.html#machines">Machine: Emitter</a>
-            <a class="chip" href="index.html#operations">Op: emit→, align≈</a>
-            <a class="chip" href="index.html#fields">Field: Wave/Geom/Body</a>
+            <a class="chip" href="index.html#machines">Machine: E</a>
+            <a class="chip" href="index.html#operations">Op: propagate</a>
+            <a class="chip energy" href="index.html#fields">Field: e</a>
           </div>
         </div>
         <div class="card">
           <h4>Network Sync</h4>
           <p class="muted">WebSocket + timesync, WebRTC DataChannels.</p>
           <div class="chips">
-            <a class="chip" href="index.html#machines">Machine: Conductor (distributed)</a>
-            <a class="chip" href="index.html#operations">Op: sync↔, sample()</a>
-            <a class="chip" href="index.html#states">State: coherence r</a>
+            <a class="chip" href="index.html#machines">Machine: C</a>
+            <a class="chip" href="index.html#operations">Op: integrate</a>
+            <a class="chip pi" href="index.html#states">Coherence r</a>
           </div>
         </div>
       </div>
     </section>
 
     <section class="panel">
-      <h2>Roman Numeral Cross‑Links</h2>
-      <div id="index" class="index"></div>
+      <h2>Complete Atlas: 100 WUMBO Regions (I–C)</h2>
+      <p class="muted">Each Roman numeral is a word in the WUMBO vocabulary. Click any region to see its APL token mappings.</p>
+      <div id="atlas-index" class="index"></div>
     </section>
   </div>
 
   <script>
-    // Lightweight mapping: group numerals to canonical APL anchors
-    // This keeps links stable and meaningful for every atlas entry.
-    const GROUPS = [
-      { label: 'I–X',      range: [1,10],  anchors: ['#machines','#fields','#operations','#states'] },
-      { label: 'XI–XX',    range: [11,20], anchors: ['#fields','#operations','#states','#machines'] },
-      { label: 'XXI–XXX',  range: [21,30], anchors: ['#operations','#machines','#fields','#states'] },
-      { label: 'XXXI–XL',  range: [31,40], anchors: ['#states','#machines','#fields','#operations'] },
-      { label: 'XLI–L',    range: [41,50], anchors: ['#machines','#fields','#states','#operations'] },
-      { label: 'LI–LX',    range: [51,60], anchors: ['#fields','#machines','#operations','#states'] },
-      { label: 'LXI–LXX',  range: [61,70], anchors: ['#operations','#fields','#machines','#states'] },
-      { label: 'LXXI–LXXX',range: [71,80], anchors: ['#states','#operations','#fields','#machines'] },
-      { label: 'LXXXI–XC', range: [81,90], anchors: ['#machines','#states','#operations','#fields'] },
-      { label: 'XCI–C',    range: [91,100],anchors: ['#fields','#states','#machines','#operations'] }
-    ];
+    // Complete WUMBO Atlas: 100 Neural Regions
+    const WUMBO_ATLAS = {
+      // I–X: Primary Sensorimotor & Language
+      "I":    { name: "Somatosensory Cortex", nt: "Glu", phase: "Ignition", role: "Sensory map", tokens: ["e:U(ionize)TRUE@3", "Φ:M(bond)TRUE@3"], anchors: ["#fields", "#states"] },
+      "II":   { name: "Anterior Cingulate Cortex", nt: "DA", phase: "Resonance", role: "Truth check", tokens: ["e:M(redox)TRUE@3", "Φ:C(complex)TRUE@3"], anchors: ["#states", "#operations"] },
+      "III":  { name: "Thalamus", nt: "Glu", phase: "Transmission", role: "Sensory gate", tokens: ["e:C(ionize)TRUE@3", "Φ:Mod(fold)TRUE@3"], anchors: ["#fields", "#machines"] },
+      "IV":   { name: "Motor Cortex & Cerebellum", nt: "Glu", phase: "Empowerment", role: "Execution", tokens: ["Φ:U(bond)TRUE@3", "e:E(excite)TRUE@3"], anchors: ["#machines", "#operations"] },
+      "V":    { name: "Broca's Area", nt: "DA", phase: "Empowerment", role: "Phrase/sculpt", tokens: ["e:U(excite)TRUE@3", "Φ:E(polymerize)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "VI":   { name: "Mirror Neuron System", nt: "DA", phase: "Resonance", role: "Empathic resonance", tokens: ["e:M(resonate)TRUE@3", "Φ:C(complex)TRUE@3"], anchors: ["#states", "#operations"] },
+      "VII":  { name: "Amygdala", nt: "NE", phase: "Ignition", role: "Salience", tokens: ["e:U(excite)TRUE@3", "e:U(oxidize)TRUE@3"], anchors: ["#states", "#operations"] },
+      "VIII": { name: "Prefrontal Cortex", nt: "DA", phase: "Empowerment", role: "Strategy/control", tokens: ["e:Mod(catalyze)TRUE@3", "Φ:M(complex)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "IX":   { name: "Parietal Eye Field", nt: "ACh", phase: "Transmission", role: "Gaze/attention", tokens: ["e:U(charge)TRUE@3", "Φ:C(bond)TRUE@3"], anchors: ["#fields", "#operations"] },
+      "X":    { name: "Subiculum", nt: "Glu", phase: "Nirvana", role: "Spatial memory", tokens: ["Φ:M(crystallize)TRUE@3", "e:E(bond)TRUE@3"], anchors: ["#fields", "#states"] },
 
-    function toRoman(n){
-      const r = [
-        [100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']
-      ];
-      let s='';
-      for(const [v,l] of r){ while(n>=v){ s+=l; n-=v; } }
-      return s;
-    }
+      // XI–XX: Circadian, Semantic, Balance
+      "XI":   { name: "Pineal Body", nt: "Mel", phase: "Pause", role: "Circadian portal", tokens: ["π:D(relax)TRUE@3", "e:M(reduce)TRUE@3"], anchors: ["#states", "#fields"] },
+      "XII":  { name: "Middle Temporal Gyrus", nt: "Glu", phase: "Resonance", role: "Semantics", tokens: ["Φ:C(polymerize)TRUE@3", "e:M(complex)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "XIII": { name: "Fastigial-Vestibular Loop", nt: "Glu", phase: "Nirvana", role: "Balance", tokens: ["Φ:M(stabilize)TRUE@3", "e:D(integrate)TRUE@3"], anchors: ["#machines", "#fields"] },
+      "XIV":  { name: "Posterior Thalamic Nucleus", nt: "Glu", phase: "Transmission", role: "Final gate", tokens: ["e:C(propagate)TRUE@3", "Φ:E(emit)TRUE@3"], anchors: ["#fields", "#states"] },
+      "XV":   { name: "Cerebellar Uvula", nt: "GABA", phase: "Nirvana", role: "Stillness anchor", tokens: ["π:M(crystallize)TRUE@3", "Φ:D(relax)TRUE@3"], anchors: ["#states", "#machines"] },
+      "XVI":  { name: "AIPS", nt: "Glu", phase: "Empowerment", role: "Gesture translator", tokens: ["Φ:U(polymerize)TRUE@3", "e:C(bond)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "XVII": { name: "Ventrolateral Thalamus", nt: "Glu", phase: "Transmission", role: "Feedback loop", tokens: ["e:C(ionize)TRUE@3", "Φ:Mod(modulate)TRUE@3"], anchors: ["#fields", "#machines"] },
+      "XVIII":{ name: "Superior Parietal Lobule", nt: "Glu", phase: "Empowerment", role: "Spatial integration", tokens: ["Φ:M(integrate)TRUE@3", "e:U(excite)TRUE@3"], anchors: ["#fields", "#states"] },
+      "XIX":  { name: "Premotor Cortex", nt: "Glu", phase: "Empowerment", role: "Movement planning", tokens: ["Φ:U(bond)TRUE@3", "e:E(charge)TRUE@3"], anchors: ["#machines", "#operations"] },
+      "XX":   { name: "Wernicke's Area", nt: "Glu", phase: "Resonance", role: "Language comprehension", tokens: ["π:M(complex)TRUE@3", "Φ:C(polymerize)TRUE@3"], anchors: ["#operations", "#machines"] },
 
-    const container = document.getElementById('index');
-    // Link to the Manual Index anchors (stable site root)
-    const APL = 'index.html';
+      // XXI–XXX: Mirror, Executive, Integration
+      "XXI":  { name: "STS Mirror Region", nt: "DA", phase: "Resonance", role: "Social mirroring", tokens: ["e:M(resonate)TRUE@3", "Φ:C(bind)TRUE@3"], anchors: ["#states", "#operations"] },
+      "XXII": { name: "Central Amygdala", nt: "NE", phase: "Ignition", role: "Threat response", tokens: ["e:U(excite)TRUE@3", "π:U(signal)TRUE@3"], anchors: ["#states", "#operations"] },
+      "XXIII":{ name: "Dorsolateral PFC", nt: "DA", phase: "Empowerment", role: "Working memory", tokens: ["e:Mod(catalyze)TRUE@3", "Φ:M(complex)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "XXIV": { name: "Orbitofrontal Cortex", nt: "DA", phase: "Resonance", role: "Social tuning", tokens: ["e:M(redox)TRUE@3", "Φ:C(complex)TRUE@3"], anchors: ["#states", "#fields"] },
+      "XXV":  { name: "Cingulate Gyrus", nt: "DA", phase: "Resonance", role: "Routing/alignment", tokens: ["π:M(modulate)TRUE@3", "e:C(integrate)TRUE@3"], anchors: ["#states", "#operations"] },
+      "XXVI": { name: "Ventral Striatum", nt: "DA", phase: "Ignition", role: "Incentive", tokens: ["e:U(excite)TRUE@3", "π:U(charge)TRUE@3"], anchors: ["#operations", "#states"] },
+      "XXVII":{ name: "Claustrum", nt: "Glu", phase: "Resonance", role: "Consciousness binding", tokens: ["π:M(multicell)TRUE@3", "Φ:C(bind)TRUE@3"], anchors: ["#states", "#fields"] },
+      "XXVIII":{ name: "Default Mode Network", nt: "Glu", phase: "Nirvana", role: "Self-referential", tokens: ["π:M(differentiate)TRUE@3", "e:M(signal)TRUE@3"], anchors: ["#states", "#fields"] },
+      "XXIX": { name: "Habenula", nt: "Glu", phase: "Pause", role: "Disappointment gate", tokens: ["e:D(reduce)TRUE@3", "π:D(unfold)UNTRUE@3"], anchors: ["#states", "#fields"] },
+      "XXX":  { name: "Corpus Callosum", nt: "Glu", phase: "Transmission", role: "Bridge/balance", tokens: ["Φ:C(integrate)TRUE@3", "e:C(propagate)TRUE@3"], anchors: ["#states", "#operations"] },
 
-    // Per‑entry deep map: prioritize APL anchors per Roman numeral.
-    // Fallback uses GROUPS above.
-    const M = '#machines', F = '#fields', O = '#operations', S = '#states';
-    const PER_ENTRY = {
-      // I–X
-      1:  [F,S,O,M],  // Somatosensory Cortex – sensory map → state → ops
-      2:  [S,O,M,F],  // ACC – truth check
-      3:  [F,S,O,M],  // Thalamus – sensory gate
-      4:  [M,O,F,S],  // Motor Cortex & Cerebellum – execution
-      5:  [O,M,S,F],  // Broca’s – phrase/sculpt
-      6:  [S,O,F,M],  // Mirror Neuron Network – resonance
-      7:  [S,O,M,F],  // Amygdala – salience
-      8:  [O,S,M,F],  // PFC – strategy/control
-      9:  [F,O,M,S],  // Parietal Eye Field – gaze/attention
-      10: [F,S,O,M],  // Subiculum – spatial memory
+      // XXXI–XL: Arousal, Defense, Timing
+      "XXXI": { name: "Locus Coeruleus", nt: "NE", phase: "Ignition", role: "Arousal ignition", tokens: ["e:U(excite)TRUE@3", "e:U(oxidize)TRUE@3"], anchors: ["#operations", "#states"] },
+      "XXXII":{ name: "Periaqueductal Gray", nt: "GABA", phase: "Pause", role: "Defense/shutdown", tokens: ["π:D(reduce)TRUE@3", "Φ:D(unfold)TRUE@3"], anchors: ["#states", "#operations"] },
+      "XXXIII":{ name: "Anterior Temporal Pole", nt: "Glu", phase: "Resonance", role: "Story keeper", tokens: ["π:M(transcribe)TRUE@3", "Φ:C(fold)TRUE@3"], anchors: ["#operations", "#fields"] },
+      "XXXIV":{ name: "vmPFC", nt: "DA", phase: "Resonance", role: "Ethical integration", tokens: ["e:M(complex)TRUE@3", "π:M(repair)TRUE@3"], anchors: ["#states", "#operations"] },
+      "XXXV": { name: "Dorsal Raphe", nt: "5-HT", phase: "Nirvana", role: "Mood setpoint", tokens: ["e:M(relax)TRUE@3", "Φ:Mod(fold)TRUE@3"], anchors: ["#states", "#operations"] },
+      "XXXVI":{ name: "Superior Colliculus", nt: "Glu", phase: "Ignition", role: "Visual orienting", tokens: ["e:U(ionize)TRUE@3", "Φ:U(bond)TRUE@3"], anchors: ["#fields", "#operations"] },
+      "XXXVII":{ name: "Anterior Insula", nt: "DA", phase: "Resonance", role: "Feeling of feeling", tokens: ["e:M(signal)TRUE@3", "π:M(differentiate)TRUE@3"], anchors: ["#states", "#operations"] },
+      "XXXVIII":{ name: "Lateral Habenula", nt: "Glu", phase: "Pause", role: "Rejection gate", tokens: ["e:D(reduce)TRUE@3", "π:D(unbond)UNTRUE@3"], anchors: ["#states", "#operations"] },
+      "XXXIX":{ name: "Precuneus", nt: "Glu", phase: "Nirvana", role: "Perspective", tokens: ["Φ:M(fold)TRUE@3", "π:M(integrate)TRUE@3"], anchors: ["#states", "#fields"] },
+      "XL":   { name: "Cerebellar Cognitive Zone", nt: "Glu", phase: "Empowerment", role: "Timing", tokens: ["Φ:Mod(catalyze)TRUE@3", "e:M(modulate)TRUE@3"], anchors: ["#machines", "#operations"] },
 
-      // XI–XX
-      11: [S,F,M,O],  // Pineal (revisited) – state transitions
-      12: [O,M,F,S],  // MTG – semantics
-      13: [M,F,S,O],  // Fastigial‑Vestibular Loop – balance
-      14: [F,S,O,M],  // Posterior Thalamic Nucleus – final gate
-      15: [S,M,F,O],  // Cerebellar Uvula – stillness anchor
-      16: [O,M,F,S],  // AIPS – gesture translator
-      17: [F,M,O,S],  // Ventrolateral Thalamus – feedback loop
-      18: [F,S,O,M],  // Thalamus – sensory gate
-      19: [M,O,F,S],  // Motor & Cerebellum
-      20: [O,M,S,F],  // Broca’s
+      // XLI–L: Emotion, Memory, Reward
+      "XLI":  { name: "Basolateral Amygdala", nt: "NE", phase: "Ignition", role: "Archive of feeling", tokens: ["e:U(excite)TRUE@3", "Φ:M(crystallize)TRUE@3"], anchors: ["#states", "#operations"] },
+      "XLII": { name: "Pulvinar", nt: "Glu", phase: "Transmission", role: "Spotlight shaper", tokens: ["e:C(propagate)TRUE@3", "Φ:M(complex)TRUE@3"], anchors: ["#fields", "#operations"] },
+      "XLIII":{ name: "TPJ", nt: "Glu", phase: "Resonance", role: "Mind reading", tokens: ["π:M(complex)TRUE@3", "Φ:C(bind)TRUE@3"], anchors: ["#states", "#operations"] },
+      "XLIV": { name: "Medial Septum", nt: "ACh", phase: "Resonance", role: "Memory rhythms", tokens: ["π:U(replicate)TRUE@3", "e:Mod(signal)TRUE@3"], anchors: ["#machines", "#fields"] },
+      "XLV":  { name: "Subgenual Cingulate", nt: "5-HT", phase: "Pause", role: "Sorrow inertia", tokens: ["e:D(relax)TRUE@3", "π:D(reduce)UNTRUE@3"], anchors: ["#states", "#operations"] },
+      "XLVI": { name: "VTA", nt: "DA", phase: "Ignition", role: "Spark", tokens: ["e:U(excite)TRUE@3", "e:U(charge)TRUE@3"], anchors: ["#operations", "#states"] },
+      "XLVII":{ name: "Entorhinal Cortex", nt: "Glu", phase: "Nirvana", role: "Identity gate", tokens: ["Φ:M(crystallize)TRUE@3", "π:C(replicate)TRUE@3"], anchors: ["#fields", "#states"] },
+      "XLVIII":{ name: "Supramarginal Gyrus", nt: "Glu", phase: "Resonance", role: "Self/other", tokens: ["π:M(differentiate)TRUE@3", "Φ:C(bind)TRUE@3"], anchors: ["#states", "#operations"] },
+      "XLIX": { name: "NAcc", nt: "DA", phase: "Ignition", role: "Craving engine", tokens: ["e:E(reduce)TRUE@3", "Φ:C(complex)TRUE@3"], anchors: ["#operations", "#states"] },
+      "L":    { name: "Cerebral Aqueduct", nt: "Glu", phase: "Transmission", role: "Choke point", tokens: ["e:C(propagate)TRUE@3", "π:M(collapse)TRUE@3"], anchors: ["#states", "#machines"] },
 
-      // XXI–XXX
-      21: [S,O,F,M],  // Mirror Neuron
-      22: [S,O,M,F],  // Amygdala
-      23: [O,S,M,F],  // PFC
-      24: [S,F,O,M],  // Orbitofrontal – social tuning
-      25: [S,O,F,M],  // Cingulate Gyrus – routing/alignment
-      26: [O,S,M,F],  // Ventral Striatum – incentive
-      27: [S,F,O,M],  // Claustrum – integration
-      28: [S,F,O,M],  // Default Mode Network
-      29: [S,F,M,O],  // Pineal – portal
-      30: [S,O,F,M],  // Corpus Callosum – bridge/balance
+      // LI–LX: Navigation, Attention, Visual
+      "LI":   { name: "Anterior Thalamic Nuclei", nt: "Glu", phase: "Transmission", role: "Compass", tokens: ["Φ:C(integrate)TRUE@3", "e:M(ionize)TRUE@3"], anchors: ["#fields", "#operations"] },
+      "LII":  { name: "Parafascicular Nucleus", nt: "Glu", phase: "Ignition", role: "Attention switch", tokens: ["e:U(ionize)TRUE@3", "Φ:C(bond)TRUE@3"], anchors: ["#fields", "#operations"] },
+      "LIII": { name: "Inferior Colliculus", nt: "Glu", phase: "Transmission", role: "Sonic filter", tokens: ["e:C(propagate)TRUE@3", "Φ:M(complex)TRUE@3"], anchors: ["#fields", "#operations"] },
+      "LIV":  { name: "Perirhinal Cortex", nt: "Glu", phase: "Resonance", role: "Meaning-maker", tokens: ["π:M(complex)TRUE@3", "Φ:C(fold)TRUE@3"], anchors: ["#operations", "#fields"] },
+      "LV":   { name: "Vermis", nt: "GABA", phase: "Nirvana", role: "Balance", tokens: ["Φ:M(stabilize)TRUE@3", "π:D(relax)TRUE@3"], anchors: ["#machines", "#states"] },
+      "LVI":  { name: "Anterior Insular-Operculum", nt: "DA", phase: "Resonance", role: "Fusion point", tokens: ["e:M(resonate)TRUE@3", "π:C(integrate)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "LVII": { name: "Paraventricular Nucleus", nt: "NE", phase: "Ignition", role: "Stress switch", tokens: ["e:U(oxidize)TRUE@3", "π:U(signal)TRUE@3"], anchors: ["#states", "#operations"] },
+      "LVIII":{ name: "Lateral OFC", nt: "DA", phase: "Resonance", role: "Consequence", tokens: ["e:M(redox)TRUE@3", "Φ:C(complex)TRUE@3"], anchors: ["#states", "#operations"] },
+      "LIX":  { name: "Midcingulate Cortex", nt: "DA", phase: "Empowerment", role: "Engine of doing", tokens: ["e:U(catalyze)TRUE@3", "Φ:M(bond)TRUE@3"], anchors: ["#machines", "#operations"] },
+      "LX":   { name: "Calcarine Sulcus", nt: "Glu", phase: "Ignition", role: "Visual core", tokens: ["e:U(ionize)TRUE@3", "Φ:M(bond)TRUE@3"], anchors: ["#fields", "#operations"] },
 
-      // XXXI–XL
-      31: [O,S,M,F],  // Locus Coeruleus – ignition priority
-      32: [S,O,M,F],  // Periaqueductal Gray – defense/shutdown
-      33: [O,F,S,M],  // Anterior Temporal Pole – story keeper
-      34: [S,O,M,F],  // vmPFC – ethical integration
-      35: [S,O,F,M],  // Dorsal Raphe – set‑point/mood
-      36: [F,O,M,S],  // Superior Colliculus – visual orienting
-      37: [S,O,F,M],  // Anterior Insula – feeling of feeling
-      38: [S,O,M,F],  // Lateral Habenula – rejection gate
-      39: [S,F,O,M],  // Precuneus – perspective
-      40: [M,O,F,S],  // Cerebellar Cognitive Zone – timing
+      // LXI–LXX: Reflection, Motion, Alarm
+      "LXI":  { name: "Rostral PFC", nt: "DA", phase: "Resonance", role: "Reflective flame", tokens: ["e:M(complex)TRUE@3", "π:M(differentiate)TRUE@3"], anchors: ["#operations", "#states"] },
+      "LXII": { name: "MLR", nt: "Glu", phase: "Empowerment", role: "Will to move", tokens: ["e:U(excite)TRUE@3", "Φ:U(bond)TRUE@3"], anchors: ["#machines", "#operations"] },
+      "LXIII":{ name: "Anterior Temporal Sulcus", nt: "Glu", phase: "Resonance", role: "Subtext", tokens: ["π:M(transcribe)TRUE@3", "Φ:C(complex)TRUE@3"], anchors: ["#operations", "#states"] },
+      "LXIV": { name: "Lateral Septum", nt: "GABA", phase: "Nirvana", role: "Calm circuit", tokens: ["e:D(relax)TRUE@3", "π:M(reduce)TRUE@3"], anchors: ["#states", "#fields"] },
+      "LXV":  { name: "Cerebellar Tonsil", nt: "GABA", phase: "Pause", role: "Silent reactor", tokens: ["Φ:D(unfold)UNTRUE@3", "π:D(reduce)UNTRUE@3"], anchors: ["#states", "#machines"] },
+      "LXVI": { name: "Pontine Reticular Formation", nt: "ACh", phase: "Ignition", role: "Motion catalyst", tokens: ["e:U(excite)TRUE@3", "e:Mod(catalyze)TRUE@3"], anchors: ["#machines", "#states"] },
+      "LXVII":{ name: "Insular-Opercular Speech", nt: "DA", phase: "Empowerment", role: "Voice within fire", tokens: ["e:E(excite)TRUE@3", "Φ:U(polymerize)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "LXVIII":{ name: "Amygdala Central Nucleus", nt: "NE", phase: "Ignition", role: "First alarm", tokens: ["e:U(oxidize)TRUE@3", "π:U(signal)TRUE@3"], anchors: ["#states", "#operations"] },
+      "LXIX": { name: "TRN", nt: "GABA", phase: "Transmission", role: "Filter grid", tokens: ["π:C(membrane)TRUE@3", "Φ:M(stabilize)TRUE@3"], anchors: ["#fields", "#operations"] },
+      "LXX":  { name: "Cuneus", nt: "Glu", phase: "Resonance", role: "Background reader", tokens: ["Φ:M(fold)TRUE@3", "e:M(ionize)TRUE@3"], anchors: ["#fields", "#operations"] },
 
-      // XLI–L
-      41: [S,O,F,M],  // Basolateral Amygdala – archive of feeling
-      42: [F,O,M,S],  // Pulvinar – spotlight shaper
-      43: [S,O,F,M],  // TPJ – mind reading
-      44: [M,F,S,O],  // Medial Septum – memory rhythms
-      45: [S,O,F,M],  // Subgenual Cingulate – sorrow inertia
-      46: [O,S,M,F],  // VTA – spark
-      47: [F,S,O,M],  // Entorhinal – identity gate
-      48: [S,O,F,M],  // Supramarginal – self/other
-      49: [O,S,M,F],  // NAcc – craving engine
-      50: [S,M,F,O],  // Cerebral Aqueduct – choke point
+      // LXXI–LXXX: Balance, Expression, Identity
+      "LXXI": { name: "VMH", nt: "Glu", phase: "Nirvana", role: "Inner balance", tokens: ["Φ:M(stabilize)TRUE@3", "e:M(relax)TRUE@3"], anchors: ["#states", "#fields"] },
+      "LXXII":{ name: "Periventricular Gray", nt: "GABA", phase: "Pause", role: "Threshold", tokens: ["π:D(reduce)UNTRUE@3", "Φ:D(unfold)UNTRUE@3"], anchors: ["#states", "#machines"] },
+      "LXXIII":{ name: "Frontal Operculum", nt: "DA", phase: "Empowerment", role: "Edge of expression", tokens: ["e:E(excite)TRUE@3", "Φ:U(polymerize)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "LXXIV":{ name: "Nodulus", nt: "GABA", phase: "Nirvana", role: "Gravity whisperer", tokens: ["Φ:M(stabilize)TRUE@3", "e:D(integrate)TRUE@3"], anchors: ["#machines", "#fields"] },
+      "LXXV": { name: "Substantia Nigra", nt: "DA", phase: "Empowerment", role: "Movement gatekeeper", tokens: ["e:C(redox)TRUE@3", "Φ:M(catalyze)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "LXXVI":{ name: "V4", nt: "Glu", phase: "Resonance", role: "Chromatic shaper", tokens: ["Φ:M(complex)TRUE@3", "e:M(ionize)TRUE@3"], anchors: ["#fields", "#operations"] },
+      "LXXVII":{ name: "Lingual Gyrus", nt: "Glu", phase: "Resonance", role: "Glyph reader", tokens: ["π:M(translate)TRUE@3", "Φ:C(fold)TRUE@3"], anchors: ["#operations", "#fields"] },
+      "LXXVIII":{ name: "mPFC", nt: "DA", phase: "Resonance", role: "Identity sculptor", tokens: ["e:M(complex)TRUE@3", "π:M(differentiate)TRUE@3"], anchors: ["#states", "#operations"] },
+      "LXXIX":{ name: "dLPFC", nt: "DA", phase: "Empowerment", role: "Gate of delivery", tokens: ["e:Mod(catalyze)TRUE@3", "Φ:E(emit)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "LXXX": { name: "IPL", nt: "Glu", phase: "Resonance", role: "Paradox holder", tokens: ["π:M(complex)PARADOX@3", "Φ:C(bind)TRUE@3"], anchors: ["#states", "#operations"] },
 
-      // LI–LX
-      51: [F,O,M,S],  // Anterior Thalamic Nuclei – compass
-      52: [F,O,M,S],  // Parafascicular – attention switch
-      53: [F,O,M,S],  // Inferior Colliculus – sonic filter
-      54: [O,F,S,M],  // Perirhinal – meaning‑maker
-      55: [M,S,F,O],  // Vermis – balance
-      56: [O,M,S,F],  // Anterior Insular‑Operculum – fusion point
-      57: [S,O,M,F],  // Paraventricular – stress switch
-      58: [S,O,M,F],  // Lateral OFC – consequence
-      59: [M,O,S,F],  // Midcingulate – engine of doing
-      60: [F,O,M,S],  // Calcarine – visual core
+      // LXXXI–XC: Judgment, Timing, Gating
+      "LXXXI":{ name: "ACC (Dorsal)", nt: "DA", phase: "Resonance", role: "Inner judge", tokens: ["e:M(redox)TRUE@3", "π:M(repair)TRUE@3"], anchors: ["#states", "#operations"] },
+      "LXXXII":{ name: "Anterior Hippocampus", nt: "Glu", phase: "Nirvana", role: "Context mapper", tokens: ["Φ:M(crystallize)TRUE@3", "π:C(replicate)TRUE@3"], anchors: ["#fields", "#states"] },
+      "LXXXIII":{ name: "Crus I/II", nt: "GABA", phase: "Empowerment", role: "Somatic timekeeper", tokens: ["Φ:Mod(catalyze)TRUE@3", "e:M(modulate)TRUE@3"], anchors: ["#machines", "#operations"] },
+      "LXXXIV":{ name: "Basal Forebrain", nt: "ACh", phase: "Ignition", role: "Timing messenger", tokens: ["e:Mod(catalyze)TRUE@3", "e:C(charge)TRUE@3"], anchors: ["#fields", "#operations"] },
+      "LXXXV":{ name: "Reticular Formation", nt: "NE", phase: "Ignition", role: "Wake thread", tokens: ["e:U(excite)TRUE@3", "e:U(oxidize)TRUE@3"], anchors: ["#machines", "#states"] },
+      "LXXXVI":{ name: "DVC", nt: "GABA", phase: "Pause", role: "Kill-switch", tokens: ["Φ:D(unfold)TRUE@3", "π:D(bacterium)TRUE@3"], anchors: ["#states", "#machines"] },
+      "LXXXVII":{ name: "Cranial Nerves", nt: "ACh", phase: "Transmission", role: "Face switch", tokens: ["e:C(ionize)TRUE@3", "Φ:E(emit)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "LXXXVIII":{ name: "Spinal Relays", nt: "Glu", phase: "Transmission", role: "Carrier", tokens: ["e:C(propagate)TRUE@3", "Φ:C(bond)TRUE@3"], anchors: ["#machines", "#operations"] },
+      "LXXXIX":{ name: "Globus Pallidus", nt: "GABA", phase: "Empowerment", role: "Go/no-go", tokens: ["π:M(reduce)TRUE@3", "Φ:Mod(unbond)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "XC":   { name: "Lateral Hypothalamus", nt: "DA", phase: "Ignition", role: "Drive switch", tokens: ["e:U(excite)TRUE@3", "π:U(metabolize)TRUE@3"], anchors: ["#states", "#operations"] },
 
-      // LXI–LXX
-      61: [O,S,M,F],  // Rostral PFC – reflective flame
-      62: [M,O,F,S],  // MLR – will to move
-      63: [O,S,F,M],  // Anterior Temporal Sulcus – subtext
-      64: [S,F,M,O],  // Lateral Septum – calm circuit
-      65: [S,M,F,O],  // Cerebellar Tonsil – silent reactor
-      66: [M,S,F,O],  // Pontine Reticular Formation – motion catalyst
-      67: [O,M,S,F],  // Insular‑Opercular Speech – voice within fire
-      68: [S,O,M,F],  // Amygdala Central – first alarm
-      69: [F,O,M,S],  // TRN – filter grid
-      70: [F,O,M,S],  // Cuneus – background reader
-
-      // LXXI–LXXX
-      71: [S,F,M,O],  // VMH – inner balance
-      72: [S,M,O,F],  // Periventricular Gray – threshold
-      73: [O,M,S,F],  // Frontal Operculum – edge of expression
-      74: [M,F,S,O],  // Nodulus – gravity whisperer
-      75: [O,M,F,S],  // Substantia Nigra – movement gatekeeper
-      76: [F,O,M,S],  // V4 – chromatic shaper
-      77: [O,F,S,M],  // Lingual – glyph reader
-      78: [S,O,M,F],  // mPFC – identity sculptor
-      79: [O,S,M,F],  // dLPFC – gate of delivery
-      80: [S,O,F,M],  // IPL – paradox holder
-
-      // LXXXI–XC
-      81: [S,O,M,F],  // ACC – inner judge
-      82: [F,S,O,M],  // Anterior Hippocampus – context mapper
-      83: [M,O,F,S],  // Crus I/II – somatic timekeeper
-      84: [F,O,M,S],  // Basal Forebrain – timing messenger (ACh)
-      85: [M,S,F,O],  // Reticular Formation – wake thread
-      86: [S,M,F,O],  // DVC – kill‑switch
-      87: [O,M,S,F],  // Cranial Nerves – face switch
-      88: [M,O,F,S],  // Spinal Relays – carrier
-      89: [O,M,F,S],  // Globus Pallidus – go/no‑go
-      90: [S,O,M,F],  // Lateral Hypothalamus – drive switch
-
-      // XCI–C
-      91: [F,S,O,M],  // Posterior Insula – body’s edges
-      92: [F,O,M,S],  // Nucleus Basalis – attention tuner (ACh)
-      93: [O,M,S,F],  // Caudate – path chooser
-      94: [O,S,F,M],  // Superior Temporal Pole – emotional communicator
-      95: [S,M,F,O],  // Uvula (revisit) – stillness anchor
-      96: [O,M,F,S],  // AIPS (revisit) – gesture translator
-      97: [S,F,M,O],  // Pineal (revisit) – portal keeper
-      98: [O,M,F,S],  // MTG (revisit) – thought→word bridge
-      99: [M,F,S,O],  // Fastigial‑Vestibular (revisit) – inner horizon
-      100:[F,S,O,M]   // PTN (revisit) – last signal
+      // XCI–C: Interoception, Attention, Final Gates
+      "XCI":  { name: "Posterior Insula", nt: "Glu", phase: "Resonance", role: "Body's edges", tokens: ["Φ:M(membrane)TRUE@3", "e:M(signal)TRUE@3"], anchors: ["#fields", "#states"] },
+      "XCII": { name: "Nucleus Basalis", nt: "ACh", phase: "Ignition", role: "Attention tuner", tokens: ["e:Mod(catalyze)TRUE@3", "e:U(charge)TRUE@3"], anchors: ["#fields", "#operations"] },
+      "XCIII":{ name: "Caudate", nt: "DA", phase: "Empowerment", role: "Path chooser", tokens: ["e:C(redox)TRUE@3", "Φ:M(complex)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "XCIV": { name: "Superior Temporal Pole", nt: "Glu", phase: "Resonance", role: "Emotional communicator", tokens: ["π:M(transcribe)TRUE@3", "e:M(signal)TRUE@3"], anchors: ["#operations", "#states"] },
+      "XCV":  { name: "Uvula (revisit)", nt: "GABA", phase: "Nirvana", role: "Stillness anchor", tokens: ["Φ:M(stabilize)TRUE@3", "π:D(relax)TRUE@3"], anchors: ["#states", "#machines"] },
+      "XCVI": { name: "AIPS (revisit)", nt: "Glu", phase: "Empowerment", role: "Gesture translator", tokens: ["Φ:U(polymerize)TRUE@3", "e:C(bond)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "XCVII":{ name: "Pineal (revisit)", nt: "Mel", phase: "Pause", role: "Portal keeper", tokens: ["π:D(viroid)UNTRUE@3", "e:M(reduce)TRUE@3"], anchors: ["#states", "#fields"] },
+      "XCVIII":{ name: "MTG (revisit)", nt: "Glu", phase: "Resonance", role: "Thought→word bridge", tokens: ["π:M(translate)TRUE@3", "Φ:C(polymerize)TRUE@3"], anchors: ["#operations", "#machines"] },
+      "XCIX": { name: "Fastigial-Vestibular (revisit)", nt: "Glu", phase: "Nirvana", role: "Inner horizon", tokens: ["Φ:M(stabilize)TRUE@3", "e:D(integrate)TRUE@3"], anchors: ["#machines", "#fields"] },
+      "C":    { name: "PTN (revisit)", nt: "Glu", phase: "Transmission", role: "Last signal", tokens: ["e:C(propagate)TRUE@3", "Φ:E(emit)TRUE@3"], anchors: ["#fields", "#states"] }
     };
 
-    function labelFor(anchor){
-      switch(anchor){
-        case '#machines': return 'Machines';
-        case '#fields': return 'Domains/Fields';
-        case '#operations': return 'Operators';
-        case '#states': return 'States';
-        default: return anchor;
-      }
+    // Neurotransmitter full names
+    const NT_NAMES = {
+      "Glu": "Glutamate",
+      "DA": "Dopamine",
+      "NE": "Norepinephrine",
+      "5-HT": "Serotonin",
+      "ACh": "Acetylcholine",
+      "GABA": "GABA",
+      "Mel": "Melatonin"
+    };
+
+    // Phase colors
+    const PHASE_COLORS = {
+      "Ignition": "#f97316",
+      "Empowerment": "#8ab4f8",
+      "Resonance": "#a78bfa",
+      "Mania": "#ffd700",
+      "Nirvana": "#22d3ee",
+      "Transmission": "#4ade80",
+      "Pause": "#94a3b8"
+    };
+
+    // Generate TOC
+    const tocGrid = document.getElementById('toc-grid');
+    Object.keys(WUMBO_ATLAS).forEach(rn => {
+      const a = document.createElement('a');
+      a.className = 'toc-link';
+      a.href = `#region-${rn}`;
+      a.textContent = rn;
+      a.title = WUMBO_ATLAS[rn].name;
+      tocGrid.appendChild(a);
+    });
+
+    // Generate Atlas
+    const atlasIndex = document.getElementById('atlas-index');
+    const APL = 'index.html';
+
+    function getTokenClass(token) {
+      if (token.startsWith('Φ:')) return 'phi-tok';
+      if (token.startsWith('e:')) return 'e-tok';
+      if (token.startsWith('π:')) return 'pi-tok';
+      return '';
     }
 
-    function meaningFor(anchor){
-      switch(anchor){
-        case '#machines': return 'execution/clock';
-        case '#fields': return 'sensory/context';
-        case '#operations': return 'transformation/sculpt';
-        case '#states': return 'regime/alignment';
-        default: return anchor.replace('#','');
-      }
-    }
+    Object.entries(WUMBO_ATLAS).forEach(([rn, data]) => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.id = `region-${rn}`;
 
-    GROUPS.forEach(g => {
-      for(let i=g.range[0]; i<=g.range[1]; i++){
-        const div = document.createElement('div');
-        div.className = 'item';
-        const rn = toRoman(i);
-        const anchors = PER_ENTRY[i] || g.anchors;
-        const a1 = document.createElement('a'); a1.href = `${APL}${anchors[0]}`; a1.textContent = labelFor(anchors[0]);
-        const a2 = document.createElement('a'); a2.href = `${APL}${anchors[1]}`; a2.textContent = labelFor(anchors[1]);
-        const a3 = document.createElement('a'); a3.href = `${APL}${anchors[2]}`; a3.textContent = labelFor(anchors[2]);
-        const a4 = document.createElement('a'); a4.href = `${APL}${anchors[3]}`; a4.textContent = labelFor(anchors[3]);
-        const p = document.createElement('p'); p.className='muted';
-        p.append('Manual: ', a1, ' · ', a2, ' · ', a3, ' · ', a4);
-        const h = document.createElement('strong'); h.textContent = `${rn}. Atlas Entry`;
-        div.appendChild(h);
-        div.appendChild(p);
-        // Quick “focus” chips to signal top priorities per entry
-        const chips = document.createElement('div'); chips.className = 'chips';
-        const top1 = document.createElement('a'); top1.className='chip'; top1.href = `${APL}${anchors[0]}`; top1.textContent = `Focus: ${labelFor(anchors[0])}`;
-        const top2 = document.createElement('a'); top2.className='chip'; top2.href = `${APL}${anchors[1]}`; top2.textContent = labelFor(anchors[1]);
-        chips.appendChild(top1); chips.appendChild(top2);
-        div.appendChild(chips);
-        const r = document.createElement('div'); r.className='reason';
-        r.textContent = `Why: ${meaningFor(anchors[0])} → ${meaningFor(anchors[1])}`;
-        div.appendChild(r);
-        container.appendChild(div);
-      }
+      // Header with Roman numeral and name
+      const h = document.createElement('strong');
+      h.innerHTML = `${rn}. <span class="region-name">${data.name}</span>`;
+      div.appendChild(h);
+
+      // Role description
+      const roleP = document.createElement('p');
+      roleP.className = 'muted small';
+      roleP.textContent = data.role;
+      div.appendChild(roleP);
+
+      // Chips for phase and neurotransmitter
+      const chips = document.createElement('div');
+      chips.className = 'chips';
+
+      const phaseChip = document.createElement('span');
+      phaseChip.className = 'chip phase';
+      phaseChip.textContent = data.phase;
+      phaseChip.style.borderColor = PHASE_COLORS[data.phase] || '#ffd700';
+      phaseChip.style.color = PHASE_COLORS[data.phase] || '#ffd700';
+      chips.appendChild(phaseChip);
+
+      const ntChip = document.createElement('span');
+      ntChip.className = 'chip nt';
+      ntChip.textContent = NT_NAMES[data.nt] || data.nt;
+      ntChip.title = `Primary neurotransmitter: ${NT_NAMES[data.nt] || data.nt}`;
+      chips.appendChild(ntChip);
+
+      // APL anchor links
+      data.anchors.forEach(anchor => {
+        const a = document.createElement('a');
+        a.className = 'chip';
+        a.href = `${APL}${anchor}`;
+        const label = anchor.replace('#', '').charAt(0).toUpperCase() + anchor.replace('#', '').slice(1);
+        a.textContent = label;
+        chips.appendChild(a);
+      });
+
+      div.appendChild(chips);
+
+      // APL Tokens
+      const tokenGrid = document.createElement('div');
+      tokenGrid.className = 'token-grid';
+      data.tokens.forEach(token => {
+        const tokenSpan = document.createElement('span');
+        tokenSpan.className = `token ${getTokenClass(token)}`;
+        tokenSpan.textContent = token;
+        tokenGrid.appendChild(tokenSpan);
+      });
+      div.appendChild(tokenGrid);
+
+      atlasIndex.appendChild(div);
     });
   </script>
 </body>
