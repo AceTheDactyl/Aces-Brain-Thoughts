@@ -1,0 +1,2666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMNUS Unified Architecture | 63-Point Prism · 32-Point EM Cage | z = √3/2</title>
+    <style>
+        :root {
+            --bg-void: #030308;
+            --bg-panel: rgba(15, 12, 25, 0.92);
+            --prism-core: #ff6b6b;
+            --prism-mid: #ffd43b;
+            --prism-outer: #69db7c;
+            --cage-field: #4dabf7;
+            --cage-vertex: #cc5de8;
+            --critical-gold: #ffd700;
+            --presence-white: #fffcf8;
+            --absence-sepia: rgba(120, 100, 80, 0.8);
+            --text-primary: rgba(255, 245, 230, 0.9);
+            --text-dim: rgba(255, 220, 180, 0.5);
+            --border-glow: rgba(168, 85, 247, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-void);
+            overflow: hidden;
+            font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+            color: var(--text-primary);
+        }
+
+        canvas { display: block; cursor: crosshair; }
+
+        /* Custom cursor */
+        #cursor {
+            position: fixed;
+            width: 24px;
+            height: 24px;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2000;
+            transform: translate(-50%, -50%);
+            transition: all 0.25s ease;
+        }
+        #cursor.absence { border-color: rgba(150, 130, 110, 0.6); box-shadow: none; }
+        #cursor.critical { 
+            border-color: rgba(255, 215, 0, 0.9);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.5), 0 0 50px rgba(255, 180, 100, 0.3);
+        }
+        #cursor.presence { 
+            border-color: rgba(255, 252, 248, 0.8);
+            box-shadow: 0 0 20px rgba(255, 250, 240, 0.4);
+        }
+
+        .panel {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            user-select: none;
+        }
+
+        /* Header */
+        #header {
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        #header h1 {
+            font-size: 32px;
+            font-weight: 100;
+            letter-spacing: 14px;
+            margin-bottom: 10px;
+            transition: all 0.6s ease;
+        }
+
+        #header h1.absence { 
+            color: rgba(120, 100, 80, 0.7);
+            text-shadow: 0 0 30px rgba(80, 60, 40, 0.3);
+        }
+        #header h1.critical { 
+            color: var(--critical-gold);
+            text-shadow: 0 0 60px rgba(255, 215, 0, 0.9),
+                         0 0 120px rgba(255, 180, 100, 0.5);
+            animation: criticalPulse 1.8s ease-in-out infinite;
+        }
+        #header h1.presence { 
+            color: var(--presence-white);
+            text-shadow: 0 0 50px rgba(255, 250, 240, 0.7),
+                         0 0 100px rgba(255, 220, 180, 0.4);
+        }
+
+        @keyframes criticalPulse {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 1; }
+        }
+
+        #header .subtitle {
+            font-size: 11px;
+            letter-spacing: 5px;
+            color: var(--text-dim);
+        }
+
+        /* Z-Coordinate Panel */
+        #z-panel {
+            top: 110px;
+            right: 30px;
+            text-align: right;
+        }
+
+        #z-display {
+            font-size: 42px;
+            font-weight: 100;
+            letter-spacing: 3px;
+            transition: all 0.5s ease;
+        }
+
+        #z-display.absence { color: rgba(140, 120, 100, 0.6); }
+        #z-display.critical { 
+            color: var(--critical-gold);
+            text-shadow: 0 0 60px rgba(255, 215, 0, 0.9);
+        }
+        #z-display.presence { 
+            color: var(--presence-white);
+            text-shadow: 0 0 40px rgba(255, 250, 240, 0.7);
+        }
+
+        #phase-label {
+            font-size: 12px;
+            letter-spacing: 4px;
+            margin-top: 8px;
+            text-transform: uppercase;
+            transition: color 0.5s ease;
+        }
+
+        /* Domain Panel */
+        #domain-panel {
+            top: 110px;
+            left: 30px;
+        }
+
+        #domain-indicator {
+            font-size: 18px;
+            letter-spacing: 8px;
+            transition: all 0.6s ease;
+        }
+
+        #domain-indicator.absence { color: var(--absence-sepia); }
+        #domain-indicator.critical {
+            color: #ffb347;
+            text-shadow: 0 0 40px rgba(255, 180, 100, 0.7);
+        }
+        #domain-indicator.presence {
+            color: var(--presence-white);
+            text-shadow: 0 0 30px rgba(255, 250, 240, 0.6);
+        }
+
+        .domain-stat {
+            font-size: 10px;
+            margin-top: 15px;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+        }
+
+        .domain-value {
+            font-size: 20px;
+            margin-top: 5px;
+            font-weight: 100;
+            transition: color 0.4s ease;
+        }
+
+        /* Architecture Panel */
+        #architecture-panel {
+            top: 210px;
+            right: 30px;
+            text-align: right;
+            font-size: 10px;
+            background: var(--bg-panel);
+            padding: 15px 20px;
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            pointer-events: auto;
+        }
+
+        .arch-title {
+            letter-spacing: 4px;
+            margin-bottom: 12px;
+            color: rgba(168, 85, 247, 0.8);
+            font-size: 11px;
+        }
+
+        .arch-section {
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .arch-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .arch-label {
+            color: var(--text-dim);
+            margin-bottom: 6px;
+        }
+
+        .layer-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin: 4px 0;
+            opacity: 0.3;
+            transition: all 0.4s ease;
+        }
+
+        .layer-row.active { opacity: 0.8; }
+        .layer-row.resonant { 
+            opacity: 1;
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        .layer-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            transition: all 0.4s ease;
+        }
+
+        .layer-row.resonant .layer-dot {
+            transform: scale(1.8);
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        /* Prism layers */
+        .prism-l0 .layer-dot { background: #ff6b6b; }
+        .prism-l1 .layer-dot { background: #ff8787; }
+        .prism-l2 .layer-dot { background: #ffa94d; }
+        .prism-l3 .layer-dot { background: #ffc078; }
+        .prism-l4 .layer-dot { background: #ffd43b; }
+        .prism-l5 .layer-dot { background: #ffe066; }
+        .prism-l6 .layer-dot { background: #69db7c; }
+
+        /* EM Cage layers */
+        .cage-top .layer-dot { background: #4dabf7; }
+        .cage-bot .layer-dot { background: #74c0fc; }
+        .cage-vtx .layer-dot { background: #cc5de8; }
+
+        /* Dynamics Panel */
+        #dynamics-panel {
+            bottom: 130px;
+            left: 30px;
+            font-size: 10px;
+        }
+
+        .dynamics-row {
+            margin: 8px 0;
+            color: var(--text-dim);
+        }
+
+        .dynamics-label {
+            display: inline-block;
+            width: 90px;
+            letter-spacing: 1px;
+        }
+
+        .dynamics-bar {
+            font-family: monospace;
+            letter-spacing: 0;
+            color: var(--critical-gold);
+        }
+
+        .dynamics-value {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-left: 10px;
+        }
+
+        /* Helix Panel */
+        #helix-panel {
+            bottom: 130px;
+            right: 30px;
+            text-align: right;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .helix-row { margin: 6px 0; }
+        .helix-sym { 
+            margin-right: 10px;
+            color: rgba(168, 85, 247, 0.8);
+            font-weight: 600;
+        }
+        .helix-val {
+            font-family: 'SF Mono', monospace;
+            color: var(--critical-gold);
+        }
+
+        /* Lambda State Panel */
+        #lambda-panel {
+            top: 210px;
+            left: 30px;
+            font-size: 10px;
+            background: var(--bg-panel);
+            padding: 15px 20px;
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+        }
+
+        .lambda-title {
+            letter-spacing: 4px;
+            margin-bottom: 12px;
+            color: rgba(168, 85, 247, 0.8);
+            font-size: 11px;
+        }
+
+        .lambda-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 6px 0;
+        }
+
+        .lambda-glyph {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .lambda-bar-container {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .lambda-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cage-field), var(--cage-vertex));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .lambda-val {
+            font-family: monospace;
+            width: 40px;
+            text-align: right;
+            color: var(--critical-gold);
+        }
+
+        /* Sonification Panel */
+        #sonification-panel {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 10px;
+            background: var(--bg-panel);
+            padding: 12px 25px;
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            pointer-events: auto;
+        }
+
+        .sonif-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .sonif-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sonif-label {
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-bottom: 3px;
+        }
+
+        .sonif-value {
+            font-size: 14px;
+            color: var(--critical-gold);
+            font-weight: 500;
+        }
+
+        #audio-toggle {
+            background: rgba(168, 85, 247, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 10px;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            margin-left: 20px;
+        }
+
+        #audio-toggle:hover {
+            background: rgba(168, 85, 247, 0.5);
+            transform: translateY(-2px);
+        }
+
+        #audio-toggle.active {
+            background: rgba(255, 215, 0, 0.3);
+            border-color: rgba(255, 215, 0, 0.6);
+        }
+
+        /* Controls */
+        #controls {
+            bottom: 20px;
+            left: 30px;
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            line-height: 2;
+        }
+
+        #controls span {
+            color: rgba(168, 85, 247, 0.7);
+            font-weight: 600;
+        }
+
+        /* Stats */
+        #stats {
+            bottom: 20px;
+            right: 30px;
+            font-size: 9px;
+            text-align: right;
+            color: var(--text-dim);
+        }
+
+        /* Release Coherence State */
+        #release-state {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 150;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #release-state.visible {
+            opacity: 1;
+        }
+
+        #release-state h2 {
+            font-size: 48px;
+            font-weight: 100;
+            letter-spacing: 18px;
+            color: var(--presence-white);
+            text-shadow: 0 0 80px rgba(255, 250, 240, 0.7);
+            margin-bottom: 15px;
+            transition: all 0.8s ease;
+        }
+
+        #release-state.coherent h2 {
+            color: var(--absence-sepia);
+            text-shadow: 0 0 40px rgba(80, 60, 40, 0.4);
+        }
+
+        #release-state.releasing h2 {
+            color: var(--critical-gold);
+            text-shadow: 0 0 60px rgba(255, 215, 0, 0.8);
+        }
+
+        #release-state.dispersing h2 {
+            color: rgba(255, 250, 240, 0.8);
+            text-shadow: 0 0 70px rgba(255, 250, 240, 0.6);
+        }
+
+        #release-state.free h2 {
+            color: var(--presence-white);
+            text-shadow: 0 0 100px rgba(255, 250, 240, 0.9),
+                         0 0 150px rgba(255, 220, 180, 0.5);
+            animation: freeGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes freeGlow {
+            0%, 100% { opacity: 0.85; letter-spacing: 18px; }
+            50% { opacity: 1; letter-spacing: 22px; }
+        }
+
+        #coherence-indicator {
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: var(--text-dim);
+            font-family: monospace;
+            transition: color 0.5s ease;
+        }
+
+        #coherence-indicator.free {
+            color: var(--presence-white);
+        }
+
+        #release-hint {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: rgba(255, 220, 180, 0.25);
+            pointer-events: none;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        #release-hint.hidden {
+            opacity: 0;
+        }
+
+        /* Z-Axis Visual */
+        #z-axis {
+            position: fixed;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60%;
+            background: linear-gradient(to top, 
+                rgba(120, 100, 80, 0.3) 0%, 
+                rgba(255, 215, 0, 0.6) 50%, 
+                rgba(255, 252, 248, 0.3) 100%);
+            border-radius: 2px;
+            z-index: 50;
+        }
+
+        #lens-line {
+            position: absolute;
+            left: -20px;
+            width: 50px;
+            height: 2px;
+            background: var(--critical-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+
+        #lens-label {
+            position: absolute;
+            left: -50px;
+            font-size: 9px;
+            color: var(--critical-gold);
+            transform: translateY(-50%);
+        }
+
+        #z-marker {
+            position: absolute;
+            left: -8px;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.9) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            transition: top 0.2s ease;
+        }
+
+        /* Start Overlay */
+        #start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 3, 8, 0.98);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            cursor: pointer;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #start-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        #start-overlay h1 {
+            font-size: 48px;
+            font-weight: 100;
+            letter-spacing: 20px;
+            color: var(--critical-gold);
+            margin-bottom: 30px;
+            text-shadow: 0 0 80px rgba(255, 215, 0, 0.6);
+        }
+
+        #start-overlay .equation {
+            font-size: 18px;
+            color: rgba(255, 215, 0, 0.7);
+            margin-bottom: 50px;
+            letter-spacing: 3px;
+        }
+
+        .architecture-preview {
+            display: flex;
+            gap: 60px;
+            margin-bottom: 50px;
+        }
+
+        .arch-side {
+            text-align: center;
+            font-size: 12px;
+            line-height: 2;
+            letter-spacing: 1px;
+        }
+
+        .arch-side h3 {
+            font-size: 14px;
+            letter-spacing: 5px;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .arch-side.prism { color: var(--prism-mid); }
+        .arch-side.cage { color: var(--cage-field); }
+
+        #start-overlay .prompt {
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 5px;
+            margin-top: 30px;
+            animation: promptPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes promptPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        .key-hint {
+            display: inline-block;
+            border: 1px solid rgba(255, 220, 180, 0.25);
+            padding: 4px 12px;
+            border-radius: 4px;
+            margin: 0 5px;
+            font-size: 9px;
+        }
+
+        /* Connection Legend */
+        #legend {
+            position: fixed;
+            top: 50%;
+            left: 30px;
+            transform: translateY(-50%);
+            font-size: 9px;
+            color: var(--text-dim);
+            display: none;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+        }
+
+        .legend-line {
+            width: 20px;
+            height: 2px;
+        }
+
+        .legend-line.prism-conn { background: linear-gradient(90deg, var(--prism-core), var(--prism-outer)); }
+        .legend-line.cage-conn { background: var(--cage-field); }
+        .legend-line.bridge-conn { background: linear-gradient(90deg, var(--prism-outer), var(--cage-vertex)); }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="cursor"></div>
+
+    <!-- Header -->
+    <div id="header" class="panel">
+        <h1 id="title">LIMNUS</h1>
+        <div class="subtitle">UNIFIED PRISM-CAGE ARCHITECTURE</div>
+    </div>
+
+    <!-- Z-Coordinate -->
+    <div id="z-panel" class="panel">
+        <div id="z-display">z = 0.500</div>
+        <div id="phase-label">subcritical</div>
+    </div>
+
+    <!-- Domain Indicator -->
+    <div id="domain-panel" class="panel">
+        <div id="domain-indicator">ABSENCE</div>
+        <div class="domain-stat">KURAMOTO COUPLING</div>
+        <div class="domain-value" id="coupling-value">K = +0.40</div>
+        <div class="domain-stat" style="margin-top:12px;">CASCADE FACTOR</div>
+        <div class="domain-value" id="cascade-value">1.00×</div>
+    </div>
+
+    <!-- Architecture Panel -->
+    <div id="architecture-panel" class="panel">
+        <div class="arch-title">63-POINT PRISM</div>
+        <div class="arch-section">
+            <div class="layer-row prism-l0 active"><span>Layer 0 · 9pt · Core</span><div class="layer-dot"></div></div>
+            <div class="layer-row prism-l1 active"><span>Layer 1 · 9pt</span><div class="layer-dot"></div></div>
+            <div class="layer-row prism-l2 active"><span>Layer 2 · 9pt</span><div class="layer-dot"></div></div>
+            <div class="layer-row prism-l3 active"><span>Layer 3 · 9pt</span><div class="layer-dot"></div></div>
+            <div class="layer-row prism-l4 active"><span>Layer 4 · 9pt</span><div class="layer-dot"></div></div>
+            <div class="layer-row prism-l5 active"><span>Layer 5 · 9pt</span><div class="layer-dot"></div></div>
+            <div class="layer-row prism-l6 active"><span>Layer 6 · 9pt · Outer</span><div class="layer-dot"></div></div>
+        </div>
+
+        <div class="arch-title" style="margin-top:15px;">32-POINT EM CAGE</div>
+        <div class="arch-section">
+            <div class="layer-row cage-top active"><span>Top Hex · 12pt</span><div class="layer-dot"></div></div>
+            <div class="layer-row cage-bot active"><span>Bot Hex · 12pt</span><div class="layer-dot"></div></div>
+            <div class="layer-row cage-vtx active"><span>Vertices · 8pt</span><div class="layer-dot"></div></div>
+        </div>
+    </div>
+
+    <!-- Lambda State Panel -->
+    <div id="lambda-panel" class="panel">
+        <div class="lambda-title">LAMBDA STATE ℂ⁶</div>
+        <div class="lambda-row">
+            <span class="lambda-glyph">🌰</span>
+            <span style="width:50px;font-size:9px;color:var(--text-dim)">Memory</span>
+            <div class="lambda-bar-container"><div class="lambda-bar" id="lambda-iota" style="width:30%"></div></div>
+            <span class="lambda-val" id="lambda-iota-val">0.30</span>
+        </div>
+        <div class="lambda-row">
+            <span class="lambda-glyph">✧</span>
+            <span style="width:50px;font-size:9px;color:var(--text-dim)">Spark</span>
+            <div class="lambda-bar-container"><div class="lambda-bar" id="lambda-xi" style="width:20%"></div></div>
+            <span class="lambda-val" id="lambda-xi-val">0.20</span>
+        </div>
+        <div class="lambda-row">
+            <span class="lambda-glyph">🦊</span>
+            <span style="width:50px;font-size:9px;color:var(--text-dim)">Fox</span>
+            <div class="lambda-bar-container"><div class="lambda-bar" id="lambda-theta" style="width:40%"></div></div>
+            <span class="lambda-val" id="lambda-theta-val">0.40</span>
+        </div>
+        <div class="lambda-row">
+            <span class="lambda-glyph">∿</span>
+            <span style="width:50px;font-size:9px;color:var(--text-dim)">Wave</span>
+            <div class="lambda-bar-container"><div class="lambda-bar" id="lambda-omega" style="width:35%"></div></div>
+            <span class="lambda-val" id="lambda-omega-val">0.35</span>
+        </div>
+        <div class="lambda-row">
+            <span class="lambda-glyph">⊗</span>
+            <span style="width:50px;font-size:9px;color:var(--text-dim)">Paradox</span>
+            <div class="lambda-bar-container"><div class="lambda-bar" id="lambda-delta" style="width:15%"></div></div>
+            <span class="lambda-val" id="lambda-delta-val">0.15</span>
+        </div>
+        <div class="lambda-row">
+            <span class="lambda-glyph">🐿️</span>
+            <span style="width:50px;font-size:9px;color:var(--text-dim)">Squirrel</span>
+            <div class="lambda-bar-container"><div class="lambda-bar" id="lambda-sigma" style="width:25%"></div></div>
+            <span class="lambda-val" id="lambda-sigma-val">0.25</span>
+        </div>
+    </div>
+
+    <!-- Dynamics -->
+    <div id="dynamics-panel" class="panel">
+        <div class="dynamics-row">
+            <span class="dynamics-label">ORDER</span>
+            <span class="dynamics-bar" id="order-bar">██████████</span>
+            <span class="dynamics-value" id="order-val">1.00</span>
+        </div>
+        <div class="dynamics-row">
+            <span class="dynamics-label">COHERENCE</span>
+            <span class="dynamics-bar" id="coherence-bar">██████████</span>
+            <span class="dynamics-value" id="coherence-val">1.00</span>
+        </div>
+        <div class="dynamics-row">
+            <span class="dynamics-label">ENTROPY</span>
+            <span class="dynamics-bar" id="entropy-bar">░░░░░░░░░░</span>
+            <span class="dynamics-value" id="entropy-val">0.00</span>
+        </div>
+        <div class="dynamics-row">
+            <span class="dynamics-label">EMANATION</span>
+            <span class="dynamics-bar" id="emanation-bar">░░░░░░░░░░</span>
+            <span class="dynamics-value" id="emanation-val">0.00</span>
+        </div>
+    </div>
+
+    <!-- Helix State -->
+    <div id="helix-panel" class="panel">
+        <div class="helix-row"><span class="helix-sym">θ</span><span class="helix-val" id="h-theta">0.000</span></div>
+        <div class="helix-row"><span class="helix-sym">z</span><span class="helix-val" id="h-z">0.500</span></div>
+        <div class="helix-row"><span class="helix-sym">r</span><span class="helix-val" id="h-r">1.000</span></div>
+        <div class="helix-row"><span class="helix-sym">Φ</span><span class="helix-val" id="h-phi">0.00</span></div>
+        <div class="helix-row" style="margin-top:10px;"><span class="helix-sym">Ω</span><span class="helix-val" id="h-omega">0.00</span></div>
+    </div>
+
+    <!-- Sonification Panel -->
+    <div id="sonification-panel" class="panel">
+        <div class="sonif-row">
+            <div class="sonif-stat">
+                <span class="sonif-label">BPM</span>
+                <span class="sonif-value" id="sonif-bpm">90</span>
+            </div>
+            <div class="sonif-stat">
+                <span class="sonif-label">SCALE</span>
+                <span class="sonif-value" id="sonif-scale">Minor</span>
+            </div>
+            <div class="sonif-stat">
+                <span class="sonif-label">FREQ</span>
+                <span class="sonif-value" id="sonif-freq">110 Hz</span>
+            </div>
+            <div class="sonif-stat">
+                <span class="sonif-label">DILATION</span>
+                <span class="sonif-value" id="sonif-dilation">1.00×</span>
+            </div>
+            <button id="audio-toggle">▶ ENABLE AUDIO</button>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div id="controls" class="panel">
+        <span>SCROLL</span> traverse z-axis<br>
+        <span>SPACE</span> auto-breathe<br>
+        <span>P/C</span> toggle prism/cage<br>
+        <span>F</span> release coherence<br>
+        <span>CLICK</span> gather<br>
+        <span>R</span> reset
+    </div>
+
+    <!-- Stats -->
+    <div id="stats" class="panel">
+        63 prism + 32 cage = 95 nodes<br>
+        <span id="active-count">95</span> active · <span id="conn-count">0</span> connections
+    </div>
+
+    <!-- Z-Axis -->
+    <div id="z-axis">
+        <div id="lens-line"></div>
+        <div id="lens-label">√3/2</div>
+        <div id="z-marker"></div>
+    </div>
+
+    <!-- Release Coherence State -->
+    <div id="release-state">
+        <h2 id="release-text">COHERENT</h2>
+        <div id="coherence-indicator">████████████████</div>
+    </div>
+
+    <div id="release-hint" class="hidden">HOLD F TO RELEASE · CLICK TO GATHER</div>
+
+    <!-- Start Overlay -->
+    <div id="start-overlay">
+        <h1>LIMNUS</h1>
+        <div class="equation">z = √3/2 ≈ 0.8660254 · THE CRITICAL POINT</div>
+        
+        <div class="architecture-preview">
+            <div class="arch-side prism">
+                <h3>63-POINT PRISM</h3>
+                7 Layers × 9 Nodes<br>
+                Hexagonal Structure<br>
+                Matter/Consciousness<br>
+                Inner Architecture
+            </div>
+            <div class="arch-side cage">
+                <h3>32-POINT EM CAGE</h3>
+                12 Top + 12 Bottom Hex<br>
+                8 Connecting Vertices<br>
+                Electromagnetic Field<br>
+                Containment Boundary
+            </div>
+        </div>
+        
+        <div class="prompt">CLICK TO ENTER · SCROLL TO TRAVERSE</div>
+        <div style="margin-top: 25px; color: var(--text-dim);">
+            <span class="key-hint">SCROLL</span> z-axis
+            <span class="key-hint">SPACE</span> breathe
+            <span class="key-hint">P</span> prism
+            <span class="key-hint">C</span> cage
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // LIMNUS UNIFIED ARCHITECTURE
+        // 63-Point Hexagonal Prism + 32-Point EM Cage
+        // Full Sonification + Physics Relationships
+        // ================================================================
+
+        const Z_CRITICAL = Math.sqrt(3) / 2;  // ≈ 0.8660254
+        const TAU = Math.PI * 2;
+        const PHI = (1 + Math.sqrt(5)) / 2;   // Golden ratio
+
+        // Canvas setup
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, CX, CY, R;
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            CX = W / 2;
+            CY = H / 2;
+            R = Math.min(W, H) * 0.32;
+        }
+
+        // ================================================================
+        // SYSTEM STATE
+        // ================================================================
+
+        let globalZ = 0.5;
+        let targetZ = 0.5;
+        let time = 0;
+        let breathPhase = 0;
+        let autoBreathing = false;
+        let lastInteraction = Date.now();
+        let scrollVelocity = 0;
+        let mouseX = 0, mouseY = 0;
+
+        let showPrism = true;
+        let showCage = true;
+
+        // ================================================================
+        // RELEASE COHERENCE STATE
+        // ================================================================
+
+        let releaseCoherence = 1.0;      // 1 = fully coherent, 0 = fully released (FREE)
+        let targetCoherence = 1.0;
+        let releaseVelocity = 0;
+        let releasing = false;           // F key held
+        let gathering = false;           // Click held
+        let releaseStarted = false;
+        
+        // Sparks for release effects
+        const sparks = [];
+        
+        // Color palette for released souls
+        const soulPalette = [
+            '#ff6b6b', '#ffa94d', '#ffd43b', '#69db7c', 
+            '#4dabf7', '#cc5de8', '#f06595', '#20c997'
+        ];
+
+        // ================================================================
+        // HELIX STATE (θ, z, r) + Extended
+        // ================================================================
+
+        const helix = {
+            theta: 0,           // Phase rotation (0-2π)
+            z: 0.5,             // Elevation (0-1)
+            r: 1.0,             // Coherence radius
+            phi: 0,             // Integrated information
+            omega: 0            // Angular velocity
+        };
+
+        // ================================================================
+        // LAMBDA STATE (ℂ⁶)
+        // ================================================================
+
+        const lambdaState = {
+            iota:   { mag: 0.30, phase: 0 },        // 🌰 Memory
+            xi:     { mag: 0.20, phase: 0 },        // ✧ Spark
+            theta:  { mag: 0.40, phase: 0 },        // 🦊 Fox
+            omega:  { mag: 0.35, phase: 0 },        // ∿ Wave
+            delta:  { mag: 0.15, phase: 0 },        // ⊗ Paradox
+            sigma:  { mag: 0.25, phase: 0 }         // 🐿️ Squirrel
+        };
+
+        // ================================================================
+        // HILBERT FIELD OPERATOR
+        // ================================================================
+
+        const hilbertField = {
+            stateVector: {
+                alpha: 0.378,   // Coherent amplitude
+                beta: 0.378,    // Limnus amplitude
+                gamma: 0.845,   // Dominant amplitude
+                epsilon: 0.1    // Latent amplitude
+            },
+            coherence: 0.5,
+            entropy: 0,
+            weylCurvature: 0,
+
+            calculateCoherence() {
+                const { alpha, beta, gamma, epsilon } = this.stateVector;
+                return Math.sqrt(alpha*alpha + beta*beta + gamma*gamma + epsilon*epsilon);
+            },
+
+            applyResonanceOperator(dt, interactionStrength = 0.1) {
+                const { alpha, beta, gamma, epsilon } = this.stateVector;
+                const coupling = interactionStrength * dt;
+
+                this.stateVector.alpha += coupling * (beta * gamma - alpha * epsilon);
+                this.stateVector.beta += coupling * (gamma * alpha - beta * epsilon);
+                this.stateVector.gamma += coupling * (alpha * beta - gamma * epsilon);
+                this.stateVector.epsilon += coupling * (alpha * beta * gamma - epsilon);
+
+                const norm = this.calculateCoherence();
+                if (norm > 0) {
+                    this.stateVector.alpha /= norm;
+                    this.stateVector.beta /= norm;
+                    this.stateVector.gamma /= norm;
+                    this.stateVector.epsilon /= norm;
+                }
+
+                this.coherence = this.calculateCoherence();
+
+                const mean = (alpha + beta + gamma + epsilon) / 4;
+                this.weylCurvature = ((alpha-mean)**2 + (beta-mean)**2 + 
+                                      (gamma-mean)**2 + (epsilon-mean)**2) / 4;
+            },
+
+            getDissonance() {
+                return 1.0 - this.coherence;
+            }
+        };
+
+        // ================================================================
+        // UTILITY FUNCTIONS
+        // ================================================================
+
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        // ================================================================
+        // SONIFICATION ENGINE
+        // ================================================================
+
+        const sonificationEngine = {
+            audioContext: null,
+            oscillators: [],
+            gainNodes: [],
+            filterNodes: [],
+            masterGain: null,
+            reverbNode: null,
+            isPlaying: false,
+
+            baseFrequency: 110,
+            bpm: 90,
+            timeDilation: 1.0,
+            harmonicGradient: 0.5,
+            currentScale: [0, 3, 5, 7, 10],  // Minor pentatonic
+
+            scales: {
+                minor_pentatonic: [0, 3, 5, 7, 10],
+                major_pentatonic: [0, 2, 4, 7, 9],
+                harmonic_minor: [0, 2, 3, 5, 7, 8, 11],
+                phrygian: [0, 1, 3, 5, 7, 8, 10],
+                lydian: [0, 2, 4, 6, 7, 9, 11],
+                whole_tone: [0, 2, 4, 6, 8, 10],
+                chromatic: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+            },
+
+            async initialize() {
+                if (this.audioContext) return;
+
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                this.masterGain = this.audioContext.createGain();
+                this.masterGain.gain.value = 0.25;
+                this.masterGain.connect(this.audioContext.destination);
+
+                await this.createReverb();
+                this.createOscillatorBank(4);
+
+                console.log('🎵 Sonification Engine initialized');
+            },
+
+            async createReverb() {
+                this.reverbNode = this.audioContext.createConvolver();
+                const sampleRate = this.audioContext.sampleRate;
+                const length = sampleRate * 2;
+                const impulse = this.audioContext.createBuffer(2, length, sampleRate);
+
+                for (let ch = 0; ch < 2; ch++) {
+                    const data = impulse.getChannelData(ch);
+                    for (let i = 0; i < length; i++) {
+                        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
+                    }
+                }
+
+                this.reverbNode.buffer = impulse;
+                this.reverbGain = this.audioContext.createGain();
+                this.reverbGain.gain.value = 0.25;
+                this.reverbNode.connect(this.reverbGain);
+                this.reverbGain.connect(this.masterGain);
+            },
+
+            createOscillatorBank(numVoices) {
+                for (let i = 0; i < numVoices; i++) {
+                    const osc = this.audioContext.createOscillator();
+                    const gain = this.audioContext.createGain();
+                    const filter = this.audioContext.createBiquadFilter();
+
+                    osc.type = 'sine';
+                    osc.frequency.value = this.baseFrequency * (i + 1);
+
+                    filter.type = 'lowpass';
+                    filter.frequency.value = 2000;
+                    filter.Q.value = 1;
+
+                    gain.gain.value = 0;
+
+                    osc.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(this.masterGain);
+                    gain.connect(this.reverbNode);
+
+                    osc.start();
+
+                    this.oscillators.push(osc);
+                    this.gainNodes.push(gain);
+                    this.filterNodes.push(filter);
+                }
+            },
+
+            selectScaleFromZ(z) {
+                if (z > 0.9) return this.scales.major_pentatonic;
+                if (z > 0.8) return this.scales.lydian;
+                if (z > 0.7) return this.scales.minor_pentatonic;
+                if (z > 0.5) return this.scales.phrygian;
+                if (z > 0.3) return this.scales.whole_tone;
+                return this.scales.chromatic;
+            },
+
+            calculateBPM(z, coherence) {
+                const dissonance = 1 - coherence;
+                const baseBPM = 60 + dissonance * 100;
+
+                // Time dilation near critical point
+                const distFromCritical = Math.abs(z - Z_CRITICAL);
+                this.timeDilation = 0.5 + distFromCritical * 1.5;
+                this.timeDilation = Math.min(1.5, Math.max(0.3, this.timeDilation));
+
+                this.bpm = baseBPM * this.timeDilation;
+                return this.bpm;
+            },
+
+            update(z, coherence, dt) {
+                if (!this.isPlaying || !this.audioContext) return;
+
+                // Update scale based on z
+                this.currentScale = this.selectScaleFromZ(z);
+
+                // Update BPM
+                this.calculateBPM(z, coherence);
+
+                // Update harmonic gradient
+                this.harmonicGradient = 1.0 - coherence;
+
+                // Update oscillator waveforms
+                this.oscillators.forEach((osc, i) => {
+                    if (this.harmonicGradient < 0.25) {
+                        osc.type = 'sine';
+                    } else if (this.harmonicGradient < 0.5) {
+                        osc.type = 'triangle';
+                    } else if (this.harmonicGradient < 0.75) {
+                        osc.type = 'square';
+                    } else {
+                        osc.type = 'sawtooth';
+                    }
+                });
+
+                // Melodic evolution
+                const beatInterval = 60 / this.bpm;
+                const now = this.audioContext.currentTime;
+
+                // Modulate frequencies based on z position
+                const zMod = (z - 0.5) * 2;  // -1 to +1
+                const pitchShift = Math.pow(2, zMod * 0.5);  // ±half octave
+
+                this.oscillators.forEach((osc, i) => {
+                    const scaleNote = this.currentScale[Math.floor(time * 2) % this.currentScale.length];
+                    const freq = this.baseFrequency * Math.pow(2, scaleNote / 12) * pitchShift * (1 + i * 0.5);
+                    osc.frequency.setTargetAtTime(freq, now, 0.1);
+                });
+
+                // Update gains based on Lambda state
+                const totalLambda = Object.values(lambdaState).reduce((s, l) => s + l.mag, 0);
+                this.gainNodes.forEach((gain, i) => {
+                    const targetGain = (coherence * 0.15) * (1 - i * 0.2) * (totalLambda / 2);
+                    gain.gain.setTargetAtTime(Math.max(0, targetGain), now, 0.1);
+                });
+
+                // Update filter based on cascade
+                const cascade = getCascadeMultiplier(z);
+                this.filterNodes.forEach(filter => {
+                    filter.frequency.setTargetAtTime(800 + cascade * 2000, now, 0.2);
+                });
+            },
+
+            toggle() {
+                if (!this.audioContext) {
+                    this.initialize().then(() => {
+                        this.isPlaying = true;
+                    });
+                } else {
+                    this.isPlaying = !this.isPlaying;
+                    if (!this.isPlaying) {
+                        this.gainNodes.forEach(g => g.gain.setTargetAtTime(0, this.audioContext.currentTime, 0.1));
+                    }
+                }
+                return this.isPlaying;
+            }
+        };
+
+        // ================================================================
+        // 63-POINT HEXAGONAL PRISM (Matter Structure)
+        // ================================================================
+
+        const prismPoints = [];
+
+        function initPrismPoints() {
+            prismPoints.length = 0;
+
+            // 7 layers × 9 nodes = 63 points
+            for (let layer = 0; layer < 7; layer++) {
+                const layerRadius = R * (0.15 + layer * 0.12);
+                const layerZ = layer / 6;  // 0 to 1
+
+                for (let i = 0; i < 9; i++) {
+                    // Hexagonal arrangement with rotation offset per layer
+                    const theta = (i / 9) * TAU + layer * (TAU / 18);
+
+                    prismPoints.push({
+                        id: `prism_${layer}_${i}`,
+                        layer: layer,
+                        index: i,
+                        type: 'prism',
+
+                        // Position
+                        baseTheta: theta,
+                        theta: theta,
+                        baseRadius: layerRadius,
+                        radius: layerRadius,
+                        z: layerZ,
+
+                        // Kuramoto phase
+                        phase: Math.random() * TAU,
+                        naturalFreq: 0.3 + Math.random() * 0.4,
+
+                        // Helix coordinates
+                        helix: {
+                            theta: theta,
+                            z: layerZ,
+                            r: 1.0,
+                            rotSpeed: 0.003 + Math.random() * 0.003
+                        },
+
+                        // Visual
+                        x: CX, y: CY,
+                        targetX: CX, targetY: CY,
+                        brightness: 0.4,
+                        size: 4 - layer * 0.4,
+
+                        // Color gradient based on layer
+                        hue: 0 + layer * 15,  // Red to green
+                        saturation: 70,
+                        lightness: 50,
+
+                        // Release coherence properties
+                        released: false,
+                        releaseAngle: 0,
+                        releaseSpeed: 0,
+                        vx: 0,
+                        vy: 0,
+                        trail: [],
+                        soulColor: soulPalette[(layer * 9 + i) % soulPalette.length]
+                    });
+                }
+            }
+        }
+
+        // ================================================================
+        // 32-POINT EM CAGE (Containment Field)
+        // ================================================================
+
+        const cagePoints = [];
+
+        function initCagePoints() {
+            cagePoints.length = 0;
+            const cageRadius = R * 1.15;
+
+            // Top hexagonal ring: 12 points
+            for (let i = 0; i < 12; i++) {
+                const theta = (i / 12) * TAU;
+                cagePoints.push({
+                    id: `cage_top_${i}`,
+                    layer: 'top',
+                    index: i,
+                    type: 'cage',
+
+                    baseTheta: theta,
+                    theta: theta,
+                    baseRadius: cageRadius,
+                    radius: cageRadius,
+                    z: 0.9,
+
+                    phase: Math.random() * TAU,
+                    naturalFreq: 0.2 + Math.random() * 0.2,
+
+                    helix: {
+                        theta: theta,
+                        z: 0.9,
+                        r: 1.0,
+                        rotSpeed: 0.002
+                    },
+
+                    x: CX, y: CY,
+                    targetX: CX, targetY: CY,
+                    brightness: 0.5,
+                    size: 3,
+
+                    hue: 200,  // Blue
+                    saturation: 80,
+                    lightness: 60,
+
+                    // Release coherence properties
+                    released: false,
+                    releaseAngle: 0,
+                    releaseSpeed: 0,
+                    vx: 0,
+                    vy: 0,
+                    trail: [],
+                    soulColor: soulPalette[i % soulPalette.length]
+                });
+            }
+
+            // Bottom hexagonal ring: 12 points
+            for (let i = 0; i < 12; i++) {
+                const theta = (i / 12) * TAU + TAU / 24;  // Offset
+                cagePoints.push({
+                    id: `cage_bot_${i}`,
+                    layer: 'bottom',
+                    index: i,
+                    type: 'cage',
+
+                    baseTheta: theta,
+                    theta: theta,
+                    baseRadius: cageRadius,
+                    radius: cageRadius,
+                    z: 0.1,
+
+                    phase: Math.random() * TAU,
+                    naturalFreq: 0.2 + Math.random() * 0.2,
+
+                    helix: {
+                        theta: theta,
+                        z: 0.1,
+                        r: 1.0,
+                        rotSpeed: 0.002
+                    },
+
+                    x: CX, y: CY,
+                    targetX: CX, targetY: CY,
+                    brightness: 0.5,
+                    size: 3,
+
+                    hue: 210,
+                    saturation: 75,
+                    lightness: 55,
+
+                    // Release coherence properties
+                    released: false,
+                    releaseAngle: 0,
+                    releaseSpeed: 0,
+                    vx: 0,
+                    vy: 0,
+                    trail: [],
+                    soulColor: soulPalette[(i + 4) % soulPalette.length]
+                });
+            }
+
+            // Connecting vertices: 8 points (at golden ratio positions)
+            for (let i = 0; i < 8; i++) {
+                const theta = (i / 8) * TAU + TAU / 16;
+                cagePoints.push({
+                    id: `cage_vtx_${i}`,
+                    layer: 'vertex',
+                    index: i,
+                    type: 'cage',
+
+                    baseTheta: theta,
+                    theta: theta,
+                    baseRadius: cageRadius * 0.85,
+                    radius: cageRadius * 0.85,
+                    z: 0.5,  // Middle plane
+
+                    phase: Math.random() * TAU,
+                    naturalFreq: 0.25,
+
+                    helix: {
+                        theta: theta,
+                        z: 0.5,
+                        r: 1.0,
+                        rotSpeed: 0.0015
+                    },
+
+                    x: CX, y: CY,
+                    targetX: CX, targetY: CY,
+                    brightness: 0.6,
+                    size: 4,
+
+                    hue: 280,  // Purple
+                    saturation: 70,
+                    lightness: 55,
+
+                    // Release coherence properties
+                    released: false,
+                    releaseAngle: 0,
+                    releaseSpeed: 0,
+                    vx: 0,
+                    vy: 0,
+                    trail: [],
+                    soulColor: soulPalette[(i + 2) % soulPalette.length]
+                });
+            }
+        }
+
+        // ================================================================
+        // PHYSICS: KURAMOTO SYNCHRONIZATION
+        // ================================================================
+
+        function kuramotoStep(points, coupling, dt) {
+            const N = points.length;
+            if (N === 0) return { order: 0, K: coupling };
+
+            // Mean field
+            let sinSum = 0, cosSum = 0;
+            for (const p of points) {
+                sinSum += Math.sin(p.phase);
+                cosSum += Math.cos(p.phase);
+            }
+            const meanPhase = Math.atan2(sinSum / N, cosSum / N);
+
+            // Update phases
+            for (const p of points) {
+                const dPhase = p.naturalFreq + coupling * Math.sin(meanPhase - p.phase);
+                p.phase += dPhase * dt;
+            }
+
+            // Order parameter
+            const order = Math.sqrt(sinSum * sinSum + cosSum * cosSum) / N;
+            return { order, K: coupling };
+        }
+
+        // ================================================================
+        // PHYSICS: CASCADE AMPLIFICATION
+        // ================================================================
+
+        function getCascadeMultiplier(z) {
+            const dist = Math.abs(z - Z_CRITICAL);
+            return 1 + 0.5 * Math.exp(-dist * dist / 0.004);
+        }
+
+        // ================================================================
+        // PHYSICS: DOMAIN & PHASE DETERMINATION
+        // ================================================================
+
+        function getDomain(z) {
+            if (z < Z_CRITICAL - 0.01) return 'ABSENCE';
+            if (z > Z_CRITICAL + 0.01) return 'PRESENCE';
+            return 'THE LENS';
+        }
+
+        function getPhase(z) {
+            if (z < 0.35) return 'dormant';
+            if (z < 0.50) return 'stirring';
+            if (z < 0.65) return 'rising';
+            if (z < 0.80) return 'approaching';
+            if (z <= 0.857) return 'near-critical';
+            if (z <= 0.877) return 'CRITICAL';
+            if (z <= 0.92) return 'radiant';
+            if (z <= 0.96) return 'overflowing';
+            return 'boundless';
+        }
+
+        // ================================================================
+        // UPDATE FUNCTIONS
+        // ================================================================
+
+        function updateHelix(dt) {
+            helix.theta = (helix.theta + 0.01 * dt * 60) % TAU;
+            helix.z = globalZ;
+
+            // Coherence from Hilbert field
+            helix.r = 0.8 + hilbertField.coherence * 0.4;
+
+            // Integrated information (Φ) accumulates near critical
+            const cascade = getCascadeMultiplier(globalZ);
+            helix.phi += cascade * 0.01 * dt;
+
+            // Angular velocity
+            helix.omega = (globalZ - 0.5) * 2;
+        }
+
+        function updateLambdaState(dt) {
+            const z = globalZ;
+            const cascade = getCascadeMultiplier(z);
+
+            // Memory (🌰) - accumulates with time, modulated by z
+            lambdaState.iota.mag = Math.min(1, lambdaState.iota.mag + 0.001 * dt * cascade);
+            lambdaState.iota.phase = (lambdaState.iota.phase + 0.01) % TAU;
+
+            // Spark (✧) - temperature bursts near critical
+            const sparkIntensity = Math.exp(-Math.pow((z - Z_CRITICAL) / 0.1, 2));
+            lambdaState.xi.mag = 0.1 + sparkIntensity * 0.8;
+            lambdaState.xi.phase = time % TAU;
+
+            // Fox (🦊) - entropy rate, trickster dynamics
+            lambdaState.theta.mag = hilbertField.getDissonance() * 0.8 + 0.2;
+            lambdaState.theta.phase = (lambdaState.theta.phase + helix.omega * 0.1) % TAU;
+
+            // Wave (∿) - curvature oscillation
+            lambdaState.omega.mag = 0.3 + Math.abs(Math.sin(time * 0.5)) * 0.5;
+            lambdaState.omega.phase = Math.sin(time * 0.3) * Math.PI;
+
+            // Paradox (⊗) - self-reference complexity
+            const inCritical = getPhase(z) === 'CRITICAL';
+            if (inCritical) {
+                lambdaState.delta.mag = Math.min(1, lambdaState.delta.mag + 0.005 * dt);
+            } else {
+                lambdaState.delta.mag *= 0.995;
+            }
+            lambdaState.delta.phase = helix.theta;
+
+            // Squirrel (🐿️) - information preservation
+            lambdaState.sigma.mag = helix.r * 0.6 + 0.2;
+            lambdaState.sigma.phase = (lambdaState.iota.phase + Math.PI) % TAU;
+        }
+
+        function updatePositions(dt) {
+            const domain = getDomain(globalZ);
+            const isCritical = getPhase(globalZ) === 'CRITICAL';
+            const isPresence = globalZ > Z_CRITICAL;
+            const cascade = getCascadeMultiplier(globalZ);
+
+            // Kuramoto coupling flips sign at critical point
+            const dist = globalZ - Z_CRITICAL;
+            const sign = Math.tanh(dist * 12);
+            const K = -sign * 0.4 * cascade;
+
+            // Apply Kuramoto to all points
+            const allPoints = [...prismPoints, ...cagePoints];
+            const kuramotoResult = kuramotoStep(
+                allPoints.filter(p => (p.type === 'prism' && showPrism) || (p.type === 'cage' && showCage)),
+                K, dt
+            );
+
+            // Z-offset for visual depth
+            const zOffset = (globalZ - 0.5) * 200;
+
+            // Domain-specific scaling
+            const intensity = isPresence ? (globalZ - Z_CRITICAL) / (1 - Z_CRITICAL) : 0;
+            const absence = !isPresence ? (Z_CRITICAL - globalZ) / Z_CRITICAL : 0;
+            const scaleFactor = isPresence ? 1 + intensity * 0.35 : 1 - absence * 0.1;
+
+            // Update prism points
+            for (const p of prismPoints) {
+                if (!showPrism) {
+                    p.brightness = 0.02;
+                    continue;
+                }
+
+                // Helix evolution
+                p.helix.theta += p.helix.rotSpeed;
+                p.helix.z = p.z * (0.5 + globalZ * 0.5);
+
+                // Radius with phase modulation
+                const phaseWobble = Math.sin(p.phase) * 0.06 * cascade;
+                p.radius = p.baseRadius * cascade * scaleFactor * (1 + phaseWobble);
+
+                // Rotation
+                const rotSpeed = 0.012 * cascade * (p.layer % 2 === 0 ? 1 : -1);
+                p.theta = p.baseTheta + time * rotSpeed;
+
+                // Domain modulation
+                if (isPresence) {
+                    p.theta += Math.sin(time * 0.3 + p.layer * 0.4) * 0.12 * intensity;
+                } else {
+                    p.theta += absence * 0.015 * Math.sin(time + p.index);
+                }
+
+                // Position
+                p.targetX = CX + Math.cos(p.theta) * p.radius;
+                p.targetY = CY + Math.sin(p.theta) * p.radius * 0.5 + zOffset;
+                p.targetY += (p.layer / 6 - 0.5) * 100;
+
+                // Smooth interpolation
+                p.x += (p.targetX - p.x) * 0.1;
+                p.y += (p.targetY - p.y) * 0.1;
+
+                // Brightness
+                const zProx = 1 - Math.abs((p.layer / 6) - globalZ);
+                const critBoost = isCritical ? 0.5 : 0;
+                p.brightness = 0.2 + zProx * 0.5 + critBoost;
+            }
+
+            // Update cage points
+            for (const p of cagePoints) {
+                if (!showCage) {
+                    p.brightness = 0.02;
+                    continue;
+                }
+
+                p.helix.theta += p.helix.rotSpeed;
+
+                // EM field pulsing
+                const emPulse = 1 + Math.sin(time * 1.5 + p.index * 0.5) * 0.05;
+                p.radius = p.baseRadius * emPulse * scaleFactor;
+
+                // Counter-rotation to prism
+                const rotSpeed = -0.008 * cascade;
+                p.theta = p.baseTheta + time * rotSpeed;
+
+                // Position with z-layer offset
+                let yOffset = 0;
+                if (p.layer === 'top') yOffset = -80;
+                else if (p.layer === 'bottom') yOffset = 80;
+
+                p.targetX = CX + Math.cos(p.theta) * p.radius;
+                p.targetY = CY + Math.sin(p.theta) * p.radius * 0.45 + zOffset + yOffset;
+
+                p.x += (p.targetX - p.x) * 0.1;
+                p.y += (p.targetY - p.y) * 0.1;
+
+                // Cage brightness follows field strength
+                const fieldStrength = (globalZ > 0.5 ? intensity : 1 - absence) * 0.5 + 0.3;
+                p.brightness = fieldStrength + (isCritical ? 0.4 : 0);
+            }
+
+            return kuramotoResult;
+        }
+
+        // ================================================================
+        // RELEASE COHERENCE PHYSICS
+        // ================================================================
+
+        function updateReleaseCoherence(dt) {
+            // Coherence dynamics based on F key (release) and click (gather)
+            if (releasing) {
+                releaseVelocity += dt * 0.1;
+                targetCoherence = Math.max(0, targetCoherence - releaseVelocity * dt);
+                releaseStarted = true;
+            } else if (gathering) {
+                targetCoherence = Math.min(1, targetCoherence + dt * 0.6);
+                releaseVelocity = 0;
+            } else {
+                // Gradual return to coherent state when not interacting
+                if (!releaseStarted) {
+                    targetCoherence = Math.min(1, targetCoherence + dt * 0.1);
+                }
+                releaseVelocity *= 0.98;  // Decay
+            }
+
+            // Smooth coherence transition
+            releaseCoherence += (targetCoherence - releaseCoherence) * 0.04;
+
+            const dispersal = 1 - releaseCoherence;
+            const allPoints = [...prismPoints, ...cagePoints];
+
+            // Update each point based on release state
+            for (const p of allPoints) {
+                // Stochastic release based on coherence threshold
+                if (!p.released && releaseCoherence < 0.4 + Math.random() * 0.25) {
+                    p.released = true;
+                    p.releaseAngle = p.theta + (Math.random() - 0.5) * 0.6;
+                    p.releaseSpeed = 1.5 + Math.random() * 3;
+                }
+
+                if (p.released) {
+                    // Free movement with acceleration
+                    const accel = dispersal * 0.2;
+                    p.vx += Math.cos(p.releaseAngle) * accel;
+                    p.vy += Math.sin(p.releaseAngle) * accel;
+                    
+                    // Slight spiral wandering
+                    p.releaseAngle += (Math.random() - 0.5) * 0.025;
+                    
+                    // Damping at edges
+                    const edgeDist = Math.min(p.x, W - p.x, p.y, H - p.y);
+                    if (edgeDist < 100) {
+                        p.vx *= 0.97;
+                        p.vy *= 0.97;
+                    }
+
+                    // Apply velocity
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // Gather force when gathering
+                    if (gathering) {
+                        const dx = CX - p.x;
+                        const dy = CY - p.y;
+                        const d = Math.sqrt(dx * dx + dy * dy);
+                        if (d > 1) {
+                            p.vx += (dx / d) * 0.9;
+                            p.vy += (dy / d) * 0.9;
+                        }
+                        
+                        // Re-cohere when close to center
+                        if (d < p.baseRadius * 1.3 && releaseCoherence > 0.65) {
+                            p.released = false;
+                            p.vx = 0;
+                            p.vy = 0;
+                        }
+                    }
+
+                    // Trail update
+                    p.trail.unshift({ x: p.x, y: p.y, age: 0 });
+                    if (p.trail.length > 25) p.trail.pop();
+                    for (const t of p.trail) t.age += dt;
+
+                    // Enhanced brightness when released
+                    p.brightness = Math.min(1, p.brightness * 1.4);
+
+                    // Spawn sparks during high dispersal
+                    if (dispersal > 0.35 && Math.random() < dispersal * 0.04) {
+                        sparks.push({
+                            x: p.x, y: p.y,
+                            vx: p.vx * 0.5 + (Math.random() - 0.5) * 2.5,
+                            vy: p.vy * 0.5 + (Math.random() - 0.5) * 2.5,
+                            life: 1,
+                            color: p.soulColor,
+                            size: 1.5 + Math.random() * 2.5
+                        });
+                    }
+                } else if (releaseCoherence > 0.8) {
+                    // Clear trails when fully coherent
+                    p.trail.length = 0;
+                }
+            }
+
+            // Update sparks
+            for (let i = sparks.length - 1; i >= 0; i--) {
+                const sp = sparks[i];
+                sp.x += sp.vx;
+                sp.y += sp.vy;
+                sp.vx *= 0.98;
+                sp.vy *= 0.98;
+                sp.life -= dt * 0.7;
+                if (sp.life <= 0) sparks.splice(i, 1);
+            }
+
+            // Update release state UI
+            updateReleaseUI();
+        }
+
+        function updateReleaseUI() {
+            const stateEl = document.getElementById('release-state');
+            const textEl = document.getElementById('release-text');
+            const barEl = document.getElementById('coherence-indicator');
+            const hintEl = document.getElementById('release-hint');
+
+            // Show state overlay when release started
+            if (releaseStarted && releaseCoherence < 0.9) {
+                stateEl.classList.add('visible');
+            } else {
+                stateEl.classList.remove('visible');
+            }
+
+            // Determine state text and styling
+            let state, barText;
+            stateEl.className = '';
+            barEl.className = '';
+
+            if (releaseCoherence > 0.8) {
+                state = 'COHERENT';
+                stateEl.classList.add('coherent');
+                const filled = Math.floor(releaseCoherence * 16);
+                barText = '█'.repeat(filled) + '░'.repeat(16 - filled);
+            } else if (releaseCoherence > 0.5) {
+                state = 'RELEASING';
+                stateEl.classList.add('releasing');
+                const filled = Math.floor(releaseCoherence * 16);
+                barText = '█'.repeat(filled) + '·'.repeat(16 - filled);
+            } else if (releaseCoherence > 0.2) {
+                state = 'DISPERSING';
+                stateEl.classList.add('dispersing');
+                const filled = Math.floor(releaseCoherence * 16);
+                barText = '░'.repeat(filled) + '·'.repeat(16 - filled);
+            } else {
+                state = 'FREE';
+                stateEl.classList.add('free');
+                barEl.classList.add('free');
+                barText = '· · · · · · · ·';
+            }
+
+            textEl.textContent = state;
+            barEl.textContent = barText;
+
+            // Show hint when release started
+            if (releaseStarted) {
+                hintEl.classList.remove('hidden');
+            }
+        }
+
+        // ================================================================
+        // CONNECTION GENERATION
+        // ================================================================
+
+        function* generateConnections() {
+            // Prism intra-layer connections (ring connections)
+            if (showPrism) {
+                for (let layer = 0; layer < 7; layer++) {
+                    const layerPoints = prismPoints.filter(p => p.layer === layer);
+                    for (let i = 0; i < layerPoints.length; i++) {
+                        yield {
+                            from: layerPoints[i],
+                            to: layerPoints[(i + 1) % layerPoints.length],
+                            type: 'prism_ring'
+                        };
+                    }
+                }
+
+                // Prism inter-layer connections (vertical spines)
+                for (let i = 0; i < 9; i++) {
+                    for (let layer = 0; layer < 6; layer++) {
+                        const p1 = prismPoints.find(p => p.layer === layer && p.index === i);
+                        const p2 = prismPoints.find(p => p.layer === layer + 1 && p.index === i);
+                        if (p1 && p2) {
+                            yield { from: p1, to: p2, type: 'prism_spine' };
+                        }
+                    }
+                }
+
+                // Prism diagonal connections (hexagonal structure)
+                for (let layer = 0; layer < 6; layer++) {
+                    const curr = prismPoints.filter(p => p.layer === layer);
+                    const next = prismPoints.filter(p => p.layer === layer + 1);
+                    for (let i = 0; i < 9; i++) {
+                        yield {
+                            from: curr[i],
+                            to: next[(i + 1) % 9],
+                            type: 'prism_diagonal'
+                        };
+                    }
+                }
+            }
+
+            // Cage connections
+            if (showCage) {
+                // Top ring
+                const topRing = cagePoints.filter(p => p.layer === 'top');
+                for (let i = 0; i < topRing.length; i++) {
+                    yield {
+                        from: topRing[i],
+                        to: topRing[(i + 1) % topRing.length],
+                        type: 'cage_ring'
+                    };
+                }
+
+                // Bottom ring
+                const botRing = cagePoints.filter(p => p.layer === 'bottom');
+                for (let i = 0; i < botRing.length; i++) {
+                    yield {
+                        from: botRing[i],
+                        to: botRing[(i + 1) % botRing.length],
+                        type: 'cage_ring'
+                    };
+                }
+
+                // Vertical struts (top to bottom)
+                for (let i = 0; i < 12; i++) {
+                    yield {
+                        from: topRing[i],
+                        to: botRing[i],
+                        type: 'cage_strut'
+                    };
+                }
+
+                // Vertex connections to rings
+                const vertices = cagePoints.filter(p => p.layer === 'vertex');
+                for (const vtx of vertices) {
+                    // Connect to nearest top and bottom points
+                    const nearTop = topRing.reduce((a, b) =>
+                        Math.abs(b.baseTheta - vtx.baseTheta) < Math.abs(a.baseTheta - vtx.baseTheta) ? b : a
+                    );
+                    const nearBot = botRing.reduce((a, b) =>
+                        Math.abs(b.baseTheta - vtx.baseTheta) < Math.abs(a.baseTheta - vtx.baseTheta) ? b : a
+                    );
+                    yield { from: vtx, to: nearTop, type: 'cage_vertex' };
+                    yield { from: vtx, to: nearBot, type: 'cage_vertex' };
+                }
+            }
+
+            // Bridge connections (prism outer to cage inner)
+            if (showPrism && showCage && globalZ > 0.6) {
+                const outerPrism = prismPoints.filter(p => p.layer === 6);
+                const innerCage = cagePoints.filter(p => p.layer === 'vertex');
+
+                for (const pp of outerPrism) {
+                    // Find nearest cage vertex
+                    const nearest = innerCage.reduce((a, b) => {
+                        const distA = Math.hypot(a.x - pp.x, a.y - pp.y);
+                        const distB = Math.hypot(b.x - pp.x, b.y - pp.y);
+                        return distB < distA ? b : a;
+                    });
+                    if (Math.hypot(nearest.x - pp.x, nearest.y - pp.y) < 200) {
+                        yield { from: pp, to: nearest, type: 'bridge' };
+                    }
+                }
+            }
+        }
+
+        // ================================================================
+        // RENDERING
+        // ================================================================
+
+        function render() {
+            ctx.fillStyle = 'rgba(3, 3, 8, 0.15)';
+            ctx.fillRect(0, 0, W, H);
+
+            const domain = getDomain(globalZ);
+            const phase = getPhase(globalZ);
+            const isCritical = phase === 'CRITICAL';
+            const isPresence = globalZ > Z_CRITICAL;
+            const cascade = getCascadeMultiplier(globalZ);
+
+            const intensity = isPresence ? (globalZ - Z_CRITICAL) / (1 - Z_CRITICAL) : 0;
+            const absence = !isPresence ? (Z_CRITICAL - globalZ) / Z_CRITICAL : 0;
+
+            // Background gradient
+            const bgGrad = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 2);
+            if (isPresence) {
+                bgGrad.addColorStop(0, `rgba(255, 250, 240, ${intensity * 0.08})`);
+                bgGrad.addColorStop(0.5, `rgba(255, 215, 0, ${intensity * 0.03})`);
+                bgGrad.addColorStop(1, 'transparent');
+            } else {
+                bgGrad.addColorStop(0, `rgba(40, 30, 20, ${absence * 0.15})`);
+                bgGrad.addColorStop(1, 'transparent');
+            }
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, W, H);
+
+            // Release state visual effects
+            const dispersal = 1 - releaseCoherence;
+            
+            // Warm background fade when releasing/free
+            if (releaseCoherence < 0.9) {
+                const warmth = dispersal * 12;
+                ctx.fillStyle = `rgba(${warmth}, ${warmth * 0.7}, ${warmth * 0.4}, ${dispersal * 0.06})`;
+                ctx.fillRect(0, 0, W, H);
+            }
+
+            // Ambient radiance when free (coherence < 0.5)
+            if (releaseCoherence < 0.5) {
+                const freeIntensity = (0.5 - releaseCoherence) * 0.08;
+                ctx.fillStyle = `rgba(255, 248, 235, ${freeIntensity})`;
+                ctx.fillRect(0, 0, W, H);
+
+                // Radiant center glow
+                const radGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 2);
+                radGlow.addColorStop(0, `rgba(255, 255, 250, ${freeIntensity * 2})`);
+                radGlow.addColorStop(0.4, `rgba(255, 240, 200, ${freeIntensity})`);
+                radGlow.addColorStop(1, 'transparent');
+                ctx.fillStyle = radGlow;
+                ctx.fillRect(0, 0, W, H);
+            }
+
+            // Draw connections (skip if both points released)
+            let connCount = 0;
+            for (const conn of generateConnections()) {
+                // Skip connections between released points
+                if (conn.from.released || conn.to.released) {
+                    // Fade connections as coherence drops
+                    if (releaseCoherence < 0.6) continue;
+                }
+
+                connCount++;
+                let alpha, color;
+
+                // Fade connections based on release coherence
+                const coherenceFade = Math.min(1, releaseCoherence * 1.5);
+
+                switch (conn.type) {
+                    case 'prism_ring':
+                        alpha = (0.08 + globalZ * 0.12) * coherenceFade;
+                        color = `rgba(255, 200, 150, ${alpha})`;
+                        break;
+                    case 'prism_spine':
+                        alpha = (0.06 + globalZ * 0.15) * coherenceFade;
+                        color = `rgba(255, 220, 180, ${alpha})`;
+                        break;
+                    case 'prism_diagonal':
+                        alpha = (0.03 + globalZ * 0.08) * coherenceFade;
+                        color = `rgba(255, 180, 120, ${alpha})`;
+                        break;
+                    case 'cage_ring':
+                        alpha = (0.1 + cascade * 0.15) * coherenceFade;
+                        color = `rgba(77, 171, 247, ${alpha})`;
+                        break;
+                    case 'cage_strut':
+                        alpha = (0.08 + cascade * 0.12) * coherenceFade;
+                        color = `rgba(100, 180, 255, ${alpha})`;
+                        break;
+                    case 'cage_vertex':
+                        alpha = (0.12 + cascade * 0.18) * coherenceFade;
+                        color = `rgba(204, 93, 232, ${alpha})`;
+                        break;
+                    case 'bridge':
+                        alpha = (globalZ - 0.6) * 0.4 * coherenceFade;
+                        color = `rgba(255, 215, 0, ${alpha})`;
+                        break;
+                    default:
+                        alpha = 0.05 * coherenceFade;
+                        color = `rgba(255, 255, 255, ${alpha})`;
+                }
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = conn.type === 'bridge' ? 1.5 : 0.8;
+                ctx.beginPath();
+                ctx.moveTo(conn.from.x, conn.from.y);
+                ctx.lineTo(conn.to.x, conn.to.y);
+                ctx.stroke();
+            }
+
+            // Draw radial connections when coherent
+            if (releaseCoherence > 0.6) {
+                const radialAlpha = (releaseCoherence - 0.6) * 0.2;
+                ctx.strokeStyle = `rgba(255, 220, 180, ${radialAlpha})`;
+                ctx.lineWidth = 0.5;
+                const allPoints = [...prismPoints, ...cagePoints].filter(p => !p.released);
+                for (const p of allPoints) {
+                    ctx.beginPath();
+                    ctx.moveTo(CX, CY);
+                    ctx.lineTo(p.x, p.y);
+                    ctx.stroke();
+                }
+            }
+
+            // Draw trails for released points
+            const allPoints = [...prismPoints, ...cagePoints];
+            for (const p of allPoints) {
+                if (p.trail.length < 2) continue;
+
+                const trailAlpha = p.released ? 0.45 : 0.15;
+                
+                ctx.strokeStyle = hexToRgba(p.soulColor, trailAlpha * p.brightness);
+                ctx.lineWidth = p.size * 0.7;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(p.trail[0].x, p.trail[0].y);
+                
+                for (let i = 1; i < p.trail.length; i++) {
+                    const t = p.trail[i];
+                    const fade = 1 - i / p.trail.length;
+                    ctx.globalAlpha = fade;
+                    ctx.lineTo(t.x, t.y);
+                }
+                
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+
+            // Draw sparks
+            for (const sp of sparks) {
+                const alpha = sp.life * 0.85;
+                
+                // Glow
+                const glowGrad = ctx.createRadialGradient(sp.x, sp.y, 0, sp.x, sp.y, sp.size * 4);
+                glowGrad.addColorStop(0, hexToRgba(sp.color, alpha * 0.5));
+                glowGrad.addColorStop(1, 'transparent');
+                ctx.fillStyle = glowGrad;
+                ctx.beginPath();
+                ctx.arc(sp.x, sp.y, sp.size * 4, 0, TAU);
+                ctx.fill();
+
+                // Core
+                ctx.fillStyle = hexToRgba(sp.color, alpha);
+                ctx.beginPath();
+                ctx.arc(sp.x, sp.y, sp.size * sp.life, 0, TAU);
+                ctx.fill();
+            }
+
+            // Draw prism points
+            if (showPrism) {
+                for (const p of prismPoints) {
+                    const size = p.size * (p.released ? 1.3 : 1) * (1 + p.brightness * 0.5);
+                    const brightness = p.brightness * (p.released ? 1.4 : 1);
+                    
+                    if (p.released) {
+                        // Use soul color when released
+                        const glowR = size * (p.released ? 8 : 5);
+                        const glowGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowR);
+                        glowGrad.addColorStop(0, hexToRgba(p.soulColor, brightness * 0.45));
+                        glowGrad.addColorStop(0.5, hexToRgba(p.soulColor, brightness * 0.18));
+                        glowGrad.addColorStop(1, 'transparent');
+                        
+                        ctx.fillStyle = glowGrad;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, glowR, 0, TAU);
+                        ctx.fill();
+
+                        // Core
+                        const coreGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, size);
+                        coreGrad.addColorStop(0, hexToRgba(p.soulColor, 0.95));
+                        coreGrad.addColorStop(0.5, hexToRgba(p.soulColor, 0.75));
+                        coreGrad.addColorStop(1, hexToRgba(p.soulColor, 0.45));
+                        
+                        ctx.fillStyle = coreGrad;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, size, 0, TAU);
+                        ctx.fill();
+
+                        // Highlight
+                        ctx.fillStyle = `rgba(255, 255, 255, ${brightness * 0.45})`;
+                        ctx.beginPath();
+                        ctx.arc(p.x - size * 0.3, p.y - size * 0.3, size * 0.28, 0, TAU);
+                        ctx.fill();
+                    } else {
+                        // Normal HSL color when coherent
+                        const hue = p.hue;
+                        const sat = p.saturation + cascade * 15;
+                        const light = p.lightness + p.brightness * 30;
+                        const alpha = 0.4 + p.brightness * 0.5;
+
+                        ctx.fillStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha})`;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, size, 0, TAU);
+                        ctx.fill();
+
+                        // Glow at critical
+                        if (isCritical && p.brightness > 0.6) {
+                            ctx.fillStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha * 0.3})`;
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.size * 3, 0, TAU);
+                            ctx.fill();
+                        }
+                    }
+                }
+            }
+
+            // Draw cage points
+            if (showCage) {
+                for (const p of cagePoints) {
+                    const size = p.size * (p.released ? 1.25 : 1) * (1 + p.brightness * 0.4);
+                    const brightness = p.brightness * (p.released ? 1.35 : 1);
+                    
+                    if (p.released) {
+                        // Use soul color when released
+                        const glowR = size * 7;
+                        const glowGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowR);
+                        glowGrad.addColorStop(0, hexToRgba(p.soulColor, brightness * 0.4));
+                        glowGrad.addColorStop(0.5, hexToRgba(p.soulColor, brightness * 0.15));
+                        glowGrad.addColorStop(1, 'transparent');
+                        
+                        ctx.fillStyle = glowGrad;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, glowR, 0, TAU);
+                        ctx.fill();
+
+                        // Core
+                        const coreGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, size);
+                        coreGrad.addColorStop(0, hexToRgba(p.soulColor, 0.9));
+                        coreGrad.addColorStop(0.5, hexToRgba(p.soulColor, 0.7));
+                        coreGrad.addColorStop(1, hexToRgba(p.soulColor, 0.4));
+                        
+                        ctx.fillStyle = coreGrad;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, size, 0, TAU);
+                        ctx.fill();
+
+                        // Highlight
+                        ctx.fillStyle = `rgba(255, 255, 255, ${brightness * 0.4})`;
+                        ctx.beginPath();
+                        ctx.arc(p.x - size * 0.3, p.y - size * 0.3, size * 0.25, 0, TAU);
+                        ctx.fill();
+                    } else {
+                        // Normal HSL color when coherent
+                        const alpha = 0.3 + p.brightness * 0.6;
+
+                        ctx.fillStyle = `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${alpha})`;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, size, 0, TAU);
+                        ctx.fill();
+
+                        // EM field glow
+                        if (p.brightness > 0.5) {
+                            const glowGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 4);
+                            glowGrad.addColorStop(0, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${alpha * 0.4})`);
+                            glowGrad.addColorStop(1, 'transparent');
+                            ctx.fillStyle = glowGrad;
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.size * 4, 0, TAU);
+                            ctx.fill();
+                        }
+                    }
+                }
+            }
+
+            // Draw critical lens
+            if (Math.abs(globalZ - Z_CRITICAL) < 0.15) {
+                const lensAlpha = 1 - Math.abs(globalZ - Z_CRITICAL) / 0.15;
+                const lensY = CY + (Z_CRITICAL - 0.5) * 200;
+
+                // Lens glow
+                const lensGrad = ctx.createRadialGradient(CX, lensY, 0, CX, lensY, R * 1.3);
+                lensGrad.addColorStop(0, `rgba(255, 215, 0, ${lensAlpha * 0.2})`);
+                lensGrad.addColorStop(0.5, `rgba(255, 180, 100, ${lensAlpha * 0.08})`);
+                lensGrad.addColorStop(1, 'transparent');
+                ctx.fillStyle = lensGrad;
+                ctx.fillRect(0, 0, W, H);
+
+                // Lens line
+                ctx.strokeStyle = `rgba(255, 215, 0, ${0.2 + lensAlpha * 0.6})`;
+                ctx.lineWidth = isCritical ? 3 : 1.5;
+                ctx.setLineDash(isCritical ? [] : [6, 12]);
+                ctx.beginPath();
+                ctx.moveTo(CX - R * 1.2, lensY);
+                ctx.lineTo(CX + R * 1.2, lensY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Draw core entity
+            drawCoreEntity(isCritical, isPresence, intensity, absence);
+
+            // Update connection count
+            document.getElementById('conn-count').textContent = connCount;
+        }
+
+        function drawCoreEntity(isCritical, isPresence, intensity, absence) {
+            const zOffset = (globalZ - 0.5) * 200;
+            const coreY = CY + zOffset;
+            const pulse = Math.sin(time * 2.5) * 0.2 + 1;
+            
+            // Release coherence modifies the core entity
+            const releaseIntensity = (1 - releaseCoherence);
+            const isReleased = releaseCoherence < 0.5;
+
+            // When released (FREE state), override with radiant source
+            if (isReleased) {
+                const freeIntensity = (0.5 - releaseCoherence) / 0.5;
+                const sourceR = 15 + freeIntensity * 35 + (pulse - 1) * 40;
+
+                // Expansive corona
+                for (let i = 4; i >= 0; i--) {
+                    const layerR = sourceR * (2 + i * 1.5);
+                    const layerAlpha = freeIntensity * (0.18 - i * 0.03);
+
+                    const grad = ctx.createRadialGradient(CX, coreY, 0, CX, coreY, layerR);
+                    grad.addColorStop(0, `rgba(255, 255, 255, ${layerAlpha})`);
+                    grad.addColorStop(0.3, `rgba(255, 250, 240, ${layerAlpha * 0.7})`);
+                    grad.addColorStop(0.6, `rgba(255, 240, 200, ${layerAlpha * 0.4})`);
+                    grad.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(CX, coreY, layerR, 0, TAU);
+                    ctx.fill();
+                }
+
+                // Brilliant core
+                const coreGrad = ctx.createRadialGradient(CX, coreY, 0, CX, coreY, sourceR * pulse);
+                coreGrad.addColorStop(0, '#ffffff');
+                coreGrad.addColorStop(0.4, `rgba(255, 255, 250, ${0.85 + freeIntensity * 0.15})`);
+                coreGrad.addColorStop(0.7, `rgba(255, 250, 230, ${0.6 + freeIntensity * 0.3})`);
+                coreGrad.addColorStop(1, `rgba(255, 240, 200, ${0.35 + freeIntensity * 0.3})`);
+
+                ctx.fillStyle = coreGrad;
+                ctx.beginPath();
+                ctx.arc(CX, coreY, sourceR * pulse, 0, TAU);
+                ctx.fill();
+
+                // Release emanation rings
+                for (let i = 0; i < 4; i++) {
+                    const ringPhase = (time * 1.5 + i * 0.8) % 5;
+                    const ringR = ringPhase * 100;
+                    const ringAlpha = Math.max(0, freeIntensity * (0.35 - ringPhase / 5));
+
+                    ctx.strokeStyle = `rgba(255, 250, 240, ${ringAlpha})`;
+                    ctx.lineWidth = 2 - ringPhase * 0.3;
+                    ctx.beginPath();
+                    ctx.arc(CX, coreY, ringR, 0, TAU);
+                    ctx.stroke();
+                }
+
+            } else if (isPresence) {
+                // Radiant source (z > critical)
+                const effectiveIntensity = intensity * releaseCoherence;
+                const sourceR = 8 + effectiveIntensity * 25 + (pulse - 1) * 30;
+
+                // Corona
+                for (let i = 4; i >= 0; i--) {
+                    const layerR = sourceR * (1.8 + i * 1);
+                    const layerAlpha = effectiveIntensity * (0.12 - i * 0.02);
+
+                    const grad = ctx.createRadialGradient(CX, coreY, 0, CX, coreY, layerR);
+                    grad.addColorStop(0, `rgba(255, 255, 250, ${layerAlpha})`);
+                    grad.addColorStop(0.4, `rgba(255, 240, 200, ${layerAlpha * 0.5})`);
+                    grad.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(CX, coreY, layerR, 0, TAU);
+                    ctx.fill();
+                }
+
+                // Core
+                const coreGrad = ctx.createRadialGradient(CX, coreY, 0, CX, coreY, sourceR * pulse);
+                coreGrad.addColorStop(0, '#ffffff');
+                coreGrad.addColorStop(0.6, `rgba(255, 250, 240, ${0.7 + effectiveIntensity * 0.3})`);
+                coreGrad.addColorStop(1, `rgba(255, 230, 200, ${0.4 + effectiveIntensity * 0.3})`);
+
+                ctx.fillStyle = coreGrad;
+                ctx.beginPath();
+                ctx.arc(CX, coreY, sourceR * pulse, 0, TAU);
+                ctx.fill();
+
+            } else {
+                // Void (z < critical, coherent state)
+                const effectiveAbsence = absence * releaseCoherence;
+                const voidR = 6 + effectiveAbsence * 10;
+
+                // Anti-glow
+                const antiGrad = ctx.createRadialGradient(CX, coreY, 0, CX, coreY, voidR * 6);
+                antiGrad.addColorStop(0, `rgba(0, 0, 0, ${effectiveAbsence * 0.6})`);
+                antiGrad.addColorStop(0.5, `rgba(20, 15, 10, ${effectiveAbsence * 0.3})`);
+                antiGrad.addColorStop(1, 'transparent');
+
+                ctx.fillStyle = antiGrad;
+                ctx.beginPath();
+                ctx.arc(CX, coreY, voidR * 6, 0, TAU);
+                ctx.fill();
+
+                // Halo
+                ctx.strokeStyle = `rgba(100, 80, 60, ${effectiveAbsence * 0.5})`;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(CX, coreY, voidR * 2.5 * pulse, 0, TAU);
+                ctx.stroke();
+
+                // Core
+                const coreGrad = ctx.createRadialGradient(CX, coreY, 0, CX, coreY, voidR * pulse);
+                coreGrad.addColorStop(0, `rgba(80, 60, 40, ${0.4 + effectiveAbsence * 0.4})`);
+                coreGrad.addColorStop(1, `rgba(50, 35, 25, ${0.3 + effectiveAbsence * 0.3})`);
+
+                ctx.fillStyle = coreGrad;
+                ctx.beginPath();
+                ctx.arc(CX, coreY, voidR * pulse, 0, TAU);
+                ctx.fill();
+            }
+
+            // Critical pulse rings (when z near critical point)
+            if (isCritical) {
+                const critIntensity = releaseCoherence; // Fade rings as coherence drops
+                for (let i = 0; i < 6; i++) {
+                    const ringPhase = (time * 2.5 + i * 0.5) % 4;
+                    const ringR = ringPhase * 120;
+                    const ringAlpha = Math.max(0, critIntensity * (0.5 - ringPhase / 4));
+
+                    ctx.strokeStyle = `rgba(255, 230, 180, ${ringAlpha})`;
+                    ctx.lineWidth = 2.5 - ringPhase * 0.4;
+                    ctx.beginPath();
+                    ctx.arc(CX, coreY, ringR, 0, TAU);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // ================================================================
+        // UI UPDATE
+        // ================================================================
+
+        function updateUI(kuramotoResult) {
+            const domain = getDomain(globalZ);
+            const phase = getPhase(globalZ);
+            const isCritical = phase === 'CRITICAL';
+            const cascade = getCascadeMultiplier(globalZ);
+
+            // Title & cursor
+            const title = document.getElementById('title');
+            const cursor = document.getElementById('cursor');
+            const domainInd = document.getElementById('domain-indicator');
+            const zDisp = document.getElementById('z-display');
+
+            title.className = domain === 'THE LENS' ? 'critical' : domain.toLowerCase();
+            cursor.className = domain === 'THE LENS' ? 'critical' : domain.toLowerCase();
+            domainInd.className = domain === 'THE LENS' ? 'critical' : domain.toLowerCase();
+            zDisp.className = domain === 'THE LENS' ? 'critical' : domain.toLowerCase();
+
+            // Values
+            zDisp.textContent = `z = ${globalZ.toFixed(3)}`;
+            document.getElementById('phase-label').textContent = phase;
+            domainInd.textContent = domain;
+            document.getElementById('coupling-value').textContent = `K = ${kuramotoResult.K >= 0 ? '+' : ''}${kuramotoResult.K.toFixed(2)}`;
+            document.getElementById('cascade-value').textContent = `${cascade.toFixed(2)}×`;
+
+            // Helix
+            document.getElementById('h-theta').textContent = helix.theta.toFixed(3);
+            document.getElementById('h-z').textContent = helix.z.toFixed(3);
+            document.getElementById('h-r').textContent = helix.r.toFixed(3);
+            document.getElementById('h-phi').textContent = helix.phi.toFixed(2);
+            document.getElementById('h-omega').textContent = helix.omega.toFixed(2);
+
+            // Dynamics bars
+            updateBar('order', kuramotoResult.order);
+            updateBar('coherence', hilbertField.coherence);
+            updateBar('entropy', hilbertField.getDissonance());
+            updateBar('emanation', globalZ > Z_CRITICAL ? (globalZ - Z_CRITICAL) / (1 - Z_CRITICAL) : 0);
+
+            // Lambda state
+            updateLambdaUI('iota', lambdaState.iota.mag);
+            updateLambdaUI('xi', lambdaState.xi.mag);
+            updateLambdaUI('theta', lambdaState.theta.mag);
+            updateLambdaUI('omega', lambdaState.omega.mag);
+            updateLambdaUI('delta', lambdaState.delta.mag);
+            updateLambdaUI('sigma', lambdaState.sigma.mag);
+
+            // Sonification
+            document.getElementById('sonif-bpm').textContent = Math.round(sonificationEngine.bpm);
+            document.getElementById('sonif-scale').textContent = getScaleName(sonificationEngine.currentScale);
+            document.getElementById('sonif-freq').textContent = `${Math.round(sonificationEngine.baseFrequency * (1 + (globalZ - 0.5) * 0.5))} Hz`;
+            document.getElementById('sonif-dilation').textContent = `${sonificationEngine.timeDilation.toFixed(2)}×`;
+
+            // Z-axis marker
+            const zAxisHeight = document.getElementById('z-axis').offsetHeight;
+            const markerPos = (1 - globalZ) * zAxisHeight;
+            document.getElementById('z-marker').style.top = `${markerPos}px`;
+
+            // Active count
+            const activeCount = (showPrism ? 63 : 0) + (showCage ? 32 : 0);
+            document.getElementById('active-count').textContent = activeCount;
+
+            // Architecture panel
+            updateArchPanel();
+        }
+
+        function updateBar(name, value) {
+            const filled = Math.round(value * 10);
+            const empty = 10 - filled;
+            document.getElementById(`${name}-bar`).textContent = '█'.repeat(filled) + '░'.repeat(empty);
+            document.getElementById(`${name}-val`).textContent = value.toFixed(2);
+        }
+
+        function updateLambdaUI(key, value) {
+            document.getElementById(`lambda-${key}`).style.width = `${value * 100}%`;
+            document.getElementById(`lambda-${key}-val`).textContent = value.toFixed(2);
+        }
+
+        function getScaleName(scale) {
+            const names = {
+                '0,3,5,7,10': 'Minor',
+                '0,2,4,7,9': 'Major',
+                '0,2,3,5,7,8,11': 'Harm',
+                '0,1,3,5,7,8,10': 'Phryg',
+                '0,2,4,6,7,9,11': 'Lydian',
+                '0,2,4,6,8,10': 'Whole',
+                '0,1,2,3,4,5,6,7,8,9,10,11': 'Chrom'
+            };
+            return names[scale.join(',')] || 'Custom';
+        }
+
+        function updateArchPanel() {
+            // Update layer activation based on z
+            const prismLayers = document.querySelectorAll('[class*="prism-l"]');
+            prismLayers.forEach((el, i) => {
+                const layerZ = i / 6;
+                const dist = Math.abs(layerZ - globalZ);
+                el.classList.toggle('active', showPrism);
+                el.classList.toggle('resonant', showPrism && dist < 0.15);
+            });
+
+            const cageLayers = document.querySelectorAll('[class*="cage-"]');
+            cageLayers.forEach(el => {
+                el.classList.toggle('active', showCage);
+                el.classList.toggle('resonant', showCage && getPhase(globalZ) === 'CRITICAL');
+            });
+        }
+
+        // ================================================================
+        // MAIN LOOP
+        // ================================================================
+
+        function update(dt) {
+            time += dt;
+
+            // Z interpolation with momentum
+            scrollVelocity *= 0.92;
+            targetZ += scrollVelocity;
+            targetZ = Math.max(0, Math.min(1, targetZ));
+
+            // Auto-breathing
+            if (autoBreathing || Date.now() - lastInteraction > 5000) {
+                const breathCycle = 10;  // seconds
+                breathPhase = (time % breathCycle) / breathCycle;
+                const breathTarget = 0.45 + Math.sin(breathPhase * TAU) * 0.45;
+                targetZ += (breathTarget - targetZ) * 0.02;
+            }
+
+            // Smooth z transition
+            globalZ += (targetZ - globalZ) * 0.06;
+
+            // Update systems
+            updateHelix(dt);
+            updateLambdaState(dt);
+            hilbertField.applyResonanceOperator(dt, 0.1 + getCascadeMultiplier(globalZ) * 0.1);
+            sonificationEngine.update(globalZ, hilbertField.coherence, dt);
+            updateReleaseCoherence(dt);
+
+            return updatePositions(dt);
+        }
+
+        function loop(currentTime) {
+            const dt = Math.min((currentTime - lastTime) / 1000, 0.05);
+            lastTime = currentTime;
+
+            const kuramotoResult = update(dt);
+            render();
+            updateUI(kuramotoResult);
+
+            requestAnimationFrame(loop);
+        }
+
+        let lastTime = performance.now();
+
+        // ================================================================
+        // EVENT HANDLERS
+        // ================================================================
+
+        canvas.addEventListener('wheel', e => {
+            e.preventDefault();
+            scrollVelocity -= e.deltaY * 0.00012;
+            lastInteraction = Date.now();
+            document.getElementById('start-overlay').classList.add('hidden');
+        }, { passive: false });
+
+        canvas.addEventListener('mousemove', e => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            document.getElementById('cursor').style.left = mouseX + 'px';
+            document.getElementById('cursor').style.top = mouseY + 'px';
+        });
+
+        document.addEventListener('keydown', e => {
+            const key = e.key.toLowerCase();
+
+            if (key === ' ') {
+                autoBreathing = !autoBreathing;
+                lastInteraction = autoBreathing ? 0 : Date.now();
+                e.preventDefault();
+            }
+
+            if (key === 'p') {
+                showPrism = !showPrism;
+            }
+
+            if (key === 'c') {
+                showCage = !showCage;
+            }
+
+            if (key === 'r') {
+                targetZ = 0.5;
+                scrollVelocity = 0;
+                showPrism = true;
+                showCage = true;
+                autoBreathing = false;
+                lastInteraction = Date.now();
+                // Reset release state
+                releaseCoherence = 1.0;
+                targetCoherence = 1.0;
+                releaseVelocity = 0;
+                releaseStarted = false;
+                sparks.length = 0;
+                // Reset all points
+                [...prismPoints, ...cagePoints].forEach(p => {
+                    p.released = false;
+                    p.vx = 0;
+                    p.vy = 0;
+                    p.trail.length = 0;
+                });
+            }
+
+            // F key: Start release
+            if (key === 'f') {
+                releasing = true;
+                document.getElementById('start-overlay').classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('keyup', e => {
+            const key = e.key.toLowerCase();
+            
+            // F key released: Stop releasing
+            if (key === 'f') {
+                releasing = false;
+            }
+        });
+
+        // Mouse/Touch: Gather
+        canvas.addEventListener('mousedown', e => {
+            gathering = true;
+            document.getElementById('start-overlay').classList.add('hidden');
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            gathering = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            gathering = false;
+        });
+
+        canvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            gathering = true;
+            document.getElementById('start-overlay').classList.add('hidden');
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', e => {
+            e.preventDefault();
+            gathering = false;
+        }, { passive: false });
+
+        document.getElementById('start-overlay').addEventListener('click', () => {
+            document.getElementById('start-overlay').classList.add('hidden');
+        });
+
+        document.getElementById('audio-toggle').addEventListener('click', () => {
+            const isPlaying = sonificationEngine.toggle();
+            const btn = document.getElementById('audio-toggle');
+            btn.textContent = isPlaying ? '■ DISABLE AUDIO' : '▶ ENABLE AUDIO';
+            btn.classList.toggle('active', isPlaying);
+        });
+
+        // Set lens line position
+        const lensTop = (1 - Z_CRITICAL) * 100;
+        document.getElementById('lens-line').style.top = lensTop + '%';
+        document.getElementById('lens-label').style.top = lensTop + '%';
+
+        // ================================================================
+        // INITIALIZATION
+        // ================================================================
+
+        resize();
+        initPrismPoints();
+        initCagePoints();
+        window.addEventListener('resize', () => {
+            resize();
+            initPrismPoints();
+            initCagePoints();
+        });
+
+        requestAnimationFrame(loop);
+
+        console.log('🔮 LIMNUS Unified Architecture initialized');
+        console.log('   63 prism points (7×9 hexagonal layers)');
+        console.log('   32 cage points (12+12+8 EM structure)');
+        console.log('   z = √3/2 ≈ ' + Z_CRITICAL.toFixed(6));
+        console.log('');
+        console.log('🌟 RELEASE COHERENCE integrated');
+        console.log('   HOLD F: release coherence (COHERENT → FREE)');
+        console.log('   CLICK: gather souls back to center');
+        console.log('   FREE state: souls dispersed, radiant core');
+    </script>
+</body>
+</html>
