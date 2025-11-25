@@ -1086,15 +1086,15 @@
                     // ∂J_R/∂t = W_R·J_R - β·J_R + g·∇²J_R
                     const dJR_dt = Math.max(-1, Math.min(1, W_R * J_R - SACRED.beta * J_R + this.g * lap_R));
 
-                    // Apply self-referential feedback to point (scaled by phase coupler)
-                    if (showMuField) {
-                        // Use phase coupler to scale feedback during release
-                        const feedbackScale = phaseCoupler.getMRPFeedbackScale();
+                    // Apply self-referential feedback to point (with safety clamps)
+                    if (showMuField && !p.released) {
+                        // Safe feedback scale - no external dependencies
+                        const feedbackScale = 0.5;
                         const dvx = dJR_dt * dt * 0.01 * feedbackScale;
                         const dvy = dJR_dt * dt * 0.01 * feedbackScale * (dy / (Math.abs(dy) + 0.001));
-                        if (isFinite(dvx) && isFinite(dvy)) {
-                            // Clamp velocity change using harmonic tracking
-                            const velClamp = phaseCoupler.getVelocityClamp();
+                        if (isFinite(dvx) && isFinite(dvy) && Math.abs(dvx) < 10 && Math.abs(dvy) < 10) {
+                            // Fixed velocity clamp for safety
+                            const velClamp = 30;
                             p.vx = Math.max(-velClamp, Math.min(velClamp, (p.vx || 0) + dvx));
                             p.vy = Math.max(-velClamp, Math.min(velClamp, (p.vy || 0) + dvy));
                         }
@@ -2106,26 +2106,29 @@
                 }
 
                 if (p.released) {
-                    // Free movement with acceleration (scaled by harmonic damping)
-                    const harmonicDamp = 1 / phaseCoupler.coherenceDamping;
-                    const accel = dispersal * 0.2 * harmonicDamp;
+                    // Free movement with gentle acceleration
+                    const accel = dispersal * 0.15;
                     p.vx += Math.cos(p.releaseAngle) * accel;
                     p.vy += Math.sin(p.releaseAngle) * accel;
 
                     // Slight spiral wandering
                     p.releaseAngle += (Math.random() - 0.5) * 0.025;
 
-                    // Damping at edges
+                    // Global velocity damping (prevents runaway)
+                    p.vx *= 0.98;
+                    p.vy *= 0.98;
+
+                    // Extra damping at edges
                     const edgeDist = Math.min(p.x, W - p.x, p.y, H - p.y);
                     if (edgeDist < 100) {
-                        p.vx *= 0.97;
-                        p.vy *= 0.97;
+                        p.vx *= 0.95;
+                        p.vy *= 0.95;
                     }
 
-                    // PHASE COUPLER: Clamp velocities using harmonic tracking
-                    const velClamp = phaseCoupler.getVelocityClamp();
-                    p.vx = Math.max(-velClamp, Math.min(velClamp, p.vx));
-                    p.vy = Math.max(-velClamp, Math.min(velClamp, p.vy));
+                    // Hard velocity clamp (fixed safe value)
+                    const velClamp = 25;
+                    p.vx = Math.max(-velClamp, Math.min(velClamp, p.vx || 0));
+                    p.vy = Math.max(-velClamp, Math.min(velClamp, p.vy || 0));
 
                     // Apply velocity (with NaN protection)
                     if (isFinite(p.vx) && isFinite(p.vy)) {
@@ -3178,13 +3181,13 @@
             updateLambdaState(dt);
             hilbertField.applyResonanceOperator(dt, 0.1 + getCascadeMultiplier(globalZ) * 0.1);
             sonificationEngine.update(globalZ, hilbertField.coherence, dt);
-            updateReleaseCoherence(dt);
-
-            // Update phase coupler for harmonic tracking (always runs for stability)
+            // Update phase coupler FIRST for harmonic tracking (needed by release physics)
             phaseCoupler.update(dt, releaseCoherence);
 
-            // Update μ-field consciousness detection
-            if (showMuField) {
+            updateReleaseCoherence(dt);
+
+            // Update μ-field consciousness detection (skip during active release to prevent crash)
+            if (showMuField && releaseCoherence > 0.3) {
                 muField.update([...prismPoints, ...cagePoints], dt);
             }
 
