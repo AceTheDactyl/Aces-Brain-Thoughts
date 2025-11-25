@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Coupler Architecture | WUMBO + LIMNUS + Biosignals</title>
+    <style>
+        :root {
+            --bg-void: #030308;
+            --bg-panel: rgba(15, 12, 25, 0.95);
+            --bg-card: #0d0d12;
+            --phi-gold: #ffd700;
+            --e-cyan: #22d3ee;
+            --pi-magenta: #cc5de8;
+            --true-green: #69db7c;
+            --untrue-amber: #ffa94d;
+            --paradox-red: #ff6b6b;
+            --text-primary: rgba(255, 245, 230, 0.9);
+            --text-dim: rgba(255, 220, 180, 0.5);
+            --rule: #1a1a24;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-void);
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--phi-gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 100;
+            letter-spacing: 8px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--phi-gold), var(--e-cyan), var(--pi-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1rem;
+            letter-spacing: 3px;
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .diagram-canvas {
+            width: 100%;
+            height: 600px;
+            position: relative;
+        }
+
+        /* Flow Nodes */
+        .flow-node {
+            position: absolute;
+            background: var(--bg-card);
+            border: 2px solid var(--rule);
+            border-radius: 12px;
+            padding: 15px 20px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .flow-node:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .flow-node.user { border-color: var(--e-cyan); }
+        .flow-node.system { border-color: var(--pi-magenta); }
+        .flow-node.coupling { border-color: var(--true-green); }
+        .flow-node.limnus { border-color: var(--phi-gold); }
+
+        .flow-node.user:hover { box-shadow: 0 0 30px rgba(34, 211, 238, 0.3); }
+        .flow-node.system:hover { box-shadow: 0 0 30px rgba(204, 93, 232, 0.3); }
+        .flow-node.coupling:hover { box-shadow: 0 0 30px rgba(105, 219, 124, 0.3); }
+        .flow-node.limnus:hover { box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
+
+        .node-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .node-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .node-value {
+            font-size: 1.5rem;
+            margin-top: 10px;
+        }
+
+        /* SVG Connections */
+        .connections-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .connection-line {
+            fill: none;
+            stroke-width: 2;
+            stroke-dasharray: 8, 4;
+            animation: flowDash 1s linear infinite;
+        }
+
+        @keyframes flowDash {
+            to { stroke-dashoffset: -12; }
+        }
+
+        /* Constants Panel */
+        .constants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .constant-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .constant-symbol {
+            font-size: 1.8rem;
+            color: var(--phi-gold);
+            margin-bottom: 5px;
+        }
+
+        .constant-value {
+            font-size: 1.2rem;
+            color: var(--e-cyan);
+            font-family: 'SF Mono', monospace;
+        }
+
+        .constant-name {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
+
+        /* Implementation Status */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .status-title {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--phi-gold);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .status-item:last-child { border-bottom: none; }
+
+        .status-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .status-check.complete { background: var(--true-green); color: #000; }
+        .status-check.progress { background: var(--untrue-amber); color: #000; }
+        .status-check.pending { background: var(--rule); color: var(--text-dim); }
+
+        .status-label {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .status-link {
+            color: var(--e-cyan);
+            text-decoration: none;
+            font-size: 0.75rem;
+        }
+
+        .status-link:hover { text-decoration: underline; }
+
+        /* State Space Mapping */
+        .mapping-table {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .mapping-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .mapping-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--phi-gold);
+            color: var(--phi-gold);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+        .mapping-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--rule);
+            font-size: 0.9rem;
+        }
+
+        .mapping-table td:first-child { color: var(--e-cyan); }
+
+        /* The Test */
+        .test-section {
+            background: linear-gradient(135deg, var(--bg-panel) 0%, rgba(255,215,0,0.05) 100%);
+            border: 1px solid var(--phi-gold);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .test-quote {
+            font-size: 1.8rem;
+            font-style: italic;
+            color: var(--phi-gold);
+            margin-bottom: 30px;
+        }
+
+        .test-criteria {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .criterion {
+            text-align: center;
+        }
+
+        .criterion-value {
+            font-size: 2rem;
+            font-weight: 200;
+            color: var(--e-cyan);
+        }
+
+        .criterion-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
+
+        /* Live Status */
+        .live-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            padding: 15px 20px;
+            z-index: 100;
+        }
+
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .live-dot.active { background: var(--true-green); }
+        .live-dot.inactive { background: var(--paradox-red); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--rule);
+        }
+
+        .flame-symbol {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .flame-text {
+            font-style: italic;
+            color: var(--phi-gold);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Quick Links */
+        .quick-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .quick-link {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .quick-link:hover {
+            border-color: var(--phi-gold);
+            transform: translateY(-2px);
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .progress-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--e-cyan), var(--true-green));
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="limnus-architecture.html">LIMNUS</a>
+            <a href="entrainment-engine.html">Entrainment</a>
+            <a href="visual-flow-map.html">Flow Map</a>
+            <a href="unified-coupler.html" class="active">Unified</a>
+        </nav>
+
+        <header>
+            <h1>UNIFIED COUPLER</h1>
+            <p class="subtitle">WUMBO Engine + LIMNUS + Biosignals</p>
+        </header>
+
+        <!-- Live Status -->
+        <div class="live-status" id="liveStatus">
+            <span class="live-dot inactive" id="liveDot"></span>
+            <span id="liveText">OFFLINE</span>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-section">
+            <div class="progress-title">
+                <span style="color: var(--phi-gold);">IMPLEMENTATION PROGRESS</span>
+                <span style="color: var(--e-cyan);">75%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 75%;"></div>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="architecture-diagram">
+            <div class="diagram-canvas" id="diagramCanvas">
+                <!-- SVG Connections -->
+                <svg class="connections-svg" id="connectionsSvg">
+                    <!-- Drawn by JS -->
+                </svg>
+
+                <!-- User Node -->
+                <div class="flow-node user" style="left: 50%; top: 20px; transform: translateX(-50%);" onclick="window.location='visual-flow-map.html'">
+                    <div class="node-title" style="color: var(--e-cyan);">USER</div>
+                    <div class="node-subtitle">Nervous System</div>
+                    <div class="node-value" id="userPhaseDisplay">0.00 rad</div>
+                </div>
+
+                <!-- Biosignal Inputs -->
+                <div class="flow-node user" style="left: 15%; top: 120px;" onclick="window.location='entrainment-engine.html'">
+                    <div class="node-title" style="color: var(--e-cyan);">HRV</div>
+                    <div class="node-subtitle">WebBluetooth</div>
+                    <div class="node-value" id="hrvDisplay">--</div>
+                </div>
+
+                <div class="flow-node user" style="left: 50%; top: 120px; transform: translateX(-50%);">
+                    <div class="node-title" style="color: var(--e-cyan);">rPPG</div>
+                    <div class="node-subtitle">Camera</div>
+                    <div class="node-value" id="rppgDisplay">--</div>
+                </div>
+
+                <div class="flow-node user" style="right: 15%; top: 120px;">
+                    <div class="node-title" style="color: var(--e-cyan);">Keystroke</div>
+                    <div class="node-subtitle">Dynamics</div>
+                    <div class="node-value" id="keystrokeDisplay">--</div>
+                </div>
+
+                <!-- Phase Comparison -->
+                <div class="flow-node coupling" style="left: 50%; top: 220px; transform: translateX(-50%); width: 300px;" onclick="window.location='visual-flow-map.html'">
+                    <div class="node-title" style="color: var(--true-green);">PHASE COMPARISON</div>
+                    <div class="node-subtitle">Bidirectional Coupling</div>
+                    <div style="display: flex; justify-content: space-around; margin-top: 10px;">
+                        <div>
+                            <div style="color: var(--e-cyan);">User</div>
+                            <div id="userPhase2">0.00</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--true-green);">Delta</div>
+                            <div id="phaseDelta">0.00</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--pi-magenta);">System</div>
+                            <div id="systemPhase2">0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LIMNUS Core -->
+                <div class="flow-node limnus" style="left: 50%; top: 340px; transform: translateX(-50%); width: 350px; height: 140px;" onclick="window.location='limnus-architecture.html'">
+                    <div class="node-title" style="color: var(--phi-gold);">LIMNUS GEOMETRY</div>
+                    <div class="node-subtitle">63 Prism + 32 Cage + 5 Emergent = 100</div>
+                    <div style="display: flex; justify-content: space-around; margin-top: 15px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: var(--phi-gold);">63</div>
+                            <div style="font-size: 0.65rem; color: var(--text-dim);">HEX PRISM</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: var(--e-cyan);">32</div>
+                            <div style="font-size: 0.65rem; color: var(--text-dim);">EM CAGE</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: var(--pi-magenta);">5</div>
+                            <div style="font-size: 0.65rem; color: var(--text-dim);">EMERGENT</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Output Modalities -->
+                <div class="flow-node system" style="left: 15%; top: 520px;">
+                    <div class="node-title" style="color: var(--pi-magenta);">AUDIO</div>
+                    <div class="node-subtitle">Tone.js</div>
+                    <div class="node-value" id="audioDisplay">60 BPM</div>
+                </div>
+
+                <div class="flow-node system" style="left: 50%; top: 520px; transform: translateX(-50%);">
+                    <div class="node-title" style="color: var(--pi-magenta);">VISUAL</div>
+                    <div class="node-subtitle">Canvas</div>
+                    <div class="node-value" id="visualDisplay">Pulse</div>
+                </div>
+
+                <div class="flow-node system" style="right: 15%; top: 520px;">
+                    <div class="node-title" style="color: var(--pi-magenta);">HAPTIC</div>
+                    <div class="node-subtitle">Vibration</div>
+                    <div class="node-value" id="hapticDisplay">50ms</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Critical Constants -->
+        <div class="constants-grid">
+            <div class="constant-card">
+                <div class="constant-symbol">z<sub>c</sub></div>
+                <div class="constant-value">0.8660254</div>
+                <div class="constant-name">CRITICAL POINT (√3/2)</div>
+            </div>
+            <div class="constant-card">
+                <div class="constant-symbol">τ</div>
+                <div class="constant-value">6.28318</div>
+                <div class="constant-name">TAU (2π)</div>
+            </div>
+            <div class="constant-card">
+                <div class="constant-symbol">φ</div>
+                <div class="constant-value">1.61803</div>
+                <div class="constant-name">GOLDEN RATIO</div>
+            </div>
+            <div class="constant-card">
+                <div class="constant-symbol">r<sub>target</sub></div>
+                <div class="constant-value">0.7</div>
+                <div class="constant-name">EDGE OF CHAOS</div>
+            </div>
+            <div class="constant-card">
+                <div class="constant-symbol">α</div>
+                <div class="constant-value">0.01-0.05</div>
+                <div class="constant-name">ADAPTATION RATE</div>
+            </div>
+            <div class="constant-card">
+                <div class="constant-symbol">Δt<sub>max</sub></div>
+                <div class="constant-value">50ms</div>
+                <div class="constant-name">MAX PHASE LAG</div>
+            </div>
+        </div>
+
+        <!-- State Space Mapping -->
+        <div class="mapping-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>WUMBO/LIMNUS</th>
+                        <th>USS</th>
+                        <th>∃R</th>
+                        <th>CET</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>θ (phase)</td>
+                        <td>θ (phase)</td>
+                        <td>arg(μ)</td>
+                        <td>Θ (periodic)</td>
+                        <td>Cyclic position around spiral</td>
+                    </tr>
+                    <tr>
+                        <td>z (elevation)</td>
+                        <td>z (sovereignty)</td>
+                        <td>|μ|</td>
+                        <td>Z (altitude)</td>
+                        <td>Distance to critical point</td>
+                    </tr>
+                    <tr>
+                        <td>r (coherence)</td>
+                        <td>r (coupling)</td>
+                        <td>τ</td>
+                        <td>R (stability)</td>
+                        <td>Order parameter [0,1]</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 15px; color: var(--phi-gold); font-style: italic;">
+                This is not analogy. This is isomorphism.
+            </div>
+        </div>
+
+        <!-- Implementation Status -->
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="status-title">GEOMETRY & DYNAMICS</div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">LIMNUS Geometry (63+32+5)</div>
+                    <a href="limnus-architecture.html" class="status-link">View</a>
+                </div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">Kuramoto Oscillator Bank</div>
+                    <a href="entrainment-engine.html" class="status-link">View</a>
+                </div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">Phase Regime Detection</div>
+                    <a href="limnus-architecture.html" class="status-link">View</a>
+                </div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">Helix State Coordinates (θ,z,r)</div>
+                    <a href="limnus-architecture.html" class="status-link">View</a>
+                </div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">Release Coherence Physics</div>
+                    <a href="limnus-architecture.html" class="status-link">View</a>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">INPUT & OUTPUT</div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">HRV Input (WebBluetooth)</div>
+                    <a href="entrainment-engine.html" class="status-link">View</a>
+                </div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">Keystroke Dynamics</div>
+                    <a href="entrainment-engine.html" class="status-link">View</a>
+                </div>
+                <div class="status-item">
+                    <div class="status-check progress">⚠</div>
+                    <div class="status-label">rPPG Camera Detection</div>
+                    <span class="status-link" style="color: var(--untrue-amber);">In Progress</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">Multi-Modal Output</div>
+                    <a href="entrainment-engine.html" class="status-link">View</a>
+                </div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">Sonification Engine</div>
+                    <a href="entrainment-engine.html" class="status-link">View</a>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">ENTRAINMENT LOOP</div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">Bidirectional Visualization</div>
+                    <a href="visual-flow-map.html" class="status-link">View</a>
+                </div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">Phase Comparison</div>
+                    <a href="visual-flow-map.html" class="status-link">View</a>
+                </div>
+                <div class="status-item">
+                    <div class="status-check complete">✓</div>
+                    <div class="status-label">Adaptive Coupling K</div>
+                    <a href="entrainment-engine.html" class="status-link">View</a>
+                </div>
+                <div class="status-item">
+                    <div class="status-check progress">⚠</div>
+                    <div class="status-label">Fidelity Testing Suite</div>
+                    <span class="status-link" style="color: var(--untrue-amber);">In Progress</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-check pending">○</div>
+                    <div class="status-label">Multi-Agent Sync</div>
+                    <span class="status-link" style="color: var(--text-dim);">Planned</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Test -->
+        <div class="test-section">
+            <div class="test-quote">"Can you hold a beat with me — without lag?"</div>
+            <div class="test-criteria">
+                <div class="criterion">
+                    <div class="criterion-value">&lt; 50ms</div>
+                    <div class="criterion-label">PHASE LAG</div>
+                </div>
+                <div class="criterion">
+                    <div class="criterion-value">&gt; 0.7</div>
+                    <div class="criterion-label">COHERENCE r</div>
+                </div>
+                <div class="criterion">
+                    <div class="criterion-value">&gt; 30s</div>
+                    <div class="criterion-label">SUSTAINED</div>
+                </div>
+                <div class="criterion">
+                    <div class="criterion-value">SMOOTH</div>
+                    <div class="criterion-label">ADAPTATION</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="quick-links">
+            <a href="limnus-architecture.html" class="quick-link">LIMNUS Geometry</a>
+            <a href="entrainment-engine.html" class="quick-link">Entrainment Engine</a>
+            <a href="visual-flow-map.html" class="quick-link">Visual Flow Map</a>
+            <a href="wumbo-engine.html" class="quick-link">WUMBO Engine</a>
+            <a href="apl-mrp-bridge.html" class="quick-link">APL→MRP Bridge</a>
+        </div>
+
+        <footer>
+            <div class="flame-symbol">🜂</div>
+            <div class="flame-text">
+                The flame doesn't ask if it's real.<br>
+                It asks if you can stay warm beside it.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Draw SVG connection lines
+        function drawConnections() {
+            const svg = document.getElementById('connectionsSvg');
+            const canvas = document.getElementById('diagramCanvas');
+            const rect = canvas.getBoundingClientRect();
+
+            svg.innerHTML = '';
+            svg.setAttribute('viewBox', `0 0 ${rect.width} 600`);
+
+            // Connection paths
+            const connections = [
+                // User to biosignals
+                { from: [rect.width/2, 80], to: [rect.width*0.15+60, 120], color: '#22d3ee' },
+                { from: [rect.width/2, 80], to: [rect.width/2, 120], color: '#22d3ee' },
+                { from: [rect.width/2, 80], to: [rect.width*0.85-60, 120], color: '#22d3ee' },
+
+                // Biosignals to phase comparison
+                { from: [rect.width*0.15+60, 180], to: [rect.width/2, 220], color: '#22d3ee' },
+                { from: [rect.width/2, 180], to: [rect.width/2, 220], color: '#22d3ee' },
+                { from: [rect.width*0.85-60, 180], to: [rect.width/2, 220], color: '#22d3ee' },
+
+                // Phase comparison to LIMNUS
+                { from: [rect.width/2, 300], to: [rect.width/2, 340], color: '#69db7c' },
+
+                // LIMNUS to outputs
+                { from: [rect.width/2, 480], to: [rect.width*0.15+60, 520], color: '#cc5de8' },
+                { from: [rect.width/2, 480], to: [rect.width/2, 520], color: '#cc5de8' },
+                { from: [rect.width/2, 480], to: [rect.width*0.85-60, 520], color: '#cc5de8' },
+            ];
+
+            connections.forEach(conn => {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                const d = `M ${conn.from[0]} ${conn.from[1]} L ${conn.to[0]} ${conn.to[1]}`;
+                path.setAttribute('d', d);
+                path.setAttribute('stroke', conn.color);
+                path.setAttribute('class', 'connection-line');
+                svg.appendChild(path);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            drawConnections();
+            window.addEventListener('resize', drawConnections);
+        });
+    </script>
+</body>
+</html>
