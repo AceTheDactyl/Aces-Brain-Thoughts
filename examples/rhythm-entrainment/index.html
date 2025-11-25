@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rhythm Entrainment Demo</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; margin: 24px; }
+    .row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    #rhythm-indicator { width: 64px; height: 64px; border-radius: 50%; background: #6aa0ff; opacity: 0.5; transition: transform 80ms ease-out, opacity 80ms ease-out; }
+    .metrics { margin-top: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    button { padding: 8px 12px; }
+    .small { font-size: 12px; color: #444; }
+  </style>
+</head>
+<body>
+  <h1>Rhythm-Based Entrainment (Browser)</h1>
+  <p class="small">AudioContext = master clock · AudioWorklet = beat timing · Worker = Kuramoto model</p>
+
+  <div class="row" style="margin-bottom: 12px;">
+    <button id="btn-start">Start</button>
+    <button id="btn-stop" disabled>Stop</button>
+    <label>BPM <input id="bpm" type="number" value="120" min="20" max="300" step="1" style="width: 72px;" /></label>
+    <label>Coupling K <input id="k" type="number" value="1.0" min="0.1" max="5.0" step="0.1" style="width: 72px;" /></label>
+    <button id="btn-hrv" title="Requires HTTPS/WebBluetooth">Connect HR Monitor</button>
+  </div>
+
+  <div class="row">
+    <div id="rhythm-indicator"></div>
+    <div class="metrics">
+      <div>Coherence r: <span id="coherence">0.00</span></div>
+      <div>System phase ψ: <span id="phase">0.00</span> rad</div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
+

@@ -50,6 +50,7 @@
         if (!window.latexjs) throw new Error('latex.js not available');
         const generator = new latexjs.HtmlGenerator({ hyphenate: false });
         latexjs.parse(tex, { generator });
+        // Clear and append generated content
         viewer.innerHTML = '';
         viewer.appendChild(generator.domFragment());
       } catch (err) {
@@ -69,4 +70,3 @@
   </script>
 </body>
 </html>
-
