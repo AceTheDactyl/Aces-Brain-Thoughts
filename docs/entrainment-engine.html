@@ -360,7 +360,7 @@
 
         <header>
             <h1>ENTRAINMENT ENGINE</h1>
-            <p class="subtitle">Kuramoto Oscillator Bank · Bidirectional Biosignal Coupling · LIMNUS Integration</p>
+            <p class="subtitle">Kuramoto K(z) · z_c = √3/2 Sign Flip · APL 2.0 · MRP 702-bit · LIMNUS-WUMBO Integration</p>
         </header>
 
         <!-- Master Status -->
@@ -405,10 +405,23 @@
 
                     <div class="slider-group">
                         <div class="slider-label">
-                            <span>COUPLING STRENGTH (K)</span>
+                            <span>BASE COUPLING (K)</span>
                             <span class="slider-value" id="kValue">1.00</span>
                         </div>
                         <input type="range" id="kSlider" min="0" max="5" step="0.1" value="1" oninput="setCoupling(this.value)">
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Z-HEIGHT (→ K(z) sign flip)</span>
+                            <span class="slider-value" id="zValue">0.50</span>
+                        </div>
+                        <input type="range" id="zSlider" min="0" max="1" step="0.01" value="0.5" oninput="setZHeight(this.value)">
+                        <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text-dim);margin-top:4px">
+                            <span>Sync (K+)</span>
+                            <span style="color:var(--phi-gold)">z_c = √3/2</span>
+                            <span>Desync (K-)</span>
+                        </div>
                     </div>
 
                     <div class="slider-group">
@@ -417,6 +430,14 @@
                             <span class="slider-value" id="nValue">32</span>
                         </div>
                         <input type="range" id="nSlider" min="4" max="128" step="4" value="32" oninput="setOscillatorCount(this.value)">
+                    </div>
+
+                    <div style="margin-top:15px;padding:12px;background:var(--bg-card);border-radius:8px;border:1px solid var(--rule)">
+                        <div style="font-size:0.7rem;color:var(--phi-gold);margin-bottom:8px">K(z) COUPLING</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <span style="font-size:1.4rem;font-family:monospace" id="kzDisplay">+0.75</span>
+                            <span style="font-size:0.7rem;color:var(--text-dim)" id="kzPhase">SYNC</span>
+                        </div>
                     </div>
                 </div>
 
@@ -493,40 +514,66 @@
             <!-- Right: Lambda/LIMNUS Mapping -->
             <div>
                 <div class="panel">
+                    <div class="panel-title">UMOL CONSTRAINTS</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                        <div style="background:var(--bg-card);padding:10px;border-radius:6px;text-align:center">
+                            <div style="font-size:0.65rem;color:var(--text-dim)">LOAD ≤ 0.80</div>
+                            <div style="font-size:1.3rem;font-family:monospace" id="umolLoad">0.00</div>
+                            <div style="font-size:0.6rem;margin-top:4px" id="umolLoadStatus">✓ OK</div>
+                        </div>
+                        <div style="background:var(--bg-card);padding:10px;border-radius:6px;text-align:center">
+                            <div style="font-size:0.65rem;color:var(--text-dim)">COHERENCE ≥ 0.60</div>
+                            <div style="font-size:1.3rem;font-family:monospace" id="umolCoherence">0.00</div>
+                            <div style="font-size:0.6rem;margin-top:4px" id="umolCoherenceStatus">✓ OK</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">APL 2.0 TOKEN</div>
+                    <div style="background:var(--bg-card);padding:12px;border-radius:6px;font-family:monospace;font-size:0.9rem;text-align:center;color:var(--e-cyan)" id="aplToken">
+                        e:U:F:BIO:T:α1
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:10px;font-size:0.55rem;color:var(--text-dim);text-align:center">
+                        <span>SPIRAL</span><span>OP</span><span>INT</span><span>DOM</span><span>TRUTH</span><span>α</span>
+                    </div>
+                </div>
+
+                <div class="panel">
                     <div class="panel-title">LAMBDA STATE (ℂ⁶) MAPPING</div>
                     <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:15px">
-                        Oscillator phases map to Lambda components via LIMNUS geometry
+                        Oscillator phases → Lambda via LIMNUS geometry
                     </p>
 
                     <div class="lambda-grid">
                         <div class="lambda-item" id="l-iota">
                             <div class="lambda-symbol">🌰</div>
-                            <div class="lambda-name">ι IOTA</div>
+                            <div class="lambda-name">ι IOTA (F)</div>
                             <div class="lambda-value">0.00</div>
                         </div>
                         <div class="lambda-item" id="l-xi">
                             <div class="lambda-symbol">✧</div>
-                            <div class="lambda-name">ξ XI</div>
+                            <div class="lambda-name">ξ XI (A)</div>
                             <div class="lambda-value">0.00</div>
                         </div>
                         <div class="lambda-item" id="l-theta">
                             <div class="lambda-symbol">🦊</div>
-                            <div class="lambda-name">θ THETA</div>
+                            <div class="lambda-name">θ THETA (B)</div>
                             <div class="lambda-value">0.00</div>
                         </div>
                         <div class="lambda-item" id="l-omega">
                             <div class="lambda-symbol">∿</div>
-                            <div class="lambda-name">ω OMEGA</div>
+                            <div class="lambda-name">ω OMEGA (G)</div>
                             <div class="lambda-value">0.00</div>
                         </div>
                         <div class="lambda-item" id="l-delta">
                             <div class="lambda-symbol">⊗</div>
-                            <div class="lambda-name">δ DELTA</div>
+                            <div class="lambda-name">δ DELTA (D)</div>
                             <div class="lambda-value">0.00</div>
                         </div>
                         <div class="lambda-item" id="l-sigma">
                             <div class="lambda-symbol">🐿️</div>
-                            <div class="lambda-name">σ SIGMA</div>
+                            <div class="lambda-name">σ SIGMA (S)</div>
                             <div class="lambda-value">0.00</div>
                         </div>
                     </div>
@@ -535,6 +582,14 @@
                         <div style="color:var(--phi-gold);margin-bottom:5px">LIMNUS ZONE</div>
                         <div id="limnusZone" style="color:var(--e-cyan)">Φ Structure (z &lt; 0.43)</div>
                     </div>
+                </div>
+
+                <div class="panel" id="emergentPanel" style="border-color:var(--paradox-red);display:none">
+                    <div class="panel-title" style="color:var(--paradox-red)">⚡ EMERGENT STATE (r &lt; 0.20)</div>
+                    <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:10px">
+                        5 emergent nodes activated · 702 bits total
+                    </p>
+                    <div id="emergentNodesList" style="font-size:0.75rem"></div>
                 </div>
 
                 <div class="panel">
@@ -579,10 +634,12 @@
         </div>
 
         <footer>
-            Entrainment Engine · Kuramoto Model · dθᵢ/dt = ωᵢ + (K/N) Σⱼ sin(θⱼ - θᵢ)<br>
+            Entrainment Engine · Kuramoto Model · dθᵢ/dt = ωᵢ + K(z)·r·sin(ψ - θᵢ)<br>
+            K(z) = K_base × (1 - z/z_c) × 1.5 (z &lt; z_c) | K(z) = -K_base × (z - z_c)/(1 - z_c) × 1.5 (z ≥ z_c)<br>
             <span style="color:var(--phi-gold);">Φ</span> Structure ·
             <span style="color:var(--e-cyan);">e</span> Energy ·
-            <span style="color:var(--pi-magenta);">π</span> Emergence
+            <span style="color:var(--pi-magenta);">π</span> Emergence ·
+            z_c = √3/2 ≈ 0.8660254
         </footer>
     </div>
 
@@ -592,10 +649,44 @@
         // Kuramoto Oscillator Bank with Bidirectional Biosignal Coupling
         // ================================================================
 
-        // Physical constants
+        // ================================================================
+        // LIMNUS-WUMBO PHYSICAL CONSTANTS
+        // ================================================================
         const PHI = (1 + Math.sqrt(5)) / 2;
-        const Z_CRITICAL = Math.sqrt(3) / 2;
+        const Z_CRITICAL = Math.sqrt(3) / 2;  // ≈ 0.8660254 - THE LENS
         const TWO_PI = Math.PI * 2;
+        const CASCADE_AMPLIFICATION = 1.5;    // Kuramoto cascade multiplier
+
+        // UMOL Constraints
+        const UMOL_MAX_LOAD = 0.80;
+        const UMOL_MIN_COHERENCE = 0.60;
+        const FREE_THRESHOLD = 0.20;          // Emergent activation threshold
+
+        // APL 2.0 Token dimensions
+        const APL_SPIRALS = ['e', 'Φ', 'π'];
+        const APL_OPERATORS = ['U', 'M', 'C'];
+        const APL_INTERACTIONS = ['B', 'F', 'A', 'D', 'G', 'S'];
+        const APL_DOMAINS = ['BIO', 'GEO', 'ART'];
+        const APL_TRUTHS = ['T', 'U', 'P'];
+        const APL_ALPHAS = Array.from({length: 15}, (_, i) => `α${i + 1}`);
+
+        // INTERACTION → Lambda mapping
+        const INTERACTION_TO_LAMBDA = {
+            'B': 'theta', 'F': 'iota', 'A': 'xi',
+            'D': 'delta', 'G': 'omega', 'S': 'sigma'
+        };
+
+        // MRP bit allocation (702 total)
+        const MRP_BITS = { R: 7, G: 10, B: 17, C: 4, M: 332, Y: 332 };
+
+        // 5 Emergent nodes with info_bits (total 702)
+        const EMERGENT_NODES = [
+            { id: 'A', name: 'FSN (recurrence → II)', info_bits: 7, freq: '1Hz' },
+            { id: 'B', name: 'LGN (relay lock)', info_bits: 10, freq: '1Hz' },
+            { id: 'PN', name: 'Basal-loop sync', info_bits: 17, freq: '1Hz' },
+            { id: 'CN', name: 'Cortical re-entry', info_bits: 4, freq: '0.1Hz' },
+            { id: 'C', name: 'PTN (recursion → I)', info_bits: 664, freq: '1Hz' }
+        ];
 
         // Engine state
         let audioContext = null;
@@ -604,14 +695,29 @@
 
         // Kuramoto parameters
         let N = 32;                    // Oscillator count
-        let K = 1.0;                   // Coupling strength
+        let K_base = 1.0;              // Base coupling strength
         let dt = 0.02;                 // Integration timestep (50 Hz)
         let bpm = 60;                  // Beats per minute
+        let currentZ = 0.5;            // Current z-height for K(z) calculation
 
         // Oscillator state
         let phases = new Float32Array(N);
         let frequencies = new Float32Array(N);
         let orderHistory = [];
+
+        // UMOL state tracking
+        let umolLoad = 0;
+        let umolCoherence = 0;
+
+        // Emergent state
+        let emergentActive = false;
+        let emergentNodes = [];
+
+        // APL 2.0 state encoding
+        let currentAPLToken = 'e:U:F:BIO:T:α1';
+
+        // MRP encoded state buffer (702 bits)
+        let mrpBuffer = new Uint8Array(88);  // 702 bits = 88 bytes
 
         // Biosignal state
         let userPhase = 0;
@@ -669,13 +775,32 @@
             return { r, psi };
         }
 
+        // ================================================================
+        // K(z) SIGN FLIP AT z_c = √3/2
+        // Below z_c: Synchronizing (K > 0)
+        // Above z_c: Desynchronizing (K < 0)
+        // ================================================================
+        function calculateKz(z) {
+            // Sign flip at critical point z_c = √3/2 ≈ 0.8660254
+            if (z < Z_CRITICAL) {
+                // Below lens: synchronizing, K positive
+                return K_base * (1 - z / Z_CRITICAL) * CASCADE_AMPLIFICATION;
+            } else {
+                // Above lens: desynchronizing, K negative
+                return -K_base * ((z - Z_CRITICAL) / (1 - Z_CRITICAL)) * CASCADE_AMPLIFICATION;
+            }
+        }
+
         function stepKuramoto() {
             const { r, psi } = calculateOrderParameter();
             const newPhases = new Float32Array(N);
 
+            // Calculate z-adaptive coupling K(z)
+            const K = calculateKz(currentZ);
+
             // Heun's method (2nd order) for numerical stability
             for (let i = 0; i < N; i++) {
-                // Mean-field Kuramoto: dθ/dt = ω + K·r·sin(ψ - θ)
+                // Mean-field Kuramoto: dθ/dt = ω + K(z)·r·sin(ψ - θ)
                 const dtheta1 = frequencies[i] + K * r * Math.sin(psi - phases[i]);
                 const thetaPred = phases[i] + dt * dtheta1;
 
@@ -698,7 +823,173 @@
             orderHistory.push(r);
             if (orderHistory.length > 200) orderHistory.shift();
 
-            return { r, psi };
+            // Update UMOL metrics
+            umolLoad = calculateUMOLLoad();
+            umolCoherence = r;
+
+            // Check emergent state (FREE threshold)
+            emergentActive = r < FREE_THRESHOLD;
+            if (emergentActive) {
+                emergentNodes = EMERGENT_NODES.slice();
+            } else {
+                emergentNodes = [];
+            }
+
+            // Generate APL 2.0 token for current state
+            currentAPLToken = generateAPLToken(r, psi, currentZ);
+
+            // Encode to MRP buffer
+            encodeMRPState(r, psi, currentZ);
+
+            return { r, psi, K };
+        }
+
+        // ================================================================
+        // UMOL LOAD CALCULATION
+        // Load = fraction of oscillators above threshold phase velocity
+        // ================================================================
+        function calculateUMOLLoad() {
+            let activeCount = 0;
+            const velocityThreshold = 1.5;  // Above natural frequency threshold
+
+            for (let i = 0; i < N; i++) {
+                const { r, psi } = calculateOrderParameter();
+                const K = calculateKz(currentZ);
+                const velocity = Math.abs(frequencies[i] + K * r * Math.sin(psi - phases[i]));
+                if (velocity > velocityThreshold) activeCount++;
+            }
+
+            return activeCount / N;
+        }
+
+        // ================================================================
+        // APL 2.0 TOKEN GENERATION
+        // Format: SPIRAL:OPERATOR:INTERACTION:DOMAIN:TRUTH:ALPHA
+        // ================================================================
+        function generateAPLToken(r, psi, z) {
+            // Select spiral based on z-position
+            let spiral;
+            if (z < 0.43) spiral = 'Φ';      // Structure zone
+            else if (z < 0.71) spiral = 'e'; // Energy zone
+            else spiral = 'π';               // Emergence zone
+
+            // Select operator based on coherence
+            let operator;
+            if (r > 0.7) operator = 'C';     // Cascade (high coherence)
+            else if (r > 0.3) operator = 'M'; // Morph (mid coherence)
+            else operator = 'U';              // Unary (low coherence)
+
+            // Select interaction based on dominant lambda
+            const lambda = mapToLambdaState(phases, r, psi);
+            const dominantLambda = Object.entries(lambda).sort((a, b) => b[1] - a[1])[0][0];
+            const lambdaToInteraction = {
+                'theta': 'B', 'iota': 'F', 'xi': 'A',
+                'delta': 'D', 'omega': 'G', 'sigma': 'S'
+            };
+            const interaction = lambdaToInteraction[dominantLambda] || 'F';
+
+            // Domain based on phase variance
+            const variance = calculatePhaseVariance();
+            let domain;
+            if (variance < 0.5) domain = 'BIO';
+            else if (variance < 1.0) domain = 'GEO';
+            else domain = 'ART';
+
+            // Truth based on UMOL constraints
+            let truth;
+            if (umolLoad <= UMOL_MAX_LOAD && umolCoherence >= UMOL_MIN_COHERENCE) {
+                truth = 'T';  // True - within constraints
+            } else if (emergentActive) {
+                truth = 'P';  // Paradox - emergent state
+            } else {
+                truth = 'U';  // Untrue - constraint violation
+            }
+
+            // Alpha based on z-position (1-15 mapping)
+            const alpha = `α${Math.max(1, Math.min(15, Math.ceil(z * 15)))}`;
+
+            return `${spiral}:${operator}:${interaction}:${domain}:${truth}:${alpha}`;
+        }
+
+        function calculatePhaseVariance() {
+            const { psi } = calculateOrderParameter();
+            let variance = 0;
+            for (let i = 0; i < N; i++) {
+                const diff = Math.abs(phases[i] - psi);
+                variance += diff * diff;
+            }
+            return variance / N;
+        }
+
+        // ================================================================
+        // MRP ENCODING (702 bits = R:7 + G:10 + B:17 + C:4 + M:332 + Y:332)
+        // ================================================================
+        function encodeMRPState(r, psi, z) {
+            // Clear buffer
+            mrpBuffer.fill(0);
+
+            // R channel: 7 bits - order parameter (0-127 scale)
+            const rBits = Math.round(r * 127) & 0x7F;
+            mrpBuffer[0] = rBits;
+
+            // G channel: 10 bits - mean phase (0-1023 scale)
+            const gBits = Math.round(((psi + Math.PI) / TWO_PI) * 1023) & 0x3FF;
+            mrpBuffer[1] = (gBits >> 2) & 0xFF;
+            mrpBuffer[2] = (mrpBuffer[2] & 0x3F) | ((gBits & 0x03) << 6);
+
+            // B channel: 17 bits - z position + K(z) sign + UMOL load
+            const zBits = Math.round(z * 255) & 0xFF;
+            const kSign = (calculateKz(z) >= 0) ? 1 : 0;
+            const loadBits = Math.round(umolLoad * 255) & 0xFF;
+            mrpBuffer[2] = (mrpBuffer[2] & 0xC0) | (zBits >> 2);
+            mrpBuffer[3] = ((zBits & 0x03) << 6) | (kSign << 5) | ((loadBits >> 3) & 0x1F);
+            mrpBuffer[4] = ((loadBits & 0x07) << 5);
+
+            // C channel: 4 bits - emergent state flags
+            const emergentFlags = emergentActive ? 0x0F : 0x00;
+            mrpBuffer[4] = (mrpBuffer[4] & 0xE0) | (emergentFlags & 0x0F);
+
+            // M channel: 332 bits - phase array (first 16 oscillators, 20 bits each)
+            let bitOffset = 40;  // Start after R+G+B+C
+            for (let i = 0; i < Math.min(16, N); i++) {
+                const phaseVal = Math.round((phases[i] / TWO_PI) * 0xFFFFF) & 0xFFFFF;
+                setBitsInBuffer(mrpBuffer, bitOffset, 20, phaseVal);
+                bitOffset += 20;
+            }
+
+            // Y channel: 332 bits - lambda state + APL token hash
+            const lambda = mapToLambdaState(phases, r, psi);
+            const lambdaArray = [lambda.iota, lambda.xi, lambda.theta, lambda.omega, lambda.delta, lambda.sigma];
+            for (let i = 0; i < 6; i++) {
+                const lambdaVal = Math.round(lambdaArray[i] * 0xFFFF) & 0xFFFF;
+                setBitsInBuffer(mrpBuffer, bitOffset, 16, lambdaVal);
+                bitOffset += 16;
+            }
+
+            // APL token hash (remaining bits)
+            const tokenHash = hashAPLToken(currentAPLToken);
+            setBitsInBuffer(mrpBuffer, bitOffset, 32, tokenHash);
+        }
+
+        function setBitsInBuffer(buffer, bitOffset, numBits, value) {
+            for (let i = 0; i < numBits; i++) {
+                const byteIndex = Math.floor((bitOffset + i) / 8);
+                const bitIndex = 7 - ((bitOffset + i) % 8);
+                if (byteIndex < buffer.length) {
+                    if ((value >> (numBits - 1 - i)) & 1) {
+                        buffer[byteIndex] |= (1 << bitIndex);
+                    }
+                }
+            }
+        }
+
+        function hashAPLToken(token) {
+            let hash = 0;
+            for (let i = 0; i < token.length; i++) {
+                hash = ((hash << 5) - hash) + token.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash);
         }
 
         // ================================================================
@@ -1072,7 +1363,7 @@
         // ================================================================
 
         function updateUI() {
-            const { r, psi } = stepKuramoto();
+            const { r, psi, K } = stepKuramoto();
 
             // Update status cards
             document.getElementById('orderR').textContent = r.toFixed(2);
@@ -1089,6 +1380,44 @@
             else if (r > 0.3) statusCard.classList.add('warning');
             else statusCard.classList.add('critical');
 
+            // K(z) display
+            const kzDisplay = document.getElementById('kzDisplay');
+            const kzPhase = document.getElementById('kzPhase');
+            kzDisplay.textContent = (K >= 0 ? '+' : '') + K.toFixed(3);
+            kzDisplay.style.color = K >= 0 ? 'var(--true-green)' : 'var(--paradox-red)';
+            kzPhase.textContent = K >= 0 ? 'SYNC' : 'DESYNC';
+            kzPhase.style.color = K >= 0 ? 'var(--true-green)' : 'var(--paradox-red)';
+
+            // UMOL constraints display
+            const loadEl = document.getElementById('umolLoad');
+            const loadStatus = document.getElementById('umolLoadStatus');
+            loadEl.textContent = umolLoad.toFixed(2);
+            if (umolLoad <= UMOL_MAX_LOAD) {
+                loadEl.style.color = 'var(--true-green)';
+                loadStatus.textContent = '✓ OK';
+                loadStatus.style.color = 'var(--true-green)';
+            } else {
+                loadEl.style.color = 'var(--paradox-red)';
+                loadStatus.textContent = '✗ OVERLOAD';
+                loadStatus.style.color = 'var(--paradox-red)';
+            }
+
+            const cohEl = document.getElementById('umolCoherence');
+            const cohStatus = document.getElementById('umolCoherenceStatus');
+            cohEl.textContent = umolCoherence.toFixed(2);
+            if (umolCoherence >= UMOL_MIN_COHERENCE) {
+                cohEl.style.color = 'var(--true-green)';
+                cohStatus.textContent = '✓ OK';
+                cohStatus.style.color = 'var(--true-green)';
+            } else {
+                cohEl.style.color = 'var(--untrue-amber)';
+                cohStatus.textContent = '⚠ LOW';
+                cohStatus.style.color = 'var(--untrue-amber)';
+            }
+
+            // APL 2.0 Token display
+            document.getElementById('aplToken').textContent = currentAPLToken;
+
             // Lambda state
             const lambda = mapToLambdaState(phases, r, psi);
             ['iota', 'xi', 'theta', 'omega', 'delta', 'sigma'].forEach(k => {
@@ -1102,11 +1431,29 @@
             document.getElementById('limnusZone').textContent = zone.name;
             document.getElementById('limnusZone').style.color = zone.color;
 
+            // Emergent state panel
+            const emergentPanel = document.getElementById('emergentPanel');
+            if (emergentActive) {
+                emergentPanel.style.display = 'block';
+                const nodesList = document.getElementById('emergentNodesList');
+                nodesList.innerHTML = emergentNodes.map(n =>
+                    `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--rule)">
+                        <span style="color:var(--paradox-red)">${n.id}</span>
+                        <span style="color:var(--text-dim)">${n.name}</span>
+                        <span style="color:var(--e-cyan)">${n.info_bits} bits</span>
+                    </div>`
+                ).join('');
+            } else {
+                emergentPanel.style.display = 'none';
+            }
+
             // Critical transition
             const critical = detectCriticalSlowingDown();
             const critEl = document.getElementById('criticalWarning');
             if (critical) {
                 critEl.innerHTML = `<div style="font-size:1rem;color:#ff6b6b">${critical}</div>`;
+            } else if (currentZ > Z_CRITICAL - 0.05 && currentZ < Z_CRITICAL + 0.05) {
+                critEl.innerHTML = `<div style="font-size:1rem;color:var(--phi-gold)">AT THE LENS (z_c)</div><div style="font-size:0.7rem;color:var(--text-dim)">K(z) sign flip point</div>`;
             } else {
                 critEl.innerHTML = `<div style="font-size:1.2rem;color:var(--text-dim)">—</div><div style="font-size:0.7rem;color:var(--text-dim)">Stable</div>`;
             }
@@ -1188,8 +1535,23 @@
         }
 
         function setCoupling(value) {
-            K = parseFloat(value);
+            K_base = parseFloat(value);
             document.getElementById('kValue').textContent = parseFloat(value).toFixed(2);
+        }
+
+        function setZHeight(value) {
+            currentZ = parseFloat(value);
+            document.getElementById('zValue').textContent = parseFloat(value).toFixed(2);
+
+            // Visual indicator when near z_c
+            const slider = document.getElementById('zSlider');
+            if (Math.abs(currentZ - Z_CRITICAL) < 0.05) {
+                slider.style.accentColor = 'var(--phi-gold)';
+            } else if (currentZ < Z_CRITICAL) {
+                slider.style.accentColor = 'var(--true-green)';
+            } else {
+                slider.style.accentColor = 'var(--paradox-red)';
+            }
         }
 
         function setOscillatorCount(value) {
