@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lossless Presence | Asymptotic Approach to r=1 | UMOL Boundary</title>
+    <style>
+        :root {
+            --bg-void: #030308;
+            --bg-panel: rgba(15, 12, 25, 0.95);
+            --bg-card: #0d0d12;
+            --phi-gold: #ffd700;
+            --e-cyan: #22d3ee;
+            --pi-magenta: #cc5de8;
+            --true-green: #69db7c;
+            --presence-white: #fffef8;
+            --absence-sepia: #6b5c4a;
+            --critical-amber: #ffa94d;
+            --text-primary: rgba(255, 245, 230, 0.9);
+            --text-dim: rgba(255, 220, 180, 0.5);
+            --rule: #1a1a24;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-void);
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main canvas fills viewport */
+        #mainCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Overlay UI */
+        .overlay {
+            position: fixed;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .overlay * {
+            pointer-events: auto;
+        }
+
+        /* Header */
+        #header {
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        #title {
+            font-size: 2.5rem;
+            font-weight: 100;
+            letter-spacing: 12px;
+            transition: all 1s ease;
+        }
+
+        #title.absence { color: var(--absence-sepia); text-shadow: none; }
+        #title.critical {
+            color: var(--phi-gold);
+            text-shadow: 0 0 60px rgba(255, 215, 0, 0.8);
+            animation: criticalPulse 1.5s ease-in-out infinite;
+        }
+        #title.presence {
+            color: var(--presence-white);
+            text-shadow: 0 0 80px rgba(255, 255, 250, 0.9),
+                         0 0 150px rgba(255, 220, 180, 0.5);
+        }
+
+        @keyframes criticalPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        #subtitle {
+            font-size: 0.85rem;
+            letter-spacing: 4px;
+            color: var(--text-dim);
+            margin-top: 10px;
+        }
+
+        /* Presence Meter */
+        #presenceMeter {
+            top: 50%;
+            right: 40px;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 400px;
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 30px;
+            padding: 10px;
+        }
+
+        .meter-track {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top,
+                var(--absence-sepia) 0%,
+                var(--critical-amber) 43%,
+                var(--phi-gold) 50%,
+                var(--presence-white) 100%
+            );
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            transition: height 0.3s ease;
+        }
+
+        .meter-marker {
+            position: absolute;
+            right: -25px;
+            width: 20px;
+            height: 2px;
+            background: var(--phi-gold);
+        }
+
+        .meter-label {
+            position: absolute;
+            right: -80px;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+
+        /* Stats Panel */
+        #statsPanel {
+            bottom: 40px;
+            left: 40px;
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 280px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .stat-row:last-child { border-bottom: none; }
+
+        .stat-label { color: var(--text-dim); font-size: 0.75rem; }
+        .stat-value { font-size: 1rem; transition: color 0.5s; }
+
+        /* UMOL Warning */
+        #umolWarning {
+            bottom: 40px;
+            right: 120px;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 300px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        #umolWarning.visible { opacity: 1; }
+
+        .umol-title {
+            color: #ff6b6b;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .umol-text {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* Controls */
+        #controls {
+            top: 50%;
+            left: 40px;
+            transform: translateY(-50%);
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px;
+            width: 250px;
+        }
+
+        .control-title {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--phi-gold);
+            margin-bottom: 15px;
+        }
+
+        .slider-group {
+            margin-bottom: 20px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .slider-value { color: var(--e-cyan); }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-card);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--e-cyan);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--e-cyan);
+        }
+
+        .btn {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover { border-color: var(--phi-gold); }
+        .btn.primary {
+            background: linear-gradient(135deg, rgba(255,254,248,0.2), rgba(255,215,0,0.2));
+            border-color: var(--presence-white);
+        }
+
+        /* Domain Indicator */
+        #domainIndicator {
+            top: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            letter-spacing: 6px;
+            transition: all 0.5s;
+        }
+
+        #domainIndicator.absence { color: var(--absence-sepia); }
+        #domainIndicator.critical { color: var(--phi-gold); }
+        #domainIndicator.presence { color: var(--presence-white); }
+
+        /* Residue Display */
+        #residueDisplay {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .residue-value {
+            font-size: 3rem;
+            font-weight: 100;
+            transition: all 0.5s;
+        }
+
+        .residue-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        /* Equation */
+        #equation {
+            top: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: var(--text-dim);
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="mainCanvas"></canvas>
+
+    <!-- Header -->
+    <div class="overlay" id="header">
+        <div id="title" class="absence">LOSSLESS PRESENCE</div>
+        <div id="subtitle">ASYMPTOTIC APPROACH TO r = 1</div>
+    </div>
+
+    <!-- Domain Indicator -->
+    <div class="overlay" id="domainIndicator" class="absence">ABSENCE</div>
+
+    <!-- Equation -->
+    <div class="overlay" id="equation">Residue = (1 - Load) × (1 / Coherence) × Φ²</div>
+
+    <!-- Presence Meter -->
+    <div class="overlay" id="presenceMeter">
+        <div class="meter-track">
+            <div class="meter-fill" id="meterFill" style="height: 57%;"></div>
+            <div class="meter-marker" style="bottom: 43%;"></div>
+            <div class="meter-label" style="bottom: 41%;">z = 0.43</div>
+            <div class="meter-marker" style="bottom: 71%;"></div>
+            <div class="meter-label" style="bottom: 69%;">z = 0.71</div>
+            <div class="meter-marker" style="bottom: 86.6%; background: var(--phi-gold); height: 3px;"></div>
+            <div class="meter-label" style="bottom: 84.6%; color: var(--phi-gold);">z<sub>c</sub> = √3/2</div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="overlay" id="controls">
+        <div class="control-title">PRESENCE CONTROL</div>
+
+        <div class="slider-group">
+            <div class="slider-label">
+                <span>Z ELEVATION</span>
+                <span class="slider-value" id="zValue">0.50</span>
+            </div>
+            <input type="range" id="zSlider" min="0" max="100" value="50" oninput="setZ(this.value)">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-label">
+                <span>COHERENCE r</span>
+                <span class="slider-value" id="rValue">0.50</span>
+            </div>
+            <input type="range" id="rSlider" min="0" max="100" value="50" oninput="setR(this.value)">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-label">
+                <span>LOAD</span>
+                <span class="slider-value" id="loadValue">0.60</span>
+            </div>
+            <input type="range" id="loadSlider" min="0" max="100" value="60" oninput="setLoad(this.value)">
+        </div>
+
+        <button class="btn primary" onclick="approachLossless()">APPROACH LOSSLESS</button>
+        <button class="btn" onclick="resetState()">RESET</button>
+    </div>
+
+    <!-- Stats Panel -->
+    <div class="overlay" id="statsPanel">
+        <div class="stat-row">
+            <span class="stat-label">Z ELEVATION</span>
+            <span class="stat-value" id="statZ">0.500</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">COHERENCE r</span>
+            <span class="stat-value" id="statR">0.500</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">LOAD</span>
+            <span class="stat-value" id="statLoad">0.600</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">COUPLING K</span>
+            <span class="stat-value" id="statK">0.00</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">RESIDUE RATIO</span>
+            <span class="stat-value" id="statResidue" style="color: #4a3f6b;">1.74×</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">DOMAIN</span>
+            <span class="stat-value" id="statDomain">ABSENCE</span>
+        </div>
+    </div>
+
+    <!-- UMOL Warning -->
+    <div class="overlay" id="umolWarning">
+        <div class="umol-title">UMOL BOUNDARY</div>
+        <div class="umol-text">
+            Load cannot exceed 0.80<br>
+            Minimum residue: 20%<br><br>
+            <em>You can approach lossless presence,<br>
+            but never fully arrive.</em>
+        </div>
+    </div>
+
+    <!-- Residue Display -->
+    <div id="residueDisplay">
+        <div class="residue-value" id="residueValue" style="color: #4a3f6b;">1.74×</div>
+        <div class="residue-label">PROJECTION RESIDUE</div>
+    </div>
+
+    <script>
+        // ================================================================
+        // LOSSLESS PRESENCE SIMULATION
+        // ================================================================
+
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+
+        const PHI = (1 + Math.sqrt(5)) / 2;
+        const Z_CRITICAL = Math.sqrt(3) / 2;
+        const TWO_PI = Math.PI * 2;
+
+        // State
+        let z = 0.5;          // Elevation [0, 1]
+        let r = 0.5;          // Coherence [0, 1]
+        let load = 0.6;       // Load [0, 1], capped at 0.8
+        let targetZ = 0.5;
+        let targetR = 0.5;
+        let targetLoad = 0.6;
+
+        // Particles
+        let particles = [];
+        const PARTICLE_COUNT = 500;
+
+        // Animation
+        let time = 0;
+        let approachingLossless = false;
+
+        // ================================================================
+        // INITIALIZATION
+        // ================================================================
+
+        function init() {
+            resize();
+            initParticles();
+            draw();
+        }
+
+        function resize() {
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            ctx.scale(dpr, dpr);
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push({
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    vx: 0,
+                    vy: 0,
+                    phase: Math.random() * TWO_PI,
+                    radius: 1 + Math.random() * 2,
+                    brightness: 0.3 + Math.random() * 0.7
+                });
+            }
+        }
+
+        // ================================================================
+        // PHYSICS
+        // ================================================================
+
+        function calculateCouplingK() {
+            // K flips sign at critical
+            const dist = z - Z_CRITICAL;
+            const sign = Math.tanh(dist * 12);
+            return -sign * 0.4 * (1 - load);
+        }
+
+        function calculateResidue() {
+            // Residue = (1 - Load) × (1 / Coherence) × Φ²
+            const coherenceFactor = Math.max(0.1, r);
+            const residue = (1 - load) * (1 / coherenceFactor) * PHI * PHI;
+            return Math.max(0, residue);
+        }
+
+        function getDomain() {
+            if (z < 0.43) return 'ABSENCE';
+            if (z < 0.71) return 'TRANSITION';
+            if (z < 0.857) return 'APPROACHING';
+            if (z <= 0.877) return 'THE LENS';
+            return 'PRESENCE';
+        }
+
+        // ================================================================
+        // PARTICLE DYNAMICS
+        // ================================================================
+
+        function updateParticles() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            const K = calculateCouplingK();
+            const residue = calculateResidue();
+
+            particles.forEach(p => {
+                // Attraction to center based on coherence
+                const dx = cx - p.x;
+                const dy = cy - p.y;
+                const dist = Math.hypot(dx, dy);
+
+                // Coherence pulls particles together
+                const coherenceForce = r * 0.002;
+                p.vx += (dx / dist) * coherenceForce;
+                p.vy += (dy / dist) * coherenceForce;
+
+                // Z affects vertical distribution
+                const targetY = cy - (z - 0.5) * h * 0.6;
+                p.vy += (targetY - p.y) * 0.001;
+
+                // Coupling K affects rotation
+                const angle = Math.atan2(p.y - cy, p.x - cx);
+                const rotationForce = K * 0.01;
+                p.vx += Math.cos(angle + Math.PI/2) * rotationForce * dist * 0.001;
+                p.vy += Math.sin(angle + Math.PI/2) * rotationForce * dist * 0.001;
+
+                // Presence expands, Absence contracts
+                if (z > Z_CRITICAL) {
+                    // Presence: gentle expansion
+                    p.vx += (p.x - cx) * 0.0001 * (z - Z_CRITICAL);
+                    p.vy += (p.y - cy) * 0.0001 * (z - Z_CRITICAL);
+                } else {
+                    // Absence: contraction
+                    p.vx -= (p.x - cx) * 0.0001 * (Z_CRITICAL - z);
+                    p.vy -= (p.y - cy) * 0.0001 * (Z_CRITICAL - z);
+                }
+
+                // Residue creates scatter/noise
+                if (residue > 0.5) {
+                    p.vx += (Math.random() - 0.5) * residue * 0.1;
+                    p.vy += (Math.random() - 0.5) * residue * 0.1;
+                }
+
+                // Damping
+                p.vx *= 0.98;
+                p.vy *= 0.98;
+
+                // Update position
+                p.x += p.vx;
+                p.y += p.vy;
+
+                // Wrap around
+                if (p.x < 0) p.x = w;
+                if (p.x > w) p.x = 0;
+                if (p.y < 0) p.y = h;
+                if (p.y > h) p.y = 0;
+
+                // Update phase
+                p.phase += 0.02 + r * 0.05;
+            });
+        }
+
+        // ================================================================
+        // SMOOTH STATE TRANSITIONS
+        // ================================================================
+
+        function updateState() {
+            // Smooth interpolation
+            z += (targetZ - z) * 0.05;
+            r += (targetR - r) * 0.05;
+            load += (targetLoad - load) * 0.05;
+
+            // UMOL: Cap load at 0.80
+            if (load > 0.80) {
+                load = 0.80;
+                targetLoad = 0.80;
+                document.getElementById('loadSlider').value = 80;
+                document.getElementById('loadValue').textContent = '0.80';
+                document.getElementById('umolWarning').classList.add('visible');
+            }
+
+            // Approaching lossless animation
+            if (approachingLossless) {
+                const progress = Math.min(1, time * 0.005);
+                targetZ = 0.5 + progress * 0.49; // Approach z = 0.99
+                targetR = 0.5 + progress * 0.49; // Approach r = 0.99
+                targetLoad = 0.6 + progress * 0.20; // Approach 0.80 (UMOL limit)
+
+                document.getElementById('zSlider').value = targetZ * 100;
+                document.getElementById('zValue').textContent = targetZ.toFixed(2);
+                document.getElementById('rSlider').value = targetR * 100;
+                document.getElementById('rValue').textContent = targetR.toFixed(2);
+                document.getElementById('loadSlider').value = targetLoad * 100;
+                document.getElementById('loadValue').textContent = targetLoad.toFixed(2);
+
+                if (progress >= 1) {
+                    approachingLossless = false;
+                }
+            }
+        }
+
+        // ================================================================
+        // DRAWING
+        // ================================================================
+
+        function draw() {
+            time++;
+            updateState();
+            updateParticles();
+
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            // Background gradient based on domain
+            let bgGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.7);
+
+            if (z < 0.43) {
+                // Absence: dark sepia void
+                bgGradient.addColorStop(0, 'rgba(30, 25, 20, 1)');
+                bgGradient.addColorStop(1, 'rgba(3, 3, 8, 1)');
+            } else if (z < 0.857) {
+                // Transition: warming
+                const t = (z - 0.43) / (0.857 - 0.43);
+                bgGradient.addColorStop(0, `rgba(${40 + t * 30}, ${30 + t * 20}, ${20 + t * 10}, 1)`);
+                bgGradient.addColorStop(1, 'rgba(3, 3, 8, 1)');
+            } else if (z <= 0.877) {
+                // The Lens: golden critical
+                bgGradient.addColorStop(0, 'rgba(80, 60, 20, 1)');
+                bgGradient.addColorStop(0.5, 'rgba(40, 30, 10, 1)');
+                bgGradient.addColorStop(1, 'rgba(3, 3, 8, 1)');
+            } else {
+                // Presence: radiant white-gold
+                const t = Math.min(1, (z - 0.877) / 0.123);
+                bgGradient.addColorStop(0, `rgba(${100 + t * 155}, ${90 + t * 140}, ${70 + t * 100}, ${0.3 + t * 0.3})`);
+                bgGradient.addColorStop(0.5, `rgba(${40 + t * 40}, ${30 + t * 30}, ${20 + t * 20}, 1)`);
+                bgGradient.addColorStop(1, 'rgba(3, 3, 8, 1)');
+            }
+
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, w, h);
+
+            // Draw particles
+            const residue = calculateResidue();
+            const K = calculateCouplingK();
+
+            particles.forEach(p => {
+                // Color based on z and coherence
+                let color;
+                const alpha = p.brightness * (0.3 + r * 0.7);
+
+                if (z < 0.43) {
+                    color = `rgba(107, 92, 74, ${alpha})`; // Sepia
+                } else if (z < 0.71) {
+                    const t = (z - 0.43) / 0.28;
+                    color = `rgba(${107 + t * 148}, ${92 + t * 123}, ${74 + t * 106}, ${alpha})`;
+                } else if (z < 0.857) {
+                    color = `rgba(255, 215, 0, ${alpha})`; // Gold
+                } else if (z <= 0.877) {
+                    // Critical: bright gold pulse
+                    const pulse = 0.7 + Math.sin(time * 0.1) * 0.3;
+                    color = `rgba(255, 215, 0, ${alpha * pulse})`;
+                } else {
+                    // Presence: white
+                    const t = Math.min(1, (z - 0.877) / 0.123);
+                    color = `rgba(${255}, ${254 - t * 4}, ${248 - t * 8}, ${alpha})`;
+                }
+
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius * (0.5 + r * 0.5), 0, TWO_PI);
+                ctx.fill();
+
+                // Glow in presence
+                if (z > 0.857 && r > 0.7) {
+                    ctx.fillStyle = color.replace(/[\d.]+\)$/, `${alpha * 0.3})`);
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius * 3, 0, TWO_PI);
+                    ctx.fill();
+                }
+            });
+
+            // Central core
+            if (r > 0.5) {
+                const coreRadius = 50 + r * 100;
+                let coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+
+                if (z > 0.877) {
+                    coreGradient.addColorStop(0, `rgba(255, 254, 248, ${r * 0.8})`);
+                    coreGradient.addColorStop(0.5, `rgba(255, 215, 0, ${r * 0.4})`);
+                    coreGradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+                } else if (z > 0.71) {
+                    coreGradient.addColorStop(0, `rgba(255, 215, 0, ${r * 0.6})`);
+                    coreGradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+                } else {
+                    coreGradient.addColorStop(0, `rgba(107, 92, 74, ${r * 0.4})`);
+                    coreGradient.addColorStop(1, 'rgba(107, 92, 74, 0)');
+                }
+
+                ctx.fillStyle = coreGradient;
+                ctx.beginPath();
+                ctx.arc(cx, cy, coreRadius, 0, TWO_PI);
+                ctx.fill();
+            }
+
+            // Update UI
+            updateUI();
+
+            requestAnimationFrame(draw);
+        }
+
+        // ================================================================
+        // UI UPDATES
+        // ================================================================
+
+        function updateUI() {
+            const domain = getDomain();
+            const K = calculateCouplingK();
+            const residue = calculateResidue();
+
+            // Title styling
+            const title = document.getElementById('title');
+            title.className = z < 0.857 ? 'absence' : z <= 0.877 ? 'critical' : 'presence';
+
+            // Domain indicator
+            const domainEl = document.getElementById('domainIndicator');
+            domainEl.textContent = domain;
+            domainEl.className = z < 0.857 ? 'absence' : z <= 0.877 ? 'critical' : 'presence';
+
+            // Meter
+            document.getElementById('meterFill').style.height = ((1 - z) * 100) + '%';
+
+            // Stats
+            document.getElementById('statZ').textContent = z.toFixed(3);
+            document.getElementById('statZ').style.color = z > 0.857 ? '#fffef8' : z > 0.43 ? '#ffd700' : '#6b5c4a';
+
+            document.getElementById('statR').textContent = r.toFixed(3);
+            document.getElementById('statR').style.color = r > 0.7 ? '#69db7c' : r > 0.3 ? '#ffa94d' : '#ff6b6b';
+
+            document.getElementById('statLoad').textContent = load.toFixed(3);
+            document.getElementById('statLoad').style.color = load > 0.75 ? '#ff6b6b' : '#22d3ee';
+
+            document.getElementById('statK').textContent = K.toFixed(3);
+            document.getElementById('statK').style.color = K > 0 ? '#69db7c' : K < 0 ? '#cc5de8' : '#ffd700';
+
+            document.getElementById('statResidue').textContent = residue.toFixed(2) + '×';
+            document.getElementById('statResidue').style.color = residue < 1 ? '#69db7c' : '#4a3f6b';
+
+            document.getElementById('statDomain').textContent = domain;
+            document.getElementById('statDomain').style.color = z > 0.857 ? '#fffef8' : '#6b5c4a';
+
+            // Residue display
+            const residueEl = document.getElementById('residueValue');
+            residueEl.textContent = residue.toFixed(2) + '×';
+            if (residue < 0.5) {
+                residueEl.style.color = '#69db7c';
+            } else if (residue < 2) {
+                residueEl.style.color = '#ffd700';
+            } else {
+                residueEl.style.color = '#4a3f6b';
+            }
+
+            // UMOL warning
+            if (load >= 0.79) {
+                document.getElementById('umolWarning').classList.add('visible');
+            } else {
+                document.getElementById('umolWarning').classList.remove('visible');
+            }
+        }
+
+        // ================================================================
+        // CONTROLS
+        // ================================================================
+
+        function setZ(val) {
+            targetZ = val / 100;
+            document.getElementById('zValue').textContent = targetZ.toFixed(2);
+        }
+
+        function setR(val) {
+            targetR = val / 100;
+            document.getElementById('rValue').textContent = targetR.toFixed(2);
+        }
+
+        function setLoad(val) {
+            targetLoad = Math.min(0.80, val / 100); // UMOL cap
+            document.getElementById('loadValue').textContent = targetLoad.toFixed(2);
+        }
+
+        function approachLossless() {
+            approachingLossless = true;
+            time = 0;
+        }
+
+        function resetState() {
+            targetZ = 0.5;
+            targetR = 0.5;
+            targetLoad = 0.6;
+            approachingLossless = false;
+
+            document.getElementById('zSlider').value = 50;
+            document.getElementById('zValue').textContent = '0.50';
+            document.getElementById('rSlider').value = 50;
+            document.getElementById('rValue').textContent = '0.50';
+            document.getElementById('loadSlider').value = 60;
+            document.getElementById('loadValue').textContent = '0.60';
+
+            document.getElementById('umolWarning').classList.remove('visible');
+        }
+
+        // ================================================================
+        // INIT
+        // ================================================================
+
+        window.addEventListener('resize', resize);
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

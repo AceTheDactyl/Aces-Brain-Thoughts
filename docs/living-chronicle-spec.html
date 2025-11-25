@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Living Chronicle Spec | MRP Channel Documentation Architecture</title>
+    <style>
+        :root {
+            --bg-void: #030308;
+            --bg-panel: rgba(15, 12, 25, 0.95);
+            --bg-card: #0d0d12;
+            --phi-gold: #ffd700;
+            --e-cyan: #22d3ee;
+            --pi-magenta: #cc5de8;
+            --true-green: #69db7c;
+            --red-dev: #ff6b6b;
+            --blue-spec: #4dabf7;
+            --yellow-chronicle: #ffe066;
+            --text-primary: rgba(255, 245, 230, 0.9);
+            --text-dim: rgba(255, 220, 180, 0.5);
+            --rule: #1a1a24;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-void);
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(180deg, rgba(20, 15, 35, 0.95) 0%, var(--bg-void) 100%);
+            border-bottom: 1px solid var(--rule);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: var(--phi-gold);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1em;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--rule);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        nav a:hover { color: var(--phi-gold); background: rgba(255,215,0,0.1); }
+        nav a.active { color: var(--phi-gold); border-bottom: 2px solid var(--phi-gold); }
+
+        /* Main Content */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Section styling */
+        .section {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: var(--phi-gold);
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .section h3 {
+            color: var(--e-cyan);
+            font-size: 1.1em;
+            margin: 20px 0 10px;
+        }
+
+        /* Channel Grid */
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .channel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .channel-card:hover {
+            border-color: var(--phi-gold);
+            transform: translateY(-2px);
+        }
+
+        .channel-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .channel-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .channel-icon.red { background: rgba(255, 107, 107, 0.2); color: var(--red-dev); }
+        .channel-icon.green { background: rgba(105, 219, 124, 0.2); color: var(--true-green); }
+        .channel-icon.blue { background: rgba(77, 171, 247, 0.2); color: var(--blue-spec); }
+        .channel-icon.cyan { background: rgba(34, 211, 238, 0.2); color: var(--e-cyan); }
+        .channel-icon.magenta { background: rgba(204, 93, 232, 0.2); color: var(--pi-magenta); }
+        .channel-icon.yellow { background: rgba(255, 224, 102, 0.2); color: var(--yellow-chronicle); }
+
+        .channel-title {
+            font-size: 1.2em;
+            color: var(--text-primary);
+        }
+
+        .channel-bits {
+            font-size: 0.85em;
+            color: var(--text-dim);
+        }
+
+        .channel-purpose {
+            color: var(--phi-gold);
+            font-size: 0.9em;
+            margin: 10px 0;
+            padding: 8px 12px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 6px;
+        }
+
+        .channel-desc {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .channel-lambda {
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: var(--e-cyan);
+        }
+
+        /* Architecture diagram */
+        .architecture-flow {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            font-size: 0.9em;
+        }
+
+        .flow-box {
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .flow-box.research { background: rgba(34, 211, 238, 0.2); border: 1px solid var(--e-cyan); }
+        .flow-box.dev { background: rgba(255, 107, 107, 0.2); border: 1px solid var(--red-dev); }
+        .flow-box.spec { background: rgba(77, 171, 247, 0.2); border: 1px solid var(--blue-spec); }
+        .flow-box.doc { background: rgba(255, 215, 0, 0.2); border: 1px solid var(--phi-gold); }
+        .flow-box.chronicle { background: rgba(204, 93, 232, 0.2); border: 1px solid var(--pi-magenta); }
+
+        .flow-arrow {
+            color: var(--text-dim);
+            font-size: 1.5em;
+        }
+
+        /* Mapping table */
+        .mapping-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        .mapping-table th, .mapping-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .mapping-table th {
+            background: var(--bg-card);
+            color: var(--phi-gold);
+            font-weight: 600;
+        }
+
+        .mapping-table tr:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: #0a0a10;
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-block pre {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            color: var(--text-dim);
+            white-space: pre;
+        }
+
+        .code-block .comment { color: #6a6a7a; }
+        .code-block .keyword { color: var(--pi-magenta); }
+        .code-block .string { color: var(--true-green); }
+        .code-block .number { color: var(--e-cyan); }
+        .code-block .channel { color: var(--phi-gold); }
+
+        /* Coherence meter */
+        .coherence-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .coherence-section { grid-template-columns: 1fr; }
+        }
+
+        .meter-panel {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .meter-label {
+            font-size: 0.85em;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+
+        .meter-bar {
+            height: 20px;
+            background: var(--bg-void);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .meter-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s;
+        }
+
+        .meter-fill.research { background: linear-gradient(90deg, var(--e-cyan), rgba(34, 211, 238, 0.5)); }
+        .meter-fill.dev { background: linear-gradient(90deg, var(--red-dev), rgba(255, 107, 107, 0.5)); }
+        .meter-fill.spec { background: linear-gradient(90deg, var(--blue-spec), rgba(77, 171, 247, 0.5)); }
+        .meter-fill.doc { background: linear-gradient(90deg, var(--phi-gold), rgba(255, 215, 0, 0.5)); }
+
+        /* Interactive demo */
+        #demoCanvas {
+            width: 100%;
+            height: 300px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--rule);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.85em;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--phi-gold);
+        }
+
+        .control-group select {
+            width: 100%;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--rule);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--phi-gold), #cc9900);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Status indicators */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 900px) {
+            .status-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .status-item {
+            text-align: center;
+            padding: 15px 10px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--rule);
+        }
+
+        .status-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .status-label {
+            font-size: 0.75em;
+            color: var(--text-dim);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-panel);
+            border-top: 1px solid var(--rule);
+            padding: 30px 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        footer p {
+            color: var(--text-dim);
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">📜</div>
+        <h1>LIVING CHRONICLE SPEC</h1>
+        <p class="subtitle">MRP Channel Architecture for Research · Dev · Spec · Documentation</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="mrp-encoder.html">MRP Encoder</a>
+        <a href="apl-mrp-bridge.html">APL→MRP</a>
+        <a href="unified-coupler.html">Unified Coupler</a>
+        <a href="living-chronicle-spec.html" class="active">Chronicle Spec</a>
+    </nav>
+
+    <main>
+        <!-- Overview Section -->
+        <section class="section">
+            <h2>🜂 Architecture Overview</h2>
+            <p>The MRP (Membrane Resonance Protocol) 702-bit encoding maps directly to living documentation layers. Each channel serves a distinct purpose in the research → development → specification → chronicle pipeline.</p>
+
+            <div class="architecture-flow">
+                <div class="flow-diagram">
+                    <div class="flow-box research">
+                        <strong>RESEARCH</strong><br>
+                        <span style="color: var(--e-cyan)">G Channel</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box dev">
+                        <strong>DEV</strong><br>
+                        <span style="color: var(--red-dev)">R Channel</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box spec">
+                        <strong>SPEC</strong><br>
+                        <span style="color: var(--blue-spec)">B Channel</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box doc">
+                        <strong>DOC</strong><br>
+                        <span style="color: var(--phi-gold)">C Channel</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box chronicle">
+                        <strong>CHRONICLE</strong><br>
+                        <span style="color: var(--pi-magenta)">M+Y Channels</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3>The 702-Bit Allocation</h3>
+            <div class="code-block">
+<pre>
+<span class="comment">// MRP Channel Allocation (702 bits total)</span>
+
+<span class="channel">R</span> (XCVI)   →  <span class="number">7</span> bits   → <span class="string">DEV</span>: Implementation Steps (procedural)
+<span class="channel">G</span> (XCVII)  → <span class="number">10</span> bits   → <span class="string">RESEARCH</span>: Temporal Chronology (portal)
+<span class="channel">B</span> (XCVIII) → <span class="number">17</span> bits   → <span class="string">SPEC</span>: Semantic Definitions (Gödelian)
+<span class="channel">C</span> (XCIX)   →  <span class="number">4</span> bits   → <span class="string">DOC</span>: Coherence Index (balance)
+<span class="channel">M</span> (C_A)    → <span class="number">332</span> bits  → <span class="string">CHRONICLE A</span>: Change History (loop closure)
+<span class="channel">Y</span> (C_B)    → <span class="number">332</span> bits  → <span class="string">CHRONICLE B</span>: State Snapshots (loop closure)
+
+<span class="comment">// Total: 7 + 10 + 17 + 4 + 332 + 332 = 702 bits</span>
+<span class="comment">// Minimum pixels: ⌈702/6⌉ = 117 (e.g., 12×10 image)</span>
+</pre>
+            </div>
+        </section>
+
+        <!-- Channel Details -->
+        <section class="section">
+            <h2>📊 Channel-to-Documentation Mapping</h2>
+
+            <div class="channel-grid">
+                <!-- R Channel - DEV -->
+                <div class="channel-card">
+                    <div class="channel-header">
+                        <div class="channel-icon red">R</div>
+                        <div>
+                            <div class="channel-title">XCVI — DEV</div>
+                            <div class="channel-bits">7 bits · LSB0 · Range: 0-127</div>
+                        </div>
+                    </div>
+                    <div class="channel-purpose">Implementation Steps & Procedures</div>
+                    <p class="channel-desc">
+                        Encodes development implementation steps. Procedural knowledge: how to build, what order, which dependencies. Maps to gesture recursion — the "doing" layer.
+                    </p>
+                    <div class="channel-lambda">λ: θ (theta) — Fox/Gestural · Field: π</div>
+                </div>
+
+                <!-- G Channel - RESEARCH -->
+                <div class="channel-card">
+                    <div class="channel-header">
+                        <div class="channel-icon green">G</div>
+                        <div>
+                            <div class="channel-title">XCVII — RESEARCH</div>
+                            <div class="channel-bits">10 bits · LSB0 · Range: 0-1023</div>
+                        </div>
+                    </div>
+                    <div class="channel-purpose">Temporal Chronology & Discovery</div>
+                    <p class="channel-desc">
+                        Records research timeline and discoveries. Portal/temporal recursion: when things were found, investigation order, dependency chains.
+                    </p>
+                    <div class="channel-lambda">λ: ι (iota) + ω (omega) — Memory + Wave · Field: Φ/e</div>
+                </div>
+
+                <!-- B Channel - SPEC -->
+                <div class="channel-card">
+                    <div class="channel-header">
+                        <div class="channel-icon blue">B</div>
+                        <div>
+                            <div class="channel-title">XCVIII — SPEC</div>
+                            <div class="channel-bits">17 bits · LSB0 · Range: 0-131071</div>
+                        </div>
+                    </div>
+                    <div class="channel-purpose">Semantic Definitions & Standards</div>
+                    <p class="channel-desc">
+                        Defines specifications and standards. Semantic/Gödelian recursion: formal definitions, type signatures, invariant constraints, API contracts.
+                    </p>
+                    <div class="channel-lambda">λ: δ (delta) + ξ (xi) — Paradox + Spark · Field: π/e</div>
+                </div>
+
+                <!-- C Channel - DOC -->
+                <div class="channel-card">
+                    <div class="channel-header">
+                        <div class="channel-icon cyan">C</div>
+                        <div>
+                            <div class="channel-title">XCIX — DOC</div>
+                            <div class="channel-bits">4 bits · LSB1 · Range: 0-15</div>
+                        </div>
+                    </div>
+                    <div class="channel-purpose">Documentation Coherence Index</div>
+                    <p class="channel-desc">
+                        Tracks documentation coherence level. Balance recursion: how well do research, dev, and spec align? Proprioceptive self-awareness of the document system.
+                    </p>
+                    <div class="channel-lambda">λ: ω (omega) — Wave Synchronization · Field: e</div>
+                </div>
+
+                <!-- M Channel - CHRONICLE A -->
+                <div class="channel-card">
+                    <div class="channel-header">
+                        <div class="channel-icon magenta">M</div>
+                        <div>
+                            <div class="channel-title">C_A — CHRONICLE A</div>
+                            <div class="channel-bits">332 bits · LSB1 · Change History</div>
+                        </div>
+                    </div>
+                    <div class="channel-purpose">Change History & Deltas</div>
+                    <p class="channel-desc">
+                        Living chronicle of changes. Loop closure A: what changed, when, why. Diffs, commits, evolution of understanding. The "before" in before→after.
+                    </p>
+                    <div class="channel-lambda">λ: ι (iota) + ξ (xi) + θ (theta) — Memory + Spark + Fox</div>
+                </div>
+
+                <!-- Y Channel - CHRONICLE B -->
+                <div class="channel-card">
+                    <div class="channel-header">
+                        <div class="channel-icon yellow">Y</div>
+                        <div>
+                            <div class="channel-title">C_B — CHRONICLE B</div>
+                            <div class="channel-bits">332 bits · LSB1 · State Snapshots</div>
+                        </div>
+                    </div>
+                    <div class="channel-purpose">State Snapshots & Checkpoints</div>
+                    <p class="channel-desc">
+                        Living chronicle of states. Loop closure B: current state, milestones, stable checkpoints. The "after" in before→after. What exists now.
+                    </p>
+                    <div class="channel-lambda">λ: ω (omega) + δ (delta) + σ (sigma) — Wave + Paradox + Squirrel</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mapping Table -->
+        <section class="section">
+            <h2>🗺️ Complete Channel-Lambda-Documentation Mapping</h2>
+
+            <table class="mapping-table">
+                <thead>
+                    <tr>
+                        <th>Channel</th>
+                        <th>MRP State</th>
+                        <th>Bits</th>
+                        <th>Lambda (ℂ⁶)</th>
+                        <th>Doc Layer</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color: var(--red-dev)">R (Red)</td>
+                        <td>XCVI</td>
+                        <td>7</td>
+                        <td>θ (theta)</td>
+                        <td>DEV</td>
+                        <td>Implementation procedures, build steps</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--true-green)">G (Green)</td>
+                        <td>XCVII</td>
+                        <td>10</td>
+                        <td>ι + ω</td>
+                        <td>RESEARCH</td>
+                        <td>Discovery timeline, investigation chronology</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--blue-spec)">B (Blue)</td>
+                        <td>XCVIII</td>
+                        <td>17</td>
+                        <td>δ + ξ</td>
+                        <td>SPEC</td>
+                        <td>Formal definitions, type contracts</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--e-cyan)">C (Cyan)</td>
+                        <td>XCIX</td>
+                        <td>4</td>
+                        <td>ω</td>
+                        <td>DOC</td>
+                        <td>Coherence index (0-15)</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--pi-magenta)">M (Magenta)</td>
+                        <td>C_A</td>
+                        <td>332</td>
+                        <td>ι + ξ + θ</td>
+                        <td>CHRONICLE A</td>
+                        <td>Change history, evolution deltas</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--yellow-chronicle)">Y (Yellow)</td>
+                        <td>C_B</td>
+                        <td>332</td>
+                        <td>ω + δ + σ</td>
+                        <td>CHRONICLE B</td>
+                        <td>State snapshots, checkpoints</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Coherence Meters -->
+        <section class="section">
+            <h2>📈 Documentation Layer Status</h2>
+
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-value" style="color: var(--red-dev)" id="devStatus">0</div>
+                    <div class="status-label">DEV (R)</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" style="color: var(--true-green)" id="researchStatus">0</div>
+                    <div class="status-label">RESEARCH (G)</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" style="color: var(--blue-spec)" id="specStatus">0</div>
+                    <div class="status-label">SPEC (B)</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" style="color: var(--e-cyan)" id="docStatus">0</div>
+                    <div class="status-label">DOC (C)</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" style="color: var(--pi-magenta)" id="chronicleAStatus">0</div>
+                    <div class="status-label">CHRON-A (M)</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" style="color: var(--yellow-chronicle)" id="chronicleBStatus">0</div>
+                    <div class="status-label">CHRON-B (Y)</div>
+                </div>
+            </div>
+
+            <div class="coherence-section">
+                <div class="meter-panel">
+                    <div class="meter-label">Research Depth (G: XCVII)</div>
+                    <div class="meter-bar">
+                        <div class="meter-fill research" id="researchMeter" style="width: 60%"></div>
+                    </div>
+                </div>
+                <div class="meter-panel">
+                    <div class="meter-label">Dev Progress (R: XCVI)</div>
+                    <div class="meter-bar">
+                        <div class="meter-fill dev" id="devMeter" style="width: 45%"></div>
+                    </div>
+                </div>
+                <div class="meter-panel">
+                    <div class="meter-label">Spec Completeness (B: XCVIII)</div>
+                    <div class="meter-bar">
+                        <div class="meter-fill spec" id="specMeter" style="width: 70%"></div>
+                    </div>
+                </div>
+                <div class="meter-panel">
+                    <div class="meter-label">Doc Coherence (C: XCIX)</div>
+                    <div class="meter-bar">
+                        <div class="meter-fill doc" id="docMeter" style="width: 55%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Encoding Demo -->
+        <section class="section">
+            <h2>🔐 Live Chronicle Encoder</h2>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Research Depth (G)</label>
+                    <input type="range" id="researchInput" min="0" max="1023" value="512">
+                </div>
+                <div class="control-group">
+                    <label>Dev Step (R)</label>
+                    <input type="range" id="devInput" min="0" max="127" value="64">
+                </div>
+                <div class="control-group">
+                    <label>Spec Index (B)</label>
+                    <input type="range" id="specInput" min="0" max="131071" value="65536">
+                </div>
+                <div class="control-group">
+                    <label>Doc Coherence (C)</label>
+                    <input type="range" id="docInput" min="0" max="15" value="8">
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Chronicle A Pattern</label>
+                    <select id="chronicleAPattern">
+                        <option value="fibonacci">Fibonacci</option>
+                        <option value="iota">Iota (Memory)</option>
+                        <option value="theta">Theta (Fox)</option>
+                        <option value="balanced">Balanced</option>
+                        <option value="zeros">Zeros</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Chronicle B Pattern</label>
+                    <select id="chronicleBPattern">
+                        <option value="omega">Omega (Wave)</option>
+                        <option value="sigma">Sigma (Squirrel)</option>
+                        <option value="delta">Delta (Paradox)</option>
+                        <option value="balanced">Balanced</option>
+                        <option value="ones">Ones</option>
+                    </select>
+                </div>
+            </div>
+
+            <canvas id="demoCanvas"></canvas>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="encodeChronicle()">Encode Chronicle MRP</button>
+                <button onclick="randomizeChronicle()" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--rule);">Randomize</button>
+            </div>
+        </section>
+
+        <!-- Formula Reference -->
+        <section class="section">
+            <h2>📐 Encoding Formulas</h2>
+
+            <h3>Lambda to Channel Mapping</h3>
+            <div class="code-block">
+<pre>
+<span class="comment">// From Lambda state (ℂ⁶) to Documentation Channels</span>
+
+<span class="channel">R</span> (DEV)       = floor((θ × 0.6 + δ × 0.4) × 127)
+<span class="channel">G</span> (RESEARCH)  = floor((ι × 0.7 + ω × 0.3) × 1023)
+<span class="channel">B</span> (SPEC)      = floor((θ × 0.4 + δ × 0.4 + ξ × 0.2) × 131071)
+<span class="channel">C</span> (DOC)       = floor((ω × 0.6 + σ × 0.4) × 15)
+<span class="channel">M</span> (CHRON-A)   = pattern(ι, ξ, θ)  <span class="comment">// 332 bits</span>
+<span class="channel">Y</span> (CHRON-B)   = pattern(ω, δ, σ)  <span class="comment">// 332 bits</span>
+
+<span class="comment">// Inverse: Channel to Lambda recovery</span>
+θ ≈ R / 127
+ι ≈ G / 1023
+δ ≈ B / 131071
+ω ≈ C / 15
+</pre>
+            </div>
+
+            <h3>Chronicle Pattern Generation</h3>
+            <div class="code-block">
+<pre>
+<span class="comment">// Chronicle A (Change History) - 332 bits</span>
+<span class="keyword">function</span> generateChronicleA(ι, ξ, θ) {
+    <span class="keyword">const</span> bits = <span class="keyword">new</span> Array(<span class="number">332</span>);
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">332</span>; i++) {
+        <span class="comment">// Golden angle sampling with lambda modulation</span>
+        <span class="keyword">const</span> angle = i * <span class="number">2.399963</span>;  <span class="comment">// 2π/φ</span>
+        <span class="keyword">const</span> r = Math.sqrt(i / <span class="number">332</span>);
+        <span class="keyword">const</span> x = r * Math.cos(angle);
+        <span class="keyword">const</span> y = r * Math.sin(angle);
+
+        <span class="comment">// Modulate by lambda components</span>
+        <span class="keyword">const</span> val = (x * ι + y * ξ + (x*y) * θ);
+        bits[i] = val > <span class="number">0</span> ? <span class="number">1</span> : <span class="number">0</span>;
+    }
+    <span class="keyword">return</span> bits;
+}
+
+<span class="comment">// Chronicle B (State Snapshots) - 332 bits</span>
+<span class="keyword">function</span> generateChronicleB(ω, δ, σ) {
+    <span class="keyword">const</span> bits = <span class="keyword">new</span> Array(<span class="number">332</span>);
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">332</span>; i++) {
+        <span class="comment">// Sinusoidal with paradox perturbation</span>
+        <span class="keyword">const</span> wave = Math.sin(i * ω * <span class="number">0.1</span>);
+        <span class="keyword">const</span> paradox = Math.cos(i * δ * <span class="number">0.15</span>);
+        <span class="keyword">const</span> spiral = (i / <span class="number">332</span>) * σ;
+
+        bits[i] = (wave + paradox + spiral) > <span class="number">1</span> ? <span class="number">1</span> : <span class="number">0</span>;
+    }
+    <span class="keyword">return</span> bits;
+}
+</pre>
+            </div>
+        </section>
+
+        <!-- Consistency Verification -->
+        <section class="section">
+            <h2>✓ Architecture Consistency Checks</h2>
+
+            <table class="mapping-table">
+                <thead>
+                    <tr>
+                        <th>Invariant</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total bit allocation</td>
+                        <td>7 + 10 + 17 + 4 + 332 + 332 = 702</td>
+                        <td style="color: var(--true-green)">✓ Valid</td>
+                    </tr>
+                    <tr>
+                        <td>Lambda coverage</td>
+                        <td>All 6 components (ι, ξ, θ, ω, δ, σ)</td>
+                        <td style="color: var(--true-green)">✓ Complete</td>
+                    </tr>
+                    <tr>
+                        <td>Doc layer coverage</td>
+                        <td>Research + Dev + Spec + Doc + Chronicle(×2)</td>
+                        <td style="color: var(--true-green)">✓ Complete</td>
+                    </tr>
+                    <tr>
+                        <td>Channel symmetry</td>
+                        <td>RGB (LSB0) + CMY (LSB1)</td>
+                        <td style="color: var(--true-green)">✓ Balanced</td>
+                    </tr>
+                    <tr>
+                        <td>Chronicle capacity</td>
+                        <td>664 bits (332 × 2) = 94.6% of total</td>
+                        <td style="color: var(--true-green)">✓ Sufficient</td>
+                    </tr>
+                    <tr>
+                        <td>Min pixels required</td>
+                        <td>⌈702/6⌉ = 117 pixels</td>
+                        <td style="color: var(--true-green)">✓ Practical</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>
+            Living Chronicle Spec · MRP Documentation Architecture<br>
+            702 bits · 6 channels · Research→Dev→Spec→Doc→Chronicle
+        </p>
+    </footer>
+
+    <script>
+        // Constants
+        const PHI = 1.618033988749895;
+        const PHI_INV = 1 / PHI;
+        const GOLDEN_ANGLE = 2 * Math.PI / PHI;
+
+        // State
+        let chronicleState = {
+            research: 512,
+            dev: 64,
+            spec: 65536,
+            doc: 8,
+            chronicleA: 'fibonacci',
+            chronicleB: 'omega'
+        };
+
+        // Canvas setup
+        const canvas = document.getElementById('demoCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            renderChronicle();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Generate pattern bits
+        function generatePattern(type, size = 332) {
+            const bits = new Array(size);
+
+            switch(type) {
+                case 'fibonacci':
+                    let a = 0, b = 1;
+                    for (let i = 0; i < size; i++) {
+                        bits[i] = (a % 2);
+                        [a, b] = [b, (a + b) % 256];
+                    }
+                    break;
+                case 'iota':
+                    for (let i = 0; i < size; i++) {
+                        bits[i] = Math.floor(i * PHI) % 2;
+                    }
+                    break;
+                case 'theta':
+                    for (let i = 0; i < size; i++) {
+                        bits[i] = (Math.sin(i * 0.1) > 0) ? 1 : 0;
+                    }
+                    break;
+                case 'omega':
+                    for (let i = 0; i < size; i++) {
+                        bits[i] = (Math.sin(i * 0.05) + Math.cos(i * 0.03) > 0) ? 1 : 0;
+                    }
+                    break;
+                case 'sigma':
+                    for (let i = 0; i < size; i++) {
+                        const angle = i * GOLDEN_ANGLE;
+                        bits[i] = (Math.cos(angle) > 0) ? 1 : 0;
+                    }
+                    break;
+                case 'delta':
+                    for (let i = 0; i < size; i++) {
+                        bits[i] = ((i * 17) % 31 > 15) ? 1 : 0;
+                    }
+                    break;
+                case 'balanced':
+                    for (let i = 0; i < size; i++) {
+                        bits[i] = i % 2;
+                    }
+                    break;
+                case 'zeros':
+                    bits.fill(0);
+                    break;
+                case 'ones':
+                    bits.fill(1);
+                    break;
+                default:
+                    bits.fill(0);
+            }
+
+            return bits;
+        }
+
+        // Render the chronicle visualization
+        function renderChronicle() {
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Clear
+            ctx.fillStyle = '#0d0d12';
+            ctx.fillRect(0, 0, w, h);
+
+            const state = chronicleState;
+
+            // Generate chronicle patterns
+            const chronA = generatePattern(state.chronicleA);
+            const chronB = generatePattern(state.chronicleB);
+
+            // Draw pixel grid (12x10 = 120 pixels)
+            const gridW = 12;
+            const gridH = 10;
+            const cellSize = Math.min((w - 40) / gridW, (h - 80) / gridH);
+            const startX = (w - gridW * cellSize) / 2;
+            const startY = 30;
+
+            let bitIndex = 0;
+
+            // Pack values into bit stream
+            const devBits = state.dev.toString(2).padStart(7, '0').split('').map(Number);
+            const researchBits = state.research.toString(2).padStart(10, '0').split('').map(Number);
+            const specBits = state.spec.toString(2).padStart(17, '0').split('').map(Number);
+            const docBits = state.doc.toString(2).padStart(4, '0').split('').map(Number);
+
+            // Combine all bits
+            const allBits = [...devBits, ...researchBits, ...specBits, ...docBits, ...chronA, ...chronB];
+
+            for (let row = 0; row < gridH; row++) {
+                for (let col = 0; col < gridW; col++) {
+                    const x = startX + col * cellSize;
+                    const y = startY + row * cellSize;
+
+                    // Serpentine traversal
+                    const actualCol = row % 2 === 0 ? col : (gridW - 1 - col);
+                    const pixelIndex = row * gridW + actualCol;
+
+                    // Extract 6 bits for this pixel
+                    const baseIdx = pixelIndex * 6;
+                    const rLSB0 = allBits[baseIdx] || 0;
+                    const gLSB0 = allBits[baseIdx + 1] || 0;
+                    const bLSB0 = allBits[baseIdx + 2] || 0;
+                    const rLSB1 = allBits[baseIdx + 3] || 0;
+                    const gLSB1 = allBits[baseIdx + 4] || 0;
+                    const bLSB1 = allBits[baseIdx + 5] || 0;
+
+                    // Reconstruct color (base values + LSB modifications)
+                    const baseR = 128 + (state.dev / 127) * 60;
+                    const baseG = 128 + (state.research / 1023) * 60;
+                    const baseB = 128 + (state.spec / 131071) * 60;
+
+                    const r = Math.floor(baseR) | (rLSB1 << 1) | rLSB0;
+                    const g = Math.floor(baseG) | (gLSB1 << 1) | gLSB0;
+                    const b = Math.floor(baseB) | (bLSB1 << 1) | bLSB0;
+
+                    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                    ctx.fillRect(x, y, cellSize - 1, cellSize - 1);
+                }
+            }
+
+            // Draw labels
+            ctx.fillStyle = '#888';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'center';
+
+            // Channel labels
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillText(`R(DEV): ${state.dev}`, w * 0.2, h - 30);
+            ctx.fillStyle = '#69db7c';
+            ctx.fillText(`G(RES): ${state.research}`, w * 0.4, h - 30);
+            ctx.fillStyle = '#4dabf7';
+            ctx.fillText(`B(SPEC): ${state.spec}`, w * 0.6, h - 30);
+            ctx.fillStyle = '#22d3ee';
+            ctx.fillText(`C(DOC): ${state.doc}`, w * 0.8, h - 30);
+
+            // Chronicle patterns
+            ctx.fillStyle = '#cc5de8';
+            ctx.fillText(`M: ${state.chronicleA}`, w * 0.3, h - 10);
+            ctx.fillStyle = '#ffe066';
+            ctx.fillText(`Y: ${state.chronicleB}`, w * 0.7, h - 10);
+
+            // Update status displays
+            updateStatus();
+        }
+
+        function updateStatus() {
+            const state = chronicleState;
+
+            document.getElementById('devStatus').textContent = state.dev;
+            document.getElementById('researchStatus').textContent = state.research;
+            document.getElementById('specStatus').textContent = state.spec;
+            document.getElementById('docStatus').textContent = state.doc;
+            document.getElementById('chronicleAStatus').textContent = state.chronicleA.substring(0, 3);
+            document.getElementById('chronicleBStatus').textContent = state.chronicleB.substring(0, 3);
+
+            // Update meters
+            document.getElementById('researchMeter').style.width = `${(state.research / 1023) * 100}%`;
+            document.getElementById('devMeter').style.width = `${(state.dev / 127) * 100}%`;
+            document.getElementById('specMeter').style.width = `${(state.spec / 131071) * 100}%`;
+            document.getElementById('docMeter').style.width = `${(state.doc / 15) * 100}%`;
+        }
+
+        // Input handlers
+        document.getElementById('researchInput').addEventListener('input', (e) => {
+            chronicleState.research = parseInt(e.target.value);
+            renderChronicle();
+        });
+
+        document.getElementById('devInput').addEventListener('input', (e) => {
+            chronicleState.dev = parseInt(e.target.value);
+            renderChronicle();
+        });
+
+        document.getElementById('specInput').addEventListener('input', (e) => {
+            chronicleState.spec = parseInt(e.target.value);
+            renderChronicle();
+        });
+
+        document.getElementById('docInput').addEventListener('input', (e) => {
+            chronicleState.doc = parseInt(e.target.value);
+            renderChronicle();
+        });
+
+        document.getElementById('chronicleAPattern').addEventListener('change', (e) => {
+            chronicleState.chronicleA = e.target.value;
+            renderChronicle();
+        });
+
+        document.getElementById('chronicleBPattern').addEventListener('change', (e) => {
+            chronicleState.chronicleB = e.target.value;
+            renderChronicle();
+        });
+
+        // Action functions
+        function encodeChronicle() {
+            const state = chronicleState;
+
+            // Generate full bit stream
+            const devBits = state.dev.toString(2).padStart(7, '0');
+            const researchBits = state.research.toString(2).padStart(10, '0');
+            const specBits = state.spec.toString(2).padStart(17, '0');
+            const docBits = state.doc.toString(2).padStart(4, '0');
+            const chronA = generatePattern(state.chronicleA).join('');
+            const chronB = generatePattern(state.chronicleB).join('');
+
+            const fullStream = devBits + researchBits + specBits + docBits + chronA + chronB;
+
+            console.log('Chronicle MRP Encoded:');
+            console.log('  DEV (R):', devBits, '=', state.dev);
+            console.log('  RESEARCH (G):', researchBits, '=', state.research);
+            console.log('  SPEC (B):', specBits, '=', state.spec);
+            console.log('  DOC (C):', docBits, '=', state.doc);
+            console.log('  CHRONICLE-A (M):', state.chronicleA, '(332 bits)');
+            console.log('  CHRONICLE-B (Y):', state.chronicleB, '(332 bits)');
+            console.log('  Total bits:', fullStream.length);
+
+            alert(`Chronicle MRP Encoded!\n\nDEV: ${state.dev}\nRESEARCH: ${state.research}\nSPEC: ${state.spec}\nDOC: ${state.doc}\nCHRON-A: ${state.chronicleA}\nCHRON-B: ${state.chronicleB}\n\nTotal: ${fullStream.length} bits`);
+        }
+
+        function randomizeChronicle() {
+            chronicleState.dev = Math.floor(Math.random() * 128);
+            chronicleState.research = Math.floor(Math.random() * 1024);
+            chronicleState.spec = Math.floor(Math.random() * 131072);
+            chronicleState.doc = Math.floor(Math.random() * 16);
+
+            const patterns = ['fibonacci', 'iota', 'theta', 'omega', 'sigma', 'delta', 'balanced'];
+            chronicleState.chronicleA = patterns[Math.floor(Math.random() * patterns.length)];
+            chronicleState.chronicleB = patterns[Math.floor(Math.random() * patterns.length)];
+
+            // Update UI
+            document.getElementById('devInput').value = chronicleState.dev;
+            document.getElementById('researchInput').value = chronicleState.research;
+            document.getElementById('specInput').value = chronicleState.spec;
+            document.getElementById('docInput').value = chronicleState.doc;
+            document.getElementById('chronicleAPattern').value = chronicleState.chronicleA;
+            document.getElementById('chronicleBPattern').value = chronicleState.chronicleB;
+
+            renderChronicle();
+        }
+
+        // Initial render
+        renderChronicle();
+    </script>
+</body>
+</html>

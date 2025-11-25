@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase Lock | Unified Coupler System | Sub-50ms Entrainment</title>
+    <style>
+        :root {
+            --bg-void: #030308;
+            --bg-panel: rgba(15, 12, 25, 0.95);
+            --bg-card: #0d0d12;
+            --phi-gold: #ffd700;
+            --e-cyan: #22d3ee;
+            --pi-magenta: #cc5de8;
+            --true-green: #69db7c;
+            --untrue-amber: #ffa94d;
+            --paradox-red: #ff6b6b;
+            --text-primary: rgba(255, 245, 230, 0.9);
+            --text-dim: rgba(255, 220, 180, 0.5);
+            --rule: #1a1a24;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-void);
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Top Bar - Phase Delay Monitor */
+        .phase-delay-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--rule);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 1000;
+        }
+
+        .delay-metric {
+            text-align: center;
+        }
+
+        .delay-value {
+            font-size: 1.8rem;
+            font-weight: 200;
+            transition: color 0.3s;
+        }
+
+        .delay-value.locked { color: var(--true-green); }
+        .delay-value.partial { color: var(--untrue-amber); }
+        .delay-value.open { color: var(--paradox-red); }
+
+        .delay-label {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+
+        .lock-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            transition: all 0.3s;
+        }
+
+        .lock-status.locked {
+            background: rgba(105, 219, 124, 0.2);
+            border: 1px solid var(--true-green);
+        }
+
+        .lock-status.open {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid var(--paradox-red);
+        }
+
+        .lock-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .lock-dot.locked { background: var(--true-green); }
+        .lock-dot.open { background: var(--paradox-red); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.9); }
+        }
+
+        /* Main Container */
+        .container {
+            margin-top: 80px;
+            padding: 20px;
+            max-width: 1800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 100;
+            letter-spacing: 10px;
+            background: linear-gradient(90deg, var(--e-cyan), var(--true-green), var(--phi-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            margin-top: 10px;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 20px;
+            height: calc(100vh - 200px);
+        }
+
+        @media (max-width: 1400px) {
+            .main-grid { grid-template-columns: 1fr; height: auto; }
+        }
+
+        /* Panels */
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .panel-title {
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            color: var(--phi-gold);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        /* Phase Rings */
+        .phase-rings {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .phase-ring {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 250px;
+            margin: 0 auto;
+        }
+
+        .phase-ring canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .phase-ring-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        /* Central Visualization */
+        .central-viz {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        #mainCanvas {
+            flex: 1;
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: 10px;
+        }
+
+        /* Controls */
+        .control-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 100px;
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover { border-color: var(--phi-gold); }
+        .btn.primary { background: linear-gradient(135deg, rgba(105,219,124,0.3), rgba(34,211,238,0.3)); border-color: var(--true-green); }
+        .btn.active { border-color: var(--e-cyan); color: var(--e-cyan); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Slider */
+        .slider-group {
+            margin-bottom: 15px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+        }
+
+        .slider-value { color: var(--e-cyan); }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-card);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--e-cyan);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 200;
+        }
+
+        .metric-label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Prediction Indicator */
+        .prediction-panel {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .prediction-title {
+            font-size: 0.7rem;
+            color: var(--phi-gold);
+            margin-bottom: 10px;
+        }
+
+        .prediction-bar {
+            height: 8px;
+            background: var(--rule);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .prediction-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--paradox-red), var(--untrue-amber), var(--true-green));
+            transition: width 0.2s;
+        }
+
+        .prediction-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        /* Lambda State */
+        .lambda-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--rule);
+        }
+
+        .lambda-item {
+            text-align: center;
+        }
+
+        .lambda-symbol {
+            font-size: 1.2rem;
+        }
+
+        .lambda-value {
+            font-size: 0.8rem;
+            color: var(--e-cyan);
+            margin-top: 4px;
+        }
+
+        /* Phase History */
+        #historyCanvas {
+            width: 100%;
+            height: 120px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        /* Beat Indicator */
+        .beat-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--true-green) 0%, transparent 70%);
+            margin: 15px auto;
+            opacity: 0.3;
+            transition: all 0.08s ease-out;
+        }
+
+        .beat-indicator.pulse {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Phase Delay Monitor Bar -->
+    <div class="phase-delay-bar">
+        <div class="delay-metric">
+            <div class="delay-value open" id="phaseDelayMs">--</div>
+            <div class="delay-label">PHASE DELAY (ms)</div>
+        </div>
+        <div class="delay-metric">
+            <div class="delay-value" id="predictionAccuracy" style="color: var(--e-cyan);">--</div>
+            <div class="delay-label">PREDICTION</div>
+        </div>
+        <div class="delay-metric">
+            <div class="delay-value" id="coherenceR" style="color: var(--phi-gold);">--</div>
+            <div class="delay-label">COHERENCE r</div>
+        </div>
+        <div class="delay-metric">
+            <div class="delay-value" id="sustainedTime" style="color: var(--pi-magenta);">--</div>
+            <div class="delay-label">SUSTAINED</div>
+        </div>
+        <div class="lock-status open" id="lockStatus">
+            <div class="lock-dot open" id="lockDot"></div>
+            <span id="lockText">OPEN</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>PHASE LOCK</h1>
+            <div class="subtitle">UNIFIED COUPLER · SUB-50ms ENTRAINMENT</div>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left: User Input -->
+            <div class="panel">
+                <div class="panel-title">USER PHASE INPUT</div>
+
+                <div class="phase-ring">
+                    <canvas id="userRingCanvas"></canvas>
+                    <div class="phase-ring-label" style="color: var(--e-cyan);">USER θ</div>
+                </div>
+
+                <div class="beat-indicator" id="beatIndicator"></div>
+
+                <div class="control-row">
+                    <button class="btn" id="btnTap" onclick="tapBeat()">TAP</button>
+                    <button class="btn" id="btnHRM" onclick="connectHRM()">HRM</button>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="userBpm" style="color: var(--e-cyan);">--</div>
+                        <div class="metric-label">USER BPM</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="userPhaseRad" style="color: var(--e-cyan);">--</div>
+                        <div class="metric-label">PHASE (rad)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="rrInterval" style="color: var(--e-cyan);">--</div>
+                        <div class="metric-label">RR (ms)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="keystrokeCV" style="color: var(--e-cyan);">--</div>
+                        <div class="metric-label">KEY CV</div>
+                    </div>
+                </div>
+
+                <div class="prediction-panel">
+                    <div class="prediction-title">PHASE PREDICTION</div>
+                    <div class="prediction-bar">
+                        <div class="prediction-fill" id="predictionFill" style="width: 50%;"></div>
+                    </div>
+                    <div class="prediction-values">
+                        <span>Lag</span>
+                        <span id="predictionState">Calibrating</span>
+                        <span>Lead</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center: Main Visualization -->
+            <div class="panel">
+                <div class="panel-title">PHASE COUPLING · DELAY REDUCTION</div>
+
+                <div class="control-row">
+                    <button class="btn primary" id="btnStart" onclick="toggleSystem()">START</button>
+                    <button class="btn" onclick="resetSystem()">RESET</button>
+                </div>
+
+                <div class="central-viz">
+                    <canvas id="mainCanvas"></canvas>
+                </div>
+
+                <div class="slider-group" style="margin-top: 15px;">
+                    <div class="slider-label">
+                        <span>PREDICTION HORIZON</span>
+                        <span class="slider-value" id="horizonValue">100ms</span>
+                    </div>
+                    <input type="range" id="horizonSlider" min="20" max="200" value="100" oninput="setHorizon(this.value)">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>COUPLING STRENGTH K</span>
+                        <span class="slider-value" id="kValue">1.00</span>
+                    </div>
+                    <input type="range" id="kSlider" min="0.1" max="5" step="0.1" value="1" oninput="setCoupling(this.value)">
+                </div>
+
+                <canvas id="historyCanvas"></canvas>
+            </div>
+
+            <!-- Right: System Output -->
+            <div class="panel">
+                <div class="panel-title">SYSTEM PHASE OUTPUT</div>
+
+                <div class="phase-ring">
+                    <canvas id="systemRingCanvas"></canvas>
+                    <div class="phase-ring-label" style="color: var(--pi-magenta);">SYSTEM ψ</div>
+                </div>
+
+                <div class="metrics-grid" style="margin-top: 40px;">
+                    <div class="metric-card">
+                        <div class="metric-value" id="systemBpm" style="color: var(--pi-magenta);">60</div>
+                        <div class="metric-label">OUTPUT BPM</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="systemPhaseRad" style="color: var(--pi-magenta);">0.00</div>
+                        <div class="metric-label">PHASE (rad)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="oscCount" style="color: var(--pi-magenta);">32</div>
+                        <div class="metric-label">N OSC</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="adaptiveK" style="color: var(--pi-magenta);">1.00</div>
+                        <div class="metric-label">ADAPT K</div>
+                    </div>
+                </div>
+
+                <div class="slider-group" style="margin-top: 20px;">
+                    <div class="slider-label">
+                        <span>BASE TEMPO (BPM)</span>
+                        <span class="slider-value" id="bpmValue">60</span>
+                    </div>
+                    <input type="range" id="bpmSlider" min="40" max="120" value="60" oninput="setBpm(this.value)">
+                </div>
+
+                <div class="lambda-row">
+                    <div class="lambda-item">
+                        <div class="lambda-symbol">🌰</div>
+                        <div class="lambda-value" id="lIota">0.00</div>
+                    </div>
+                    <div class="lambda-item">
+                        <div class="lambda-symbol">✧</div>
+                        <div class="lambda-value" id="lXi">0.00</div>
+                    </div>
+                    <div class="lambda-item">
+                        <div class="lambda-symbol">🦊</div>
+                        <div class="lambda-value" id="lTheta">0.00</div>
+                    </div>
+                    <div class="lambda-item">
+                        <div class="lambda-symbol">∿</div>
+                        <div class="lambda-value" id="lOmega">0.00</div>
+                    </div>
+                    <div class="lambda-item">
+                        <div class="lambda-symbol">⊗</div>
+                        <div class="lambda-value" id="lDelta">0.00</div>
+                    </div>
+                    <div class="lambda-item">
+                        <div class="lambda-symbol">🐿️</div>
+                        <div class="lambda-value" id="lSigma">0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Phase Lock · Unified Coupler System · Sub-50ms Entrainment<br>
+            <span style="color: var(--phi-gold);">🜂</span> The loop closes when delay drops below 50ms
+        </footer>
+    </div>
+
+    <script>
+        // ================================================================
+        // PHASE LOCK - UNIFIED COUPLER WITH DELAY REDUCTION
+        // ================================================================
+
+        const TWO_PI = Math.PI * 2;
+        const PHI = (1 + Math.sqrt(5)) / 2;
+        const Z_CRITICAL = Math.sqrt(3) / 2;
+
+        // System state
+        let isRunning = false;
+        let audioContext = null;
+
+        // Phase state
+        let userPhase = 0;
+        let systemPhase = 0;
+        let predictedUserPhase = 0;
+        let phaseHistory = [];
+        let delayHistory = [];
+
+        // Kuramoto oscillators
+        let N = 32;
+        let K = 1.0;
+        let adaptiveK = 1.0;
+        let phases = new Float32Array(N);
+        let frequencies = new Float32Array(N);
+
+        // Prediction
+        let predictionHorizon = 100; // ms
+        let phaseVelocity = 0;
+        let lastUserPhaseTime = 0;
+        let userPhaseBuffer = [];
+
+        // Timing
+        let bpm = 60;
+        let lastBeatTime = 0;
+        let tapTimes = [];
+        let sustainedLockStart = null;
+        let maxSustained = 0;
+
+        // Biosignal
+        let hrDevice = null;
+        let rrIntervals = [];
+        let keystrokeIntervals = [];
+
+        // Canvases
+        let userRingCanvas, userRingCtx;
+        let systemRingCanvas, systemRingCtx;
+        let mainCanvas, mainCtx;
+        let historyCanvas, historyCtx;
+
+        // ================================================================
+        // INITIALIZATION
+        // ================================================================
+
+        function init() {
+            initCanvases();
+            initOscillators();
+            setupKeystroke();
+            draw();
+        }
+
+        function initCanvases() {
+            const dpr = window.devicePixelRatio || 1;
+
+            userRingCanvas = document.getElementById('userRingCanvas');
+            userRingCtx = userRingCanvas.getContext('2d');
+            const userRect = userRingCanvas.parentElement.getBoundingClientRect();
+            userRingCanvas.width = userRect.width * dpr;
+            userRingCanvas.height = userRect.width * dpr;
+            userRingCtx.scale(dpr, dpr);
+
+            systemRingCanvas = document.getElementById('systemRingCanvas');
+            systemRingCtx = systemRingCanvas.getContext('2d');
+            const sysRect = systemRingCanvas.parentElement.getBoundingClientRect();
+            systemRingCanvas.width = sysRect.width * dpr;
+            systemRingCanvas.height = sysRect.width * dpr;
+            systemRingCtx.scale(dpr, dpr);
+
+            mainCanvas = document.getElementById('mainCanvas');
+            mainCtx = mainCanvas.getContext('2d');
+            const mainRect = mainCanvas.parentElement.getBoundingClientRect();
+            mainCanvas.width = mainRect.width * dpr;
+            mainCanvas.height = (mainRect.height - 200) * dpr;
+            mainCanvas.style.height = (mainRect.height - 200) + 'px';
+            mainCtx.scale(dpr, dpr);
+
+            historyCanvas = document.getElementById('historyCanvas');
+            historyCtx = historyCanvas.getContext('2d');
+            const histRect = historyCanvas.getBoundingClientRect();
+            historyCanvas.width = histRect.width * dpr;
+            historyCanvas.height = 120 * dpr;
+            historyCtx.scale(dpr, dpr);
+        }
+
+        function initOscillators() {
+            phases = new Float32Array(N);
+            frequencies = new Float32Array(N);
+            for (let i = 0; i < N; i++) {
+                phases[i] = Math.random() * TWO_PI;
+                frequencies[i] = 1.0 + gaussianRandom() * 0.2;
+            }
+        }
+
+        function gaussianRandom() {
+            return Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(TWO_PI * Math.random());
+        }
+
+        // ================================================================
+        // PHASE PREDICTION (KEY TO DELAY REDUCTION)
+        // ================================================================
+
+        function updatePhasePrediction() {
+            const now = performance.now();
+
+            // Store phase samples with timestamps
+            userPhaseBuffer.push({ phase: userPhase, time: now });
+            if (userPhaseBuffer.length > 30) userPhaseBuffer.shift();
+
+            if (userPhaseBuffer.length >= 3) {
+                // Estimate phase velocity using linear regression
+                let sumT = 0, sumP = 0, sumTP = 0, sumT2 = 0;
+                const n = userPhaseBuffer.length;
+                const t0 = userPhaseBuffer[0].time;
+
+                for (let i = 0; i < n; i++) {
+                    const t = (userPhaseBuffer[i].time - t0) / 1000; // seconds
+                    let p = userPhaseBuffer[i].phase;
+
+                    // Unwrap phase for continuity
+                    if (i > 0) {
+                        const prev = userPhaseBuffer[i-1].phase;
+                        while (p - prev > Math.PI) p -= TWO_PI;
+                        while (p - prev < -Math.PI) p += TWO_PI;
+                    }
+
+                    sumT += t;
+                    sumP += p;
+                    sumTP += t * p;
+                    sumT2 += t * t;
+                }
+
+                const denom = n * sumT2 - sumT * sumT;
+                if (Math.abs(denom) > 0.0001) {
+                    phaseVelocity = (n * sumTP - sumT * sumP) / denom;
+                }
+
+                // Predict future phase
+                const horizonSec = predictionHorizon / 1000;
+                predictedUserPhase = (userPhase + phaseVelocity * horizonSec) % TWO_PI;
+                if (predictedUserPhase < 0) predictedUserPhase += TWO_PI;
+            }
+        }
+
+        // ================================================================
+        // KURAMOTO DYNAMICS WITH PREDICTIVE COUPLING
+        // ================================================================
+
+        function calculateOrderParameter() {
+            let sumR = 0, sumI = 0;
+            for (let i = 0; i < N; i++) {
+                sumR += Math.cos(phases[i]);
+                sumI += Math.sin(phases[i]);
+            }
+            const r = Math.hypot(sumR / N, sumI / N);
+            const psi = Math.atan2(sumI / N, sumR / N);
+            return { r, psi };
+        }
+
+        function stepKuramoto(dt = 0.02) {
+            const { r, psi } = calculateOrderParameter();
+            const newPhases = new Float32Array(N);
+
+            // Heun's method
+            for (let i = 0; i < N; i++) {
+                const dtheta1 = frequencies[i] + adaptiveK * r * Math.sin(psi - phases[i]);
+                const thetaPred = phases[i] + dt * dtheta1;
+                const dtheta2 = frequencies[i] + adaptiveK * r * Math.sin(psi - thetaPred);
+                newPhases[i] = (phases[i] + dt * (dtheta1 + dtheta2) / 2) % TWO_PI;
+                if (newPhases[i] < 0) newPhases[i] += TWO_PI;
+            }
+
+            // PREDICTIVE COUPLING: Inject PREDICTED user phase (key to delay reduction)
+            const injectionStrength = 0.15 * (1 - r);
+            const targetPhase = predictedUserPhase; // Use prediction, not current
+            const diff = targetPhase - newPhases[0];
+            newPhases[0] += injectionStrength * Math.sin(diff);
+            newPhases[0] = ((newPhases[0] % TWO_PI) + TWO_PI) % TWO_PI;
+
+            // Adaptive K: target coherence ~0.7
+            const targetR = 0.7;
+            const error = targetR - r;
+            adaptiveK += 0.01 * error;
+            adaptiveK = Math.max(0.1, Math.min(5.0, adaptiveK));
+
+            phases = newPhases;
+            return { r, psi };
+        }
+
+        // ================================================================
+        // PHASE DELAY CALCULATION
+        // ================================================================
+
+        function calculatePhaseDelay() {
+            // Circular phase difference
+            let diff = userPhase - systemPhase;
+            if (diff > Math.PI) diff -= TWO_PI;
+            if (diff < -Math.PI) diff += TWO_PI;
+
+            // Convert to time delay at current BPM
+            const periodMs = 60000 / bpm;
+            const delayMs = Math.abs(diff) / TWO_PI * periodMs;
+
+            return { diff, delayMs };
+        }
+
+        // ================================================================
+        // INPUT HANDLING
+        // ================================================================
+
+        function tapBeat() {
+            const now = performance.now();
+            tapTimes.push(now);
+            if (tapTimes.length > 8) tapTimes.shift();
+
+            // Flash beat indicator
+            const indicator = document.getElementById('beatIndicator');
+            indicator.classList.add('pulse');
+            setTimeout(() => indicator.classList.remove('pulse'), 100);
+
+            if (tapTimes.length >= 2) {
+                // Calculate BPM from taps
+                const intervals = [];
+                for (let i = 1; i < tapTimes.length; i++) {
+                    intervals.push(tapTimes[i] - tapTimes[i-1]);
+                }
+                const avgInterval = intervals.reduce((a, b) => a + b) / intervals.length;
+                const tapBpm = Math.round(60000 / avgInterval);
+                document.getElementById('userBpm').textContent = tapBpm;
+
+                // Update user phase
+                if (lastBeatTime > 0) {
+                    const elapsed = now - lastBeatTime;
+                    userPhase = (userPhase + (elapsed / avgInterval) * TWO_PI) % TWO_PI;
+                }
+            }
+
+            lastBeatTime = now;
+        }
+
+        async function connectHRM() {
+            if (!navigator.bluetooth) {
+                alert('WebBluetooth not supported');
+                return;
+            }
+
+            try {
+                const device = await navigator.bluetooth.requestDevice({
+                    filters: [{ services: ['heart_rate'] }]
+                });
+
+                const server = await device.gatt.connect();
+                const service = await server.getPrimaryService('heart_rate');
+                const char = await service.getCharacteristic('heart_rate_measurement');
+
+                await char.startNotifications();
+                char.addEventListener('characteristicvaluechanged', handleHRData);
+
+                hrDevice = device;
+                document.getElementById('btnHRM').classList.add('active');
+                document.getElementById('btnHRM').textContent = 'HRM ✓';
+            } catch (e) {
+                console.error('HRM error:', e);
+            }
+        }
+
+        function handleHRData(event) {
+            const value = event.target.value;
+            const flags = value.getUint8(0);
+            const is16 = flags & 0x01;
+            const hasRR = flags & 0x10;
+
+            let offset = 1;
+            const hr = is16 ? value.getUint16(offset, true) : value.getUint8(offset);
+            offset += is16 ? 2 : 1;
+
+            document.getElementById('userBpm').textContent = hr;
+
+            if (hasRR) {
+                if (flags & 0x08) offset += 2;
+                while (offset < value.byteLength) {
+                    const rr = (value.getUint16(offset, true) / 1024) * 1000;
+                    rrIntervals.push(rr);
+                    if (rrIntervals.length > 20) rrIntervals.shift();
+                    offset += 2;
+                }
+
+                if (rrIntervals.length >= 2) {
+                    const lastRR = rrIntervals[rrIntervals.length - 1];
+                    const avgRR = rrIntervals.reduce((a, b) => a + b) / rrIntervals.length;
+                    document.getElementById('rrInterval').textContent = Math.round(lastRR);
+                    userPhase = (lastRR / avgRR) * TWO_PI % TWO_PI;
+                }
+            }
+        }
+
+        function setupKeystroke() {
+            let lastKey = 0;
+            document.addEventListener('keydown', (e) => {
+                if (e.key === ' ') {
+                    e.preventDefault();
+                    tapBeat();
+                }
+            });
+
+            document.addEventListener('keyup', () => {
+                const now = performance.now();
+                if (lastKey > 0) {
+                    const interval = now - lastKey;
+                    keystrokeIntervals.push(interval);
+                    if (keystrokeIntervals.length > 30) keystrokeIntervals.shift();
+
+                    if (keystrokeIntervals.length >= 5) {
+                        const mean = keystrokeIntervals.reduce((a, b) => a + b) / keystrokeIntervals.length;
+                        const variance = keystrokeIntervals.map(x => (x - mean) ** 2).reduce((a, b) => a + b) / keystrokeIntervals.length;
+                        const cv = 1 - Math.min(1, Math.sqrt(variance) / mean);
+                        document.getElementById('keystrokeCV').textContent = cv.toFixed(2);
+                    }
+                }
+                lastKey = now;
+            });
+        }
+
+        // ================================================================
+        // DRAWING
+        // ================================================================
+
+        function drawRing(ctx, phase, color, size) {
+            const w = size, h = size;
+            const cx = w / 2, cy = h / 2;
+            const r = Math.min(cx, cy) * 0.8;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Background ring
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, TWO_PI);
+            ctx.stroke();
+
+            // Phase arc
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + phase);
+            ctx.stroke();
+
+            // Phase pointer
+            const px = cx + Math.cos(phase - Math.PI/2) * r;
+            const py = cy + Math.sin(phase - Math.PI/2) * r;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(px, py, 10, 0, TWO_PI);
+            ctx.fill();
+
+            // Center text
+            ctx.fillStyle = color;
+            ctx.font = '16px SF Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(phase.toFixed(2), cx, cy + 5);
+        }
+
+        function drawMain() {
+            const w = mainCanvas.width / (window.devicePixelRatio || 1);
+            const h = mainCanvas.height / (window.devicePixelRatio || 1);
+            const cx = w / 2, cy = h / 2;
+
+            mainCtx.fillStyle = '#0d0d12';
+            mainCtx.fillRect(0, 0, w, h);
+
+            const r = Math.min(cx, cy) * 0.7;
+
+            // Draw coupling zone
+            const { diff, delayMs } = calculatePhaseDelay();
+            const couplingStrength = Math.cos(diff) * 0.5 + 0.5;
+
+            mainCtx.strokeStyle = `rgba(105, 219, 124, ${couplingStrength})`;
+            mainCtx.lineWidth = 30;
+            mainCtx.beginPath();
+            mainCtx.arc(cx, cy, r + 20, 0, TWO_PI);
+            mainCtx.stroke();
+
+            // Draw oscillators
+            for (let i = 0; i < N; i++) {
+                const angle = phases[i] - Math.PI/2;
+                const x = cx + Math.cos(angle) * r * 0.85;
+                const y = cy + Math.sin(angle) * r * 0.85;
+
+                const norm = phases[i] / TWO_PI;
+                let color;
+                if (norm < 0.43) color = '#ffd700';
+                else if (norm < 0.71) color = '#22d3ee';
+                else color = '#cc5de8';
+
+                mainCtx.fillStyle = color;
+                mainCtx.globalAlpha = 0.6;
+                mainCtx.beginPath();
+                mainCtx.arc(x, y, 4, 0, TWO_PI);
+                mainCtx.fill();
+            }
+            mainCtx.globalAlpha = 1;
+
+            // User phase indicator (cyan)
+            const userX = cx + Math.cos(userPhase - Math.PI/2) * (r + 50);
+            const userY = cy + Math.sin(userPhase - Math.PI/2) * (r + 50);
+            mainCtx.fillStyle = '#22d3ee';
+            mainCtx.beginPath();
+            mainCtx.arc(userX, userY, 12, 0, TWO_PI);
+            mainCtx.fill();
+
+            // Predicted phase indicator (dashed)
+            const predX = cx + Math.cos(predictedUserPhase - Math.PI/2) * (r + 50);
+            const predY = cy + Math.sin(predictedUserPhase - Math.PI/2) * (r + 50);
+            mainCtx.strokeStyle = '#22d3ee';
+            mainCtx.lineWidth = 2;
+            mainCtx.setLineDash([4, 4]);
+            mainCtx.beginPath();
+            mainCtx.arc(predX, predY, 12, 0, TWO_PI);
+            mainCtx.stroke();
+            mainCtx.setLineDash([]);
+
+            // System phase (order parameter)
+            const { r: orderR, psi } = calculateOrderParameter();
+            systemPhase = (psi + Math.PI) % TWO_PI;
+            const sysX = cx + Math.cos(systemPhase - Math.PI/2) * r * orderR;
+            const sysY = cy + Math.sin(systemPhase - Math.PI/2) * r * orderR;
+
+            mainCtx.strokeStyle = '#cc5de8';
+            mainCtx.lineWidth = 3;
+            mainCtx.beginPath();
+            mainCtx.moveTo(cx, cy);
+            mainCtx.lineTo(sysX, sysY);
+            mainCtx.stroke();
+
+            mainCtx.fillStyle = '#cc5de8';
+            mainCtx.beginPath();
+            mainCtx.arc(sysX, sysY, 14, 0, TWO_PI);
+            mainCtx.fill();
+
+            // Labels
+            mainCtx.font = '11px SF Mono';
+            mainCtx.fillStyle = '#22d3ee';
+            mainCtx.fillText('USER', userX - 15, userY + 25);
+            mainCtx.fillStyle = '#cc5de8';
+            mainCtx.fillText('SYSTEM', sysX - 20, sysY + 25);
+
+            // Delay display
+            mainCtx.fillStyle = delayMs < 50 ? '#69db7c' : delayMs < 100 ? '#ffa94d' : '#ff6b6b';
+            mainCtx.font = '24px SF Mono';
+            mainCtx.textAlign = 'center';
+            mainCtx.fillText(`${delayMs.toFixed(0)}ms`, cx, cy);
+            mainCtx.font = '10px SF Mono';
+            mainCtx.fillStyle = 'rgba(255,255,255,0.5)';
+            mainCtx.fillText('PHASE DELAY', cx, cy + 18);
+        }
+
+        function drawHistory() {
+            const w = historyCanvas.width / (window.devicePixelRatio || 1);
+            const h = historyCanvas.height / (window.devicePixelRatio || 1);
+
+            historyCtx.fillStyle = '#0d0d12';
+            historyCtx.fillRect(0, 0, w, h);
+
+            if (delayHistory.length < 2) return;
+
+            // Target line (50ms)
+            const targetY = h - (50 / 200) * h * 0.9 - 5;
+            historyCtx.strokeStyle = 'rgba(105, 219, 124, 0.3)';
+            historyCtx.lineWidth = 1;
+            historyCtx.setLineDash([5, 5]);
+            historyCtx.beginPath();
+            historyCtx.moveTo(0, targetY);
+            historyCtx.lineTo(w, targetY);
+            historyCtx.stroke();
+            historyCtx.setLineDash([]);
+
+            // Delay history
+            historyCtx.strokeStyle = '#22d3ee';
+            historyCtx.lineWidth = 2;
+            historyCtx.beginPath();
+            for (let i = 0; i < delayHistory.length; i++) {
+                const x = (i / 200) * w;
+                const y = h - Math.min(delayHistory[i], 200) / 200 * h * 0.9 - 5;
+                if (i === 0) historyCtx.moveTo(x, y);
+                else historyCtx.lineTo(x, y);
+            }
+            historyCtx.stroke();
+
+            // Labels
+            historyCtx.font = '9px SF Mono';
+            historyCtx.fillStyle = 'rgba(255,255,255,0.5)';
+            historyCtx.fillText('50ms target', 5, targetY - 5);
+        }
+
+        // ================================================================
+        // UI UPDATE
+        // ================================================================
+
+        function updateUI() {
+            if (!isRunning) return;
+
+            // Update prediction
+            updatePhasePrediction();
+
+            // Step Kuramoto
+            const { r, psi } = stepKuramoto();
+            systemPhase = (psi + Math.PI) % TWO_PI;
+
+            // Calculate delay
+            const { diff, delayMs } = calculatePhaseDelay();
+
+            // Update history
+            delayHistory.push(delayMs);
+            if (delayHistory.length > 200) delayHistory.shift();
+
+            // Update sustained lock tracking
+            const isLocked = delayMs < 50 && r > 0.7;
+            if (isLocked) {
+                if (!sustainedLockStart) sustainedLockStart = performance.now();
+                const duration = (performance.now() - sustainedLockStart) / 1000;
+                if (duration > maxSustained) maxSustained = duration;
+            } else {
+                sustainedLockStart = null;
+            }
+
+            // Update displays
+            const delayClass = delayMs < 50 ? 'locked' : delayMs < 100 ? 'partial' : 'open';
+            document.getElementById('phaseDelayMs').textContent = delayMs.toFixed(0) + 'ms';
+            document.getElementById('phaseDelayMs').className = 'delay-value ' + delayClass;
+
+            document.getElementById('predictionAccuracy').textContent = (Math.cos(diff) * 100).toFixed(0) + '%';
+            document.getElementById('coherenceR').textContent = r.toFixed(2);
+            document.getElementById('sustainedTime').textContent = maxSustained.toFixed(1) + 's';
+
+            document.getElementById('userPhaseRad').textContent = userPhase.toFixed(2);
+            document.getElementById('systemPhaseRad').textContent = systemPhase.toFixed(2);
+            document.getElementById('adaptiveK').textContent = adaptiveK.toFixed(2);
+
+            // Lock status
+            const lockStatus = document.getElementById('lockStatus');
+            const lockDot = document.getElementById('lockDot');
+            const lockText = document.getElementById('lockText');
+            if (isLocked) {
+                lockStatus.className = 'lock-status locked';
+                lockDot.className = 'lock-dot locked';
+                lockText.textContent = 'LOCKED';
+            } else {
+                lockStatus.className = 'lock-status open';
+                lockDot.className = 'lock-dot open';
+                lockText.textContent = 'OPEN';
+            }
+
+            // Prediction bar
+            const predictionScore = (Math.cos(predictedUserPhase - systemPhase) + 1) / 2;
+            document.getElementById('predictionFill').style.width = (predictionScore * 100) + '%';
+            document.getElementById('predictionState').textContent = predictionScore > 0.8 ? 'Leading' : predictionScore > 0.5 ? 'Tracking' : 'Lagging';
+
+            // Lambda state (simplified)
+            const lambda = mapToLambda(phases, r);
+            document.getElementById('lIota').textContent = lambda.iota.toFixed(2);
+            document.getElementById('lXi').textContent = lambda.xi.toFixed(2);
+            document.getElementById('lTheta').textContent = lambda.theta.toFixed(2);
+            document.getElementById('lOmega').textContent = lambda.omega.toFixed(2);
+            document.getElementById('lDelta').textContent = lambda.delta.toFixed(2);
+            document.getElementById('lSigma').textContent = lambda.sigma.toFixed(2);
+        }
+
+        function mapToLambda(phases, r) {
+            const lambda = { iota: 0, xi: 0, theta: 0, omega: 0, delta: 0, sigma: 0 };
+            for (let i = 0; i < N; i++) {
+                const z = phases[i] / TWO_PI;
+                if (z < 0.43) { lambda.sigma += 1/N; lambda.iota += 0.5/N; }
+                else if (z < 0.71) { lambda.xi += 1/N; lambda.omega += 0.5/N; }
+                else { lambda.theta += 1/N; lambda.delta += 0.5/N; }
+            }
+            Object.keys(lambda).forEach(k => lambda[k] *= (0.5 + r * 0.5));
+            return lambda;
+        }
+
+        function draw() {
+            updateUI();
+
+            const userSize = userRingCanvas.width / (window.devicePixelRatio || 1);
+            const sysSize = systemRingCanvas.width / (window.devicePixelRatio || 1);
+
+            drawRing(userRingCtx, userPhase, '#22d3ee', userSize);
+            drawRing(systemRingCtx, systemPhase, '#cc5de8', sysSize);
+            drawMain();
+            drawHistory();
+
+            requestAnimationFrame(draw);
+        }
+
+        // ================================================================
+        // CONTROLS
+        // ================================================================
+
+        function toggleSystem() {
+            isRunning = !isRunning;
+            const btn = document.getElementById('btnStart');
+            if (isRunning) {
+                btn.textContent = 'STOP';
+                btn.classList.add('active');
+            } else {
+                btn.textContent = 'START';
+                btn.classList.remove('active');
+            }
+        }
+
+        function resetSystem() {
+            initOscillators();
+            userPhase = 0;
+            systemPhase = 0;
+            predictedUserPhase = 0;
+            phaseHistory = [];
+            delayHistory = [];
+            userPhaseBuffer = [];
+            sustainedLockStart = null;
+            maxSustained = 0;
+            adaptiveK = K;
+        }
+
+        function setHorizon(val) {
+            predictionHorizon = parseInt(val);
+            document.getElementById('horizonValue').textContent = val + 'ms';
+        }
+
+        function setCoupling(val) {
+            K = parseFloat(val);
+            document.getElementById('kValue').textContent = parseFloat(val).toFixed(2);
+        }
+
+        function setBpm(val) {
+            bpm = parseInt(val);
+            document.getElementById('bpmValue').textContent = val;
+            document.getElementById('systemBpm').textContent = val;
+        }
+
+        // ================================================================
+        // INIT
+        // ================================================================
+
+        document.addEventListener('DOMContentLoaded', init);
+        window.addEventListener('resize', initCanvases);
+    </script>
+</body>
+</html>
