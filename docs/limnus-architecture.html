@@ -809,6 +809,26 @@
             <span class="dynamics-bar" id="k-indicator" style="letter-spacing: 2px;">· · ·</span>
             <span class="dynamics-value" id="k-val">NO</span>
         </div>
+        <div class="dynamics-row" style="margin-top:12px; border-top: 1px solid rgba(255, 100, 100, 0.3); padding-top:10px;">
+            <span class="dynamics-label" style="color: #ff6b6b;">R μ_E</span>
+            <span class="dynamics-bar" id="mrp-r-bar" style="color: #ff6b6b;">░░░░░░░░░░</span>
+            <span class="dynamics-value" id="mrp-r-val" style="color: #ff6b6b;">0.00</span>
+        </div>
+        <div class="dynamics-row">
+            <span class="dynamics-label" style="color: #69db7c;">G μ_R</span>
+            <span class="dynamics-bar" id="mrp-g-bar" style="color: #69db7c;">░░░░░░░░░░</span>
+            <span class="dynamics-value" id="mrp-g-val" style="color: #69db7c;">0.00</span>
+        </div>
+        <div class="dynamics-row">
+            <span class="dynamics-label" style="color: #4dabf7;">B ECC</span>
+            <span class="dynamics-bar" id="mrp-b-bar" style="color: #4dabf7;">░░░░░░░░░░</span>
+            <span class="dynamics-value" id="mrp-b-val" style="color: #4dabf7;">0.00</span>
+        </div>
+        <div class="dynamics-row">
+            <span class="dynamics-label" id="parity-label" style="color: rgba(150,130,110,0.6);">PARITY</span>
+            <span class="dynamics-bar" id="parity-indicator" style="letter-spacing: 2px;">· · ·</span>
+            <span class="dynamics-value" id="parity-val">—</span>
+        </div>
     </div>
 
     <!-- Helix State -->
@@ -956,6 +976,21 @@
             energy: 0,             // Field energy
             consciousness_level: 0, // 0-2 scale
 
+            // ============================================================
+            // MRP CHANNEL GRADIENTS
+            // R = μ_E (Existence/Energy) - primary field magnitude
+            // G = μ_R (Reference/Relational) - connections/context
+            // B = ECC (Error Correction) - stability/coherence
+            // ============================================================
+            mrp: {
+                R: { gradient: 0, intensity: 0, crc: 0 },  // μ_E channel
+                G: { gradient: 0, intensity: 0, crc: 0 },  // μ_R channel
+                B: { gradient: 0, intensity: 0, crc: 0 },  // ECC channel
+                parity: 0,           // Cross-channel XOR parity
+                parity_ok: false,    // Parity validation
+                sha256_sim: 0,       // Simulated integrity hash
+            },
+
             get r() { return this.mu - SACRED.mu_P; },  // Control parameter
 
             // Update from prism/cage field state
@@ -965,9 +1000,14 @@
                 let energySum = 0;
                 const N = points.length;
 
+                // MRP channel accumulators
+                let R_sum = 0, G_sum = 0, B_sum = 0;
+                let R_grad = 0, G_grad = 0, B_grad = 0;
+
                 for (let i = 0; i < N; i++) {
                     const p = points[i];
                     const next = points[(i + 1) % N];
+                    const prev = points[(i - 1 + N) % N];
 
                     // Discrete curl: ∂Jy/∂x - ∂Jx/∂y
                     const dx = next.x - p.x;
@@ -979,8 +1019,70 @@
                     curlSum += (dx * vy - dy * vx) * 0.001;
 
                     // Energy: |J|²
-                    energySum += vx * vx + vy * vy;
+                    const v2 = vx * vx + vy * vy;
+                    energySum += v2;
+
+                    // ========================================
+                    // MRP CHANNEL CALCULATIONS
+                    // ========================================
+
+                    // R channel (μ_E): Primary energy/existence
+                    // Magnitude of field at point
+                    const mu_E = Math.sqrt(v2 + (p.brightness || 0.5));
+                    R_sum += mu_E;
+
+                    // R gradient: rate of change of energy
+                    const prev_v2 = (prev.vx || 0)**2 + (prev.vy || 0)**2;
+                    R_grad += Math.abs(v2 - prev_v2);
+
+                    // G channel (μ_R): Relational/reference metadata
+                    // Distance to neighbors (connection strength)
+                    const d_next = Math.sqrt(dx * dx + dy * dy);
+                    const d_prev = Math.sqrt((p.x - prev.x)**2 + (p.y - prev.y)**2);
+                    const mu_R = 1 / (1 + (d_next + d_prev) * 0.01);
+                    G_sum += mu_R;
+
+                    // G gradient: rate of change of connectivity
+                    G_grad += Math.abs(d_next - d_prev) * 0.01;
+
+                    // B channel (ECC): Error correction / stability
+                    // Based on coherence and damping
+                    const stability = p.released ? 0.2 : (1 - Math.abs(vx) - Math.abs(vy)) * 0.5 + 0.5;
+                    B_sum += Math.max(0, Math.min(1, stability));
+
+                    // B gradient: instability detection
+                    B_grad += p.released ? 0.5 : Math.abs(vx * vy) * 0.1;
+
+                    // Store per-point MRP values for visualization
+                    p.mrp_R = mu_E;
+                    p.mrp_G = mu_R;
+                    p.mrp_B = stability;
                 }
+
+                // Normalize MRP channels
+                this.mrp.R.intensity = R_sum / N;
+                this.mrp.G.intensity = G_sum / N;
+                this.mrp.B.intensity = B_sum / N;
+
+                this.mrp.R.gradient = Math.min(1, R_grad / N);
+                this.mrp.G.gradient = Math.min(1, G_grad / N);
+                this.mrp.B.gradient = Math.min(1, B_grad / N);
+
+                // CRC32 simulation (simple hash based on channel values)
+                this.mrp.R.crc = Math.floor(this.mrp.R.intensity * 255) ^ Math.floor(this.mrp.R.gradient * 255);
+                this.mrp.G.crc = Math.floor(this.mrp.G.intensity * 255) ^ Math.floor(this.mrp.G.gradient * 255);
+                this.mrp.B.crc = Math.floor(this.mrp.B.intensity * 255) ^ Math.floor(this.mrp.B.gradient * 255);
+
+                // Cross-channel XOR parity: P[i] = R[i] XOR G[i]
+                this.mrp.parity = (this.mrp.R.crc ^ this.mrp.G.crc) / 255;
+
+                // Parity validation: all channels in harmony when parity is low
+                this.mrp.parity_ok = this.mrp.parity < 0.3 && this.mrp.B.intensity > 0.6;
+
+                // Simulated SHA-256 integrity (normalized 0-1)
+                this.mrp.sha256_sim = (this.mrp.R.intensity * 0.4 +
+                                       this.mrp.G.intensity * 0.35 +
+                                       this.mrp.B.intensity * 0.25);
 
                 // Q_κ = (1/2π) ∫ curl(J) dA
                 this.curl_sum = curlSum;
@@ -992,6 +1094,24 @@
 
                 // Dynamic μ based on z-height
                 this.mu = SACRED.mu_P + (globalZ * 0.4);
+            },
+
+            // Get MRP-enhanced color for a point
+            getMRPColor(p, baseColor) {
+                if (!showMuField) return baseColor;
+
+                const r = Math.min(255, Math.floor((p.mrp_R || 0.5) * 255));
+                const g = Math.min(255, Math.floor((p.mrp_G || 0.5) * 255));
+                const b = Math.min(255, Math.floor((p.mrp_B || 0.5) * 200 + 55));
+
+                // Blend with base color based on gradient strength
+                const blend = (this.mrp.R.gradient + this.mrp.G.gradient) / 2;
+                return `rgba(${r}, ${g}, ${b}, ${0.6 + blend * 0.4})`;
+            },
+
+            // Get gradient strength for visual effects
+            getGradientStrength() {
+                return (this.mrp.R.gradient + this.mrp.G.gradient + this.mrp.B.gradient) / 3;
             },
 
             // Klein-Gordon effective mass²
@@ -2076,6 +2196,49 @@
                 ctx.fillRect(0, 0, W, H);
             }
 
+            // ========================================
+            // MRP PARITY VALIDATION GLOW
+            // When all channels are in harmony, emit a stabilizing field
+            // ========================================
+            if (showMuField && muField.mrp.parity_ok) {
+                // Tricolor parity glow (R+G+B in harmony)
+                const parityGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 1.5);
+                const parityIntensity = muField.mrp.sha256_sim * 0.15;
+
+                // RGB channel harmony visualization
+                parityGlow.addColorStop(0, `rgba(100, 255, 150, ${parityIntensity * 1.2})`);  // Green center (parity OK)
+                parityGlow.addColorStop(0.3, `rgba(${Math.floor(muField.mrp.R.intensity * 200)}, ${Math.floor(muField.mrp.G.intensity * 200)}, ${Math.floor(muField.mrp.B.intensity * 200)}, ${parityIntensity})`);
+                parityGlow.addColorStop(0.6, `rgba(150, 200, 255, ${parityIntensity * 0.5})`);  // Blue stability ring
+                parityGlow.addColorStop(1, 'transparent');
+
+                ctx.fillStyle = parityGlow;
+                ctx.fillRect(0, 0, W, H);
+            }
+
+            // MRP Gradient strength visual - subtle RGB channel indicator rings
+            if (showMuField && muField.getGradientStrength() > 0.05) {
+                const gradStrength = muField.getGradientStrength();
+
+                // R channel (energy) - inner ring
+                ctx.strokeStyle = `rgba(255, 100, 100, ${muField.mrp.R.gradient * 0.3})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(CX, CY, R * 0.3, 0, TAU);
+                ctx.stroke();
+
+                // G channel (relational) - middle ring
+                ctx.strokeStyle = `rgba(100, 255, 100, ${muField.mrp.G.gradient * 0.3})`;
+                ctx.beginPath();
+                ctx.arc(CX, CY, R * 0.5, 0, TAU);
+                ctx.stroke();
+
+                // B channel (stability) - outer ring
+                ctx.strokeStyle = `rgba(100, 150, 255, ${muField.mrp.B.gradient * 0.3})`;
+                ctx.beginPath();
+                ctx.arc(CX, CY, R * 0.7, 0, TAU);
+                ctx.stroke();
+            }
+
             // Draw connections (skip if both points released)
             let connCount = 0;
             for (const conn of generateConnections()) {
@@ -2091,34 +2254,58 @@
                 // Fade connections based on release coherence
                 const coherenceFade = Math.min(1, releaseCoherence * 1.5);
 
+                // MRP-enhanced connection coloring
+                const mrpBlend = showMuField ? muField.getGradientStrength() : 0;
+                const mrpR = showMuField ? Math.floor(muField.mrp.R.intensity * 255) : 0;
+                const mrpG = showMuField ? Math.floor(muField.mrp.G.intensity * 255) : 0;
+                const mrpB = showMuField ? Math.floor(muField.mrp.B.intensity * 200) : 0;
+
                 switch (conn.type) {
                     case 'prism_ring':
                         alpha = (0.08 + globalZ * 0.12) * coherenceFade;
-                        color = `rgba(255, 200, 150, ${alpha})`;
+                        // Blend with R channel (energy)
+                        color = mrpBlend > 0.1
+                            ? `rgba(${Math.min(255, 200 + mrpR * 0.2)}, ${150 + mrpG * 0.3}, ${100 + mrpB * 0.2}, ${alpha * (1 + mrpBlend)})`
+                            : `rgba(255, 200, 150, ${alpha})`;
                         break;
                     case 'prism_spine':
                         alpha = (0.06 + globalZ * 0.15) * coherenceFade;
-                        color = `rgba(255, 220, 180, ${alpha})`;
+                        color = mrpBlend > 0.1
+                            ? `rgba(${Math.min(255, 180 + mrpR * 0.3)}, ${200 + mrpG * 0.2}, ${150 + mrpB * 0.2}, ${alpha * (1 + mrpBlend)})`
+                            : `rgba(255, 220, 180, ${alpha})`;
                         break;
                     case 'prism_diagonal':
                         alpha = (0.03 + globalZ * 0.08) * coherenceFade;
-                        color = `rgba(255, 180, 120, ${alpha})`;
+                        color = mrpBlend > 0.1
+                            ? `rgba(${Math.min(255, 180 + mrpR * 0.3)}, ${150 + mrpG * 0.2}, ${100 + mrpB * 0.15}, ${alpha * (1 + mrpBlend)})`
+                            : `rgba(255, 180, 120, ${alpha})`;
                         break;
                     case 'cage_ring':
                         alpha = (0.1 + cascade * 0.15) * coherenceFade;
-                        color = `rgba(77, 171, 247, ${alpha})`;
+                        // Blend with B channel (stability/ECC)
+                        color = mrpBlend > 0.1
+                            ? `rgba(${60 + mrpR * 0.1}, ${150 + mrpG * 0.3}, ${Math.min(255, 200 + mrpB * 0.2)}, ${alpha * (1 + mrpBlend)})`
+                            : `rgba(77, 171, 247, ${alpha})`;
                         break;
                     case 'cage_strut':
                         alpha = (0.08 + cascade * 0.12) * coherenceFade;
-                        color = `rgba(100, 180, 255, ${alpha})`;
+                        color = mrpBlend > 0.1
+                            ? `rgba(${80 + mrpR * 0.1}, ${160 + mrpG * 0.25}, ${Math.min(255, 220 + mrpB * 0.15)}, ${alpha * (1 + mrpBlend)})`
+                            : `rgba(100, 180, 255, ${alpha})`;
                         break;
                     case 'cage_vertex':
                         alpha = (0.12 + cascade * 0.18) * coherenceFade;
-                        color = `rgba(204, 93, 232, ${alpha})`;
+                        // G channel affects relational vertex connections
+                        color = mrpBlend > 0.1
+                            ? `rgba(${180 + mrpR * 0.2}, ${80 + mrpG * 0.4}, ${Math.min(255, 200 + mrpB * 0.2)}, ${alpha * (1 + mrpBlend)})`
+                            : `rgba(204, 93, 232, ${alpha})`;
                         break;
                     case 'bridge':
                         alpha = (globalZ - 0.6) * 0.4 * coherenceFade;
-                        color = `rgba(255, 215, 0, ${alpha})`;
+                        // Parity-ok connections glow gold-green
+                        color = (showMuField && muField.mrp.parity_ok)
+                            ? `rgba(180, 255, 100, ${alpha * 1.5})`
+                            : `rgba(255, 215, 0, ${alpha})`;
                         break;
                     default:
                         alpha = 0.05 * coherenceFade;
@@ -2620,6 +2807,46 @@
                 kVal.textContent = 'NO';
                 kVal.style.color = 'var(--text-dim)';
             }
+
+            // ========================================
+            // MRP CHANNEL DISPLAY
+            // ========================================
+
+            // R channel (μ_E) - red energy channel
+            const rFilled = Math.round(muField.mrp.R.intensity * 10);
+            document.getElementById('mrp-r-bar').textContent = '█'.repeat(rFilled) + '░'.repeat(10 - rFilled);
+            document.getElementById('mrp-r-val').textContent = muField.mrp.R.gradient.toFixed(2);
+
+            // G channel (μ_R) - green relational channel
+            const gFilled = Math.round(muField.mrp.G.intensity * 10);
+            document.getElementById('mrp-g-bar').textContent = '█'.repeat(gFilled) + '░'.repeat(10 - gFilled);
+            document.getElementById('mrp-g-val').textContent = muField.mrp.G.gradient.toFixed(2);
+
+            // B channel (ECC) - blue stability channel
+            const bFilled = Math.round(muField.mrp.B.intensity * 10);
+            document.getElementById('mrp-b-bar').textContent = '█'.repeat(bFilled) + '░'.repeat(10 - bFilled);
+            document.getElementById('mrp-b-val').textContent = muField.mrp.B.gradient.toFixed(2);
+
+            // Parity indicator
+            const parityLabel = document.getElementById('parity-label');
+            const parityIndicator = document.getElementById('parity-indicator');
+            const parityVal = document.getElementById('parity-val');
+
+            if (muField.mrp.parity_ok) {
+                parityLabel.style.color = '#69db7c';
+                parityIndicator.textContent = '✓ ✓ ✓';
+                parityIndicator.style.color = '#69db7c';
+                parityIndicator.style.textShadow = '0 0 10px rgba(105, 219, 124, 0.8)';
+                parityVal.textContent = 'OK';
+                parityVal.style.color = '#69db7c';
+            } else {
+                parityLabel.style.color = 'rgba(150,130,110,0.6)';
+                parityIndicator.textContent = '× × ×';
+                parityIndicator.style.color = '#ff6b6b';
+                parityIndicator.style.textShadow = 'none';
+                parityVal.textContent = muField.mrp.parity.toFixed(2);
+                parityVal.style.color = '#ff6b6b';
+            }
         }
 
         function getScaleName(scale) {
@@ -2858,6 +3085,14 @@
         console.log('   K_threshold = φ⁻¹ ≈ ' + SACRED.K_threshold.toFixed(10));
         console.log('   Q_min = ' + SACRED.Q_min.toFixed(10));
         console.log('   K-formation: consciousness emerges when τ_K > K_threshold');
+        console.log('');
+        console.log('📡 MRP CHANNEL GRADIENTS integrated');
+        console.log('   R channel (μ_E): Energy/Existence - primary field magnitude');
+        console.log('   G channel (μ_R): Relational/Reference - connection metadata');
+        console.log('   B channel (ECC): Error Correction - stability/coherence');
+        console.log('   Cross-channel parity: P[i] = R[i] XOR G[i]');
+        console.log('   Parity OK: low parity + high B stability = channel harmony');
+        console.log('   Visual: RGB rings show gradient strength, green glow = parity OK');
     </script>
 </body>
 </html>
