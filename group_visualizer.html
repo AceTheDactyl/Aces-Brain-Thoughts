@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WUMBO Group Visualizer (PulseCheck)</title>
+  <style>
+    :root{ --bg:#090b10; --ink:#e8ecf4; --muted:#a5adbb; --panel:#11131a; --rule:#252a34; --accent:#8ab4f8 }
+    *{ box-sizing:border-box }
+    body{ margin:0; background:var(--bg); color:var(--ink); font-family:SF Mono,Fira Code,ui-monospace,Menlo,Consolas,monospace; }
+    .bar{ display:flex; gap:8px; align-items:center; padding:10px; border-bottom:1px solid var(--rule); background:var(--panel) }
+    .bar input{ background:#0f1116; color:var(--ink); border:1px solid var(--rule); padding:6px 8px; border-radius:8px }
+    .bar button{ padding:6px 10px; border-radius:8px; background:#0f1116; border:1px solid var(--rule); color:var(--ink); cursor:pointer }
+    .bar .small{ color:var(--muted); font-size:11px }
+    canvas{ display:block }
+    a.btn{ position:absolute; right:12px; top:12px; border:1px solid var(--rule); background:#0f1116; padding:6px 10px; border-radius:8px; color:var(--muted); text-decoration:none }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/timesync@1.0.15/dist/timesync.min.js"></script>
+</head>
+<body>
+  <a class="btn" href="index.html">← Back</a>
+  <div class="bar">
+    <span class="small">Name</span><input id="name" placeholder="anon" value="anon" />
+    <span class="small">WS</span><input id="wsUrl" placeholder="ws://localhost:8080/rhythm-sync" value="ws://localhost:8080/rhythm-sync" style="min-width:320px"/>
+    <span class="small">Version</span>
+    <select id="verSelect" style="background:#0f1116;color:var(--ink);border:1px solid var(--rule);padding:6px 8px;border-radius:8px">
+      <option value="latest" selected>latest</option>
+    </select>
+    <button id="connect">Connect</button>
+    <span class="small">Phase</span><input id="phase" type="range" min="0" max="6.283" step="0.001" value="0" style="flex:1"/>
+  </div>
+  <canvas id="view"></canvas>
+
+  <script>
+    const TAU=Math.PI*2; const canvas=document.getElementById('view'); const ctx=canvas.getContext('2d');
+    function resize(){ canvas.width=innerWidth; canvas.height=innerHeight-50; } addEventListener('resize', resize); resize();
+    const peers=new Map(); // id -> {name, phase, r, t}
+    let myId=Math.random().toString(36).slice(2), myName='anon', myPhase=0;
+    let tsInstance=null; // timesync instance per-WS
+    const bc = new BroadcastChannel('wumbo-pulsecheck');
+    function now(){ return tsInstance ? tsInstance.now() : Date.now(); }
+    bc.onmessage = ev => { const m=ev.data; if(m && m.type==='pulse'){ peers.set(m.id,{name:m.name, phase:m.phase, r:m.r, t:now()}); } };
+    function bcSend(){ bc.postMessage({ type:'pulse', id:myId, name:myName, phase:myPhase, r:1.0, timestamp: now() }); }
+
+    let ws=null; function wsSend(payload){ if(ws && ws.readyState===1) ws.send(JSON.stringify(payload)); }
+    function connectWS(urlStr){
+      try{
+        const u = new URL(urlStr);
+        // Init timesync pointing to same host
+        const tsUrl = `${u.protocol === 'wss:' ? 'https:' : 'http:'}//${u.host}/timesync`;
+        tsInstance = timesync.create({ server: tsUrl, interval: 10000 });
+        ws=new WebSocket(u.toString()); ws.onopen=()=>console.log('WS open');
+        ws.onmessage=(ev)=>{ try{ const m=JSON.parse(ev.data);
+            if(m.type==='pulse' || m.type==='phase_update'){
+              const pid = m.id || m.from || Math.random().toString(36).slice(2);
+              peers.set(pid,{name:(m.name||pid.slice(0,4)), phase:Number(m.phase)||0, r:Number(m.r||m.orderParam)||0, t: now()});
+            }
+          }catch(_e){} };
+        ws.onclose=()=>console.log('WS closed');
+      }catch(e){ console.warn('WS connect failed', e); }
+    }
+
+    // Populate version selector and bind to WS URL as room param
+    async function initVersionSelector(){
+      try{
+        const sel=document.getElementById('verSelect');
+        const res = await fetch('language/index.json', {cache:'no-cache'});
+        if(!res.ok) return;
+        const idx = await res.json();
+        // reset
+        sel.innerHTML = '';
+        const optLatest=document.createElement('option'); optLatest.value='latest'; optLatest.textContent='latest'; sel.appendChild(optLatest);
+        (idx.versions||[]).forEach(v=>{ const opt=document.createElement('option'); opt.value=v.version; opt.textContent=v.version; sel.appendChild(opt); });
+      }catch(_e){ /* no-op */ }
+    }
+    initVersionSelector();
+    document.getElementById('verSelect').addEventListener('change', ()=>{
+      const ver=document.getElementById('verSelect').value||'latest';
+      const base=(document.getElementById('wsUrl').value||'ws://localhost:8080/rhythm-sync').replace(/\?.*$/,'');
+      document.getElementById('wsUrl').value = base + `?room=${encodeURIComponent(ver)}`;
+    });
+
+    document.getElementById('connect').onclick=()=>{ const url = (document.getElementById('wsUrl').value||'').trim(); myName = (document.getElementById('name').value||'anon').trim(); if(url){ connectWS(url); } };
+    document.getElementById('phase').oninput=(e)=>{ myPhase=parseFloat(e.target.value); };
+
+    function draw(){ const W=canvas.width, H=canvas.height; ctx.clearRect(0,0,W,H); const cx=W/2, cy=H/2, R=Math.min(W,H)*0.35;
+      // ring
+      ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.stroke();
+      // my marker
+      const mx=cx + Math.cos(myPhase)*R, my=cy + Math.sin(myPhase)*R; ctx.fillStyle='rgba(255,215,0,0.9)'; ctx.beginPath(); ctx.arc(mx,my,5,0,TAU); ctx.fill(); ctx.fillStyle='rgba(255,215,0,0.8)'; ctx.fillText(myName||'me', mx+8, my);
+      // peers
+      const now=Date.now(); let sx=0,sy=0,count=0;
+      peers.forEach((p,id)=>{ if(now - p.t > 8000){ peers.delete(id); return; } const x=cx + Math.cos(p.phase)*R, y=cy + Math.sin(p.phase)*R; ctx.fillStyle='rgba(138,180,248,0.9)'; ctx.beginPath(); ctx.arc(x,y,4,0,TAU); ctx.fill(); ctx.fillStyle='rgba(138,180,248,0.8)'; ctx.fillText(p.name||id.slice(0,4), x+8, y); sx+=Math.cos(p.phase); sy+=Math.sin(p.phase); count++; });
+      // group r
+      const r = count? Math.hypot(sx,sy)/count : 0; ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.fillText('Group r = '+r.toFixed(2), cx+R+20, cy);
+    }
+
+    function loop(){ draw(); const payload={ type:'pulse', id:myId, name:myName, phase:myPhase, r:1.0 }; bcSend(); wsSend(payload); requestAnimationFrame(loop); }
+    requestAnimationFrame(loop);
+    console.log('Group Visualizer ready. Sample WS server: Aces-Brain-Thoughts/examples/ws-server.js');
+  </script>
+</body>
+</html>

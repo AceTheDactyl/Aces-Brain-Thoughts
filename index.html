@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ace Neural Codex — Wumbo Engine Runner</title>
+  <style>
+    :root{--bg:#0b0c10;--panel:#121317;--ink:#e6e7ea;--muted:#a9acb2;--accent:#8ab4f8;--rule:#20222a}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;line-height:1.55}
+    .container{max-width:1000px;margin:0 auto;padding:32px 20px}
+    .header{padding:24px;border:1px solid var(--rule);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02))}
+    .header h1{margin:0 0 8px}
+    .muted{color:var(--muted)}
+    .section{margin:28px 0;padding:20px;border:1px solid var(--rule);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02))}
+    .entry{position:relative;margin:14px 0;padding:12px;border:1px solid var(--rule);border-radius:10px;background:rgba(255,255,255,.02)}
+    .entry.collapsed .entry-content{display:none}
+    .entry .entry-toggle{position:absolute;top:12px;right:12px;cursor:pointer}
+    .btn{display:inline-block;background:var(--accent);color:#0b0c10;font-weight:700;border-radius:8px;padding:8px 12px;border:2px solid #000;cursor:pointer}
+    .row{display:flex;gap:16px;flex-wrap:wrap}
+    .row .btn{margin:6px 0}
+    .viewer{min-height:300px;margin-top:12px;padding:16px;border:1px solid var(--rule);border-radius:10px;background:#0e0f14;overflow:auto}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    input[type="search"]{flex:1;min-width:220px;padding:8px;border-radius:8px;border:1px solid var(--rule);background:#0f1116;color:var(--ink)}
+    .muted-link{color:var(--muted);text-decoration:none}
+    .muted-link:hover{color:var(--ink);text-decoration:underline}
+    .split{display:flex;gap:16px}
+    .pane{flex:1;min-width:0}
+    .controls{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+    .index-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .chip{padding:6px 10px;border:1px solid var(--rule);border-radius:999px;background:#11121a;color:var(--ink);cursor:pointer}
+    .chip.active{background:var(--accent);color:#0b0c10;border-color:#000}
+    mark, .hl{background: #fff176;color:#111;padding:0 2px;border-radius:2px}
+    .sticky{position:sticky;top:8px;z-index:5;padding:8px;border:1px solid var(--rule);border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
+    .toc-section{margin-top:8px}
+    .toc-section > strong{display:block;color:var(--muted);margin-bottom:4px}
+    .grid{display:grid;gap:12px}
+    .card{padding:12px;border:1px solid var(--rule);border-radius:10px;background:#0f1116}
+    .row-items{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-weight:600;border:1px solid var(--rule);background:#11121a;color:var(--ink)}
+    .b-hi{background:#165b33;color:#eaffea;border-color:#2b864f}
+    .b-md{background:#6b5b00;color:#fff9c4;border-color:#9e8c00}
+    .b-lo{background:#1b2631;color:#d6eaf8;border-color:#273746}
+    .small{font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Ace Neural Codex – Wumbo Engine</h1>
+      <p class="muted">Local runner is live. Operators Manual mode enabled for Tokens Index and Neural Matrix.</p>
+    </header>
+
+    <section class="section">
+      <h2>Quick Demo</h2>
+      <article id="demo-entry" class="entry">
+        <div class="entry-toggle" onclick="toggleEntry('demo-entry')">▼</div>
+        <h3>Collapsible Entry</h3>
+        <div class="entry-content">
+          <p>This demonstrates the collapse/expand behavior used across the Wumbo Engine.</p>
+        </div>
+      </article>
+      <button class="btn" onclick="alert('Wumbo Engine runner is active.')">Ping Wumbo</button>
+    </section>
+
+    <section class="section">
+      <h2>Operators Manual — Token Index & Neural Matrix</h2>
+      <p class="muted">Use the controls below to open, search, and cross‑reference the Codex documents. Source files are Markdown and live in this repository.</p>
+      <div class="toolbar" style="margin:8px 0 12px">
+        <div class="row">
+          <button class="btn" onclick="loadDoc('TOKEN_INDEX.md')">Open Token Index</button>
+          <button class="btn" onclick="loadDoc('NEURAL_PATHING_MATRIX.md')">Open Neural Pathing Matrix</button>
+          <button class="btn" onclick="loadDoc('CONVERGENCE.md')">Open Convergence Report</button>
+          <button class="btn" onclick="window.open('shape_of_absence.html','_blank')">Open z=0.867 Demo</button>
+          <button class="btn" onclick="window.open('wumbo_engine.html','_blank')">Open WUMBO Neural Engine</button>
+          <button class="btn" onclick="window.open('wumbo_playground.html','_blank')">Open Kuramoto Playground</button>
+          <button class="btn" onclick="window.open('group_visualizer.html','_blank')">Open Group Visualizer</button>
+        </div>
+        <input id="searchBox" type="search" placeholder="Search in document… (press Enter)" onkeydown="if(event.key==='Enter'){searchInViewer()}" />
+        <a class="muted-link" href="TOKEN_INDEX.md" target="_blank">Raw Token Index</a>
+        <span>·</span>
+        <a class="muted-link" href="NEURAL_PATHING_MATRIX.md" target="_blank">Raw Neural Matrix</a>
+      </div>
+      <div class="controls">
+        <button class="btn" onclick="toggleSplit()" id="splitBtn">Enable Split View</button>
+        <button class="btn" onclick="findPrev()">Find Prev</button>
+        <button class="btn" onclick="findNext()">Find Next</button>
+        <button class="btn" onclick="clearHighlights()">Clear Highlights</button>
+        <label><input type="checkbox" id="syncSearch" checked /> Sync search to other pane</label>
+        <button class="btn" onclick="buildLanguagePack()">Build Language Pack</button>
+        <span class="small">Version:</span>
+        <select id="versionSelect" style="background:#0f1116;color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:6px 8px">
+          <option value="language/latest.json" selected>latest</option>
+        </select>
+        <button class="btn" onclick="loadSelectedVersion()">Load Published Pack</button>
+      </div>
+      <div id="stickyNav" class="sticky">
+        <div class="toc-section">
+          <strong>Tokens</strong>
+          <div id="quickIndex" class="index-list"></div>
+        </div>
+        <div class="toc-section">
+          <strong>Matrix</strong>
+          <div id="matrixIndex" class="index-list"></div>
+        </div>
+      </div>
+      <div id="splitContainer" class="split" style="display:none">
+        <div class="pane">
+          <h3>Primary</h3>
+          <div id="viewer" class="viewer"><em class="muted">Select a document to begin.</em></div>
+        </div>
+        <div class="pane" id="paneB" style="display:none">
+          <h3>Secondary</h3>
+          <div id="viewerB" class="viewer"><em class="muted">Load a second document or enable auto‑sync.</em></div>
+        </div>
+      </div>
+      <div id="singleContainer">
+        <div id="viewer_single" class="viewer" style="display:block"><em class="muted">Select a document to begin.</em></div>
+      </div>
+      <div id="lang_out" class="viewer" style="margin-top:16px"><em class="muted">Language pack output will appear here when built or loaded.</em></div>
+    </section>
+
+    <section class="section">
+      <h2>Next Steps</h2>
+      <ol>
+        <li>Open the Token Index or Neural Matrix using the buttons above.</li>
+        <li>Use the search box to find regions, phases, or pathways.</li>
+        <li>Publish updates by pushing to <code>main</code>; GitHub Pages deploys automatically.</li>
+      </ol>
+      <p class="muted">Tip: The raw Markdown links are handy for quick diffs and PR reviews.</p>
+    </section>
+  </div>
+
+  <!-- Markdown rendering (client-side) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js"></script>
+  <script>
+    let lastDocPath = null;     // primary
+    let lastDocText = '';
+    let lastDocPathB = null;    // secondary
+    let lastDocTextB = '';
+    let split = false;
+    let lastSearch = '';
+    let lastFoundNode = null;
+    let lastMatrixViewer = null; // which viewer currently hosts the Matrix
+    let publishedPack = null;
+    let versionIndex = null;
+
+    function toggleEntry(id){
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.toggle('collapsed');
+    }
+
+    function slugify(text){
+      return (text||'').toLowerCase()
+        .replace(/[^a-z0-9\s\-_.]/g,'')
+        .replace(/\s+/g,'-')
+        .replace(/-+/g,'-')
+        .replace(/^-|-$|\.+$/g,'');
+    }
+
+    function renderMarkdownTo(elId, md){
+      const html = DOMPurify.sanitize(marked.parse(md));
+      const el = document.getElementById(elId);
+      el.innerHTML = html;
+      return el;
+    }
+
+    function postProcessTokenIndex(el){
+      // Add anchors to bold region headers like: **V. Broca's Area** — ...
+      const strongs = el.querySelectorAll('p > strong');
+      let chips = [];
+      strongs.forEach(s => {
+        const t = s.textContent.trim();
+        const m = t.match(/^([IVXLCDM]+)\.?\s+([^*—\-]+)/);
+        if(m){
+          const roman = m[1];
+          const name = m[2].trim();
+          const id = 'token-' + slugify(roman + '-' + name);
+          // Insert anchor
+          if(!el.querySelector('#'+id)){
+            const a = document.createElement('a');
+            a.id = id;
+            s.parentElement.parentElement.insertBefore(a, s.parentElement);
+          }
+          chips.push({id, label: roman+'. '+name, query: name});
+        }
+      });
+      // Render quick index chips
+      const qi = document.getElementById('quickIndex');
+      qi.innerHTML = '';
+      chips.slice(0, 40).forEach(({id,label,query}) => {
+        const c = document.createElement('button');
+        c.className = 'chip';
+        c.textContent = label;
+        c.title = 'Jump to '+label;
+        c.onclick = () => {
+          // Scroll primary
+          const anchor = el.querySelector('#'+id);
+          if(anchor){ anchor.scrollIntoView({behavior:'smooth', block:'start'}); }
+          // If split and sync, search other pane by name
+          if(split && document.getElementById('syncSearch').checked){
+            const q = query;
+            if(lastDocPathB){
+              doSearchIn('viewerB', q, true);
+              if(lastDocPathB && /NEURAL_PATHING_MATRIX/i.test(lastDocPathB)){
+                gotoNearestPathway('viewerB');
+              }
+            } else {
+              // Auto-load the other doc
+              if(lastDocPath && lastDocPath.includes('TOKEN_INDEX')){
+                loadDoc('NEURAL_PATHING_MATRIX.md', true, q);
+              }else{
+                loadDoc('TOKEN_INDEX.md', true, q);
+              }
+            }
+          }
+        };
+        qi.appendChild(c);
+      });
+    }
+
+    // Index and navigation helpers for the Neural Pathing Matrix
+    function ensureMatrixAnchors(viewerId){
+      const el = document.getElementById(viewerId);
+      if(!el) return;
+      const heads = el.querySelectorAll('h1, h2, h3, h4, h5');
+      heads.forEach(h => {
+        const t = (h.textContent||'').trim();
+        const m = t.match(/^Pathway\s+(\d+)/i);
+        if(m){
+          const id = 'pathway-' + m[1];
+          if(!h.id) h.id = id; // stable anchor
+        }
+      });
+      // Populate matrix ToC chips
+      const list = Array.from(el.querySelectorAll('h1, h2, h3, h4, h5'))
+        .filter(h => /^Pathway\s+\d+/i.test((h.textContent||'').trim()))
+        .slice(0, 60);
+      const matrixIndex = document.getElementById('matrixIndex');
+      matrixIndex.innerHTML = '';
+      list.forEach(h => {
+        const label = (h.textContent||'').trim().replace(/^(###\s*)?/,'');
+        const chip = document.createElement('button');
+        chip.className = 'chip';
+        chip.textContent = label;
+        chip.onclick = () => { h.scrollIntoView({behavior:'smooth', block:'start'}); };
+        matrixIndex.appendChild(chip);
+      });
+      lastMatrixViewer = viewerId;
+    }
+
+    function gotoNearestPathway(viewerId){
+      const el = document.getElementById(viewerId);
+      if(!el) return false;
+      ensureMatrixAnchors(viewerId);
+      const ref = el.querySelector('mark.hl');
+      if(!ref) return false;
+      const refTop = ref.getBoundingClientRect().top + window.scrollY;
+      const heads = Array.from(el.querySelectorAll('h1, h2, h3, h4, h5')).filter(h => /^Pathway\s+\d+/i.test((h.textContent||'').trim()));
+      if(heads.length === 0) return false;
+      let best = heads[0];
+      let bestDelta = -Infinity;
+      heads.forEach(h => {
+        const top = h.getBoundingClientRect().top + window.scrollY;
+        const delta = refTop - top; // positive if head is above ref
+        if(delta >= 0 && delta > bestDelta){ bestDelta = delta; best = h; }
+      });
+      if(best){
+        best.scrollIntoView({behavior:'smooth', block:'start'});
+        best.style.outline = '2px solid #8ab4f8';
+        setTimeout(()=>{ best.style.outline = 'none'; }, 1200);
+        return true;
+      }
+      return false;
+    }
+
+    async function loadDoc(path, toSecondary=false, postSearch=null){
+      try{
+        const res = await fetch(path, {cache:'no-cache'});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const md = await res.text();
+        if(split){
+          if(toSecondary){
+            lastDocPathB = path; lastDocTextB = md;
+            renderMarkdownTo('viewerB', md);
+            if(/NEURAL_PATHING_MATRIX/i.test(path)) ensureMatrixAnchors('viewerB');
+            if(postSearch){
+              doSearchIn('viewerB', postSearch, true);
+              if(/NEURAL_PATHING_MATRIX/i.test(path)) gotoNearestPathway('viewerB');
+            }
+          }else{
+            lastDocPath = path; lastDocText = md;
+            renderMarkdownTo('viewer', md);
+            if(path.includes('TOKEN_INDEX')){ postProcessTokenIndex(document.getElementById('viewer')); }
+            if(/NEURAL_PATHING_MATRIX/i.test(path)) ensureMatrixAnchors('viewer');
+            if(postSearch){
+              doSearchIn('viewer', postSearch, true);
+              if(/NEURAL_PATHING_MATRIX/i.test(path)) gotoNearestPathway('viewer');
+            }
+          }
+        }else{
+          lastDocPath = path; lastDocText = md;
+          renderMarkdownTo('viewer_single', md);
+          if(path.includes('TOKEN_INDEX')){ postProcessTokenIndex(document.getElementById('viewer_single')); }
+          if(/NEURAL_PATHING_MATRIX/i.test(path)) ensureMatrixAnchors('viewer_single');
+          if(postSearch){ doSearchIn('viewer_single', postSearch, true); }
+        }
+        // Reset search box
+        const sb = document.getElementById('searchBox');
+        if (sb) sb.value = '';
+        // Scroll to top
+        window.scrollTo({top:0, behavior:'smooth'});
+      }catch(err){
+        const target = split ? (toSecondary ? 'viewerB' : 'viewer') : 'viewer_single';
+        document.getElementById(target).innerHTML = '<p style="color:#ff8080">Failed to load '+path+': '+err.message+'</p>';
+      }
+    }
+
+    function elementsForSearch(){
+      if(split){
+        return [document.getElementById('viewer'), document.getElementById('viewerB')].filter(Boolean);
+      }
+      return [document.getElementById('viewer_single')];
+    }
+
+    function clearHighlights(){
+      elementsForSearch().forEach(el => {
+        el.querySelectorAll('mark.hl').forEach(m => {
+          const text = document.createTextNode(m.textContent);
+          m.parentNode.replaceChild(text, m);
+        });
+      });
+      lastFoundNode = null;
+    }
+
+    function highlightAll(el, q){
+      if(!q) return;
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      const lower = q.toLowerCase();
+      let node;
+      const toWrap = [];
+      while(node = walker.nextNode()){
+        const text = node.nodeValue;
+        const idx = text.toLowerCase().indexOf(lower);
+        if(idx !== -1){ toWrap.push({node, idx}); }
+      }
+      toWrap.forEach(({node, idx}) => {
+        const range = document.createRange();
+        range.setStart(node, idx);
+        range.setEnd(node, idx + q.length);
+        const mark = document.createElement('mark');
+        mark.className = 'hl';
+        range.surroundContents(mark);
+      });
+    }
+
+    function doSearchIn(viewerId, q, center=false){
+      const el = document.getElementById(viewerId);
+      if(!el) return false;
+      clearHighlights();
+      highlightAll(el, q);
+      // Focus first match
+      const first = el.querySelector('mark.hl');
+      if(first){
+        const r = document.createRange();
+        r.selectNodeContents(first);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(r);
+        if(center){
+          const rect = first.getBoundingClientRect();
+          const top = rect.top + window.scrollY - 120;
+          window.scrollTo({top, behavior:'smooth'});
+        }
+        return true;
+      }
+      return false;
+    }
+
+    function searchInViewer(){
+      const q = (document.getElementById('searchBox')?.value || '').trim();
+      if(!q){return}
+      lastSearch = q;
+      const ok = doSearchIn(split ? 'viewer' : 'viewer_single', q, true);
+      if(split && document.getElementById('syncSearch').checked){
+        doSearchIn('viewerB', q, false);
+        if(lastDocPathB && /NEURAL_PATHING_MATRIX/i.test(lastDocPathB)){
+          gotoNearestPathway('viewerB');
+        }
+      }
+      if(!ok){ /* no-op */ }
+    }
+
+    function findNext(){
+      const q = lastSearch || (document.getElementById('searchBox')?.value || '').trim();
+      if(!q) return;
+      // move to next highlight
+      const el = split ? document.getElementById('viewer') : document.getElementById('viewer_single');
+      const marks = el.querySelectorAll('mark.hl');
+      if(marks.length === 0){ doSearchIn(el.id, q, true); return; }
+      let idx = 0;
+      if(lastFoundNode){
+        idx = Array.from(marks).indexOf(lastFoundNode) + 1;
+        if(idx >= marks.length) idx = 0;
+      }
+      const m = marks[idx];
+      lastFoundNode = m;
+      const r = document.createRange(); r.selectNodeContents(m);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      const rect = m.getBoundingClientRect();
+      window.scrollBy({top: rect.top - 120, behavior:'smooth'});
+      if(split && document.getElementById('syncSearch').checked){
+        doSearchIn('viewerB', q, false);
+        if(lastDocPathB && /NEURAL_PATHING_MATRIX/i.test(lastDocPathB)){
+          gotoNearestPathway('viewerB');
+        }
+      }
+    }
+
+    function findPrev(){
+      const q = lastSearch || (document.getElementById('searchBox')?.value || '').trim();
+      if(!q) return;
+      const el = split ? document.getElementById('viewer') : document.getElementById('viewer_single');
+      const marks = el.querySelectorAll('mark.hl');
+      if(marks.length === 0){ doSearchIn(el.id, q, true); return; }
+      let idx = marks.length - 1;
+      if(lastFoundNode){
+        idx = Array.from(marks).indexOf(lastFoundNode) - 1;
+        if(idx < 0) idx = marks.length - 1;
+      }
+      const m = marks[idx];
+      lastFoundNode = m;
+      const r = document.createRange(); r.selectNodeContents(m);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      const rect = m.getBoundingClientRect();
+      window.scrollBy({top: rect.top - 120, behavior:'smooth'});
+      if(split && document.getElementById('syncSearch').checked){
+        doSearchIn('viewerB', q, false);
+        if(lastDocPathB && /NEURAL_PATHING_MATRIX/i.test(lastDocPathB)){
+          gotoNearestPathway('viewerB');
+        }
+      }
+    }
+
+    function toggleSplit(){
+      split = !split;
+      const splitEl = document.getElementById('splitContainer');
+      const singleEl = document.getElementById('singleContainer');
+      const paneB = document.getElementById('paneB');
+      const btn = document.getElementById('splitBtn');
+      if(split){
+        splitEl.style.display = 'flex';
+        singleEl.style.display = 'none';
+        paneB.style.display = 'block';
+        btn.textContent = 'Disable Split View';
+        // populate viewer from single if present
+        if(lastDocText){
+          renderMarkdownTo('viewer', lastDocText);
+          if(lastDocPath && lastDocPath.includes('TOKEN_INDEX')){ postProcessTokenIndex(document.getElementById('viewer')); }
+        }
+        // auto-load the counterpart doc
+        if(lastDocPath){
+          const other = lastDocPath.includes('TOKEN_INDEX') ? 'NEURAL_PATHING_MATRIX.md' : 'TOKEN_INDEX.md';
+          loadDoc(other, true);
+        }
+      }else{
+        splitEl.style.display = 'none';
+        singleEl.style.display = 'block';
+        btn.textContent = 'Enable Split View';
+        // sync content back to single
+        const base = document.getElementById('viewer');
+        document.getElementById('viewer_single').innerHTML = base ? base.innerHTML : '<em class="muted">Select a document to begin.</em>';
+        // reset secondary
+        lastDocPathB = null; lastDocTextB = '';
+      }
+    }
+
+    // -------- Language Pack Builder --------
+    function normalizeName(s){
+      return (s||'')
+        .toLowerCase()
+        .replace(/\(.*?\)/g,'')
+        .replace(/[^a-z0-9\s]/g,' ')
+        .replace(/\s+/g,' ') 
+        .trim();
+    }
+
+    function parseTokensMD(md){
+      const lines = md.split(/\r?\n/);
+      const tokens = [];
+      let i = 0;
+      while(i < lines.length){
+        const m = lines[i].match(/^\*\*([IVXLCDM]+)\.\s+([^*]+)\*\*\s+—\s+\*([^*]+)\*/);
+        if(m){
+          const roman = m[1].trim();
+          const name = m[2].trim();
+          const epithet = m[3].trim();
+          const rec = { id: roman, name, epithet, phase:null, function:null, modulation:null, wumbo_roles:[] };
+          i++;
+          while(i < lines.length && lines[i].trim() !== ''){
+            const L = lines[i].trim();
+            let mm;
+            if((mm = L.match(/^Phase:\s*(.*)$/i))){ rec.phase = mm[1].trim(); }
+            else if((mm = L.match(/^Function:\s*(.*)$/i))){ rec.function = mm[1].trim(); }
+            else if((mm = L.match(/^Modulation:\s*(.*)$/i))){ rec.modulation = mm[1].trim(); }
+            else if((mm = L.match(/^Wumbo\s*Role(?:s)?\s*:\s*(.*)$/i))){
+              const raw = mm[1].trim();
+              const parts = raw.split(/[;,\/|•]+/).map(s=>s.trim()).filter(Boolean);
+              rec.wumbo_roles = Array.from(new Set(parts));
+            }
+            i++;
+          }
+          tokens.push(rec);
+        } else {
+          i++;
+        }
+      }
+      return tokens;
+    }
+
+    function parseMatrixMD(md){
+      const lines = md.split(/\r?\n/);
+      const pathways = [];
+      let i = 0;
+      while(i < lines.length){
+        const h = lines[i].match(/^###\s+Pathway\s+(\d+):\s*(.*)$/i);
+        if(h){
+          const num = parseInt(h[1],10);
+          const title = h[2].trim();
+          const start = i+1;
+          // Capture section until next ### Pathway or end
+          let j = start;
+          const section = [];
+          while(j < lines.length && !/^###\s+Pathway\s+\d+:/i.test(lines[j])){ section.push(lines[j]); j++; }
+          // Parse nodes in code blocks and bullet sections
+          const text = section.join("\n");
+          const nodes = [];
+          const modulators = [];
+          const bottlenecks = [];
+          // Roman numeral nodes inside code blocks
+          text.split(/\n/).forEach(L => {
+            const mm = L.match(/^([IVXLCDM]+)\.\s+([^()]+?)(?:\s*\(([^)]+)\))?\s*$/);
+            if(mm){ nodes.push({ roman:mm[1], name:mm[2].trim(), note:(mm[3]||'').trim() }); }
+          });
+          // Bullet lists for Modulation Nodes / Critical Bottlenecks
+          let currentList = null;
+          section.forEach(L => {
+            if(/^\*\*Modulation Nodes\*\*/i.test(L) || /^\-\s*\*\*Modulation Nodes\*\*/i.test(L)){ currentList = 'mod'; }
+            else if(/^\*\*Critical Bottlenecks\*\*/i.test(L) || /^\-\s*\*\*Critical Bottlenecks\*\*/i.test(L)){ currentList = 'bot'; }
+            const bm = L.match(/^\-\s*\*\*([IVXLCDM]+)\.\s*([^*]+)\*\*\s*\(([^)]+)\)/);
+            if(bm){
+              const item = { roman: bm[1], name: bm[2].trim(), note: bm[3].trim() };
+              if(currentList === 'mod') modulators.push(item);
+              else if(currentList === 'bot') bottlenecks.push(item);
+            }
+          });
+          pathways.push({ number:num, title, nodes, modulators, bottlenecks, raw:text });
+          i = j; continue;
+        }
+        i++;
+      }
+      return pathways.sort((a,b)=>a.number-b.number);
+    }
+
+    function crossReference(tokens, pathways){
+      const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const tokenToPathsScored = new Map();
+      const pathToTokensScored = new Map();
+      const index = pathways.map(p => ({
+        p,
+        names: [
+          ...p.nodes.map(n => ({kind:'node', n:normalizeName(n.name), raw:n.name, roman:n.roman})),
+          ...p.modulators.map(n => ({kind:'mod', n:normalizeName(n.name), raw:n.name, roman:n.roman})),
+          ...p.bottlenecks.map(n => ({kind:'bot', n:normalizeName(n.name), raw:n.name, roman:n.roman}))
+        ]
+      }));
+      tokens.forEach(t => {
+        const key = normalizeName(t.name);
+        const epi = normalizeName(t.epithet||'');
+        const res = [];
+        index.forEach(({p, names}) => {
+          let conf = 0;
+          const reasons = [];
+          // Roman match in pathway nodes
+          if(p.nodes && p.nodes.some(nn => (nn.roman||'').trim() === t.id)){
+            conf = Math.max(conf, 0.95);
+            reasons.push(`roman-match:${t.id}`);
+          }
+          // Exact name match
+          if(names.some(obj => obj.n === key)){
+            conf = Math.max(conf, 1.0);
+            reasons.push('exact-name');
+          }
+          // Partial name match with word boundary
+          const re = new RegExp(`\\b${escapeRe(key)}\\b`);
+          if(conf < 1.0 && key && names.some(obj => re.test(obj.n))){
+            conf = Math.max(conf, 0.85);
+            reasons.push('name-boundary');
+          }
+          // Epithet hint
+          if(conf < 1.0 && epi && names.some(obj => obj.n.includes(epi))){
+            conf = Math.max(conf, 0.8);
+            reasons.push('epithet-hint');
+          }
+          // Raw text fallback
+          if(conf === 0 && (p.raw||'').toLowerCase().includes(key)){
+            conf = 0.6;
+            reasons.push('raw-mention');
+          }
+          if(conf > 0){
+            res.push({ number: p.number, confidence: Math.round(conf*100)/100, reasons });
+          }
+        });
+        res.sort((a,b)=> (b.confidence - a.confidence) || (a.number - b.number));
+        tokenToPathsScored.set(t.id, res);
+        res.forEach(r => {
+          if(!pathToTokensScored.has(r.number)) pathToTokensScored.set(r.number, []);
+          pathToTokensScored.get(r.number).push({ token_id: t.id, confidence: r.confidence });
+        });
+      });
+      // Sort reverse lists
+      pathToTokensScored.forEach(arr => arr.sort((a,b)=> (b.confidence - a.confidence) || (a.token_id.localeCompare(b.token_id))));
+      // Also provide unscored convenience maps
+      const tokenToPaths = new Map(Array.from(tokenToPathsScored.entries()).map(([tid, arr]) => [tid, arr.map(x=>x.number)]));
+      const pathToTokens = new Map();
+      pathToTokensScored.forEach((arr, num) => { pathToTokens.set(num, arr.map(x=>x.token_id)); });
+      return { tokenToPaths, pathToTokens, tokenToPathsScored, pathToTokensScored };
+    }
+
+    function downloadFile(name, text, mime='application/json'){
+      const blob = new Blob([text], {type:mime});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url), 1500);
+    }
+
+    async function buildLanguagePack(){
+      // Ensure we have source texts
+      const tokText = lastDocPath && lastDocPath.includes('TOKEN_INDEX') ? lastDocText :
+                      lastDocPathB && lastDocPathB.includes('TOKEN_INDEX') ? lastDocTextB :
+                      await (await fetch('TOKEN_INDEX.md', {cache:'no-cache'})).text();
+      const matText = lastDocPath && /NEURAL_PATHING_MATRIX/.test(lastDocPath) ? lastDocText :
+                      lastDocPathB && /NEURAL_PATHING_MATRIX/.test(lastDocPathB) ? lastDocTextB :
+                      await (await fetch('NEURAL_PATHING_MATRIX.md', {cache:'no-cache'})).text();
+
+      const tokens = parseTokensMD(tokText);
+      const pathways = parseMatrixMD(matText);
+      const { tokenToPaths, pathToTokens, tokenToPathsScored, pathToTokensScored } = crossReference(tokens, pathways);
+
+      const bundle = {
+        meta: {
+          name: 'Ace Neural Codex Language Pack',
+          version: 1,
+          generated_at: new Date().toISOString(),
+          sources: ['TOKEN_INDEX.md', 'NEURAL_PATHING_MATRIX.md']
+        },
+        tokens,
+        pathways,
+        links: {
+          token_to_pathways: Object.fromEntries(tokenToPaths),
+          pathway_to_tokens: Object.fromEntries(pathToTokens),
+          token_to_pathways_scored: Object.fromEntries(tokenToPathsScored),
+          pathway_to_tokens_scored: Object.fromEntries(pathToTokensScored)
+        }
+      };
+
+      const out = document.getElementById('lang_out');
+      out.innerHTML = '';
+      const summary = document.createElement('div');
+      summary.innerHTML = `<strong>Language Pack Built.</strong><br>Tokens: ${tokens.length} · Pathways: ${pathways.length}`;
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = 'Download JSON';
+      btn.onclick = () => downloadFile('language_pack.json', JSON.stringify(bundle, null, 2));
+      const btn2 = document.createElement('button');
+      btn2.className = 'btn';
+      btn2.style.marginLeft = '8px';
+      btn2.textContent = 'Download Markdown Summary';
+      btn2.onclick = () => {
+        const lines = [];
+        lines.push('# Language Pack Summary');
+        lines.push('');
+        lines.push(`Generated: ${bundle.meta.generated_at}`);
+        lines.push('');
+        tokens.forEach(t => {
+          const scored = (tokenToPathsScored.get(t.id) || []).slice(0,5);
+          const label = scored.length ? ` (Pathways: ${scored.map(x=>`${x.number}(${x.confidence.toFixed(2)})`).join(', ')})` : '';
+          lines.push(`- ${t.id}. ${t.name} — Phase: ${t.phase||''}${label}`);
+        });
+        downloadFile('language_pack_summary.md', lines.join('\n'), 'text/markdown');
+      };
+      out.appendChild(summary);
+      out.appendChild(document.createElement('br'));
+      out.appendChild(btn);
+      out.appendChild(btn2);
+    }
+
+    // -------- Published Pack Loader & Renderer --------
+    async function initVersionSelector(){
+      try{
+        const res = await fetch('language/index.json', {cache:'no-cache'});
+        if(!res.ok) return; // leave default 'latest'
+        const idx = await res.json();
+        versionIndex = idx;
+        const sel = document.getElementById('versionSelect');
+        // Clear existing (keep latest as first option)
+        sel.innerHTML = '';
+        const optLatest = document.createElement('option');
+        optLatest.value = 'language/latest.json';
+        optLatest.textContent = 'latest';
+        sel.appendChild(optLatest);
+        (idx.versions||[]).forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = 'language/' + (v.paths?.json || (v.version+'/pack.json'));
+          opt.textContent = v.version + (v.generated_at ? (' · ' + v.generated_at) : '');
+          sel.appendChild(opt);
+        });
+        sel.selectedIndex = 0; // default to latest
+      }catch(_e){ /* ignore */ }
+    }
+
+    function loadSelectedVersion(){
+      const sel = document.getElementById('versionSelect');
+      const url = sel?.value || 'language/latest.json';
+      loadPublishedPack(url);
+    }
+
+    async function loadPublishedPack(versionPath){
+      try{
+        const url = versionPath || 'language/latest.json';
+        const res = await fetch(url, {cache:'no-cache'});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const pack = await res.json();
+        publishedPack = pack;
+        renderPublishedPack(pack);
+      }catch(err){
+        const out = document.getElementById('lang_out');
+        out.innerHTML = '<p style="color:#ff8080">Failed to load language pack: '+err.message+'</p>';
+      }
+    }
+
+    function confClass(c){
+      if(c >= 0.95) return 'b-hi';
+      if(c >= 0.8) return 'b-md';
+      return 'b-lo';
+    }
+
+    function renderPublishedPack(pack){
+      const out = document.getElementById('lang_out');
+      out.innerHTML = '';
+      const head = document.createElement('div');
+      head.className = 'card';
+      head.innerHTML = `<strong>Published Language Pack</strong><br>
+        Version: <code>${pack.meta?.version||'?'}</code> · Tokens: ${pack.tokens?.length||0} · Pathways: ${pack.pathways?.length||0}`;
+      out.appendChild(head);
+
+      // Build lookup maps
+      const pathByNum = new Map((pack.pathways||[]).map(p => [p.number, p]));
+      const scored = new Map(Object.entries(pack.links?.token_to_paths_scored || {}));
+
+      // Filter UI
+      const filterWrap = document.createElement('div');
+      filterWrap.className = 'card';
+      const f = document.createElement('input');
+      f.type = 'search'; f.placeholder = 'Filter tokens by name…'; f.style.width = '100%';
+      const rolesWrap = document.createElement('div');
+      rolesWrap.className = 'row-items';
+      rolesWrap.style.marginTop = '8px';
+      const rolesLabel = document.createElement('div'); rolesLabel.className = 'small'; rolesLabel.textContent = 'Wumbo Roles:';
+      rolesWrap.appendChild(rolesLabel);
+      const rolesChips = document.createElement('div'); rolesChips.className = 'row-items';
+      rolesWrap.appendChild(rolesChips);
+      filterWrap.appendChild(f);
+      filterWrap.appendChild(rolesWrap);
+      out.appendChild(filterWrap);
+
+      const list = document.createElement('div');
+      list.className = 'grid';
+      out.appendChild(list);
+
+      const allRoles = Array.from(new Set((pack.tokens||[]).flatMap(t => (t.wumbo_roles||[])))).sort();
+      const selectedRoles = new Set();
+      function renderRoleChips(){
+        rolesChips.innerHTML='';
+        const clear = document.createElement('button'); clear.className='chip'; clear.textContent='Clear'; clear.onclick=()=>{selectedRoles.clear(); renderRoleChips(); renderList();};
+        rolesChips.appendChild(clear);
+        allRoles.forEach(role => {
+          const chip = document.createElement('button');
+          chip.className = 'chip' + (selectedRoles.has(role)?' active':'');
+          chip.textContent = role;
+          chip.onclick = () => {
+            if(selectedRoles.has(role)) selectedRoles.delete(role); else selectedRoles.add(role);
+            renderRoleChips();
+            renderList();
+          };
+          rolesChips.appendChild(chip);
+        });
+      }
+      renderRoleChips();
+
+      function roleMatch(t){
+        if(selectedRoles.size === 0) return true;
+        const set = new Set(t.wumbo_roles||[]);
+        for(const r of selectedRoles){ if(!set.has(r)) return false; }
+        return true;
+      }
+
+      function badgeLabel(p, m){
+        const title = p && p.title ? p.title : ('Pathway '+m.number);
+        return `P${m.number}: ${title} • ${m.confidence.toFixed(2)}`;
+      }
+
+      function renderList(){
+        const q = (f.value||'').toLowerCase().trim();
+        list.innerHTML = '';
+        (pack.tokens||[]).forEach(t => {
+          if(q && !(t.name||'').toLowerCase().includes(q) && !(t.id||'').toLowerCase().includes(q)) return;
+          if(!roleMatch(t)) return;
+          const card = document.createElement('div');
+          card.className = 'card';
+          const top = document.createElement('div');
+          top.className = 'row-items';
+          const title = document.createElement('div');
+          title.innerHTML = `<strong>${t.id}. ${t.name}</strong> <span class="small">${t.phase?('· '+t.phase):''}</span>`;
+          top.appendChild(title);
+          const rowBadges = document.createElement('div');
+          rowBadges.className = 'row-items';
+          (scored.get(t.id)||[]).slice(0,4).forEach(m => {
+            const p = pathByNum.get(m.number);
+            const b = document.createElement('button');
+            b.className = 'badge '+confClass(m.confidence);
+            b.textContent = badgeLabel(p, m);
+            b.title = p ? p.title : ('Pathway '+m.number);
+            b.onclick = () => openMatrixAt(m.number, t.name);
+            rowBadges.appendChild(b);
+          });
+          top.appendChild(rowBadges);
+          card.appendChild(top);
+
+          // details block
+          const details = document.createElement('div');
+          details.style.marginTop = '8px';
+          const roles = (t.wumbo_roles||[]).length ? ` · Roles: ${t.wumbo_roles.join(', ')}` : '';
+          const func = t.function ? ` · Function: ${t.function}` : '';
+          const mod = t.modulation ? ` · Modulation: ${t.modulation}` : '';
+          details.innerHTML = `<span class="small">${(t.epithet||'')}${roles}${func}${mod}</span>`;
+          card.appendChild(details);
+
+          // full matches table
+          const matches = scored.get(t.id)||[];
+          if(matches.length){
+            const tbl = document.createElement('div');
+            tbl.className = 'row-items';
+            tbl.style.marginTop = '8px';
+            matches.slice(0,12).forEach(m => {
+              const p = pathByNum.get(m.number);
+              const badge = document.createElement('button');
+              badge.className = 'badge '+confClass(m.confidence);
+              badge.textContent = badgeLabel(p, m);
+              badge.title = p ? p.title : ('Pathway '+m.number);
+              badge.onclick = () => openMatrixAt(m.number, t.name);
+              tbl.appendChild(badge);
+            });
+            card.appendChild(tbl);
+          }
+
+          list.appendChild(card);
+        });
+      }
+      f.addEventListener('input', renderList);
+      renderList();
+    }
+
+    async function openMatrixAt(pathwayNumber, tokenName){
+      // Ensure split and Matrix loaded in secondary pane
+      if(!split) toggleSplit();
+      const wantedId = 'pathway-'+String(pathwayNumber);
+      const ensureAndScroll = () => {
+        const viewerId = lastMatrixViewer || 'viewerB';
+        ensureMatrixAnchors(viewerId);
+        const el = document.getElementById(viewerId);
+        const target = el && el.querySelector('#'+wantedId);
+        if(target){
+          target.scrollIntoView({behavior:'smooth', block:'start'});
+          target.style.outline = '2px solid #8ab4f8';
+          setTimeout(()=>{ target.style.outline = 'none'; }, 1200);
+        } else if(tokenName){
+          doSearchIn(viewerId, tokenName, true);
+          gotoNearestPathway(viewerId);
+        }
+      };
+      if(!lastDocPathB || !/NEURAL_PATHING_MATRIX/i.test(lastDocPathB)){
+        await loadDoc('NEURAL_PATHING_MATRIX.md', true);
+        setTimeout(ensureAndScroll, 50);
+      }else{
+        ensureAndScroll();
+      }
+    }
+    // Deep-link support: #pathway-<n>
+    function handleHash(){
+      const m = (location.hash||'').match(/^#pathway-(\d+)$/i);
+      if(m){
+        const n = parseInt(m[1], 10);
+        if(!Number.isNaN(n)){
+          openMatrixAt(n);
+        }
+      }
+    }
+    window.addEventListener('hashchange', handleHash);
+    // Initialize version selector and handle deep-link on load
+    window.addEventListener('DOMContentLoaded', ()=>{ initVersionSelector(); handleHash(); });
+  </script>
+</body>
+</html>
