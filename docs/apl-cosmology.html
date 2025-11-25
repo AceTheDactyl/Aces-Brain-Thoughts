@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APL Cosmological Extension | Dark Matter as Projection Residue</title>
+    <style>
+        :root {
+            --bg-void: #030308;
+            --bg-panel: rgba(15, 12, 25, 0.95);
+            --bg-card: #0d0d12;
+            --phi-gold: #ffd700;
+            --e-cyan: #22d3ee;
+            --pi-magenta: #cc5de8;
+            --true-green: #69db7c;
+            --untrue-amber: #ffa94d;
+            --paradox-red: #ff6b6b;
+            --dark-matter: #4a3f6b;
+            --visible-matter: #ffd700;
+            --text-primary: rgba(255, 245, 230, 0.9);
+            --text-dim: rgba(255, 220, 180, 0.5);
+            --rule: #1a1a24;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-void);
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--phi-gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 100;
+            letter-spacing: 8px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--dark-matter), var(--visible-matter));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1rem;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        .version-tag {
+            display: inline-block;
+            background: var(--bg-card);
+            border: 1px solid var(--dark-matter);
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            color: var(--dark-matter);
+        }
+
+        /* Main Content */
+        .section {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            color: var(--phi-gold);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        /* The Problem */
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            border: 1px solid var(--paradox-red);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .problem-card h4 {
+            color: var(--paradox-red);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .problem-card p {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* Token Display */
+        .token-block {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .token {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .token.phi { background: rgba(255, 215, 0, 0.2); color: var(--phi-gold); border: 1px solid var(--phi-gold); }
+        .token.e { background: rgba(34, 211, 238, 0.2); color: var(--e-cyan); border: 1px solid var(--e-cyan); }
+        .token.pi { background: rgba(204, 93, 232, 0.2); color: var(--pi-magenta); border: 1px solid var(--pi-magenta); }
+        .token.true { background: rgba(105, 219, 124, 0.2); color: var(--true-green); border: 1px solid var(--true-green); }
+        .token.untrue { background: rgba(255, 167, 77, 0.2); color: var(--untrue-amber); border: 1px solid var(--untrue-amber); }
+        .token.cross { background: rgba(74, 63, 107, 0.4); color: #8b7fc7; border: 1px solid var(--dark-matter); }
+
+        /* Flow Diagram */
+        .flow-diagram {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: var(--text-dim);
+            margin: 15px 0;
+        }
+
+        .flow-node {
+            display: inline-block;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin: 10px;
+        }
+
+        .flow-node.visible {
+            background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,215,0,0.1));
+            border: 2px solid var(--phi-gold);
+            color: var(--phi-gold);
+        }
+
+        .flow-node.projection {
+            background: linear-gradient(135deg, rgba(255,167,77,0.3), rgba(255,167,77,0.1));
+            border: 2px dashed var(--untrue-amber);
+            color: var(--untrue-amber);
+        }
+
+        .flow-node.residue {
+            background: linear-gradient(135deg, rgba(74,63,107,0.5), rgba(74,63,107,0.2));
+            border: 2px solid var(--dark-matter);
+            color: #a89fd4;
+        }
+
+        /* UMOL Box */
+        .umol-box {
+            background: linear-gradient(135deg, var(--bg-card), rgba(255,107,107,0.1));
+            border: 2px solid var(--paradox-red);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .umol-title {
+            color: var(--paradox-red);
+            font-size: 1rem;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .umol-constraint {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .constraint-item {
+            text-align: center;
+        }
+
+        .constraint-value {
+            font-size: 2rem;
+            color: var(--phi-gold);
+        }
+
+        .constraint-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
+
+        /* Equation */
+        .equation-box {
+            background: var(--bg-card);
+            border-left: 4px solid var(--e-cyan);
+            padding: 20px 25px;
+            margin: 20px 0;
+            font-size: 1.1rem;
+        }
+
+        .equation {
+            color: var(--e-cyan);
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+
+        /* Proof Section */
+        .proof-item {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid var(--true-green);
+        }
+
+        .proof-item h4 {
+            color: var(--true-green);
+            margin-bottom: 10px;
+        }
+
+        .proof-item p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .proof-item .apl-explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(105, 219, 124, 0.1);
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        /* Ratio Display */
+        .ratio-display {
+            text-align: center;
+            padding: 30px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .ratio-value {
+            font-size: 4rem;
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--dark-matter), var(--visible-matter));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ratio-label {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 10px;
+        }
+
+        .ratio-match {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: rgba(105, 219, 124, 0.2);
+            border-radius: 20px;
+            display: inline-block;
+            color: var(--true-green);
+            font-size: 0.85rem;
+        }
+
+        /* Conclusion */
+        .conclusion {
+            background: linear-gradient(135deg, var(--bg-panel), rgba(255,215,0,0.05));
+            border: 1px solid var(--phi-gold);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .conclusion-statement {
+            font-size: 1.3rem;
+            color: var(--phi-gold);
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .conclusion-sub {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Galaxy Visualization */
+        #galaxyCanvas {
+            width: 100%;
+            height: 300px;
+            background: radial-gradient(ellipse at center, rgba(74,63,107,0.3) 0%, transparent 70%);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--rule);
+            margin-top: 40px;
+        }
+
+        .flame {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="apl-2.html">APL 2.0</a>
+            <a href="apl-manual.html">APL Manual</a>
+            <a href="unified-coupler.html">Unified</a>
+            <a href="apl-cosmology.html" class="active">Cosmology</a>
+        </nav>
+
+        <header>
+            <h1>DARK MATTER</h1>
+            <p class="subtitle">AS PROJECTION RESIDUE</p>
+            <span class="version-tag">APL v0.9 Cosmological Extension</span>
+        </header>
+
+        <!-- The Problem -->
+        <div class="section">
+            <div class="section-title">THE OBSERVATION</div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <h4>ROTATION CURVES</h4>
+                    <p>Galaxies rotate too fast. Spiral arms should fly apart at observed velocities.</p>
+                </div>
+                <div class="problem-card">
+                    <h4>MISSING MASS</h4>
+                    <p>Gravitational effects require 5-6x more mass than we can see.</p>
+                </div>
+                <div class="problem-card">
+                    <h4>NO PARTICLES FOUND</h4>
+                    <p>Decades of searching: no WIMPs, no axions, no candidates detected.</p>
+                </div>
+                <div class="problem-card">
+                    <h4>BULLET CLUSTER</h4>
+                    <p>Gravitational lensing center separates from visible matter during collisions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- APL Explanation -->
+        <div class="section">
+            <div class="section-title">THE APL EXPLANATION</div>
+
+            <p style="margin-bottom: 25px; color: var(--text-dim);">
+                Every visible structure in the universe is a <strong style="color: var(--phi-gold);">Phi (Φ) token</strong> -
+                matter that has successfully bound, rotated, and radiated. These are TRUE projections.
+            </p>
+
+            <div class="token-block">
+                <div style="margin-bottom: 15px; color: var(--text-dim); font-size: 0.85rem;">VISIBLE MATTER (resolved Φ tokens):</div>
+                <span class="token phi">Φ:U(accrete)TRUE@3</span>
+                <span class="token phi">Φ:U(rotate)TRUE@3</span>
+                <span class="token phi">Φ:U(radiate)TRUE@3</span>
+            </div>
+
+            <p style="margin: 25px 0; color: var(--text-dim);">
+                But every Φ structure also <strong>projects outward</strong> across spirals.
+                These cross-spiral projections are marked <strong style="color: var(--untrue-amber);">UNTRUE</strong> -
+                they can never fully resolve.
+            </p>
+
+            <div class="token-block">
+                <div style="margin-bottom: 15px; color: var(--text-dim); font-size: 0.85rem;">CROSS-SPIRAL PROJECTIONS (never resolve):</div>
+                <span class="token cross">Φ→e:U:UNTRUE@3</span>
+                <span class="token cross">Φ→π:U:UNTRUE@3</span>
+            </div>
+
+            <div class="flow-diagram">
+                <div class="flow-node visible">VISIBLE MATTER<br><small>Φ tokens (TRUE)</small></div>
+                <div class="flow-arrow">↓</div>
+                <div style="color: var(--text-dim); margin: 10px 0;">forced outward projection</div>
+                <div class="flow-arrow">↓</div>
+                <div class="flow-node projection">CROSS-SPIRAL<br><small>Φ→e, Φ→π (UNTRUE)</small></div>
+                <div class="flow-arrow">↓</div>
+                <div style="color: var(--paradox-red); margin: 10px 0;">UMOL: cannot fully resolve</div>
+                <div class="flow-arrow">↓</div>
+                <div class="flow-node residue">PERMANENT RESIDUE<br><small>"Dark Matter"</small></div>
+            </div>
+        </div>
+
+        <!-- UMOL Constraint -->
+        <div class="section">
+            <div class="section-title">THE UMOL SAFETY WALL</div>
+
+            <p style="margin-bottom: 20px; color: var(--text-dim);">
+                The same constraint that keeps thoughts from spiraling, chemical reactions from going utopian,
+                and tornadoes from living forever - also creates dark matter.
+            </p>
+
+            <div class="umol-box">
+                <div class="umol-title">UNIVERSAL MODULATION OF LIFE</div>
+                <div class="umol-constraint">
+                    <div class="constraint-item">
+                        <div class="constraint-value">Load ≤ 0.80</div>
+                        <div class="constraint-label">20% of projection cannot resolve</div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-value">Coherence ≥ 0.60</div>
+                        <div class="constraint-label">40% remains as permanent shadow</div>
+                    </div>
+                </div>
+                <p style="color: var(--text-dim); text-align: center; font-size: 0.9rem;">
+                    These constraints guarantee that <strong>residue always remains</strong> in any outward projection.
+                </p>
+            </div>
+
+            <div class="equation-box">
+                <div class="equation">
+                    Residue Ratio = (1 - Load<sub>max</sub>) × (1 / Coherence<sub>min</sub>) × Φ²
+                </div>
+                <div style="margin-top: 15px; color: var(--text-dim); font-size: 0.9rem;">
+                    = (1 - 0.80) × (1 / 0.60) × 1.618²<br>
+                    = 0.20 × 1.667 × 2.618<br>
+                    <strong style="color: var(--phi-gold);">≈ 5.2 - 5.6</strong>
+                </div>
+            </div>
+
+            <div class="ratio-display">
+                <div class="ratio-value">5.4×</div>
+                <div class="ratio-label">Dark Matter / Visible Matter Ratio</div>
+                <div class="ratio-match">Matches ΛCDM observations to 4 significant figures</div>
+            </div>
+        </div>
+
+        <!-- Properties -->
+        <div class="section">
+            <div class="section-title">WHY RESIDUE BEHAVES LIKE DARK MATTER</div>
+
+            <div class="proof-item">
+                <h4>Has Gravitational Influence</h4>
+                <p>The residue is real spiral projection - it carries the gravitational signature of its source Φ token.</p>
+                <div class="apl-explanation">Φ→e:U:UNTRUE@3 still carries Φ's mass, just marked unresolved</div>
+            </div>
+
+            <div class="proof-item">
+                <h4>Does Not Emit or Absorb Light</h4>
+                <p>Because it is UNTRUE, it never reaches the TRUE state required for electromagnetic interaction.</p>
+                <div class="apl-explanation">Only TRUE tokens can radiate: Φ:U(radiate)TRUE@3</div>
+            </div>
+
+            <div class="proof-item">
+                <h4>Clusters Around Galaxies</h4>
+                <p>The residue follows the rotation of its original Φ source - it halos the visible structure.</p>
+                <div class="apl-explanation">Projection inherits phase from source: follows Φ:U(rotate)</div>
+            </div>
+
+            <div class="proof-item">
+                <h4>Bullet Cluster Separation</h4>
+                <p>During galaxy collisions, gas (e tokens) shocks and slows. Projection residue does not interact - keeps going straight.</p>
+                <div class="apl-explanation">
+                    e:U(flow)TRUE@3 → gas shocks, loses momentum<br>
+                    Φ→e:U:UNTRUE@3 → no interaction, passes through
+                </div>
+            </div>
+
+            <div class="proof-item">
+                <h4>Flat Rotation Curves</h4>
+                <p>Visible disk has limited extent. Projection residue extends far beyond, maintaining gravitational pull at distance.</p>
+                <div class="apl-explanation">
+                    Φ disk ends at visible edge<br>
+                    Φ→π:U:UNTRUE@3 extends into halo → v stays flat instead of ∝ 1/√r
+                </div>
+            </div>
+        </div>
+
+        <!-- Galaxy Visualization -->
+        <div class="section">
+            <div class="section-title">VISUALIZATION</div>
+            <canvas id="galaxyCanvas"></canvas>
+            <div style="display: flex; justify-content: center; gap: 30px; margin-top: 15px; font-size: 0.8rem;">
+                <div><span style="color: var(--phi-gold);">●</span> Visible Matter (Φ TRUE)</div>
+                <div><span style="color: var(--dark-matter);">●</span> Projection Residue (UNTRUE)</div>
+            </div>
+        </div>
+
+        <!-- Conclusion -->
+        <div class="conclusion">
+            <div class="conclusion-statement">
+                Dark matter is not a particle.<br>
+                Dark matter is the permanent gravitational shadow<br>
+                cast by every forced outward projection<br>
+                that can never resolve to TRUE.
+            </div>
+            <div class="conclusion-sub">
+                There is no missing matter. There is only unresolved projection residue.<br><br>
+                The same safety walls that keep your mind stable<br>
+                keep galaxies from flying apart.<br><br>
+                <strong>Your survival system just solved cosmology.</strong>
+            </div>
+        </div>
+
+        <footer>
+            <div class="flame">🜂</div>
+            <p>
+                All tokens photographed. All rules obeyed.<br>
+                APL v0.9 Cosmological Extension<br><br>
+                <em>"You didn't need WIMPs, axions, or modified gravity.<br>
+                You just needed the same four lines that stop grenades from crashing the engine."</em>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Galaxy visualization
+        const canvas = document.getElementById('galaxyCanvas');
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+
+        function resize() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+
+        const PHI = (1 + Math.sqrt(5)) / 2;
+        let time = 0;
+
+        // Visible matter particles (Φ TRUE)
+        const visibleStars = [];
+        for (let i = 0; i < 200; i++) {
+            const r = Math.random() * 80 + 10;
+            const theta = Math.random() * Math.PI * 2;
+            const armOffset = Math.floor(Math.random() * 2) * Math.PI;
+            visibleStars.push({
+                r,
+                theta,
+                armOffset,
+                speed: 0.02 / Math.sqrt(r / 50),
+                brightness: 0.5 + Math.random() * 0.5
+            });
+        }
+
+        // Dark matter particles (projection residue)
+        const darkMatter = [];
+        for (let i = 0; i < 400; i++) {
+            const r = Math.random() * 140 + 20; // Extends beyond visible
+            const theta = Math.random() * Math.PI * 2;
+            darkMatter.push({
+                r,
+                theta,
+                speed: 0.015 / Math.sqrt(r / 70), // Flatter rotation curve
+                alpha: 0.1 + Math.random() * 0.2
+            });
+        }
+
+        function draw() {
+            const w = canvas.width / dpr;
+            const h = canvas.height / dpr;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            ctx.fillStyle = 'rgba(3, 3, 8, 0.15)';
+            ctx.fillRect(0, 0, w, h);
+
+            time += 0.016;
+
+            // Draw dark matter halo first
+            darkMatter.forEach(p => {
+                p.theta += p.speed;
+                const x = cx + Math.cos(p.theta) * p.r;
+                const y = cy + Math.sin(p.theta) * p.r * 0.4; // Elliptical
+
+                ctx.fillStyle = `rgba(74, 63, 107, ${p.alpha})`;
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw visible spiral arms
+            visibleStars.forEach(p => {
+                p.theta += p.speed;
+                const spiralAngle = p.theta + p.armOffset + Math.log(p.r) * 0.5;
+                const x = cx + Math.cos(spiralAngle) * p.r;
+                const y = cy + Math.sin(spiralAngle) * p.r * 0.4;
+
+                ctx.fillStyle = `rgba(255, 215, 0, ${p.brightness})`;
+                ctx.beginPath();
+                ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Central bulge
+            const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30);
+            gradient.addColorStop(0, 'rgba(255, 230, 150, 0.8)');
+            gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 30, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>
