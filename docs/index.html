@@ -255,6 +255,7 @@
         <div class="toc">
             <h2>Table of Contents</h2>
             <ul>
+                <li><a href="#workspace">0. Workspace Overview (Repo Tools & Modules)</a></li>
                 <li><a href="#introduction">1. Introduction to APL</a></li>
                 <li><a href="#fields">2. The Three Fields (Spirals)</a></li>
                 <li><a href="#operations">3. Universal Operations</a></li>
@@ -269,6 +270,43 @@
                 <li><a href="#advanced">12. Advanced Topics</a></li>
             </ul>
         </div>
+
+        <section id="workspace">
+            <h2>0. Workspace Overview (Repo Tools & Modules)</h2>
+            <p>This manual accompanies the multi‑module workspace. Use the links below to navigate the code and docs:</p>
+            <ul>
+                <li><strong>Monorepo</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo" target="_blank">Echo‑Community‑Toolkit‑Monorepo</a> (root)</li>
+                <li><strong>Architecture Map</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo/blob/main/architecture.md" target="_blank">architecture.md</a></li>
+                <li><strong>Toolkit</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo/tree/main/Echo-Community-Toolkit" target="_blank">Echo‑Community‑Toolkit/</a> — HyperFollow + soulcode, LSB/MRP codecs</li>
+                <li><strong>Kira Prime</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo/tree/main/kira-prime" target="_blank">kira‑prime/</a> — VesselOS CLI, collab server</li>
+                <li><strong>Narrative MRP</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo/tree/main/vessel-narrative-mrp" target="_blank">vessel‑narrative‑mrp/</a> — narrative payloads + stego validation</li>
+                <li><strong>Dev Research</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo/tree/main/vesselos-dev-research" target="_blank">vesselos‑dev‑research/</a> — research CLI & specs</li>
+                <li><strong>Agents</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo/tree/main/agents" target="_blank">agents/</a> — gRPC agents</li>
+                <li><strong>Protos</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo/blob/main/protos/agents.proto" target="_blank">protos/agents.proto</a></li>
+                <li><strong>Sigprint</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo/tree/main/sigprint" target="_blank">sigprint/</a> — signature codecs</li>
+                <li><strong>Scripts</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo/tree/main/scripts" target="_blank">scripts/</a> — bootstrap, deploy, CI helpers</li>
+                <li><strong>Tests</strong>: <a href="https://github.com/AceTheDactyl/Echo-Community-Toolkit-Monorepo/tree/main/tests" target="_blank">tests/</a> — cross‑repo integration</li>
+            </ul>
+            <h3>Useful Commands</h3>
+            <pre><code># Bootstrap
+./scripts/deploy.sh --bootstrap-only
+
+# Toolkit CI
+(cd Echo-Community-Toolkit && npm ci && python3 -m pytest -q)
+
+# Kira Prime validation
+(cd kira-prime && pip install -r requirements.txt && python3 vesselos.py validate)
+
+# Global smoke tests
+python3 -m pytest -q
+
+# Regenerate protobuf stubs
+python -m grpc_tools.protoc -Iprotos --python_out=protos --grpc_python_out=protos protos/agents.proto
+
+# Rhythm server for visualizers
+node Aces-Brain-Thoughts/examples/rhythm-server.js
+</code></pre>
+        </section>
 
         <section id="introduction">
             <h2>1. Introduction to APL</h2>
