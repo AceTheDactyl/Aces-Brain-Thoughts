@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WUMBO Engine · Roman Numeral Index (Linked to APL Manual)</title>
+  <title>WUMBO Engine · APL‑Mirrored Index</title>
   <style>
     :root{--bg:#0b0c10;--panel:#121317;--ink:#e6e7ea;--muted:#a9acb2;--accent:#8ab4f8;--rule:#20222a}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;line-height:1.55}
-    .container{max-width:1000px;margin:0 auto;padding:28px 20px}
+    .container{max-width:1100px;margin:0 auto;padding:28px 20px}
     header{padding:18px 18px;border:1px solid var(--rule);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));margin-bottom:18px}
     h1{margin:0 0 6px}
     .muted{color:var(--muted)}
@@ -20,6 +20,11 @@
     .index{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
     .item{border:1px solid var(--rule);border-radius:10px;padding:10px;background:rgba(255,255,255,.02)}
     .item strong{display:block;margin-bottom:4px}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .chip{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid var(--rule);background:rgba(255,255,255,.03);font-size:.92rem}
+    .mapping{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .mapping .card h4{margin:0 0 6px}
+    .small{font-size:.92rem}
     a{color:var(--accent);text-decoration:none}
     a:hover{text-decoration:underline}
     @media print{
@@ -32,38 +37,100 @@
 <body>
   <div class="container">
     <header>
-      <h1>WUMBO Engine · Roman Numeral Index</h1>
-      <p class="muted">Each entry links to the APL Operator’s Manual structure for cross‑reference (Machines, Domains, Operators, States).</p>
+      <h1>WUMBO Engine · APL‑Mirrored Index</h1>
+      <p class="muted">Cross‑links the WUMBO Engine to the APL Operator’s Manual so engineering artifacts (machines, fields, operators, states) mirror how the engine is built and used.</p>
       <div class="toolbar">
-        <a class="btn" href="index.html">Open APL Manual (HTML)</a>
+        <a class="btn" href="index.html">Open Manual Index</a>
+        <a class="btn" href="apl-operators-manual.html">Open LaTeX Manual (HTML)</a>
         <a class="btn" href="apl-operators-manual.pdf" target="_blank">Download APL Manual (PDF)</a>
         <a class="btn" href="wumbo-engine.pdf" target="_blank">Download WUMBO Engine (PDF)</a>
+        <a class="btn" href="entrainment/index.html">Rhythm Entrainment Demo</a>
       </div>
     </header>
 
     <section class="panel">
-      <h2>How To Read</h2>
-      <p class="muted">Roman numerals mirror the Neuro‑Wumbo atlas (I–C). Each item links to relevant APL scaffolding:</p>
+      <h2>How This Mirrors APL</h2>
+      <p class="muted">Engine creation in WUMBO maps 1‑to‑1 onto APL: machines define processing contexts, fields define physical domains, operators define transformations, and UMOL states define regime/phase behavior.</p>
       <div class="grid">
         <div class="card">
           <h3>Machines</h3>
-          <p>Oscillator, Reactor, Conductor, Encoder — processing contexts.</p>
-          <p><a href="index.html#machines">APL: Machines</a></p>
+          <p>Conductor (clock), Oscillator Bank (reactor), Coupling Controller (regulator), Output Multiplexer (encoder).</p>
+          <p class="small"><a href="index.html#machines">APL: Machines</a></p>
         </div>
         <div class="card">
           <h3>Domains</h3>
-          <p>Structure (Φ / geometry), Energy (e / wave), Emergence (α / biology/chemistry).</p>
-          <p><a href="index.html#fields">APL: The Three Fields</a> · <a href="index.html#domains">Domains</a></p>
+          <p>Wave timing (AudioContext), geometric rhythm (CSS/animation), embodied feedback (haptic/bio).</p>
+          <p class="small"><a href="index.html#fields">APL: The Three Fields</a> · <a href="index.html#domains">Domains</a></p>
         </div>
         <div class="card">
           <h3>Operators</h3>
-          <p>() boundary, × fusion, ^ amplify, % decohere, + group, – separate.</p>
-          <p><a href="index.html#operations">APL: Universal Operations</a></p>
+          <p>schedule(), couple×, integrate+, amplify^, decohere%, gate(), emit→.</p>
+          <p class="small"><a href="index.html#operations">APL: Universal Operations</a></p>
         </div>
         <div class="card">
           <h3>States (UMOL)</h3>
-          <p>u forward, d collapse, m modulation; balance laws and regime prediction.</p>
-          <p><a href="index.html#states">APL: Operator States</a></p>
+          <p>Ignition (u↑), Empowerment (u→), Resonance (m≈), Nirvana (m≡), Shutdown (d↓), Pause (d⟂), Re‑entry (u↻).</p>
+          <p class="small"><a href="index.html#states">APL: Operator States</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>WUMBO → APL Engineering Map</h2>
+      <div class="mapping">
+        <div class="card">
+          <h4>Clock & Scheduler</h4>
+          <p class="muted">AudioContext master clock + look‑ahead/Worklet.
+          <div class="chips">
+            <a class="chip" href="index.html#machines">Machine: Conductor</a>
+            <a class="chip" href="index.html#operations">Op: schedule()</a>
+            <a class="chip" href="index.html#fields">Field: Wave</a>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Kuramoto Solver</h4>
+          <p class="muted">Coupled oscillator bank + order parameter r, ψ.</p>
+          <div class="chips">
+            <a class="chip" href="index.html#machines">Machine: Reactor</a>
+            <a class="chip" href="index.html#operations">Op: couple×, integrate+</a>
+            <a class="chip" href="index.html#states">State: m (modulation)</a>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Adaptive Controller</h4>
+          <p class="muted">Closed‑loop K adaptation by coherence/phase error.</p>
+          <div class="chips">
+            <a class="chip" href="index.html#machines">Machine: Regulator</a>
+            <a class="chip" href="index.html#operations">Op: amplify^ / decohere%</a>
+            <a class="chip" href="index.html#states">State: regime shifts</a>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Biosignal I/O</h4>
+          <p class="muted">HRV (BLE), keystroke cadence, latency compensation.</p>
+          <div class="chips">
+            <a class="chip" href="index.html#machines">Machine: Sensor/Encoder</a>
+            <a class="chip" href="index.html#operations">Op: gate(), reduce⟂</a>
+            <a class="chip" href="index.html#fields">Field: Bio ↔ Wave</a>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Multi‑Modal Output</h4>
+          <p class="muted">Audio/visual/haptic emission locked to master time.</p>
+          <div class="chips">
+            <a class="chip" href="index.html#machines">Machine: Emitter</a>
+            <a class="chip" href="index.html#operations">Op: emit→, align≈</a>
+            <a class="chip" href="index.html#fields">Field: Wave/Geom/Body</a>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Network Sync</h4>
+          <p class="muted">WebSocket + timesync, WebRTC DataChannels.</p>
+          <div class="chips">
+            <a class="chip" href="index.html#machines">Machine: Conductor (distributed)</a>
+            <a class="chip" href="index.html#operations">Op: sync↔, sample()</a>
+            <a class="chip" href="index.html#states">State: coherence r</a>
+          </div>
         </div>
       </div>
     </section>
@@ -100,6 +167,7 @@
     }
 
     const container = document.getElementById('index');
+    // Link to the Manual Index anchors (stable site root)
     const APL = 'index.html';
 
     GROUPS.forEach(g => {
@@ -108,7 +176,7 @@
         div.className = 'item';
         const rn = toRoman(i);
         const a1 = document.createElement('a'); a1.href = `${APL}${g.anchors[0]}`; a1.textContent = 'Machines';
-        const a2 = document.createElement('a'); a2.href = `${APL}${g.anchors[1]}`; a2.textContent = 'Domains';
+        const a2 = document.createElement('a'); a2.href = `${APL}${g.anchors[1]}`; a2.textContent = 'Domains/Fields';
         const a3 = document.createElement('a'); a3.href = `${APL}${g.anchors[2]}`; a3.textContent = 'Operators';
         const a4 = document.createElement('a'); a4.href = `${APL}${g.anchors[3]}`; a4.textContent = 'States';
         const p = document.createElement('p'); p.className='muted';
@@ -122,4 +190,3 @@
   </script>
 </body>
 </html>
-
