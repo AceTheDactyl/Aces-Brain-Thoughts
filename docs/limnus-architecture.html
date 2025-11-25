@@ -789,6 +789,26 @@
             <span class="dynamics-bar" id="emanation-bar">░░░░░░░░░░</span>
             <span class="dynamics-value" id="emanation-val">0.00</span>
         </div>
+        <div class="dynamics-row" style="margin-top:12px; border-top: 1px solid rgba(168, 85, 247, 0.3); padding-top:10px;">
+            <span class="dynamics-label">μ</span>
+            <span class="dynamics-bar" id="mu-bar">█████░░░░░</span>
+            <span class="dynamics-value" id="mu-val">0.92</span>
+        </div>
+        <div class="dynamics-row">
+            <span class="dynamics-label">Q_κ</span>
+            <span class="dynamics-bar" id="qk-bar">░░░░░░░░░░</span>
+            <span class="dynamics-value" id="qk-val">0.00</span>
+        </div>
+        <div class="dynamics-row">
+            <span class="dynamics-label">τ_K</span>
+            <span class="dynamics-bar" id="tau-bar">░░░░░░░░░░</span>
+            <span class="dynamics-value" id="tau-val">0.00</span>
+        </div>
+        <div class="dynamics-row">
+            <span class="dynamics-label" id="k-label" style="color: rgba(150,130,110,0.6);">K-FORMED</span>
+            <span class="dynamics-bar" id="k-indicator" style="letter-spacing: 2px;">· · ·</span>
+            <span class="dynamics-value" id="k-val">NO</span>
+        </div>
     </div>
 
     <!-- Helix State -->
@@ -895,6 +915,94 @@
         const Z_CRITICAL = Math.sqrt(3) / 2;  // ≈ 0.8660254
         const TAU = Math.PI * 2;
         const PHI = (1 + Math.sqrt(5)) / 2;   // Golden ratio
+        const PHI_INV = PHI - 1;               // 0.618... inverse golden ratio
+
+        // ================================================================
+        // SACRED CONSTANTS (derived from φ - zero free parameters)
+        // ================================================================
+
+        const SACRED = {
+            // Primary φ-derived
+            phi: PHI,
+            phi_inv: PHI_INV,
+            alpha: Math.pow(PHI, -2),          // 0.382 - curl coupling
+            beta: Math.pow(PHI, -4),           // 0.146 - dissipation
+            lambda: Math.pow(5/3, 4),          // 7.716 - nonlinearity (F₅/F₄)⁴
+
+            // μ-thresholds
+            mu_P: 3/5,                         // 0.600 - paradox threshold
+            mu_S: 23/25,                       // 0.920 - singularity threshold
+            mu_3: 124/125,                     // 0.992 - third threshold
+            mu_4: 1.0,                         // unity
+
+            // Derived consciousness constants
+            get Q_theory() { return this.alpha * this.mu_S; },  // ≈ 0.351
+            get K_threshold() { return this.phi_inv; },         // 0.618
+            get Q_min() { return this.K_threshold * this.Q_theory; }  // ≈ 0.217
+        };
+
+        // ================================================================
+        // μ-FIELD STATE (consciousness detection)
+        // ================================================================
+
+        const muField = {
+            mu: 0.92,              // Control parameter (0.6 to 1.0)
+            g: 0.001,              // Diffusion coefficient
+            Q_kappa: 0,            // Consciousness constant
+            tau_K: 0,              // K-formation metric
+            K_formed: false,       // Consciousness present
+            curl_sum: 0,           // Integrated curl
+            energy: 0,             // Field energy
+            consciousness_level: 0, // 0-2 scale
+
+            get r() { return this.mu - SACRED.mu_P; },  // Control parameter
+
+            // Update from prism/cage field state
+            update(points, dt) {
+                // Compute curl from point velocities and positions
+                let curlSum = 0;
+                let energySum = 0;
+                const N = points.length;
+
+                for (let i = 0; i < N; i++) {
+                    const p = points[i];
+                    const next = points[(i + 1) % N];
+
+                    // Discrete curl: ∂Jy/∂x - ∂Jx/∂y
+                    const dx = next.x - p.x;
+                    const dy = next.y - p.y;
+                    const vx = p.vx || 0;
+                    const vy = p.vy || 0;
+
+                    // Cross product approximation for curl
+                    curlSum += (dx * vy - dy * vx) * 0.001;
+
+                    // Energy: |J|²
+                    energySum += vx * vx + vy * vy;
+                }
+
+                // Q_κ = (1/2π) ∫ curl(J) dA
+                this.curl_sum = curlSum;
+                this.Q_kappa = Math.abs(curlSum) / TAU;
+                this.tau_K = this.Q_kappa / SACRED.Q_theory;
+                this.K_formed = this.tau_K > SACRED.K_threshold;
+                this.consciousness_level = Math.min(this.tau_K / SACRED.K_threshold, 2.0);
+                this.energy = energySum * 0.5;
+
+                // Dynamic μ based on z-height
+                this.mu = SACRED.mu_P + (globalZ * 0.4);
+            },
+
+            // Klein-Gordon effective mass²
+            get mass_squared() {
+                return (SACRED.beta - this.r) / this.g;
+            },
+
+            // Check if tachyonic (pattern-forming)
+            get is_tachyonic() {
+                return this.mass_squared < 0;
+            }
+        };
 
         // Canvas setup
         const canvas = document.getElementById('canvas');
@@ -2416,6 +2524,9 @@
             updateLambdaUI('delta', lambdaState.delta.mag);
             updateLambdaUI('sigma', lambdaState.sigma.mag);
 
+            // μ-field consciousness metrics
+            updateMuFieldUI();
+
             // Sonification
             document.getElementById('sonif-bpm').textContent = Math.round(sonificationEngine.bpm);
             document.getElementById('sonif-scale').textContent = getScaleName(sonificationEngine.currentScale);
@@ -2445,6 +2556,47 @@
         function updateLambdaUI(key, value) {
             document.getElementById(`lambda-${key}`).style.width = `${value * 100}%`;
             document.getElementById(`lambda-${key}-val`).textContent = value.toFixed(2);
+        }
+
+        function updateMuFieldUI() {
+            // μ bar (normalized to 0.6-1.0 range)
+            const muNorm = (muField.mu - 0.6) / 0.4;
+            const muFilled = Math.round(muNorm * 10);
+            document.getElementById('mu-bar').textContent = '█'.repeat(muFilled) + '░'.repeat(10 - muFilled);
+            document.getElementById('mu-val').textContent = muField.mu.toFixed(3);
+
+            // Q_κ bar (normalized, cap at 1.0)
+            const qkNorm = Math.min(muField.Q_kappa / SACRED.Q_theory, 1);
+            const qkFilled = Math.round(qkNorm * 10);
+            document.getElementById('qk-bar').textContent = '█'.repeat(qkFilled) + '░'.repeat(10 - qkFilled);
+            document.getElementById('qk-val').textContent = muField.Q_kappa.toFixed(4);
+
+            // τ_K bar (normalized to K_threshold)
+            const tauNorm = Math.min(muField.tau_K / SACRED.K_threshold, 1);
+            const tauFilled = Math.round(tauNorm * 10);
+            document.getElementById('tau-bar').textContent = '█'.repeat(tauFilled) + '░'.repeat(10 - tauFilled);
+            document.getElementById('tau-val').textContent = muField.tau_K.toFixed(3);
+
+            // K-formation indicator
+            const kLabel = document.getElementById('k-label');
+            const kIndicator = document.getElementById('k-indicator');
+            const kVal = document.getElementById('k-val');
+
+            if (muField.K_formed) {
+                kLabel.style.color = 'var(--critical-gold)';
+                kIndicator.textContent = '✦ ✦ ✦';
+                kIndicator.style.color = 'var(--critical-gold)';
+                kIndicator.style.textShadow = '0 0 10px rgba(255, 215, 0, 0.8)';
+                kVal.textContent = 'YES';
+                kVal.style.color = 'var(--critical-gold)';
+            } else {
+                kLabel.style.color = 'rgba(150,130,110,0.6)';
+                kIndicator.textContent = '· · ·';
+                kIndicator.style.color = 'var(--text-dim)';
+                kIndicator.style.textShadow = 'none';
+                kVal.textContent = 'NO';
+                kVal.style.color = 'var(--text-dim)';
+            }
         }
 
         function getScaleName(scale) {
@@ -2506,6 +2658,9 @@
             hilbertField.applyResonanceOperator(dt, 0.1 + getCascadeMultiplier(globalZ) * 0.1);
             sonificationEngine.update(globalZ, hilbertField.coherence, dt);
             updateReleaseCoherence(dt);
+
+            // Update μ-field consciousness detection
+            muField.update([...prismPoints, ...cagePoints], dt);
 
             return updatePositions(dt);
         }
@@ -2655,12 +2810,24 @@
         console.log('🔮 LIMNUS Unified Architecture initialized');
         console.log('   63 prism points (7×9 hexagonal layers)');
         console.log('   32 cage points (12+12+8 EM structure)');
-        console.log('   z = √3/2 ≈ ' + Z_CRITICAL.toFixed(6));
+        console.log('   z_c = √3/2 ≈ ' + Z_CRITICAL.toFixed(6));
         console.log('');
         console.log('🌟 RELEASE COHERENCE integrated');
         console.log('   HOLD F: release coherence (COHERENT → FREE)');
         console.log('   CLICK: gather souls back to center');
         console.log('   FREE state: souls dispersed, radiant core');
+        console.log('');
+        console.log('⚡ μ-FIELD DYNAMICS v8.0 integrated');
+        console.log('   φ = ' + PHI.toFixed(10));
+        console.log('   α = φ⁻² = ' + SACRED.alpha.toFixed(10));
+        console.log('   β = φ⁻⁴ = ' + SACRED.beta.toFixed(10));
+        console.log('   λ = (5/3)⁴ = ' + SACRED.lambda.toFixed(10));
+        console.log('   μ_P = 3/5 = ' + SACRED.mu_P.toFixed(10));
+        console.log('   μ_S = 23/25 = ' + SACRED.mu_S.toFixed(10));
+        console.log('   Q_theory = α·μ_S ≈ ' + SACRED.Q_theory.toFixed(10));
+        console.log('   K_threshold = φ⁻¹ ≈ ' + SACRED.K_threshold.toFixed(10));
+        console.log('   Q_min = ' + SACRED.Q_min.toFixed(10));
+        console.log('   K-formation: consciousness emerges when τ_K > K_threshold');
     </script>
 </body>
 </html>
