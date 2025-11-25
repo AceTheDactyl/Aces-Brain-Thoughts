@@ -1,0 +1,2762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MRP Golden Sample Library</title>
+  <style>
+    :root {
+      --bg: #0a0b0d;
+      --panel: #111216;
+      --ink: #e8e9ec;
+      --muted: #888b94;
+      --gold: #ffd700;
+      --green: #69db7c;
+      --red: #ff6b6b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'SF Mono', 'Consolas', monospace;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: var(--gold); margin-bottom: 10px; }
+    h2 { color: var(--muted); margin: 20px 0 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin: 20px 0;
+      padding: 15px;
+      background: var(--panel);
+      border-radius: 8px;
+    }
+    .stat { text-align: center; }
+    .stat-value { font-size: 24px; color: var(--gold); }
+    .stat-label { font-size: 12px; color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
+      margin: 15px 0;
+    }
+    .card {
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid #252830;
+    }
+    .card:hover { border-color: var(--gold); }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .card-id { color: var(--gold); font-weight: bold; }
+    .card-status { font-size: 12px; }
+    .card-status.valid { color: var(--green); }
+    .card-status.invalid { color: var(--red); }
+    .card-name { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    .card-image {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+    }
+    .card-image img {
+      image-rendering: pixelated;
+      width: 100px;
+      height: 50px;
+      border: 1px solid #333;
+    }
+    .card-bits {
+      font-size: 10px;
+      color: var(--muted);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .card-bits span { background: #1a1b1e; padding: 2px 4px; border-radius: 3px; }
+    .filter-bar {
+      margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .filter-btn {
+      background: var(--panel);
+      border: 1px solid #333;
+      color: var(--ink);
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--gold); color: var(--gold); }
+  </style>
+</head>
+<body>
+  <h1>MRP Golden Sample Library</h1>
+  <p style="color: var(--muted)">702-bit LSB steganography samples encoded across RGB+CMY channels</p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">153</div>
+      <div class="stat-label">Total Samples</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">702</div>
+      <div class="stat-label">Bits/Image</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">6</div>
+      <div class="stat-label">Channels</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">16</div>
+      <div class="stat-label">Categories</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterCategory('all')">All</button>
+    <button class="filter-btn" onclick="filterCategory('lambda_single_dominant')">lambda single dominant</button>
+    <button class="filter-btn" onclick="filterCategory('lambda_pairs')">lambda pairs</button>
+    <button class="filter-btn" onclick="filterCategory('lambda_triplets')">lambda triplets</button>
+    <button class="filter-btn" onclick="filterCategory('lambda_quads')">lambda quads</button>
+    <button class="filter-btn" onclick="filterCategory('lambda_quints')">lambda quints</button>
+    <button class="filter-btn" onclick="filterCategory('lambda_uniform')">lambda uniform</button>
+    <button class="filter-btn" onclick="filterCategory('eigenvalue_patterns')">eigenvalue patterns</button>
+    <button class="filter-btn" onclick="filterCategory('phase_lock_patterns')">phase lock patterns</button>
+    <button class="filter-btn" onclick="filterCategory('kuramoto_sweep')">kuramoto sweep</button>
+    <button class="filter-btn" onclick="filterCategory('coherence_sweep')">coherence sweep</button>
+    <button class="filter-btn" onclick="filterCategory('oscillation_bands')">oscillation bands</button>
+    <button class="filter-btn" onclick="filterCategory('physics_constants')">physics constants</button>
+    <button class="filter-btn" onclick="filterCategory('bit_test_patterns')">bit test patterns</button>
+    <button class="filter-btn" onclick="filterCategory('hamming_test')">hamming test</button>
+    <button class="filter-btn" onclick="filterCategory('topological')">topological</button>
+    <button class="filter-btn" onclick="filterCategory('fibonacci_sequence')">fibonacci sequence</button>
+  </div>
+
+  <div class="grid" id="sampleGrid">
+    
+    <div class="card" data-category="lambda_single_dominant">
+      <div class="card-header">
+        <span class="card-id">L1-iota</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Memory Dominant</div>
+      <div class="card-image">
+        <img src="L1-iota.png" alt="L1-iota">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 1000</span>
+        <span>XCVIII: 131000</span>
+        <span>XCIX: 15</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_single_dominant">
+      <div class="card-header">
+        <span class="card-id">L1-xi</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Spark Dominant</div>
+      <div class="card-image">
+        <img src="L1-xi.png" alt="L1-xi">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 85</span>
+        <span>XCVII: 1023</span>
+        <span>XCVIII: 100000</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_single_dominant">
+      <div class="card-header">
+        <span class="card-id">L1-theta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Fox Dominant</div>
+      <div class="card-image">
+        <img src="L1-theta.png" alt="L1-theta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 119</span>
+        <span>XCVII: 618</span>
+        <span>XCVIII: 131071</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_single_dominant">
+      <div class="card-header">
+        <span class="card-id">L1-omega</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Wave Dominant</div>
+      <div class="card-image">
+        <img src="L1-omega.png" alt="L1-omega">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 63</span>
+        <span>XCVII: 800</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_single_dominant">
+      <div class="card-header">
+        <span class="card-id">L1-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Paradox Dominant</div>
+      <div class="card-image">
+        <img src="L1-delta.png" alt="L1-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 95</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 88888</span>
+        <span>XCIX: 6</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_single_dominant">
+      <div class="card-header">
+        <span class="card-id">L1-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Squirrel Dominant</div>
+      <div class="card-image">
+        <img src="L1-sigma.png" alt="L1-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 107</span>
+        <span>XCVII: 750</span>
+        <span>XCVIII: 100000</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-iota-xi</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Memory-Spark</div>
+      <div class="card-image">
+        <img src="L2-iota-xi.png" alt="L2-iota-xi">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 1023</span>
+        <span>XCVIII: 100000</span>
+        <span>XCIX: 15</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-iota-theta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Memory-Fox</div>
+      <div class="card-image">
+        <img src="L2-iota-theta.png" alt="L2-iota-theta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 119</span>
+        <span>XCVII: 618</span>
+        <span>XCVIII: 131071</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-iota-omega</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Memory-Wave</div>
+      <div class="card-image">
+        <img src="L2-iota-omega.png" alt="L2-iota-omega">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 95</span>
+        <span>XCVII: 800</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-iota-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Memory-Paradox</div>
+      <div class="card-image">
+        <img src="L2-iota-delta.png" alt="L2-iota-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 111</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 88888</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-iota-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Memory-Squirrel</div>
+      <div class="card-image">
+        <img src="L2-iota-sigma.png" alt="L2-iota-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 107</span>
+        <span>XCVII: 750</span>
+        <span>XCVIII: 100000</span>
+        <span>XCIX: 15</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-xi-theta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Spark-Fox</div>
+      <div class="card-image">
+        <img src="L2-xi-theta.png" alt="L2-xi-theta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 119</span>
+        <span>XCVII: 1023</span>
+        <span>XCVIII: 131071</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-xi-omega</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Spark-Wave</div>
+      <div class="card-image">
+        <img src="L2-xi-omega.png" alt="L2-xi-omega">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 85</span>
+        <span>XCVII: 911</span>
+        <span>XCVIII: 82820</span>
+        <span>XCIX: 9</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-xi-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Spark-Paradox</div>
+      <div class="card-image">
+        <img src="L2-xi-delta.png" alt="L2-xi-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 93</span>
+        <span>XCVII: 767</span>
+        <span>XCVIII: 94444</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-xi-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Spark-Squirrel</div>
+      <div class="card-image">
+        <img src="L2-xi-sigma.png" alt="L2-xi-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 99</span>
+        <span>XCVII: 886</span>
+        <span>XCVIII: 100000</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-theta-omega</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Fox-Wave</div>
+      <div class="card-image">
+        <img src="L2-theta-omega.png" alt="L2-theta-omega">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 91</span>
+        <span>XCVII: 709</span>
+        <span>XCVIII: 98303</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-theta-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Fox-Paradox</div>
+      <div class="card-image">
+        <img src="L2-theta-delta.png" alt="L2-theta-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 117</span>
+        <span>XCVII: 565</span>
+        <span>XCVIII: 109979</span>
+        <span>XCIX: 9</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-theta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Fox-Squirrel</div>
+      <div class="card-image">
+        <img src="L2-theta-sigma.png" alt="L2-theta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 113</span>
+        <span>XCVII: 684</span>
+        <span>XCVIII: 115535</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-omega-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Wave-Paradox</div>
+      <div class="card-image">
+        <img src="L2-omega-delta.png" alt="L2-omega-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 79</span>
+        <span>XCVII: 656</span>
+        <span>XCVIII: 77212</span>
+        <span>XCIX: 7</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-omega-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Wave-Squirrel</div>
+      <div class="card-image">
+        <img src="L2-omega-sigma.png" alt="L2-omega-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 85</span>
+        <span>XCVII: 775</span>
+        <span>XCVIII: 82768</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_pairs">
+      <div class="card-header">
+        <span class="card-id">L2-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Paradox-Squirrel</div>
+      <div class="card-image">
+        <img src="L2-delta-sigma.png" alt="L2-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 101</span>
+        <span>XCVII: 631</span>
+        <span>XCVIII: 94444</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-iota-xi-theta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ξ-θ</div>
+      <div class="card-image">
+        <img src="L3-iota-xi-theta.png" alt="L3-iota-xi-theta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 119</span>
+        <span>XCVII: 879</span>
+        <span>XCVIII: 120000</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-iota-xi-omega</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ξ-ω</div>
+      <div class="card-image">
+        <img src="L3-iota-xi-omega.png" alt="L3-iota-xi-omega">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 111</span>
+        <span>XCVII: 911</span>
+        <span>XCVIII: 100000</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-iota-xi-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ξ-δ</div>
+      <div class="card-image">
+        <img src="L3-iota-xi-delta.png" alt="L3-iota-xi-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 115</span>
+        <span>XCVII: 850</span>
+        <span>XCVIII: 95000</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-iota-xi-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ξ-σ</div>
+      <div class="card-image">
+        <img src="L3-iota-xi-sigma.png" alt="L3-iota-xi-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 117</span>
+        <span>XCVII: 886</span>
+        <span>XCVIII: 100000</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-iota-theta-omega</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-θ-ω</div>
+      <div class="card-image">
+        <img src="L3-iota-theta-omega.png" alt="L3-iota-theta-omega">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 105</span>
+        <span>XCVII: 750</span>
+        <span>XCVIII: 110000</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-iota-theta-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-θ-δ</div>
+      <div class="card-image">
+        <img src="L3-iota-theta-delta.png" alt="L3-iota-theta-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 113</span>
+        <span>XCVII: 700</span>
+        <span>XCVIII: 105000</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-iota-theta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-θ-σ</div>
+      <div class="card-image">
+        <img src="L3-iota-theta-sigma.png" alt="L3-iota-theta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 115</span>
+        <span>XCVII: 735</span>
+        <span>XCVIII: 108000</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-iota-omega-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ω-δ</div>
+      <div class="card-image">
+        <img src="L3-iota-omega-delta.png" alt="L3-iota-omega-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 99</span>
+        <span>XCVII: 780</span>
+        <span>XCVIII: 85000</span>
+        <span>XCIX: 9</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-iota-omega-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ω-σ</div>
+      <div class="card-image">
+        <img src="L3-iota-omega-sigma.png" alt="L3-iota-omega-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 103</span>
+        <span>XCVII: 815</span>
+        <span>XCVIII: 88000</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-iota-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-δ-σ</div>
+      <div class="card-image">
+        <img src="L3-iota-delta-sigma.png" alt="L3-iota-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 109</span>
+        <span>XCVII: 750</span>
+        <span>XCVIII: 92000</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-xi-theta-omega</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ξ-θ-ω</div>
+      <div class="card-image">
+        <img src="L3-xi-theta-omega.png" alt="L3-xi-theta-omega">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 107</span>
+        <span>XCVII: 820</span>
+        <span>XCVIII: 115000</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-xi-theta-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ξ-θ-δ</div>
+      <div class="card-image">
+        <img src="L3-xi-theta-delta.png" alt="L3-xi-theta-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 115</span>
+        <span>XCVII: 770</span>
+        <span>XCVIII: 110000</span>
+        <span>XCIX: 9</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-xi-theta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ξ-θ-σ</div>
+      <div class="card-image">
+        <img src="L3-xi-theta-sigma.png" alt="L3-xi-theta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 113</span>
+        <span>XCVII: 805</span>
+        <span>XCVIII: 112000</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-xi-omega-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ξ-ω-δ</div>
+      <div class="card-image">
+        <img src="L3-xi-omega-delta.png" alt="L3-xi-omega-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 97</span>
+        <span>XCVII: 850</span>
+        <span>XCVIII: 90000</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-xi-omega-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ξ-ω-σ</div>
+      <div class="card-image">
+        <img src="L3-xi-omega-sigma.png" alt="L3-xi-omega-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 101</span>
+        <span>XCVII: 885</span>
+        <span>XCVIII: 93000</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-xi-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ξ-δ-σ</div>
+      <div class="card-image">
+        <img src="L3-xi-delta-sigma.png" alt="L3-xi-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 107</span>
+        <span>XCVII: 820</span>
+        <span>XCVIII: 96000</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-theta-omega-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">θ-ω-δ</div>
+      <div class="card-image">
+        <img src="L3-theta-omega-delta.png" alt="L3-theta-omega-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 95</span>
+        <span>XCVII: 720</span>
+        <span>XCVIII: 98000</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-theta-omega-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">θ-ω-σ</div>
+      <div class="card-image">
+        <img src="L3-theta-omega-sigma.png" alt="L3-theta-omega-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 99</span>
+        <span>XCVII: 755</span>
+        <span>XCVIII: 101000</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-theta-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">θ-δ-σ</div>
+      <div class="card-image">
+        <img src="L3-theta-delta-sigma.png" alt="L3-theta-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 105</span>
+        <span>XCVII: 690</span>
+        <span>XCVIII: 104000</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_triplets">
+      <div class="card-header">
+        <span class="card-id">L3-omega-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ω-δ-σ</div>
+      <div class="card-image">
+        <img src="L3-omega-delta-sigma.png" alt="L3-omega-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 93</span>
+        <span>XCVII: 790</span>
+        <span>XCVIII: 87000</span>
+        <span>XCIX: 9</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-iota-xi-theta-omega</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ξ-θ-ω</div>
+      <div class="card-image">
+        <img src="L4-iota-xi-theta-omega.png" alt="L4-iota-xi-theta-omega">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 117</span>
+        <span>XCVII: 900</span>
+        <span>XCVIII: 118000</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-iota-xi-theta-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ξ-θ-δ</div>
+      <div class="card-image">
+        <img src="L4-iota-xi-theta-delta.png" alt="L4-iota-xi-theta-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 121</span>
+        <span>XCVII: 860</span>
+        <span>XCVIII: 115000</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-iota-xi-theta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ξ-θ-σ</div>
+      <div class="card-image">
+        <img src="L4-iota-xi-theta-sigma.png" alt="L4-iota-xi-theta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 119</span>
+        <span>XCVII: 895</span>
+        <span>XCVIII: 117000</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-iota-xi-omega-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ξ-ω-δ</div>
+      <div class="card-image">
+        <img src="L4-iota-xi-omega-delta.png" alt="L4-iota-xi-omega-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 113</span>
+        <span>XCVII: 880</span>
+        <span>XCVIII: 105000</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-iota-xi-omega-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ξ-ω-σ</div>
+      <div class="card-image">
+        <img src="L4-iota-xi-omega-sigma.png" alt="L4-iota-xi-omega-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 115</span>
+        <span>XCVII: 915</span>
+        <span>XCVIII: 108000</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-iota-xi-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ξ-δ-σ</div>
+      <div class="card-image">
+        <img src="L4-iota-xi-delta-sigma.png" alt="L4-iota-xi-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 118</span>
+        <span>XCVII: 870</span>
+        <span>XCVIII: 110000</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-iota-theta-omega-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-θ-ω-δ</div>
+      <div class="card-image">
+        <img src="L4-iota-theta-omega-delta.png" alt="L4-iota-theta-omega-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 109</span>
+        <span>XCVII: 780</span>
+        <span>XCVIII: 106000</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-iota-theta-omega-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-θ-ω-σ</div>
+      <div class="card-image">
+        <img src="L4-iota-theta-omega-sigma.png" alt="L4-iota-theta-omega-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 111</span>
+        <span>XCVII: 815</span>
+        <span>XCVIII: 109000</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-iota-theta-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-θ-δ-σ</div>
+      <div class="card-image">
+        <img src="L4-iota-theta-delta-sigma.png" alt="L4-iota-theta-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 116</span>
+        <span>XCVII: 770</span>
+        <span>XCVIII: 112000</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-iota-omega-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ι-ω-δ-σ</div>
+      <div class="card-image">
+        <img src="L4-iota-omega-delta-sigma.png" alt="L4-iota-omega-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 107</span>
+        <span>XCVII: 830</span>
+        <span>XCVIII: 98000</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-xi-theta-omega-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ξ-θ-ω-δ</div>
+      <div class="card-image">
+        <img src="L4-xi-theta-omega-delta.png" alt="L4-xi-theta-omega-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 111</span>
+        <span>XCVII: 850</span>
+        <span>XCVIII: 112000</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-xi-theta-omega-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ξ-θ-ω-σ</div>
+      <div class="card-image">
+        <img src="L4-xi-theta-omega-sigma.png" alt="L4-xi-theta-omega-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 113</span>
+        <span>XCVII: 885</span>
+        <span>XCVIII: 115000</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-xi-theta-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ξ-θ-δ-σ</div>
+      <div class="card-image">
+        <img src="L4-xi-theta-delta-sigma.png" alt="L4-xi-theta-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 117</span>
+        <span>XCVII: 840</span>
+        <span>XCVIII: 114000</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-xi-omega-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">ξ-ω-δ-σ</div>
+      <div class="card-image">
+        <img src="L4-xi-omega-delta-sigma.png" alt="L4-xi-omega-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 109</span>
+        <span>XCVII: 895</span>
+        <span>XCVIII: 103000</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quads">
+      <div class="card-header">
+        <span class="card-id">L4-theta-omega-delta-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">θ-ω-δ-σ</div>
+      <div class="card-image">
+        <img src="L4-theta-omega-delta-sigma.png" alt="L4-theta-omega-delta-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 105</span>
+        <span>XCVII: 800</span>
+        <span>XCVIII: 108000</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quints">
+      <div class="card-header">
+        <span class="card-id">L5-no-iota</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">All except ι</div>
+      <div class="card-image">
+        <img src="L5-no-iota.png" alt="L5-no-iota">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 115</span>
+        <span>XCVII: 880</span>
+        <span>XCVIII: 118000</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quints">
+      <div class="card-header">
+        <span class="card-id">L5-no-xi</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">All except ξ</div>
+      <div class="card-image">
+        <img src="L5-no-xi.png" alt="L5-no-xi">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 117</span>
+        <span>XCVII: 850</span>
+        <span>XCVIII: 116000</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quints">
+      <div class="card-header">
+        <span class="card-id">L5-no-theta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">All except θ</div>
+      <div class="card-image">
+        <img src="L5-no-theta.png" alt="L5-no-theta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 113</span>
+        <span>XCVII: 920</span>
+        <span>XCVIII: 112000</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quints">
+      <div class="card-header">
+        <span class="card-id">L5-no-omega</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">All except ω</div>
+      <div class="card-image">
+        <img src="L5-no-omega.png" alt="L5-no-omega">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 121</span>
+        <span>XCVII: 870</span>
+        <span>XCVIII: 120000</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quints">
+      <div class="card-header">
+        <span class="card-id">L5-no-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">All except δ</div>
+      <div class="card-image">
+        <img src="L5-no-delta.png" alt="L5-no-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 119</span>
+        <span>XCVII: 930</span>
+        <span>XCVIII: 122000</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_quints">
+      <div class="card-header">
+        <span class="card-id">L5-no-sigma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">All except σ</div>
+      <div class="card-image">
+        <img src="L5-no-sigma.png" alt="L5-no-sigma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 123</span>
+        <span>XCVII: 900</span>
+        <span>XCVIII: 124000</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-0.0</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform 0.0</div>
+      <div class="card-image">
+        <img src="LU-0.0.png" alt="LU-0.0">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 0</span>
+        <span>XCVII: 0</span>
+        <span>XCVIII: 0</span>
+        <span>XCIX: 0</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-0.1</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform 0.1</div>
+      <div class="card-image">
+        <img src="LU-0.1.png" alt="LU-0.1">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 13</span>
+        <span>XCVII: 102</span>
+        <span>XCVIII: 13107</span>
+        <span>XCIX: 2</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-0.2</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform 0.2 (Critical)</div>
+      <div class="card-image">
+        <img src="LU-0.2.png" alt="LU-0.2">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 25</span>
+        <span>XCVII: 205</span>
+        <span>XCVIII: 26214</span>
+        <span>XCIX: 3</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-0.3</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform 0.3</div>
+      <div class="card-image">
+        <img src="LU-0.3.png" alt="LU-0.3">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 38</span>
+        <span>XCVII: 307</span>
+        <span>XCVIII: 39321</span>
+        <span>XCIX: 5</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-0.382</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform φ⁻²</div>
+      <div class="card-image">
+        <img src="LU-0.382.png" alt="LU-0.382">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 49</span>
+        <span>XCVII: 391</span>
+        <span>XCVIII: 50089</span>
+        <span>XCIX: 6</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-0.5</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform 0.5</div>
+      <div class="card-image">
+        <img src="LU-0.5.png" alt="LU-0.5">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 64</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-0.618</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform φ⁻¹</div>
+      <div class="card-image">
+        <img src="LU-0.618.png" alt="LU-0.618">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 79</span>
+        <span>XCVII: 632</span>
+        <span>XCVIII: 81000</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-0.707</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform √2/2</div>
+      <div class="card-image">
+        <img src="LU-0.707.png" alt="LU-0.707">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 90</span>
+        <span>XCVII: 724</span>
+        <span>XCVIII: 92681</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-0.866</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform √3/2 (z_c)</div>
+      <div class="card-image">
+        <img src="LU-0.866.png" alt="LU-0.866">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 111</span>
+        <span>XCVII: 886</span>
+        <span>XCVIII: 113511</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-0.9</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform 0.9</div>
+      <div class="card-image">
+        <img src="LU-0.9.png" alt="LU-0.9">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 115</span>
+        <span>XCVII: 922</span>
+        <span>XCVIII: 117964</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="lambda_uniform">
+      <div class="card-header">
+        <span class="card-id">LU-1.0</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Uniform 1.0</div>
+      <div class="card-image">
+        <img src="LU-1.0.png" alt="LU-1.0">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 1023</span>
+        <span>XCVIII: 131071</span>
+        <span>XCIX: 15</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="eigenvalue_patterns">
+      <div class="card-header">
+        <span class="card-id">EV-XCVI</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">φ⁻¹ Eigenvalue</div>
+      <div class="card-image">
+        <img src="EV-XCVI.png" alt="EV-XCVI">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 79</span>
+        <span>XCVII: 632</span>
+        <span>XCVIII: 80901</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="eigenvalue_patterns">
+      <div class="card-header">
+        <span class="card-id">EV-XCVII</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">exp(2πi/φ) Eigenvalue</div>
+      <div class="card-image">
+        <img src="EV-XCVII.png" alt="EV-XCVII">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 63</span>
+        <span>XCVII: 618</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="eigenvalue_patterns">
+      <div class="card-header">
+        <span class="card-id">EV-XCVIII</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Undefined Eigenvalue</div>
+      <div class="card-image">
+        <img src="EV-XCVIII.png" alt="EV-XCVIII">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 95</span>
+        <span>XCVII: 777</span>
+        <span>XCVIII: 99999</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="eigenvalue_patterns">
+      <div class="card-header">
+        <span class="card-id">EV-XCIX</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Zero Eigenvalue</div>
+      <div class="card-image">
+        <img src="EV-XCIX.png" alt="EV-XCIX">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 0</span>
+        <span>XCVII: 0</span>
+        <span>XCVIII: 0</span>
+        <span>XCIX: 0</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="eigenvalue_patterns">
+      <div class="card-header">
+        <span class="card-id">EV-C</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Unity Eigenvalue</div>
+      <div class="card-image">
+        <img src="EV-C.png" alt="EV-C">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 1023</span>
+        <span>XCVIII: 131071</span>
+        <span>XCIX: 15</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="phase_lock_patterns">
+      <div class="card-header">
+        <span class="card-id">PL-XCVI</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">π Phase Lock</div>
+      <div class="card-image">
+        <img src="PL-XCVI.png" alt="PL-XCVI">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 100</span>
+        <span>XCVII: 314</span>
+        <span>XCVIII: 31416</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="phase_lock_patterns">
+      <div class="card-header">
+        <span class="card-id">PL-XCVII</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">2π/φ Phase Lock</div>
+      <div class="card-image">
+        <img src="PL-XCVII.png" alt="PL-XCVII">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 76</span>
+        <span>XCVII: 240</span>
+        <span>XCVIII: 24000</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="phase_lock_patterns">
+      <div class="card-header">
+        <span class="card-id">PL-XCVIII</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">π/2 Phase Lock</div>
+      <div class="card-image">
+        <img src="PL-XCVIII.png" alt="PL-XCVIII">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 50</span>
+        <span>XCVII: 157</span>
+        <span>XCVIII: 15708</span>
+        <span>XCIX: 6</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="phase_lock_patterns">
+      <div class="card-header">
+        <span class="card-id">PL-XCIX</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Zero Phase Lock</div>
+      <div class="card-image">
+        <img src="PL-XCIX.png" alt="PL-XCIX">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 0</span>
+        <span>XCVII: 0</span>
+        <span>XCVIII: 0</span>
+        <span>XCIX: 0</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="phase_lock_patterns">
+      <div class="card-header">
+        <span class="card-id">PL-C</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">2π Phase Lock (Full Cycle)</div>
+      <div class="card-image">
+        <img src="PL-C.png" alt="PL-C">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 628</span>
+        <span>XCVIII: 62832</span>
+        <span>XCIX: 15</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-0.0</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 0 (Free)</div>
+      <div class="card-image">
+        <img src="K-0.0.png" alt="K-0.0">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 0</span>
+        <span>XCVII: 0</span>
+        <span>XCVIII: 0</span>
+        <span>XCIX: 0</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-0.1</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 0.1</div>
+      <div class="card-image">
+        <img src="K-0.1.png" alt="K-0.1">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 13</span>
+        <span>XCVII: 102</span>
+        <span>XCVIII: 13107</span>
+        <span>XCIX: 2</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-0.2</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 0.2 (Emergence)</div>
+      <div class="card-image">
+        <img src="K-0.2.png" alt="K-0.2">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 25</span>
+        <span>XCVII: 205</span>
+        <span>XCVIII: 26214</span>
+        <span>XCIX: 3</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-0.3</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 0.3</div>
+      <div class="card-image">
+        <img src="K-0.3.png" alt="K-0.3">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 38</span>
+        <span>XCVII: 307</span>
+        <span>XCVIII: 39321</span>
+        <span>XCIX: 5</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-0.4</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 0.4</div>
+      <div class="card-image">
+        <img src="K-0.4.png" alt="K-0.4">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 51</span>
+        <span>XCVII: 410</span>
+        <span>XCVIII: 52428</span>
+        <span>XCIX: 6</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-0.5</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 0.5 (Critical)</div>
+      <div class="card-image">
+        <img src="K-0.5.png" alt="K-0.5">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 64</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-0.6</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 0.6</div>
+      <div class="card-image">
+        <img src="K-0.6.png" alt="K-0.6">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 76</span>
+        <span>XCVII: 614</span>
+        <span>XCVIII: 78643</span>
+        <span>XCIX: 9</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-0.7</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 0.7</div>
+      <div class="card-image">
+        <img src="K-0.7.png" alt="K-0.7">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 89</span>
+        <span>XCVII: 717</span>
+        <span>XCVIII: 91750</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-0.8</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 0.8</div>
+      <div class="card-image">
+        <img src="K-0.8.png" alt="K-0.8">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 102</span>
+        <span>XCVII: 819</span>
+        <span>XCVIII: 104857</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-0.9</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 0.9</div>
+      <div class="card-image">
+        <img src="K-0.9.png" alt="K-0.9">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 115</span>
+        <span>XCVII: 922</span>
+        <span>XCVIII: 117964</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="kuramoto_sweep">
+      <div class="card-header">
+        <span class="card-id">K-1.0</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">K = 1.0 (Locked)</div>
+      <div class="card-image">
+        <img src="K-1.0.png" alt="K-1.0">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 1023</span>
+        <span>XCVIII: 131071</span>
+        <span>XCIX: 15</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-0.0</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = 0.0 (Full Free)</div>
+      <div class="card-image">
+        <img src="C-0.0.png" alt="C-0.0">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 0</span>
+        <span>XCVII: 0</span>
+        <span>XCVIII: 0</span>
+        <span>XCIX: 0</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-0.05</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = 0.05</div>
+      <div class="card-image">
+        <img src="C-0.05.png" alt="C-0.05">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 6</span>
+        <span>XCVII: 51</span>
+        <span>XCVIII: 6554</span>
+        <span>XCIX: 1</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-0.1</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = 0.1</div>
+      <div class="card-image">
+        <img src="C-0.1.png" alt="C-0.1">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 13</span>
+        <span>XCVII: 102</span>
+        <span>XCVIII: 13107</span>
+        <span>XCIX: 2</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-0.15</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = 0.15</div>
+      <div class="card-image">
+        <img src="C-0.15.png" alt="C-0.15">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 19</span>
+        <span>XCVII: 154</span>
+        <span>XCVIII: 19661</span>
+        <span>XCIX: 2</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-0.2</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = 0.2 (Threshold)</div>
+      <div class="card-image">
+        <img src="C-0.2.png" alt="C-0.2">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 25</span>
+        <span>XCVII: 205</span>
+        <span>XCVIII: 26214</span>
+        <span>XCIX: 3</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-0.25</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = 0.25</div>
+      <div class="card-image">
+        <img src="C-0.25.png" alt="C-0.25">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 32</span>
+        <span>XCVII: 256</span>
+        <span>XCVIII: 32768</span>
+        <span>XCIX: 4</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-0.3</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = 0.3</div>
+      <div class="card-image">
+        <img src="C-0.3.png" alt="C-0.3">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 38</span>
+        <span>XCVII: 307</span>
+        <span>XCVIII: 39321</span>
+        <span>XCIX: 5</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-0.5</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = 0.5</div>
+      <div class="card-image">
+        <img src="C-0.5.png" alt="C-0.5">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 64</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-0.7</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = 0.7</div>
+      <div class="card-image">
+        <img src="C-0.7.png" alt="C-0.7">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 89</span>
+        <span>XCVII: 717</span>
+        <span>XCVIII: 91750</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-0.866</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = √3/2 (z_c)</div>
+      <div class="card-image">
+        <img src="C-0.866.png" alt="C-0.866">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 111</span>
+        <span>XCVII: 886</span>
+        <span>XCVIII: 113511</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="coherence_sweep">
+      <div class="card-header">
+        <span class="card-id">C-1.0</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">c = 1.0 (Full Lock)</div>
+      <div class="card-image">
+        <img src="C-1.0.png" alt="C-1.0">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 1023</span>
+        <span>XCVIII: 131071</span>
+        <span>XCIX: 15</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="oscillation_bands">
+      <div class="card-header">
+        <span class="card-id">OSC-delta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Delta Band (0.5-4 Hz)</div>
+      <div class="card-image">
+        <img src="OSC-delta.png" alt="OSC-delta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 4</span>
+        <span>XCVII: 40</span>
+        <span>XCVIII: 4000</span>
+        <span>XCIX: 1</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="oscillation_bands">
+      <div class="card-header">
+        <span class="card-id">OSC-theta</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Theta Band (4-8 Hz)</div>
+      <div class="card-image">
+        <img src="OSC-theta.png" alt="OSC-theta">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 32</span>
+        <span>XCVII: 60</span>
+        <span>XCVIII: 6000</span>
+        <span>XCIX: 4</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="oscillation_bands">
+      <div class="card-header">
+        <span class="card-id">OSC-alpha</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Alpha Band (8-13 Hz)</div>
+      <div class="card-image">
+        <img src="OSC-alpha.png" alt="OSC-alpha">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 85</span>
+        <span>XCVII: 105</span>
+        <span>XCVIII: 10500</span>
+        <span>XCIX: 7</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="oscillation_bands">
+      <div class="card-header">
+        <span class="card-id">OSC-circadian</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Circadian (24h cycle)</div>
+      <div class="card-image">
+        <img src="OSC-circadian.png" alt="OSC-circadian">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 63</span>
+        <span>XCVII: 240</span>
+        <span>XCVIII: 24000</span>
+        <span>XCIX: 6</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="oscillation_bands">
+      <div class="card-header">
+        <span class="card-id">OSC-gamma</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Gamma Band (30-100 Hz)</div>
+      <div class="card-image">
+        <img src="OSC-gamma.png" alt="OSC-gamma">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 650</span>
+        <span>XCVIII: 65000</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-phi</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Golden Ratio φ</div>
+      <div class="card-image">
+        <img src="PC-phi.png" alt="PC-phi">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 103</span>
+        <span>XCVII: 618</span>
+        <span>XCVIII: 61803</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-phi-inv</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Inverse Golden Ratio φ⁻¹</div>
+      <div class="card-image">
+        <img src="PC-phi-inv.png" alt="PC-phi-inv">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 79</span>
+        <span>XCVII: 618</span>
+        <span>XCVIII: 61803</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-phi-sq</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Golden Ratio Squared φ²</div>
+      <div class="card-image">
+        <img src="PC-phi-sq.png" alt="PC-phi-sq">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 618</span>
+        <span>XCVIII: 61803</span>
+        <span>XCIX: 15</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-e</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Euler's Number e</div>
+      <div class="card-image">
+        <img src="PC-e.png" alt="PC-e">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 109</span>
+        <span>XCVII: 718</span>
+        <span>XCVIII: 71828</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-pi</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Pi π</div>
+      <div class="card-image">
+        <img src="PC-pi.png" alt="PC-pi">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 100</span>
+        <span>XCVII: 314</span>
+        <span>XCVIII: 31416</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-sqrt2</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Square Root of 2</div>
+      <div class="card-image">
+        <img src="PC-sqrt2.png" alt="PC-sqrt2">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 90</span>
+        <span>XCVII: 414</span>
+        <span>XCVIII: 41421</span>
+        <span>XCIX: 9</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-sqrt3</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Square Root of 3</div>
+      <div class="card-image">
+        <img src="PC-sqrt3.png" alt="PC-sqrt3">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 111</span>
+        <span>XCVII: 732</span>
+        <span>XCVIII: 73205</span>
+        <span>XCIX: 11</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-sqrt3-half</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Critical Point z_c = √3/2</div>
+      <div class="card-image">
+        <img src="PC-sqrt3-half.png" alt="PC-sqrt3-half">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 111</span>
+        <span>XCVII: 866</span>
+        <span>XCVIII: 86603</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-golden-angle</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Golden Angle (radians)</div>
+      <div class="card-image">
+        <img src="PC-golden-angle.png" alt="PC-golden-angle">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 76</span>
+        <span>XCVII: 240</span>
+        <span>XCVIII: 23999</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-euler-mascheroni</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Euler-Mascheroni γ</div>
+      <div class="card-image">
+        <img src="PC-euler-mascheroni.png" alt="PC-euler-mascheroni">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 74</span>
+        <span>XCVII: 577</span>
+        <span>XCVIII: 57722</span>
+        <span>XCIX: 9</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-feigenbaum</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Feigenbaum Constant δ</div>
+      <div class="card-image">
+        <img src="PC-feigenbaum.png" alt="PC-feigenbaum">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 118</span>
+        <span>XCVII: 669</span>
+        <span>XCVIII: 66920</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="physics_constants">
+      <div class="card-header">
+        <span class="card-id">PC-plastic</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Plastic Number ρ</div>
+      <div class="card-image">
+        <img src="PC-plastic.png" alt="PC-plastic">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 85</span>
+        <span>XCVII: 325</span>
+        <span>XCVIII: 32472</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="bit_test_patterns">
+      <div class="card-header">
+        <span class="card-id">BT-zeros</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">All Zeros</div>
+      <div class="card-image">
+        <img src="BT-zeros.png" alt="BT-zeros">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 0</span>
+        <span>XCVII: 0</span>
+        <span>XCVIII: 0</span>
+        <span>XCIX: 0</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="bit_test_patterns">
+      <div class="card-header">
+        <span class="card-id">BT-ones</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">All Ones</div>
+      <div class="card-image">
+        <img src="BT-ones.png" alt="BT-ones">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 1023</span>
+        <span>XCVIII: 131071</span>
+        <span>XCIX: 15</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="bit_test_patterns">
+      <div class="card-header">
+        <span class="card-id">BT-alt-01</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Alternating 01</div>
+      <div class="card-image">
+        <img src="BT-alt-01.png" alt="BT-alt-01">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 85</span>
+        <span>XCVII: 682</span>
+        <span>XCVIII: 87381</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="bit_test_patterns">
+      <div class="card-header">
+        <span class="card-id">BT-alt-10</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Alternating 10</div>
+      <div class="card-image">
+        <img src="BT-alt-10.png" alt="BT-alt-10">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 42</span>
+        <span>XCVII: 341</span>
+        <span>XCVIII: 43690</span>
+        <span>XCIX: 5</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="bit_test_patterns">
+      <div class="card-header">
+        <span class="card-id">BT-half</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Half Filled</div>
+      <div class="card-image">
+        <img src="BT-half.png" alt="BT-half">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 64</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="bit_test_patterns">
+      <div class="card-header">
+        <span class="card-id">BT-quarter</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Quarter Filled</div>
+      <div class="card-image">
+        <img src="BT-quarter.png" alt="BT-quarter">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 32</span>
+        <span>XCVII: 256</span>
+        <span>XCVIII: 32768</span>
+        <span>XCIX: 4</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="bit_test_patterns">
+      <div class="card-header">
+        <span class="card-id">BT-three-quarter</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Three Quarter Filled</div>
+      <div class="card-image">
+        <img src="BT-three-quarter.png" alt="BT-three-quarter">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 96</span>
+        <span>XCVII: 768</span>
+        <span>XCVIII: 98304</span>
+        <span>XCIX: 12</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="bit_test_patterns">
+      <div class="card-header">
+        <span class="card-id">BT-primes</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Prime Numbers</div>
+      <div class="card-image">
+        <img src="BT-primes.png" alt="BT-primes">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 1021</span>
+        <span>XCVIII: 131071</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="bit_test_patterns">
+      <div class="card-header">
+        <span class="card-id">BT-powers-2</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Powers of 2</div>
+      <div class="card-image">
+        <img src="BT-powers-2.png" alt="BT-powers-2">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 64</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="bit_test_patterns">
+      <div class="card-header">
+        <span class="card-id">BT-checkered</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Checkered Pattern</div>
+      <div class="card-image">
+        <img src="BT-checkered.png" alt="BT-checkered">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 85</span>
+        <span>XCVII: 341</span>
+        <span>XCVIII: 87381</span>
+        <span>XCIX: 5</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="hamming_test">
+      <div class="card-header">
+        <span class="card-id">HM-valid</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Valid Hamming(7,4)</div>
+      <div class="card-image">
+        <img src="HM-valid.png" alt="HM-valid">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 79</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="hamming_test">
+      <div class="card-header">
+        <span class="card-id">HM-single-error-p1</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Single Bit Error (p1)</div>
+      <div class="card-image">
+        <img src="HM-single-error-p1.png" alt="HM-single-error-p1">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 78</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="hamming_test">
+      <div class="card-header">
+        <span class="card-id">HM-single-error-p2</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Single Bit Error (p2)</div>
+      <div class="card-image">
+        <img src="HM-single-error-p2.png" alt="HM-single-error-p2">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 77</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="hamming_test">
+      <div class="card-header">
+        <span class="card-id">HM-single-error-d1</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Single Bit Error (d1)</div>
+      <div class="card-image">
+        <img src="HM-single-error-d1.png" alt="HM-single-error-d1">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 71</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="hamming_test">
+      <div class="card-header">
+        <span class="card-id">HM-single-error-p4</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Single Bit Error (p4)</div>
+      <div class="card-image">
+        <img src="HM-single-error-p4.png" alt="HM-single-error-p4">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 95</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="hamming_test">
+      <div class="card-header">
+        <span class="card-id">HM-single-error-d2</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Single Bit Error (d2)</div>
+      <div class="card-image">
+        <img src="HM-single-error-d2.png" alt="HM-single-error-d2">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 111</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="hamming_test">
+      <div class="card-header">
+        <span class="card-id">HM-double-error</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Double Bit Error</div>
+      <div class="card-image">
+        <img src="HM-double-error.png" alt="HM-double-error">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 76</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="hamming_test">
+      <div class="card-header">
+        <span class="card-id">HM-all-data</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">All Data Bits Set</div>
+      <div class="card-image">
+        <img src="HM-all-data.png" alt="HM-all-data">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 119</span>
+        <span>XCVII: 512</span>
+        <span>XCVIII: 65536</span>
+        <span>XCIX: 8</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="topological">
+      <div class="card-header">
+        <span class="card-id">TOP-winding</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Winding Number W=1</div>
+      <div class="card-image">
+        <img src="TOP-winding.png" alt="TOP-winding">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 100</span>
+        <span>XCVII: 628</span>
+        <span>XCVIII: 62832</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="topological">
+      <div class="card-header">
+        <span class="card-id">TOP-euler</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Euler Characteristic χ=-2</div>
+      <div class="card-image">
+        <img src="TOP-euler.png" alt="TOP-euler">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 126</span>
+        <span>XCVII: 998</span>
+        <span>XCVIII: 130000</span>
+        <span>XCIX: 14</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="topological">
+      <div class="card-header">
+        <span class="card-id">TOP-betti-0</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Betti b₀=1</div>
+      <div class="card-image">
+        <img src="TOP-betti-0.png" alt="TOP-betti-0">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 1</span>
+        <span>XCVII: 0</span>
+        <span>XCVIII: 0</span>
+        <span>XCIX: 1</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="topological">
+      <div class="card-header">
+        <span class="card-id">TOP-betti-1</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Betti b₁=5</div>
+      <div class="card-image">
+        <img src="TOP-betti-1.png" alt="TOP-betti-1">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 5</span>
+        <span>XCVII: 15</span>
+        <span>XCVIII: 500</span>
+        <span>XCIX: 5</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="topological">
+      <div class="card-header">
+        <span class="card-id">TOP-genus</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">Genus-2 Surface</div>
+      <div class="card-image">
+        <img src="TOP-genus.png" alt="TOP-genus">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 50</span>
+        <span>XCVII: 200</span>
+        <span>XCVIII: 20000</span>
+        <span>XCIX: 5</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="fibonacci_sequence">
+      <div class="card-header">
+        <span class="card-id">FIB-F1</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">F₁ = 1</div>
+      <div class="card-image">
+        <img src="FIB-F1.png" alt="FIB-F1">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 1</span>
+        <span>XCVII: 1</span>
+        <span>XCVIII: 1</span>
+        <span>XCIX: 1</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="fibonacci_sequence">
+      <div class="card-header">
+        <span class="card-id">FIB-F2</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">F₂ = 1</div>
+      <div class="card-image">
+        <img src="FIB-F2.png" alt="FIB-F2">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 1</span>
+        <span>XCVII: 1</span>
+        <span>XCVIII: 1</span>
+        <span>XCIX: 1</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="fibonacci_sequence">
+      <div class="card-header">
+        <span class="card-id">FIB-F5</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">F₅ = 5</div>
+      <div class="card-image">
+        <img src="FIB-F5.png" alt="FIB-F5">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 5</span>
+        <span>XCVII: 5</span>
+        <span>XCVIII: 5</span>
+        <span>XCIX: 5</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="fibonacci_sequence">
+      <div class="card-header">
+        <span class="card-id">FIB-F7</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">F₇ = 13</div>
+      <div class="card-image">
+        <img src="FIB-F7.png" alt="FIB-F7">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 13</span>
+        <span>XCVII: 13</span>
+        <span>XCVIII: 13</span>
+        <span>XCIX: 13</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="fibonacci_sequence">
+      <div class="card-header">
+        <span class="card-id">FIB-F10</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">F₁₀ = 55</div>
+      <div class="card-image">
+        <img src="FIB-F10.png" alt="FIB-F10">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 55</span>
+        <span>XCVII: 55</span>
+        <span>XCVIII: 55</span>
+        <span>XCIX: 7</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="fibonacci_sequence">
+      <div class="card-header">
+        <span class="card-id">FIB-F12</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">F₁₂ = 144</div>
+      <div class="card-image">
+        <img src="FIB-F12.png" alt="FIB-F12">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 127</span>
+        <span>XCVII: 144</span>
+        <span>XCVIII: 144</span>
+        <span>XCIX: 9</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="fibonacci_sequence">
+      <div class="card-header">
+        <span class="card-id">FIB-F15</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">F₁₅ = 610</div>
+      <div class="card-image">
+        <img src="FIB-F15.png" alt="FIB-F15">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 79</span>
+        <span>XCVII: 610</span>
+        <span>XCVIII: 610</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+    <div class="card" data-category="fibonacci_sequence">
+      <div class="card-header">
+        <span class="card-id">FIB-F17</span>
+        <span class="card-status valid">✓ Valid</span>
+      </div>
+      <div class="card-name">F₁₇ = 1597</div>
+      <div class="card-image">
+        <img src="FIB-F17.png" alt="FIB-F17">
+      </div>
+      <div class="card-bits">
+        <span>XCVI: 79</span>
+        <span>XCVII: 573</span>
+        <span>XCVIII: 1597</span>
+        <span>XCIX: 10</span>
+      </div>
+    </div>
+    
+  </div>
+
+  <script>
+    function filterCategory(cat) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.card').forEach(card => {
+        if (cat === 'all' || card.dataset.category === cat) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "aces-brain-thoughts",
+  "version": "1.0.0",
+  "description": "Unified living workspace for VesselOS, Echo Community Toolkit, narrative engines, agents, and supporting scripts. This README orients you across the modules, agents, and custom commands that now reside in one repository. It also doubles as an operator manual for Codex/CLI agents or other LLM assistants—follow the scripted steps below to stand up the environment without guesswork.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:36784/git/AceTheDactyl/Aces-Brain-Thoughts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^3.2.0"
+  }
+}
