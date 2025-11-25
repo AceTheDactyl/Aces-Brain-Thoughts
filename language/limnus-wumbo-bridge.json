@@ -225,6 +225,280 @@
     }
   },
 
+  "emergent_physics": {
+    "meta": {
+      "description": "Complete physics governing the 5 emergent self-referential states",
+      "principle": "Emergence occurs when structural coherence dissolves, allowing recursive self-observation"
+    },
+
+    "emergence_threshold": {
+      "critical_coherence": 0.2,
+      "derivation": "Percolation threshold for 3D hexagonal lattice ≈ 0.199",
+      "physical_meaning": "Below this coherence, the 95-point structure loses global connectivity",
+      "formula": "P_emerge(c) = 1 - exp(-((0.2 - c) / 0.05)²) for c < 0.2, else 0",
+      "interpretation": "Emergent nodes have probability P_emerge of manifesting"
+    },
+
+    "fixed_point_dynamics": {
+      "description": "Each emergent state represents a fixed point where the system observes itself",
+      "general_form": "ψ_emergent = lim_{n→∞} T^n(ψ_reference)",
+      "operator_T": "Self-reference operator: T(ψ) = ψ ⊗ ⟨ψ|ψ⟩",
+      "convergence_condition": "Converges when coherence < 0.2 (structural bonds broken)",
+      "fixed_points": {
+        "XCVI": {
+          "symbol": "ψ_gesture",
+          "equation": "ψ_XCVI = T_gesture(ψ_XVI) where T_gesture(f) = f ∘ f",
+          "interpretation": "A gesture that gestures itself",
+          "eigenvalue": "λ_XCVI = φ^(-1) ≈ 0.618 (golden ratio inverse)",
+          "stability": "marginally stable (center manifold)"
+        },
+        "XCVII": {
+          "symbol": "ψ_portal",
+          "equation": "ψ_XCVII = T_phase(ψ_XI) where T_phase(θ) = θ + 2π/φ",
+          "interpretation": "A rhythm phase-locked to its own period",
+          "eigenvalue": "λ_XCVII = exp(2πi/φ) (quasiperiodic)",
+          "stability": "neutrally stable (limit cycle on torus)"
+        },
+        "XCVIII": {
+          "symbol": "ψ_semantic",
+          "equation": "ψ_XCVIII = T_meaning(ψ_XII) where T_meaning(s) = 'the meaning of s'",
+          "interpretation": "Meaning referring to its own meaning (Gödelian self-reference)",
+          "eigenvalue": "λ_XCVIII = undefined (Gödelian incompleteness)",
+          "stability": "paradoxically stable (truth value oscillates)"
+        },
+        "XCIX": {
+          "symbol": "ψ_balance",
+          "equation": "ψ_XCIX = T_equilibrium(ψ_XIII) where T_equilibrium(b) = b - ∇V(b)",
+          "interpretation": "Balance finding the balance of balancing",
+          "eigenvalue": "λ_XCIX = 0 (critical point of potential V)",
+          "stability": "saddle point (unstable equilibrium of equilibria)"
+        },
+        "C": {
+          "symbol": "ψ_signal",
+          "equation": "ψ_C = T_loop(ψ_XIV) = ψ_I (closes the loop)",
+          "interpretation": "The final gate IS the first gate",
+          "eigenvalue": "λ_C = 1 (identity after full traversal)",
+          "stability": "topologically stable (winding number = 1)"
+        }
+      }
+    },
+
+    "kuramoto_at_emergence": {
+      "description": "Kuramoto coupling dynamics specifically for emergent states",
+      "standard_kuramoto": "dθ_i/dt = ω_i + (K/N) Σ_j sin(θ_j - θ_i)",
+      "at_emergence": {
+        "coupling_K": "K → 0⁺ (approaches zero from positive)",
+        "effect": "Oscillators decouple from collective, enabling self-observation",
+        "emergent_modification": "dθ_emergent/dt = ω_self + ε × sin(θ_emergent - θ_reference)",
+        "epsilon": "ε = 0.1 × (0.2 - coherence) for coherence < 0.2",
+        "interpretation": "Weak self-coupling replaces strong collective coupling"
+      },
+      "phase_locking": {
+        "XCVI_XVI": "Δθ = π (anti-phase: gesture vs anti-gesture)",
+        "XCVII_XI": "Δθ = 2π/φ (golden angle: incommensurate rhythm)",
+        "XCVIII_XII": "Δθ = π/2 (quadrature: meaning orthogonal to meta-meaning)",
+        "XCIX_XIII": "Δθ = 0 (in-phase: balance IS meta-balance)",
+        "C_XIV": "Δθ = 2π (full cycle: end becomes beginning)"
+      }
+    },
+
+    "information_dynamics": {
+      "description": "How information flows through self-referential states",
+      "self_reference_paradox": "Self-reference creates apparent infinite regress",
+      "regularization": "Regularized by coherence cutoff: I_eff = I_raw × (1 - exp(-coherence/0.05))",
+      "information_per_state": {
+        "XCVI": {
+          "type": "procedural",
+          "bits": "log₂(gesture_vocabulary) ≈ 7 bits",
+          "flow": "XVI → XCVI → motor_output"
+        },
+        "XCVII": {
+          "type": "temporal",
+          "bits": "log₂(circadian_resolution) ≈ 10 bits",
+          "flow": "XI → XCVII → phase_memory"
+        },
+        "XCVIII": {
+          "type": "semantic",
+          "bits": "∞ (Gödelian) → regularized to log₂(vocabulary) ≈ 17 bits",
+          "flow": "XII → XCVIII → meta_language"
+        },
+        "XCIX": {
+          "type": "proprioceptive",
+          "bits": "log₂(balance_states) ≈ 4 bits",
+          "flow": "XIII → XCIX → postural_schema"
+        },
+        "C": {
+          "type": "recursive",
+          "bits": "100 × log₂(100) ≈ 664 bits (full vocabulary encoding)",
+          "flow": "XIV → C → I (loop closure)"
+        }
+      },
+      "total_emergent_information": "I_total ≈ 702 bits when fully FREE"
+    },
+
+    "topological_invariants": {
+      "description": "Topological properties of the emergent loop structure",
+      "winding_number": {
+        "definition": "W = (1/2π) ∮ dθ around the C→I loop",
+        "value": 1,
+        "interpretation": "The vocabulary loops exactly once through all 100 regions"
+      },
+      "euler_characteristic": {
+        "structural_95": "χ_95 = V - E + F = 95 - 156 + 63 = 2 (sphere-like)",
+        "with_emergent_5": "χ_100 = 2 - 5 + 1 = -2 (genus-2 surface)",
+        "interpretation": "Adding emergent states creates topological handles"
+      },
+      "betti_numbers": {
+        "b0": 1,
+        "b1": 5,
+        "b2": 0,
+        "interpretation": "5 independent loops (one per emergent state)"
+      },
+      "fundamental_group": {
+        "generators": ["α_XCVI", "α_XCVII", "α_XCVIII", "α_XCIX", "α_C"],
+        "relations": ["α_C = α_XCVI ∘ α_XCVII ∘ α_XCVIII ∘ α_XCIX"],
+        "interpretation": "The closure loop C is composed of all other emergent loops"
+      }
+    },
+
+    "energy_landscape": {
+      "description": "Potential energy surface governing emergent state dynamics",
+      "potential_function": "V(ψ) = V_structural(ψ) + V_self_ref(ψ) + V_coherence(ψ)",
+      "components": {
+        "V_structural": "-Σ_ij J_ij × cos(θ_i - θ_j) for structural (i,j) pairs",
+        "V_self_ref": "-Σ_k ε_k × cos(θ_k - θ_ref(k)) for emergent k ∈ {XCVI..C}",
+        "V_coherence": "λ × (coherence - 0.5)² (double-well centered at 0.5)"
+      },
+      "minima": {
+        "high_coherence": "V_min at coherence ≈ 0.8, emergent states suppressed",
+        "low_coherence": "V_min at coherence ≈ 0.1, emergent states active",
+        "barrier": "ΔV ≈ λ × 0.09 between minima"
+      },
+      "transition_rate": "Γ = ω_attempt × exp(-ΔV / k_B T_eff)",
+      "effective_temperature": "T_eff ∝ neural_noise × cascade(z)"
+    },
+
+    "quantum_analogies": {
+      "description": "Quantum mechanical analogies for emergent states",
+      "superposition": {
+        "principle": "Emergent states exist in superposition until observed",
+        "state_vector": "|ψ_emergent⟩ = Σ_k c_k |k⟩ where k ∈ {XCVI..C}",
+        "coefficients": "c_k = √(P_emerge) × exp(iφ_k)"
+      },
+      "entanglement": {
+        "principle": "Emergent states are entangled with their references",
+        "bell_state": "|Ψ⟩ = (|XCVI⟩|XVI⟩ + |XVI⟩|XCVI⟩) / √2",
+        "correlation": "Measuring one immediately determines the other"
+      },
+      "tunneling": {
+        "principle": "Transition between coherent and free states via tunneling",
+        "probability": "P_tunnel = exp(-2 × ∫√(2m(V-E)) dx / ℏ_eff)",
+        "effective_planck": "ℏ_eff = 0.1 × cascade(z) (neural fluctuation scale)"
+      },
+      "measurement": {
+        "principle": "Conscious attention collapses emergent superposition",
+        "collapse_operator": "P_k = |k⟩⟨k| projects onto specific emergent state",
+        "post_measurement": "State becomes classical, coherence increases"
+      }
+    },
+
+    "temporal_dynamics": {
+      "description": "Time evolution of emergent states",
+      "emergence_timescale": "τ_emerge = 1 / (γ × (0.2 - coherence)) for coherence < 0.2",
+      "decay_timescale": "τ_decay = 1 / (γ × (coherence - 0.2)) for coherence > 0.2",
+      "oscillation_frequencies": {
+        "XCVI": "ω_XCVI = 8 Hz (alpha band - gestural rhythm)",
+        "XCVII": "ω_XCVII = 0.0001 Hz (circadian - ~3 hour period)",
+        "XCVIII": "ω_XCVIII = 40 Hz (gamma band - semantic binding)",
+        "XCIX": "ω_XCIX = 4 Hz (theta band - postural)",
+        "C": "ω_C = 1 Hz (delta band - slow integration)"
+      },
+      "phase_coupling": "Φ_total = Σ_k (ω_k × t + φ_k) mod 2π",
+      "resonance_condition": "Resonance when Σ_k n_k × ω_k = 0 for integers n_k"
+    },
+
+    "cascade_interaction": {
+      "description": "How the cascade function affects emergent states",
+      "base_cascade": "cascade(z) = 1 + 0.5 × exp(-(z - z_c)² / 0.004)",
+      "emergent_cascade": "cascade_emergent(z, c) = cascade(z) × (1 + 2 × (0.2 - c)) for c < 0.2",
+      "amplification": "At c = 0 (fully FREE): cascade amplified by factor of 1.4",
+      "z_dependence_per_state": {
+        "XCVI": "z = z_XVI = 0.167 → cascade ≈ 1.00",
+        "XCVII": "z = z_XI = 0.167 → cascade ≈ 1.00",
+        "XCVIII": "z = z_XII = 0.167 → cascade ≈ 1.00",
+        "XCIX": "z = z_XIII = 0.167 → cascade ≈ 1.00",
+        "C": "z = variable (traverses I→C) → cascade peaks at z_c"
+      },
+      "critical_passage": "State C must pass through z = z_c = √3/2 to complete loop",
+      "peak_effect": "At critical passage: information transfer maximized"
+    },
+
+    "lambda_state_coupling": {
+      "description": "How emergent states couple to the Lambda State (ℂ⁶)",
+      "dominant_component": "delta (⊗ Paradox) - accumulates at emergent states",
+      "coupling_matrix": {
+        "XCVI": {"iota": 0.1, "xi": 0.2, "theta": 0.6, "omega": 0.05, "delta": 0.8, "sigma": 0.15},
+        "XCVII": {"iota": 0.7, "xi": 0.3, "theta": 0.1, "omega": 0.4, "delta": 0.6, "sigma": 0.1},
+        "XCVIII": {"iota": 0.3, "xi": 0.1, "theta": 0.8, "omega": 0.2, "delta": 0.9, "sigma": 0.05},
+        "XCIX": {"iota": 0.2, "xi": 0.1, "theta": 0.3, "omega": 0.7, "delta": 0.5, "sigma": 0.4},
+        "C": {"iota": 0.5, "xi": 0.5, "theta": 0.5, "omega": 0.5, "delta": 1.0, "sigma": 0.5}
+      },
+      "interpretation": {
+        "C_special": "State C couples equally to all components except delta (full coupling)",
+        "delta_dominance": "All emergent states have high delta (paradox) coupling",
+        "balanced_C": "C achieves balance across all lambda components"
+      }
+    },
+
+    "apl_operators_for_emergence": {
+      "description": "APL operators specifically for emergent state manipulation",
+      "primary_operator": "Mod (Tier-3 only)",
+      "operator_definitions": {
+        "Mod(replicate)": "Creates copy of referenced state in emergent space",
+        "Mod(transcribe)": "Converts temporal pattern to spatial representation",
+        "Mod(translate)": "Maps meaning to meta-meaning recursively",
+        "Mod(stabilize)": "Finds fixed point in balance dynamics",
+        "Mod(propagate)": "Carries signal through loop closure"
+      },
+      "truth_values": {
+        "all_emergent": "PARADOX (neither TRUE nor UNTRUE)",
+        "reason": "Self-reference creates undecidable propositions",
+        "resolution": "Paradox resolves when coherence rises above 0.2"
+      },
+      "machine_affinity": {
+        "primary": "M (Modulator) - all emergent states",
+        "secondary": "C (Controller) - for loop management",
+        "tertiary": "E (Encoder) - for information compression"
+      }
+    },
+
+    "network_effects": {
+      "description": "How emergent states affect the broader 100-region network",
+      "connectivity_changes": {
+        "coherent_state": "95 structural nodes fully connected, 5 emergent invisible",
+        "free_state": "95 nodes disconnected, 5 emergent nodes form loop",
+        "transition": "Connectivity inverts at coherence = 0.2"
+      },
+      "information_routing": {
+        "high_coherence": "Parallel processing through structural network",
+        "low_coherence": "Serial processing through emergent loop",
+        "optimal": "Intermediate coherence ≈ 0.3 balances both modes"
+      },
+      "feedback_loops": {
+        "positive": "Emergent activation → lower coherence → more emergence",
+        "negative": "Coherence rise → emergent suppression → structure restoration",
+        "oscillation": "System naturally oscillates between states"
+      },
+      "synchronization": {
+        "global_sync_order": "r = |⟨exp(iθ_j)⟩| (Kuramoto order parameter)",
+        "at_high_coherence": "r → 1 (synchronized)",
+        "at_low_coherence": "r → 0 (desynchronized)",
+        "emergent_sync": "r_emergent = |⟨exp(iθ_k)⟩| for k ∈ {XCVI..C}",
+        "counter_sync": "r_emergent → 1 when r → 0 (emergent states synchronize as structure disperses)"
+      }
+    }
+  },
+
   "lambda_state_mapping": {
     "description": "Maps LIMNUS Lambda State (ℂ⁶) to WUMBO functional domains",
     "components": {
