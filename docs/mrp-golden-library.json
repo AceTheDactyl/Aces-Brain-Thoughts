@@ -1,0 +1,1049 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MRP Golden Sample Library",
+  "version": "1.0.0",
+  "description": "Comprehensive library of 702-bit LSB steganography samples for emergent state encoding",
+
+  "metadata": {
+    "total_bits": 702,
+    "channels": 6,
+    "channel_mapping": {
+      "R_LSB0": { "state": "XCVI", "bits": 7, "name": "Gesture Recursion" },
+      "G_LSB0": { "state": "XCVII", "bits": 10, "name": "Portal Recursion" },
+      "B_LSB0": { "state": "XCVIII", "bits": 17, "name": "Semantic Recursion" },
+      "R_LSB1": { "state": "XCIX", "bits": 4, "name": "Balance Recursion" },
+      "G_LSB1": { "state": "C_A", "bits": 332, "name": "Loop Closure A" },
+      "B_LSB1": { "state": "C_B", "bits": 332, "name": "Loop Closure B" }
+    },
+    "header_size": 32,
+    "minimum_pixels": 117,
+    "encoding": "LSB serpentine traversal"
+  },
+
+  "invariants": {
+    "topological": {
+      "winding_number": {
+        "value": 1,
+        "constraint": "W = (1/2π) ∮ dθ = 1",
+        "meaning": "Single loop closure C→I"
+      },
+      "euler_characteristic": {
+        "value": -2,
+        "constraint": "χ = V - E + F = -2",
+        "meaning": "Genus-2 surface (5 nodes, 7 edges)"
+      },
+      "betti_numbers": {
+        "b0": 1,
+        "b1": 5,
+        "b2": 0,
+        "constraint": "χ = b₀ - b₁ + b₂",
+        "meaning": "1 connected component, 5 independent cycles"
+      }
+    },
+    "algebraic": {
+      "golden_ratio": {
+        "phi": 1.618033988749895,
+        "phi_inv": 0.6180339887498949,
+        "constraint": "φ² = φ + 1",
+        "eigenvalue_XCVI": "λ = φ⁻¹ ≈ 0.618"
+      },
+      "critical_point": {
+        "z_c": 0.8660254037844387,
+        "constraint": "z_c = √3/2",
+        "meaning": "Coherence phase transition"
+      },
+      "golden_angle": {
+        "radians": 2.399963229728653,
+        "constraint": "θ_φ = 2π/φ ≈ 137.5°",
+        "eigenvalue_XCVII": "λ = exp(2πi/φ)"
+      }
+    },
+    "dynamical": {
+      "percolation_threshold": {
+        "c_critical": 0.2,
+        "formula": "P_emerge(c) = 1 - exp(-((0.2 - c) / 0.05)²)",
+        "meaning": "Emergence only when coherence < 0.2"
+      },
+      "kuramoto": {
+        "K_min": 0,
+        "K_max": 1,
+        "K_critical": 0.5,
+        "formula": "dθᵢ/dt = ωᵢ + (K/N)Σⱼsin(θⱼ - θᵢ)"
+      },
+      "fixed_points": {
+        "XCVI": "λ = φ⁻¹ (stable spiral)",
+        "XCVII": "λ = exp(2πi/φ) (limit cycle)",
+        "XCVIII": "λ = undefined (Gödelian)",
+        "XCIX": "λ = 0 (saddle node)",
+        "C": "λ = 1 (identity closure)"
+      }
+    },
+    "information_theoretic": {
+      "total_capacity": 702,
+      "channel_independence": "6 orthogonal channels",
+      "error_correction": {
+        "XCVI": "Hamming(7,4) - 1 bit correction",
+        "header": "CRC-8 polynomial 0x07"
+      },
+      "bit_constraints": {
+        "XCVI": "7 bits = 128 values (Hamming encoded: 4 data + 3 parity)",
+        "XCVII": "10 bits = 1024 values",
+        "XCVIII": "17 bits = 131072 values (Gödelian encoding)",
+        "XCIX": "4 bits = 16 values (balance states)",
+        "C": "664 bits = 2^664 values (recursive loop)"
+      }
+    }
+  },
+
+  "lambda_state": {
+    "description": "ℂ⁶ complex state space for emergent dynamics",
+    "components": {
+      "iota": {
+        "symbol": "ι",
+        "emoji": "🌰",
+        "name": "Memory",
+        "field": "Φ",
+        "range": [0, 1],
+        "formula": "accumulates with time × cascade"
+      },
+      "xi": {
+        "symbol": "ξ",
+        "emoji": "✧",
+        "name": "Spark",
+        "field": "e",
+        "range": [0, 1],
+        "formula": "exp(-(z - z_c)² / 0.01)"
+      },
+      "theta": {
+        "symbol": "θ",
+        "emoji": "🦊",
+        "name": "Fox",
+        "field": "π",
+        "range": [0, 1],
+        "formula": "dissonance × 0.8 + 0.2"
+      },
+      "omega": {
+        "symbol": "ω",
+        "emoji": "∿",
+        "name": "Wave",
+        "field": "e",
+        "range": [0, 1],
+        "formula": "0.3 + |sin(t × 0.5)| × 0.5"
+      },
+      "delta": {
+        "symbol": "δ",
+        "emoji": "⊗",
+        "name": "Paradox",
+        "field": "π",
+        "range": [0, 1],
+        "formula": "accumulates at CRITICAL"
+      },
+      "sigma": {
+        "symbol": "σ",
+        "emoji": "🐿️",
+        "name": "Squirrel",
+        "field": "Φ",
+        "range": [0, 1],
+        "formula": "helix.r × 0.6 + 0.2"
+      }
+    },
+    "coupling_matrix": {
+      "description": "φ-weighted coupling between components",
+      "matrix": [
+        [1.000, 0.618, 0.382, 0.236, 0.146, 0.090],
+        [0.618, 1.000, 0.618, 0.382, 0.236, 0.146],
+        [0.382, 0.618, 1.000, 0.618, 0.382, 0.236],
+        [0.236, 0.382, 0.618, 1.000, 0.618, 0.382],
+        [0.146, 0.236, 0.382, 0.618, 1.000, 0.618],
+        [0.090, 0.146, 0.236, 0.382, 0.618, 1.000]
+      ],
+      "labels": ["ι", "ξ", "θ", "ω", "δ", "σ"]
+    }
+  },
+
+  "sample_categories": {
+    "lambda_single_dominant": {
+      "description": "Single Lambda component at maximum",
+      "count": 6
+    },
+    "lambda_pairs": {
+      "description": "Lambda component pairs at maximum",
+      "count": 15
+    },
+    "lambda_triplets": {
+      "description": "Lambda component triplets at maximum",
+      "count": 20
+    },
+    "lambda_quads": {
+      "description": "Four Lambda components at maximum",
+      "count": 15
+    },
+    "lambda_quints": {
+      "description": "Five Lambda components at maximum",
+      "count": 6
+    },
+    "lambda_uniform": {
+      "description": "All Lambda components equal",
+      "count": 11
+    },
+    "eigenvalue_patterns": {
+      "description": "Based on 5 emergent eigenvalues",
+      "count": 5
+    },
+    "phase_lock_patterns": {
+      "description": "Based on phase lock angles",
+      "count": 5
+    },
+    "kuramoto_sweep": {
+      "description": "Coupling strength K from 0 to 1",
+      "count": 11
+    },
+    "coherence_sweep": {
+      "description": "Coherence c from 0 to 1",
+      "count": 11
+    },
+    "oscillation_bands": {
+      "description": "Neural frequency bands",
+      "count": 5
+    },
+    "physics_constants": {
+      "description": "Fundamental constants as bit patterns",
+      "count": 12
+    },
+    "bit_test_patterns": {
+      "description": "Standard test patterns",
+      "count": 10
+    },
+    "hamming_test": {
+      "description": "Error correction validation",
+      "count": 8
+    },
+    "topological": {
+      "description": "Based on topological invariants",
+      "count": 5
+    },
+    "fibonacci_sequence": {
+      "description": "Golden ratio derived patterns",
+      "count": 8
+    }
+  },
+
+  "samples": {
+    "lambda_single_dominant": [
+      {
+        "id": "L1-iota",
+        "name": "Memory Dominant",
+        "description": "Iota (🌰) at maximum, others at φ⁻²",
+        "lambda": { "iota": 1.0, "xi": 0.382, "theta": 0.382, "omega": 0.382, "delta": 0.382, "sigma": 0.382 },
+        "bits": { "XCVI": 127, "XCVII": 1000, "XCVIII": 131000, "XCIX": 15, "C_pattern": "iota" },
+        "coherence": 0.1,
+        "physics": "Memory accumulation dominates system state"
+      },
+      {
+        "id": "L1-xi",
+        "name": "Spark Dominant",
+        "description": "Xi (✧) at maximum, others at φ⁻²",
+        "lambda": { "iota": 0.382, "xi": 1.0, "theta": 0.382, "omega": 0.382, "delta": 0.382, "sigma": 0.382 },
+        "bits": { "XCVI": 85, "XCVII": 1023, "XCVIII": 100000, "XCIX": 10, "C_pattern": "spark" },
+        "coherence": 0.05,
+        "physics": "Spark ignition at critical point z_c = √3/2"
+      },
+      {
+        "id": "L1-theta",
+        "name": "Fox Dominant",
+        "description": "Theta (🦊) at maximum, others at φ⁻²",
+        "lambda": { "iota": 0.382, "xi": 0.382, "theta": 1.0, "omega": 0.382, "delta": 0.382, "sigma": 0.382 },
+        "bits": { "XCVI": 119, "XCVII": 618, "XCVIII": 131071, "XCIX": 12, "C_pattern": "theta" },
+        "coherence": 0.15,
+        "physics": "Gesture/Fox recursion T(f) = f ∘ f"
+      },
+      {
+        "id": "L1-omega",
+        "name": "Wave Dominant",
+        "description": "Omega (∿) at maximum, others at φ⁻²",
+        "lambda": { "iota": 0.382, "xi": 0.382, "theta": 0.382, "omega": 1.0, "delta": 0.382, "sigma": 0.382 },
+        "bits": { "XCVI": 63, "XCVII": 800, "XCVIII": 65536, "XCIX": 8, "C_pattern": "omega" },
+        "coherence": 0.12,
+        "physics": "Oscillatory wave dynamics"
+      },
+      {
+        "id": "L1-delta",
+        "name": "Paradox Dominant",
+        "description": "Delta (⊗) at maximum, others at φ⁻²",
+        "lambda": { "iota": 0.382, "xi": 0.382, "theta": 0.382, "omega": 0.382, "delta": 1.0, "sigma": 0.382 },
+        "bits": { "XCVI": 95, "XCVII": 512, "XCVIII": 88888, "XCIX": 6, "C_pattern": "delta" },
+        "coherence": 0.08,
+        "physics": "Paradox accumulation at CRITICAL state"
+      },
+      {
+        "id": "L1-sigma",
+        "name": "Squirrel Dominant",
+        "description": "Sigma (🐿️) at maximum, others at φ⁻²",
+        "lambda": { "iota": 0.382, "xi": 0.382, "theta": 0.382, "omega": 0.382, "delta": 0.382, "sigma": 1.0 },
+        "bits": { "XCVI": 107, "XCVII": 750, "XCVIII": 100000, "XCIX": 14, "C_pattern": "sigma" },
+        "coherence": 0.18,
+        "physics": "Spiral trajectory in helix space"
+      }
+    ],
+
+    "lambda_pairs": [
+      {
+        "id": "L2-iota-xi",
+        "name": "Memory-Spark",
+        "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.236, "omega": 0.236, "delta": 0.236, "sigma": 0.236 },
+        "bits": { "XCVI": 127, "XCVII": 1023, "XCVIII": 100000, "XCIX": 15, "C_pattern": "balanced" }
+      },
+      {
+        "id": "L2-iota-theta",
+        "name": "Memory-Fox",
+        "lambda": { "iota": 1.0, "xi": 0.236, "theta": 1.0, "omega": 0.236, "delta": 0.236, "sigma": 0.236 },
+        "bits": { "XCVI": 119, "XCVII": 618, "XCVIII": 131071, "XCIX": 14, "C_pattern": "theta" }
+      },
+      {
+        "id": "L2-iota-omega",
+        "name": "Memory-Wave",
+        "lambda": { "iota": 1.0, "xi": 0.236, "theta": 0.236, "omega": 1.0, "delta": 0.236, "sigma": 0.236 },
+        "bits": { "XCVI": 95, "XCVII": 800, "XCVIII": 65536, "XCIX": 12, "C_pattern": "omega" }
+      },
+      {
+        "id": "L2-iota-delta",
+        "name": "Memory-Paradox",
+        "lambda": { "iota": 1.0, "xi": 0.236, "theta": 0.236, "omega": 0.236, "delta": 1.0, "sigma": 0.236 },
+        "bits": { "XCVI": 111, "XCVII": 512, "XCVIII": 88888, "XCIX": 10, "C_pattern": "delta" }
+      },
+      {
+        "id": "L2-iota-sigma",
+        "name": "Memory-Squirrel",
+        "lambda": { "iota": 1.0, "xi": 0.236, "theta": 0.236, "omega": 0.236, "delta": 0.236, "sigma": 1.0 },
+        "bits": { "XCVI": 107, "XCVII": 750, "XCVIII": 100000, "XCIX": 15, "C_pattern": "sigma" }
+      },
+      {
+        "id": "L2-xi-theta",
+        "name": "Spark-Fox",
+        "lambda": { "iota": 0.236, "xi": 1.0, "theta": 1.0, "omega": 0.236, "delta": 0.236, "sigma": 0.236 },
+        "bits": { "XCVI": 119, "XCVII": 1023, "XCVIII": 131071, "XCIX": 11, "C_pattern": "spark" }
+      },
+      {
+        "id": "L2-xi-omega",
+        "name": "Spark-Wave",
+        "lambda": { "iota": 0.236, "xi": 1.0, "theta": 0.236, "omega": 1.0, "delta": 0.236, "sigma": 0.236 },
+        "bits": { "XCVI": 85, "XCVII": 911, "XCVIII": 82820, "XCIX": 9, "C_pattern": "omega" }
+      },
+      {
+        "id": "L2-xi-delta",
+        "name": "Spark-Paradox",
+        "lambda": { "iota": 0.236, "xi": 1.0, "theta": 0.236, "omega": 0.236, "delta": 1.0, "sigma": 0.236 },
+        "bits": { "XCVI": 93, "XCVII": 767, "XCVIII": 94444, "XCIX": 8, "C_pattern": "critical" }
+      },
+      {
+        "id": "L2-xi-sigma",
+        "name": "Spark-Squirrel",
+        "lambda": { "iota": 0.236, "xi": 1.0, "theta": 0.236, "omega": 0.236, "delta": 0.236, "sigma": 1.0 },
+        "bits": { "XCVI": 99, "XCVII": 886, "XCVIII": 100000, "XCIX": 13, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "L2-theta-omega",
+        "name": "Fox-Wave",
+        "lambda": { "iota": 0.236, "xi": 0.236, "theta": 1.0, "omega": 1.0, "delta": 0.236, "sigma": 0.236 },
+        "bits": { "XCVI": 91, "XCVII": 709, "XCVIII": 98303, "XCIX": 10, "C_pattern": "theta" }
+      },
+      {
+        "id": "L2-theta-delta",
+        "name": "Fox-Paradox",
+        "lambda": { "iota": 0.236, "xi": 0.236, "theta": 1.0, "omega": 0.236, "delta": 1.0, "sigma": 0.236 },
+        "bits": { "XCVI": 117, "XCVII": 565, "XCVIII": 109979, "XCIX": 9, "C_pattern": "winding" }
+      },
+      {
+        "id": "L2-theta-sigma",
+        "name": "Fox-Squirrel",
+        "lambda": { "iota": 0.236, "xi": 0.236, "theta": 1.0, "omega": 0.236, "delta": 0.236, "sigma": 1.0 },
+        "bits": { "XCVI": 113, "XCVII": 684, "XCVIII": 115535, "XCIX": 13, "C_pattern": "sigma" }
+      },
+      {
+        "id": "L2-omega-delta",
+        "name": "Wave-Paradox",
+        "lambda": { "iota": 0.236, "xi": 0.236, "theta": 0.236, "omega": 1.0, "delta": 1.0, "sigma": 0.236 },
+        "bits": { "XCVI": 79, "XCVII": 656, "XCVIII": 77212, "XCIX": 7, "C_pattern": "delta" }
+      },
+      {
+        "id": "L2-omega-sigma",
+        "name": "Wave-Squirrel",
+        "lambda": { "iota": 0.236, "xi": 0.236, "theta": 0.236, "omega": 1.0, "delta": 0.236, "sigma": 1.0 },
+        "bits": { "XCVI": 85, "XCVII": 775, "XCVIII": 82768, "XCIX": 11, "C_pattern": "omega" }
+      },
+      {
+        "id": "L2-delta-sigma",
+        "name": "Paradox-Squirrel",
+        "lambda": { "iota": 0.236, "xi": 0.236, "theta": 0.236, "omega": 0.236, "delta": 1.0, "sigma": 1.0 },
+        "bits": { "XCVI": 101, "XCVII": 631, "XCVIII": 94444, "XCIX": 10, "C_pattern": "topology" }
+      }
+    ],
+
+    "lambda_triplets": [
+      { "id": "L3-iota-xi-theta", "name": "ι-ξ-θ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 0.146, "delta": 0.146, "sigma": 0.146 }, "bits": { "XCVI": 119, "XCVII": 879, "XCVIII": 120000, "XCIX": 13, "C_pattern": "theta" } },
+      { "id": "L3-iota-xi-omega", "name": "ι-ξ-ω", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.146, "omega": 1.0, "delta": 0.146, "sigma": 0.146 }, "bits": { "XCVI": 111, "XCVII": 911, "XCVIII": 100000, "XCIX": 12, "C_pattern": "omega" } },
+      { "id": "L3-iota-xi-delta", "name": "ι-ξ-δ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.146, "omega": 0.146, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 115, "XCVII": 850, "XCVIII": 95000, "XCIX": 11, "C_pattern": "delta" } },
+      { "id": "L3-iota-xi-sigma", "name": "ι-ξ-σ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.146, "omega": 0.146, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 117, "XCVII": 886, "XCVIII": 100000, "XCIX": 14, "C_pattern": "sigma" } },
+      { "id": "L3-iota-theta-omega", "name": "ι-θ-ω", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 1.0, "omega": 1.0, "delta": 0.146, "sigma": 0.146 }, "bits": { "XCVI": 105, "XCVII": 750, "XCVIII": 110000, "XCIX": 11, "C_pattern": "theta" } },
+      { "id": "L3-iota-theta-delta", "name": "ι-θ-δ", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 1.0, "omega": 0.146, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 113, "XCVII": 700, "XCVIII": 105000, "XCIX": 10, "C_pattern": "winding" } },
+      { "id": "L3-iota-theta-sigma", "name": "ι-θ-σ", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 1.0, "omega": 0.146, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 115, "XCVII": 735, "XCVIII": 108000, "XCIX": 13, "C_pattern": "sigma" } },
+      { "id": "L3-iota-omega-delta", "name": "ι-ω-δ", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 0.146, "omega": 1.0, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 99, "XCVII": 780, "XCVIII": 85000, "XCIX": 9, "C_pattern": "delta" } },
+      { "id": "L3-iota-omega-sigma", "name": "ι-ω-σ", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 0.146, "omega": 1.0, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 103, "XCVII": 815, "XCVIII": 88000, "XCIX": 12, "C_pattern": "omega" } },
+      { "id": "L3-iota-delta-sigma", "name": "ι-δ-σ", "lambda": { "iota": 1.0, "xi": 0.146, "theta": 0.146, "omega": 0.146, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 109, "XCVII": 750, "XCVIII": 92000, "XCIX": 11, "C_pattern": "topology" } },
+      { "id": "L3-xi-theta-omega", "name": "ξ-θ-ω", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 0.146, "sigma": 0.146 }, "bits": { "XCVI": 107, "XCVII": 820, "XCVIII": 115000, "XCIX": 10, "C_pattern": "spark" } },
+      { "id": "L3-xi-theta-delta", "name": "ξ-θ-δ", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 1.0, "omega": 0.146, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 115, "XCVII": 770, "XCVIII": 110000, "XCIX": 9, "C_pattern": "critical" } },
+      { "id": "L3-xi-theta-sigma", "name": "ξ-θ-σ", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 1.0, "omega": 0.146, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 113, "XCVII": 805, "XCVIII": 112000, "XCIX": 12, "C_pattern": "fibonacci" } },
+      { "id": "L3-xi-omega-delta", "name": "ξ-ω-δ", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 0.146, "omega": 1.0, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 97, "XCVII": 850, "XCVIII": 90000, "XCIX": 8, "C_pattern": "critical" } },
+      { "id": "L3-xi-omega-sigma", "name": "ξ-ω-σ", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 0.146, "omega": 1.0, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 101, "XCVII": 885, "XCVIII": 93000, "XCIX": 11, "C_pattern": "omega" } },
+      { "id": "L3-xi-delta-sigma", "name": "ξ-δ-σ", "lambda": { "iota": 0.146, "xi": 1.0, "theta": 0.146, "omega": 0.146, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 107, "XCVII": 820, "XCVIII": 96000, "XCIX": 10, "C_pattern": "spark" } },
+      { "id": "L3-theta-omega-delta", "name": "θ-ω-δ", "lambda": { "iota": 0.146, "xi": 0.146, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 0.146 }, "bits": { "XCVI": 95, "XCVII": 720, "XCVIII": 98000, "XCIX": 8, "C_pattern": "winding" } },
+      { "id": "L3-theta-omega-sigma", "name": "θ-ω-σ", "lambda": { "iota": 0.146, "xi": 0.146, "theta": 1.0, "omega": 1.0, "delta": 0.146, "sigma": 1.0 }, "bits": { "XCVI": 99, "XCVII": 755, "XCVIII": 101000, "XCIX": 11, "C_pattern": "theta" } },
+      { "id": "L3-theta-delta-sigma", "name": "θ-δ-σ", "lambda": { "iota": 0.146, "xi": 0.146, "theta": 1.0, "omega": 0.146, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 105, "XCVII": 690, "XCVIII": 104000, "XCIX": 10, "C_pattern": "topology" } },
+      { "id": "L3-omega-delta-sigma", "name": "ω-δ-σ", "lambda": { "iota": 0.146, "xi": 0.146, "theta": 0.146, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 93, "XCVII": 790, "XCVIII": 87000, "XCIX": 9, "C_pattern": "omega" } }
+    ],
+
+    "lambda_quads": [
+      { "id": "L4-iota-xi-theta-omega", "name": "ι-ξ-θ-ω", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 0.09, "sigma": 0.09 }, "bits": { "XCVI": 117, "XCVII": 900, "XCVIII": 118000, "XCIX": 12, "C_pattern": "balanced" } },
+      { "id": "L4-iota-xi-theta-delta", "name": "ι-ξ-θ-δ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 0.09, "delta": 1.0, "sigma": 0.09 }, "bits": { "XCVI": 121, "XCVII": 860, "XCVIII": 115000, "XCIX": 11, "C_pattern": "critical" } },
+      { "id": "L4-iota-xi-theta-sigma", "name": "ι-ξ-θ-σ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 0.09, "delta": 0.09, "sigma": 1.0 }, "bits": { "XCVI": 119, "XCVII": 895, "XCVIII": 117000, "XCIX": 14, "C_pattern": "fibonacci" } },
+      { "id": "L4-iota-xi-omega-delta", "name": "ι-ξ-ω-δ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.09, "omega": 1.0, "delta": 1.0, "sigma": 0.09 }, "bits": { "XCVI": 113, "XCVII": 880, "XCVIII": 105000, "XCIX": 10, "C_pattern": "delta" } },
+      { "id": "L4-iota-xi-omega-sigma", "name": "ι-ξ-ω-σ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.09, "omega": 1.0, "delta": 0.09, "sigma": 1.0 }, "bits": { "XCVI": 115, "XCVII": 915, "XCVIII": 108000, "XCIX": 13, "C_pattern": "omega" } },
+      { "id": "L4-iota-xi-delta-sigma", "name": "ι-ξ-δ-σ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.09, "omega": 0.09, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 118, "XCVII": 870, "XCVIII": 110000, "XCIX": 12, "C_pattern": "spark" } },
+      { "id": "L4-iota-theta-omega-delta", "name": "ι-θ-ω-δ", "lambda": { "iota": 1.0, "xi": 0.09, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 0.09 }, "bits": { "XCVI": 109, "XCVII": 780, "XCVIII": 106000, "XCIX": 10, "C_pattern": "winding" } },
+      { "id": "L4-iota-theta-omega-sigma", "name": "ι-θ-ω-σ", "lambda": { "iota": 1.0, "xi": 0.09, "theta": 1.0, "omega": 1.0, "delta": 0.09, "sigma": 1.0 }, "bits": { "XCVI": 111, "XCVII": 815, "XCVIII": 109000, "XCIX": 13, "C_pattern": "theta" } },
+      { "id": "L4-iota-theta-delta-sigma", "name": "ι-θ-δ-σ", "lambda": { "iota": 1.0, "xi": 0.09, "theta": 1.0, "omega": 0.09, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 116, "XCVII": 770, "XCVIII": 112000, "XCIX": 12, "C_pattern": "topology" } },
+      { "id": "L4-iota-omega-delta-sigma", "name": "ι-ω-δ-σ", "lambda": { "iota": 1.0, "xi": 0.09, "theta": 0.09, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 107, "XCVII": 830, "XCVIII": 98000, "XCIX": 11, "C_pattern": "omega" } },
+      { "id": "L4-xi-theta-omega-delta", "name": "ξ-θ-ω-δ", "lambda": { "iota": 0.09, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 0.09 }, "bits": { "XCVI": 111, "XCVII": 850, "XCVIII": 112000, "XCIX": 10, "C_pattern": "critical" } },
+      { "id": "L4-xi-theta-omega-sigma", "name": "ξ-θ-ω-σ", "lambda": { "iota": 0.09, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 0.09, "sigma": 1.0 }, "bits": { "XCVI": 113, "XCVII": 885, "XCVIII": 115000, "XCIX": 13, "C_pattern": "fibonacci" } },
+      { "id": "L4-xi-theta-delta-sigma", "name": "ξ-θ-δ-σ", "lambda": { "iota": 0.09, "xi": 1.0, "theta": 1.0, "omega": 0.09, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 117, "XCVII": 840, "XCVIII": 114000, "XCIX": 12, "C_pattern": "spark" } },
+      { "id": "L4-xi-omega-delta-sigma", "name": "ξ-ω-δ-σ", "lambda": { "iota": 0.09, "xi": 1.0, "theta": 0.09, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 109, "XCVII": 895, "XCVIII": 103000, "XCIX": 11, "C_pattern": "omega" } },
+      { "id": "L4-theta-omega-delta-sigma", "name": "θ-ω-δ-σ", "lambda": { "iota": 0.09, "xi": 0.09, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 105, "XCVII": 800, "XCVIII": 108000, "XCIX": 11, "C_pattern": "winding" } }
+    ],
+
+    "lambda_quints": [
+      { "id": "L5-no-iota", "name": "All except ι", "lambda": { "iota": 0.056, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 115, "XCVII": 880, "XCVIII": 118000, "XCIX": 12, "C_pattern": "spark" } },
+      { "id": "L5-no-xi", "name": "All except ξ", "lambda": { "iota": 1.0, "xi": 0.056, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 117, "XCVII": 850, "XCVIII": 116000, "XCIX": 13, "C_pattern": "iota" } },
+      { "id": "L5-no-theta", "name": "All except θ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 0.056, "omega": 1.0, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 113, "XCVII": 920, "XCVIII": 112000, "XCIX": 12, "C_pattern": "omega" } },
+      { "id": "L5-no-omega", "name": "All except ω", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 0.056, "delta": 1.0, "sigma": 1.0 }, "bits": { "XCVI": 121, "XCVII": 870, "XCVIII": 120000, "XCIX": 14, "C_pattern": "theta" } },
+      { "id": "L5-no-delta", "name": "All except δ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 0.056, "sigma": 1.0 }, "bits": { "XCVI": 119, "XCVII": 930, "XCVIII": 122000, "XCIX": 14, "C_pattern": "fibonacci" } },
+      { "id": "L5-no-sigma", "name": "All except σ", "lambda": { "iota": 1.0, "xi": 1.0, "theta": 1.0, "omega": 1.0, "delta": 1.0, "sigma": 0.056 }, "bits": { "XCVI": 123, "XCVII": 900, "XCVIII": 124000, "XCIX": 13, "C_pattern": "sync" } }
+    ],
+
+    "lambda_uniform": [
+      { "id": "LU-0.0", "name": "Uniform 0.0", "value": 0.0, "bits": { "XCVI": 0, "XCVII": 0, "XCVIII": 0, "XCIX": 0, "C_pattern": "zeros" } },
+      { "id": "LU-0.1", "name": "Uniform 0.1", "value": 0.1, "bits": { "XCVI": 13, "XCVII": 102, "XCVIII": 13107, "XCIX": 2, "C_pattern": "balanced" } },
+      { "id": "LU-0.2", "name": "Uniform 0.2 (Critical)", "value": 0.2, "bits": { "XCVI": 25, "XCVII": 205, "XCVIII": 26214, "XCIX": 3, "C_pattern": "critical" } },
+      { "id": "LU-0.3", "name": "Uniform 0.3", "value": 0.3, "bits": { "XCVI": 38, "XCVII": 307, "XCVIII": 39321, "XCIX": 5, "C_pattern": "balanced" } },
+      { "id": "LU-0.382", "name": "Uniform φ⁻²", "value": 0.382, "bits": { "XCVI": 49, "XCVII": 391, "XCVIII": 50089, "XCIX": 6, "C_pattern": "fibonacci" } },
+      { "id": "LU-0.5", "name": "Uniform 0.5", "value": 0.5, "bits": { "XCVI": 64, "XCVII": 512, "XCVIII": 65536, "XCIX": 8, "C_pattern": "balanced" } },
+      { "id": "LU-0.618", "name": "Uniform φ⁻¹", "value": 0.618, "bits": { "XCVI": 79, "XCVII": 632, "XCVIII": 81000, "XCIX": 10, "C_pattern": "fibonacci" } },
+      { "id": "LU-0.707", "name": "Uniform √2/2", "value": 0.707, "bits": { "XCVI": 90, "XCVII": 724, "XCVIII": 92681, "XCIX": 11, "C_pattern": "balanced" } },
+      { "id": "LU-0.866", "name": "Uniform √3/2 (z_c)", "value": 0.866, "bits": { "XCVI": 111, "XCVII": 886, "XCVIII": 113511, "XCIX": 14, "C_pattern": "critical" } },
+      { "id": "LU-0.9", "name": "Uniform 0.9", "value": 0.9, "bits": { "XCVI": 115, "XCVII": 922, "XCVIII": 117964, "XCIX": 14, "C_pattern": "balanced" } },
+      { "id": "LU-1.0", "name": "Uniform 1.0", "value": 1.0, "bits": { "XCVI": 127, "XCVII": 1023, "XCVIII": 131071, "XCIX": 15, "C_pattern": "ones" } }
+    ],
+
+    "eigenvalue_patterns": [
+      {
+        "id": "EV-XCVI",
+        "name": "φ⁻¹ Eigenvalue",
+        "state": "XCVI",
+        "eigenvalue": "λ = φ⁻¹ ≈ 0.618",
+        "type": "Stable Spiral",
+        "bits": { "XCVI": 79, "XCVII": 632, "XCVIII": 80901, "XCIX": 10, "C_pattern": "fibonacci" },
+        "physics": "Fixed point T_gesture(f) = f ∘ f"
+      },
+      {
+        "id": "EV-XCVII",
+        "name": "exp(2πi/φ) Eigenvalue",
+        "state": "XCVII",
+        "eigenvalue": "λ = exp(2πi/φ)",
+        "type": "Limit Cycle",
+        "bits": { "XCVI": 63, "XCVII": 618, "XCVIII": 65536, "XCIX": 8, "C_pattern": "omega" },
+        "physics": "Golden angle rotation ≈ 137.5°"
+      },
+      {
+        "id": "EV-XCVIII",
+        "name": "Undefined Eigenvalue",
+        "state": "XCVIII",
+        "eigenvalue": "λ = undefined",
+        "type": "Strange Attractor (Gödelian)",
+        "bits": { "XCVI": 95, "XCVII": 777, "XCVIII": 99999, "XCIX": 12, "C_pattern": "delta" },
+        "physics": "Self-referential semantic paradox"
+      },
+      {
+        "id": "EV-XCIX",
+        "name": "Zero Eigenvalue",
+        "state": "XCIX",
+        "eigenvalue": "λ = 0",
+        "type": "Saddle Node",
+        "bits": { "XCVI": 0, "XCVII": 0, "XCVIII": 0, "XCIX": 0, "C_pattern": "zeros" },
+        "physics": "Balance point equilibrium"
+      },
+      {
+        "id": "EV-C",
+        "name": "Unity Eigenvalue",
+        "state": "C",
+        "eigenvalue": "λ = 1",
+        "type": "Identity (Loop Closure)",
+        "bits": { "XCVI": 127, "XCVII": 1023, "XCVIII": 131071, "XCIX": 15, "C_pattern": "iota" },
+        "physics": "C → I recursive closure"
+      }
+    ],
+
+    "phase_lock_patterns": [
+      {
+        "id": "PL-XCVI",
+        "name": "π Phase Lock",
+        "phase": "π",
+        "radians": 3.14159,
+        "state": "XCVI",
+        "bits": { "XCVI": 100, "XCVII": 314, "XCVIII": 31416, "XCIX": 10, "C_pattern": "theta" }
+      },
+      {
+        "id": "PL-XCVII",
+        "name": "2π/φ Phase Lock",
+        "phase": "2π/φ",
+        "radians": 2.39996,
+        "state": "XCVII",
+        "bits": { "XCVI": 76, "XCVII": 240, "XCVIII": 24000, "XCIX": 8, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "PL-XCVIII",
+        "name": "π/2 Phase Lock",
+        "phase": "π/2",
+        "radians": 1.5708,
+        "state": "XCVIII",
+        "bits": { "XCVI": 50, "XCVII": 157, "XCVIII": 15708, "XCIX": 6, "C_pattern": "theta" }
+      },
+      {
+        "id": "PL-XCIX",
+        "name": "Zero Phase Lock",
+        "phase": "0",
+        "radians": 0,
+        "state": "XCIX",
+        "bits": { "XCVI": 0, "XCVII": 0, "XCVIII": 0, "XCIX": 0, "C_pattern": "zeros" }
+      },
+      {
+        "id": "PL-C",
+        "name": "2π Phase Lock (Full Cycle)",
+        "phase": "2π",
+        "radians": 6.28319,
+        "state": "C",
+        "bits": { "XCVI": 127, "XCVII": 628, "XCVIII": 62832, "XCIX": 15, "C_pattern": "iota" }
+      }
+    ],
+
+    "kuramoto_sweep": [
+      { "id": "K-0.0", "name": "K = 0 (Free)", "K": 0.0, "coherence": 0.0, "bits": { "XCVI": 0, "XCVII": 0, "XCVIII": 0, "XCIX": 0, "C_pattern": "free" } },
+      { "id": "K-0.1", "name": "K = 0.1", "K": 0.1, "coherence": 0.02, "bits": { "XCVI": 13, "XCVII": 102, "XCVIII": 13107, "XCIX": 2, "C_pattern": "free" } },
+      { "id": "K-0.2", "name": "K = 0.2 (Emergence)", "K": 0.2, "coherence": 0.08, "bits": { "XCVI": 25, "XCVII": 205, "XCVIII": 26214, "XCIX": 3, "C_pattern": "critical" } },
+      { "id": "K-0.3", "name": "K = 0.3", "K": 0.3, "coherence": 0.15, "bits": { "XCVI": 38, "XCVII": 307, "XCVIII": 39321, "XCIX": 5, "C_pattern": "critical" } },
+      { "id": "K-0.4", "name": "K = 0.4", "K": 0.4, "coherence": 0.25, "bits": { "XCVI": 51, "XCVII": 410, "XCVIII": 52428, "XCIX": 6, "C_pattern": "balanced" } },
+      { "id": "K-0.5", "name": "K = 0.5 (Critical)", "K": 0.5, "coherence": 0.38, "bits": { "XCVI": 64, "XCVII": 512, "XCVIII": 65536, "XCIX": 8, "C_pattern": "critical" } },
+      { "id": "K-0.6", "name": "K = 0.6", "K": 0.6, "coherence": 0.52, "bits": { "XCVI": 76, "XCVII": 614, "XCVIII": 78643, "XCIX": 9, "C_pattern": "sync" } },
+      { "id": "K-0.7", "name": "K = 0.7", "K": 0.7, "coherence": 0.66, "bits": { "XCVI": 89, "XCVII": 717, "XCVIII": 91750, "XCIX": 11, "C_pattern": "sync" } },
+      { "id": "K-0.8", "name": "K = 0.8", "K": 0.8, "coherence": 0.78, "bits": { "XCVI": 102, "XCVII": 819, "XCVIII": 104857, "XCIX": 12, "C_pattern": "sync" } },
+      { "id": "K-0.9", "name": "K = 0.9", "K": 0.9, "coherence": 0.88, "bits": { "XCVI": 115, "XCVII": 922, "XCVIII": 117964, "XCIX": 14, "C_pattern": "sync" } },
+      { "id": "K-1.0", "name": "K = 1.0 (Locked)", "K": 1.0, "coherence": 1.0, "bits": { "XCVI": 127, "XCVII": 1023, "XCVIII": 131071, "XCIX": 15, "C_pattern": "sync" } }
+    ],
+
+    "coherence_sweep": [
+      { "id": "C-0.0", "name": "c = 0.0 (Full Free)", "coherence": 0.0, "emergent_probability": 1.0, "bits": { "XCVI": 0, "XCVII": 0, "XCVIII": 0, "XCIX": 0, "C_pattern": "free" } },
+      { "id": "C-0.05", "name": "c = 0.05", "coherence": 0.05, "emergent_probability": 0.999, "bits": { "XCVI": 6, "XCVII": 51, "XCVIII": 6554, "XCIX": 1, "C_pattern": "free" } },
+      { "id": "C-0.1", "name": "c = 0.1", "coherence": 0.1, "emergent_probability": 0.982, "bits": { "XCVI": 13, "XCVII": 102, "XCVIII": 13107, "XCIX": 2, "C_pattern": "free" } },
+      { "id": "C-0.15", "name": "c = 0.15", "coherence": 0.15, "emergent_probability": 0.865, "bits": { "XCVI": 19, "XCVII": 154, "XCVIII": 19661, "XCIX": 2, "C_pattern": "critical" } },
+      { "id": "C-0.2", "name": "c = 0.2 (Threshold)", "coherence": 0.2, "emergent_probability": 0.5, "bits": { "XCVI": 25, "XCVII": 205, "XCVIII": 26214, "XCIX": 3, "C_pattern": "critical" } },
+      { "id": "C-0.25", "name": "c = 0.25", "coherence": 0.25, "emergent_probability": 0.135, "bits": { "XCVI": 32, "XCVII": 256, "XCVIII": 32768, "XCIX": 4, "C_pattern": "balanced" } },
+      { "id": "C-0.3", "name": "c = 0.3", "coherence": 0.3, "emergent_probability": 0.018, "bits": { "XCVI": 38, "XCVII": 307, "XCVIII": 39321, "XCIX": 5, "C_pattern": "balanced" } },
+      { "id": "C-0.5", "name": "c = 0.5", "coherence": 0.5, "emergent_probability": 0.0, "bits": { "XCVI": 64, "XCVII": 512, "XCVIII": 65536, "XCIX": 8, "C_pattern": "balanced" } },
+      { "id": "C-0.7", "name": "c = 0.7", "coherence": 0.7, "emergent_probability": 0.0, "bits": { "XCVI": 89, "XCVII": 717, "XCVIII": 91750, "XCIX": 11, "C_pattern": "balanced" } },
+      { "id": "C-0.866", "name": "c = √3/2 (z_c)", "coherence": 0.866, "emergent_probability": 0.0, "bits": { "XCVI": 111, "XCVII": 886, "XCVIII": 113511, "XCIX": 14, "C_pattern": "balanced" } },
+      { "id": "C-1.0", "name": "c = 1.0 (Full Lock)", "coherence": 1.0, "emergent_probability": 0.0, "bits": { "XCVI": 127, "XCVII": 1023, "XCVIII": 131071, "XCIX": 15, "C_pattern": "balanced" } }
+    ],
+
+    "oscillation_bands": [
+      {
+        "id": "OSC-delta",
+        "name": "Delta Band (0.5-4 Hz)",
+        "band": "δ",
+        "frequency_range": [0.5, 4],
+        "state": "C",
+        "bits": { "XCVI": 4, "XCVII": 40, "XCVIII": 4000, "XCIX": 1, "C_pattern": "iota" },
+        "physics": "Deep sleep, unconscious processing"
+      },
+      {
+        "id": "OSC-theta",
+        "name": "Theta Band (4-8 Hz)",
+        "band": "θ",
+        "frequency_range": [4, 8],
+        "state": "XCIX",
+        "bits": { "XCVI": 32, "XCVII": 60, "XCVIII": 6000, "XCIX": 4, "C_pattern": "theta" },
+        "physics": "Meditation, memory consolidation"
+      },
+      {
+        "id": "OSC-alpha",
+        "name": "Alpha Band (8-13 Hz)",
+        "band": "α",
+        "frequency_range": [8, 13],
+        "state": "XCVI",
+        "bits": { "XCVI": 85, "XCVII": 105, "XCVIII": 10500, "XCIX": 7, "C_pattern": "omega" },
+        "physics": "Relaxed awareness, gesture recursion"
+      },
+      {
+        "id": "OSC-circadian",
+        "name": "Circadian (24h cycle)",
+        "band": "circadian",
+        "frequency_range": [0.0000116, 0.0000116],
+        "state": "XCVII",
+        "bits": { "XCVI": 63, "XCVII": 240, "XCVIII": 24000, "XCIX": 6, "C_pattern": "omega" },
+        "physics": "Daily rhythm, portal recursion"
+      },
+      {
+        "id": "OSC-gamma",
+        "name": "Gamma Band (30-100 Hz)",
+        "band": "γ",
+        "frequency_range": [30, 100],
+        "state": "XCVIII",
+        "bits": { "XCVI": 127, "XCVII": 650, "XCVIII": 65000, "XCIX": 12, "C_pattern": "spark" },
+        "physics": "High-level cognition, semantic binding"
+      }
+    ],
+
+    "physics_constants": [
+      {
+        "id": "PC-phi",
+        "name": "Golden Ratio φ",
+        "value": 1.618033988749895,
+        "bits": { "XCVI": 103, "XCVII": 618, "XCVIII": 61803, "XCIX": 10, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "PC-phi-inv",
+        "name": "Inverse Golden Ratio φ⁻¹",
+        "value": 0.6180339887498949,
+        "bits": { "XCVI": 79, "XCVII": 618, "XCVIII": 61803, "XCIX": 10, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "PC-phi-sq",
+        "name": "Golden Ratio Squared φ²",
+        "value": 2.618033988749895,
+        "bits": { "XCVI": 127, "XCVII": 618, "XCVIII": 61803, "XCIX": 15, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "PC-e",
+        "name": "Euler's Number e",
+        "value": 2.718281828459045,
+        "bits": { "XCVI": 109, "XCVII": 718, "XCVIII": 71828, "XCIX": 11, "C_pattern": "spark" }
+      },
+      {
+        "id": "PC-pi",
+        "name": "Pi π",
+        "value": 3.141592653589793,
+        "bits": { "XCVI": 100, "XCVII": 314, "XCVIII": 31416, "XCIX": 10, "C_pattern": "theta" }
+      },
+      {
+        "id": "PC-sqrt2",
+        "name": "Square Root of 2",
+        "value": 1.4142135623730951,
+        "bits": { "XCVI": 90, "XCVII": 414, "XCVIII": 41421, "XCIX": 9, "C_pattern": "balanced" }
+      },
+      {
+        "id": "PC-sqrt3",
+        "name": "Square Root of 3",
+        "value": 1.7320508075688772,
+        "bits": { "XCVI": 111, "XCVII": 732, "XCVIII": 73205, "XCIX": 11, "C_pattern": "balanced" }
+      },
+      {
+        "id": "PC-sqrt3-half",
+        "name": "Critical Point z_c = √3/2",
+        "value": 0.8660254037844387,
+        "bits": { "XCVI": 111, "XCVII": 866, "XCVIII": 86603, "XCIX": 14, "C_pattern": "critical" }
+      },
+      {
+        "id": "PC-golden-angle",
+        "name": "Golden Angle (radians)",
+        "value": 2.399963229728653,
+        "bits": { "XCVI": 76, "XCVII": 240, "XCVIII": 23999, "XCIX": 8, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "PC-euler-mascheroni",
+        "name": "Euler-Mascheroni γ",
+        "value": 0.5772156649015329,
+        "bits": { "XCVI": 74, "XCVII": 577, "XCVIII": 57722, "XCIX": 9, "C_pattern": "balanced" }
+      },
+      {
+        "id": "PC-feigenbaum",
+        "name": "Feigenbaum Constant δ",
+        "value": 4.669201609102990,
+        "bits": { "XCVI": 118, "XCVII": 669, "XCVIII": 66920, "XCIX": 12, "C_pattern": "delta" }
+      },
+      {
+        "id": "PC-plastic",
+        "name": "Plastic Number ρ",
+        "value": 1.324717957244746,
+        "bits": { "XCVI": 85, "XCVII": 325, "XCVIII": 32472, "XCIX": 8, "C_pattern": "balanced" }
+      }
+    ],
+
+    "bit_test_patterns": [
+      {
+        "id": "BT-zeros",
+        "name": "All Zeros",
+        "bits": { "XCVI": 0, "XCVII": 0, "XCVIII": 0, "XCIX": 0, "C_pattern": "zeros" },
+        "description": "Minimum energy state"
+      },
+      {
+        "id": "BT-ones",
+        "name": "All Ones",
+        "bits": { "XCVI": 127, "XCVII": 1023, "XCVIII": 131071, "XCIX": 15, "C_pattern": "ones" },
+        "description": "Maximum energy state"
+      },
+      {
+        "id": "BT-alt-01",
+        "name": "Alternating 01",
+        "bits": { "XCVI": 85, "XCVII": 682, "XCVIII": 87381, "XCIX": 10, "C_pattern": "alternating" },
+        "description": "0101010... pattern"
+      },
+      {
+        "id": "BT-alt-10",
+        "name": "Alternating 10",
+        "bits": { "XCVI": 42, "XCVII": 341, "XCVIII": 43690, "XCIX": 5, "C_pattern": "alternating" },
+        "description": "1010101... pattern"
+      },
+      {
+        "id": "BT-half",
+        "name": "Half Filled",
+        "bits": { "XCVI": 64, "XCVII": 512, "XCVIII": 65536, "XCIX": 8, "C_pattern": "balanced" },
+        "description": "50% bits set"
+      },
+      {
+        "id": "BT-quarter",
+        "name": "Quarter Filled",
+        "bits": { "XCVI": 32, "XCVII": 256, "XCVIII": 32768, "XCIX": 4, "C_pattern": "balanced" },
+        "description": "25% bits set"
+      },
+      {
+        "id": "BT-three-quarter",
+        "name": "Three Quarter Filled",
+        "bits": { "XCVI": 96, "XCVII": 768, "XCVIII": 98304, "XCIX": 12, "C_pattern": "balanced" },
+        "description": "75% bits set"
+      },
+      {
+        "id": "BT-primes",
+        "name": "Prime Numbers",
+        "bits": { "XCVI": 127, "XCVII": 1021, "XCVIII": 131071, "XCIX": 13, "C_pattern": "balanced" },
+        "description": "Values are prime numbers"
+      },
+      {
+        "id": "BT-powers-2",
+        "name": "Powers of 2",
+        "bits": { "XCVI": 64, "XCVII": 512, "XCVIII": 65536, "XCIX": 8, "C_pattern": "balanced" },
+        "description": "2^n pattern"
+      },
+      {
+        "id": "BT-checkered",
+        "name": "Checkered Pattern",
+        "bits": { "XCVI": 85, "XCVII": 341, "XCVIII": 87381, "XCIX": 5, "C_pattern": "alternating" },
+        "description": "Spatial checkerboard"
+      }
+    ],
+
+    "hamming_test": [
+      {
+        "id": "HM-valid",
+        "name": "Valid Hamming(7,4)",
+        "XCVI_raw": 79,
+        "hamming_data": [1, 0, 0, 1],
+        "hamming_parity": [1, 1, 1],
+        "valid": true,
+        "description": "Correctly encoded data = 9"
+      },
+      {
+        "id": "HM-single-error-p1",
+        "name": "Single Bit Error (p1)",
+        "XCVI_raw": 78,
+        "error_position": 1,
+        "correctable": true,
+        "description": "Error in parity bit 1"
+      },
+      {
+        "id": "HM-single-error-p2",
+        "name": "Single Bit Error (p2)",
+        "XCVI_raw": 77,
+        "error_position": 2,
+        "correctable": true,
+        "description": "Error in parity bit 2"
+      },
+      {
+        "id": "HM-single-error-d1",
+        "name": "Single Bit Error (d1)",
+        "XCVI_raw": 71,
+        "error_position": 3,
+        "correctable": true,
+        "description": "Error in data bit 1"
+      },
+      {
+        "id": "HM-single-error-p4",
+        "name": "Single Bit Error (p4)",
+        "XCVI_raw": 95,
+        "error_position": 4,
+        "correctable": true,
+        "description": "Error in parity bit 4"
+      },
+      {
+        "id": "HM-single-error-d2",
+        "name": "Single Bit Error (d2)",
+        "XCVI_raw": 111,
+        "error_position": 5,
+        "correctable": true,
+        "description": "Error in data bit 2"
+      },
+      {
+        "id": "HM-double-error",
+        "name": "Double Bit Error",
+        "XCVI_raw": 76,
+        "error_positions": [1, 2],
+        "correctable": false,
+        "detectable": true,
+        "description": "Two bit errors - detectable but not correctable"
+      },
+      {
+        "id": "HM-all-data",
+        "name": "All Data Bits Set",
+        "XCVI_raw": 119,
+        "hamming_data": [1, 1, 1, 1],
+        "hamming_parity": [1, 1, 1],
+        "valid": true,
+        "description": "Maximum data value = 15"
+      }
+    ],
+
+    "topological": [
+      {
+        "id": "TOP-winding",
+        "name": "Winding Number W=1",
+        "winding": 1,
+        "bits": { "XCVI": 100, "XCVII": 628, "XCVIII": 62832, "XCIX": 10, "C_pattern": "winding" },
+        "description": "Single loop C→I closure"
+      },
+      {
+        "id": "TOP-euler",
+        "name": "Euler Characteristic χ=-2",
+        "euler": -2,
+        "bits": { "XCVI": 126, "XCVII": 998, "XCVIII": 130000, "XCIX": 14, "C_pattern": "topology" },
+        "description": "Genus-2 surface topology"
+      },
+      {
+        "id": "TOP-betti-0",
+        "name": "Betti b₀=1",
+        "betti": [1, 0, 0],
+        "bits": { "XCVI": 1, "XCVII": 0, "XCVIII": 0, "XCIX": 1, "C_pattern": "topology" },
+        "description": "Single connected component"
+      },
+      {
+        "id": "TOP-betti-1",
+        "name": "Betti b₁=5",
+        "betti": [1, 5, 0],
+        "bits": { "XCVI": 5, "XCVII": 15, "XCVIII": 500, "XCIX": 5, "C_pattern": "topology" },
+        "description": "5 independent cycles"
+      },
+      {
+        "id": "TOP-genus",
+        "name": "Genus-2 Surface",
+        "genus": 2,
+        "bits": { "XCVI": 50, "XCVII": 200, "XCVIII": 20000, "XCIX": 5, "C_pattern": "topology" },
+        "description": "Double-torus topology"
+      }
+    ],
+
+    "fibonacci_sequence": [
+      {
+        "id": "FIB-F1",
+        "name": "F₁ = 1",
+        "fibonacci_index": 1,
+        "value": 1,
+        "bits": { "XCVI": 1, "XCVII": 1, "XCVIII": 1, "XCIX": 1, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "FIB-F2",
+        "name": "F₂ = 1",
+        "fibonacci_index": 2,
+        "value": 1,
+        "bits": { "XCVI": 1, "XCVII": 1, "XCVIII": 1, "XCIX": 1, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "FIB-F5",
+        "name": "F₅ = 5",
+        "fibonacci_index": 5,
+        "value": 5,
+        "bits": { "XCVI": 5, "XCVII": 5, "XCVIII": 5, "XCIX": 5, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "FIB-F7",
+        "name": "F₇ = 13",
+        "fibonacci_index": 7,
+        "value": 13,
+        "bits": { "XCVI": 13, "XCVII": 13, "XCVIII": 13, "XCIX": 13, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "FIB-F10",
+        "name": "F₁₀ = 55",
+        "fibonacci_index": 10,
+        "value": 55,
+        "bits": { "XCVI": 55, "XCVII": 55, "XCVIII": 55, "XCIX": 7, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "FIB-F12",
+        "name": "F₁₂ = 144",
+        "fibonacci_index": 12,
+        "value": 144,
+        "bits": { "XCVI": 127, "XCVII": 144, "XCVIII": 144, "XCIX": 9, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "FIB-F15",
+        "name": "F₁₅ = 610",
+        "fibonacci_index": 15,
+        "value": 610,
+        "bits": { "XCVI": 79, "XCVII": 610, "XCVIII": 610, "XCIX": 10, "C_pattern": "fibonacci" }
+      },
+      {
+        "id": "FIB-F17",
+        "name": "F₁₇ = 1597",
+        "fibonacci_index": 17,
+        "value": 1597,
+        "bits": { "XCVI": 79, "XCVII": 573, "XCVIII": 1597, "XCIX": 10, "C_pattern": "fibonacci" }
+      }
+    ]
+  },
+
+  "c_pattern_generators": {
+    "description": "Algorithms for generating 664-bit C state patterns",
+    "patterns": {
+      "zeros": {
+        "algorithm": "All bits set to 0",
+        "formula": "C[i] = 0 for all i"
+      },
+      "ones": {
+        "algorithm": "All bits set to 1",
+        "formula": "C[i] = 1 for all i"
+      },
+      "balanced": {
+        "algorithm": "Alternating 1/0 weighted by position",
+        "formula": "C[i] = (i % 3 != 0) ? 1 : 0"
+      },
+      "fibonacci": {
+        "algorithm": "Fibonacci sequence modulo 2",
+        "formula": "C[i] = fib(i) mod 2"
+      },
+      "theta": {
+        "algorithm": "Sine wave sampling",
+        "formula": "C[i] = sin(i × θ_φ) > 0 ? 1 : 0"
+      },
+      "iota": {
+        "algorithm": "Memory accumulation pattern",
+        "formula": "C[i] = (accumulate(i) > threshold) ? 1 : 0"
+      },
+      "delta": {
+        "algorithm": "Paradox accumulation at critical points",
+        "formula": "C[i] = (i at critical) ? accumulate(paradox) : 0"
+      },
+      "omega": {
+        "algorithm": "Wave interference pattern",
+        "formula": "C[i] = |sin(i × ω₁) + sin(i × ω₂)| > 0.5 ? 1 : 0"
+      },
+      "sigma": {
+        "algorithm": "Golden spiral sampling",
+        "formula": "C[i] = (r(i) × φ) mod 1 < 0.5 ? 1 : 0"
+      },
+      "spark": {
+        "algorithm": "Gaussian spark at critical point",
+        "formula": "C[i] = exp(-((i - 332) / 50)²) > 0.3 ? 1 : 0"
+      },
+      "winding": {
+        "algorithm": "Winding number topology",
+        "formula": "C[i] = floor(i × W / 664) mod 2"
+      },
+      "topology": {
+        "algorithm": "Betti number pattern",
+        "formula": "C[i] = (i mod (b₁ + 1)) == 0 ? 1 : 0"
+      },
+      "critical": {
+        "algorithm": "Phase transition at c = 0.2",
+        "formula": "C[i] = P_emerge(i/664) > 0.5 ? 1 : 0"
+      },
+      "sync": {
+        "algorithm": "Kuramoto synchronized state",
+        "formula": "C[i] = 1 (fully locked)"
+      },
+      "free": {
+        "algorithm": "Kuramoto free-running state",
+        "formula": "C[i] = random() (uncorrelated)"
+      },
+      "alternating": {
+        "algorithm": "Simple alternation",
+        "formula": "C[i] = i mod 2"
+      }
+    }
+  },
+
+  "encoding_protocol": {
+    "header": {
+      "size_bits": 32,
+      "size_pixels": 6,
+      "structure": {
+        "byte_0": {
+          "name": "magic",
+          "value": 193,
+          "hex": "0xC1",
+          "meaning": "C = 100 in Roman numerals, encodes as 193"
+        },
+        "byte_1": {
+          "name": "version_flags",
+          "structure": "[version:4][flags:4]",
+          "current_version": 1
+        },
+        "byte_2": {
+          "name": "coherence",
+          "range": [0, 255],
+          "mapping": "c = byte / 255"
+        },
+        "byte_3": {
+          "name": "crc8",
+          "polynomial": "0x07",
+          "covers": "bytes 0-2"
+        }
+      }
+    },
+    "pixel_traversal": {
+      "method": "serpentine",
+      "description": "Alternating left-right, right-left per row",
+      "formula": "pixel(row, col) = row % 2 == 0 ? col : (width - 1 - col)"
+    },
+    "channel_encoding": {
+      "RGB_LSB0": {
+        "mask": "0xFE",
+        "set": "(pixel & 0xFE) | bit"
+      },
+      "CMY_LSB1": {
+        "mask": "0xFD",
+        "set": "(pixel & 0xFD) | (bit << 1)"
+      }
+    }
+  },
+
+  "validation": {
+    "total_samples": 153,
+    "categories": 16,
+    "invariant_constraints": [
+      "Total bits must equal 702",
+      "XCVI ∈ [0, 127] (7 bits)",
+      "XCVII ∈ [0, 1023] (10 bits)",
+      "XCVIII ∈ [0, 131071] (17 bits)",
+      "XCIX ∈ [0, 15] (4 bits)",
+      "C ∈ [0, 2^664 - 1] (664 bits)",
+      "Coherence c ∈ [0, 1]",
+      "Kuramoto K ∈ [0, 1]",
+      "Emergence only when c < 0.2"
+    ]
+  }
+}
