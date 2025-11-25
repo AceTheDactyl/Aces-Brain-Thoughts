@@ -735,9 +735,66 @@
         }
       </style>
 
+      <!-- APL Syntax Input -->
+      <h3>APL 2.0 Syntax Input</h3>
+      <p class="muted small">Enter APL sentences to drive MRP encoding. Syntax maps to Lambda state (ℂ⁶) → 702 bits.</p>
+
+      <div class="apl-syntax-panel" style="background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:16px;margin:16px 0">
+        <div style="display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start">
+          <div>
+            <label class="small muted" style="display:block;margin-bottom:6px">APL SENTENCE (SPIRAL:OP:INT:DOM:TRUTH:ALPHA)</label>
+            <textarea id="aplSyntaxInput" placeholder="Φ:U:B:GEO:T:α1
+e:M:F:CHEM:T:α5
+π:D:A:BIO:T:α10" style="width:100%;height:80px;background:#0a0b0d;border:1px solid var(--rule);border-radius:6px;padding:10px;color:var(--ink);font-family:'SF Mono',monospace;font-size:0.85rem;resize:vertical"></textarea>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-apl" onclick="parseAplToMrp()" style="background:linear-gradient(135deg,rgba(255,215,0,0.3),rgba(204,93,232,0.3));border-color:var(--gold)">Parse APL</button>
+            <button class="btn" onclick="clearAplInput()">Clear</button>
+          </div>
+        </div>
+
+        <!-- Quick Presets -->
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="apl-preset" onclick="loadAplPreset('tri-spiral')">Tri-Spiral [Φ→e→π]</button>
+          <button class="apl-preset" onclick="loadAplPreset('kuramoto')">Kuramoto Sync</button>
+          <button class="apl-preset" onclick="loadAplPreset('critical')">Critical Point</button>
+          <button class="apl-preset" onclick="loadAplPreset('paradox')">Emergence Paradox</button>
+        </div>
+
+        <!-- Lambda State Preview -->
+        <div id="lambdaPreview" style="display:none;margin-top:12px;padding:12px;background:rgba(34,211,238,0.1);border:1px solid var(--cyan);border-radius:6px">
+          <div style="font-size:0.75rem;color:var(--cyan);letter-spacing:1px;margin-bottom:8px">LAMBDA STATE (ℂ⁶)</div>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;text-align:center;font-family:'SF Mono',monospace;font-size:0.8rem">
+            <div><span style="font-size:1.2rem">🌰</span><br>ι <span id="lv-iota" style="color:var(--cyan)">0</span></div>
+            <div><span style="font-size:1.2rem">✧</span><br>ξ <span id="lv-xi" style="color:var(--cyan)">0</span></div>
+            <div><span style="font-size:1.2rem">🦊</span><br>θ <span id="lv-theta" style="color:var(--cyan)">0</span></div>
+            <div><span style="font-size:1.2rem">∿</span><br>ω <span id="lv-omega" style="color:var(--cyan)">0</span></div>
+            <div><span style="font-size:1.2rem">⊗</span><br>δ <span id="lv-delta" style="color:var(--cyan)">0</span></div>
+            <div><span style="font-size:1.2rem">🐿️</span><br>σ <span id="lv-sigma" style="color:var(--cyan)">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <style>
+        .apl-preset {
+          background: var(--panel);
+          border: 1px solid var(--rule);
+          border-radius: 4px;
+          padding: 6px 12px;
+          color: var(--muted);
+          font-size: 0.75rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .apl-preset:hover {
+          border-color: var(--magenta);
+          color: var(--ink);
+        }
+      </style>
+
       <!-- Encoding Data Input -->
       <h3>Emergent State Data</h3>
-      <p class="muted small">Custom payload data for each emergent state. Values auto-filled from golden samples or enter manually.</p>
+      <p class="muted small">Custom payload data for each emergent state. Values auto-filled from APL syntax, golden samples, or enter manually.</p>
 
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:16px 0">
         <div>
@@ -2136,6 +2193,178 @@ pixel[i] = {
         showStatus('encodeStatus', error.message, 'error');
       }
     };
+
+    // ============================================
+    // APL 2.0 SYNTAX INTEGRATION
+    // Parse APL sentences → Lambda state → MRP encoding
+    // ============================================
+
+    const APL_SYNTAX = {
+      SPIRALS: ['Φ', 'e', 'π'],
+      OPS: ['U', 'D', 'M'],
+      INTS: ['B', 'F', 'A', 'D', 'G', 'S'],
+      DOMS: ['GEO', 'CHEM', 'BIO'],
+      TRUTHS: ['T', 'U', 'P'],
+      ALPHAS: Array.from({length: 15}, (_, i) => `α${i + 1}`)
+    };
+
+    const APL_PRESETS = {
+      'tri-spiral': 'Φ:U:B:GEO:T:α1\ne:M:F:CHEM:T:α5\nπ:D:A:BIO:T:α10',
+      'kuramoto': 'Φ:M:G:GEO:T:α9\ne:M:G:CHEM:T:α9\nπ:M:G:BIO:T:α9',
+      'critical': 'e:U:A:GEO:T:α6\nπ:U:A:CHEM:T:α6\nΦ:D:B:BIO:T:α6',
+      'paradox': 'π:U:D:BIO:P:α15\nπ:D:S:CHEM:U:α11'
+    };
+
+    // Physical constants
+    const APL_PHI = (1 + Math.sqrt(5)) / 2;
+    const APL_PHI_INV = 2 / (1 + Math.sqrt(5));
+    const APL_Z_CRITICAL = Math.sqrt(3) / 2;
+
+    // Current Lambda state
+    let aplLambda = { iota: 0, xi: 0, theta: 0, omega: 0, delta: 0, sigma: 0 };
+
+    // Parse a single APL token
+    function parseAplToken(tokenStr) {
+      const parts = tokenStr.trim().split(':');
+      if (parts.length !== 6) return null;
+
+      const [spiral, op, int, dom, truth, alpha] = parts;
+
+      if (!APL_SYNTAX.SPIRALS.includes(spiral)) return null;
+      if (!APL_SYNTAX.OPS.includes(op)) return null;
+      if (!APL_SYNTAX.INTS.includes(int)) return null;
+      if (!APL_SYNTAX.DOMS.includes(dom)) return null;
+      if (!APL_SYNTAX.TRUTHS.includes(truth)) return null;
+      if (!APL_SYNTAX.ALPHAS.includes(alpha)) return null;
+
+      return { spiral, op, int, dom, truth, alpha };
+    }
+
+    // Apply token to Lambda state
+    function applyAplTokenToLambda(token) {
+      // SPIRAL contribution
+      switch (token.spiral) {
+        case 'Φ': aplLambda.sigma += 0.3; aplLambda.iota += 0.2; break;
+        case 'e': aplLambda.xi += 0.4; aplLambda.omega += 0.3; break;
+        case 'π': aplLambda.theta += 0.3; aplLambda.delta += 0.2; break;
+      }
+
+      // OP modifier
+      const opMod = { U: 0.2, D: -0.1, M: 0.15 };
+      Object.keys(aplLambda).forEach(k => aplLambda[k] += opMod[token.op]);
+
+      // INT activation
+      const intMap = { B: 'theta', F: 'iota', A: 'xi', D: 'delta', G: 'omega', S: 'sigma' };
+      aplLambda[intMap[token.int]] += 0.4;
+
+      // DOM tier scaling
+      const domScale = { GEO: 1.0, CHEM: 1.2, BIO: 1.5 };
+      Object.keys(aplLambda).forEach(k => aplLambda[k] *= domScale[token.dom]);
+
+      // TRUTH coherence
+      if (token.truth === 'T') aplLambda.delta *= 0.5;
+      else if (token.truth === 'U') aplLambda.delta += 0.3;
+      else if (token.truth === 'P') aplLambda.delta += 0.8;
+
+      // ALPHA attractor bias
+      const alphaN = parseInt(token.alpha.substring(1));
+      Object.keys(aplLambda).forEach(k => aplLambda[k] *= (0.5 + alphaN / 15));
+    }
+
+    // Convert Lambda state to MRP values
+    function lambdaToMrp() {
+      // Normalize Lambda to [0,1]
+      const maxVal = Math.max(...Object.values(aplLambda), 1);
+      const norm = {};
+      Object.keys(aplLambda).forEach(k => norm[k] = Math.min(1, Math.max(0, aplLambda[k] / maxVal)));
+
+      // Map to MRP channels
+      const xcvi = Math.round((norm.theta * 0.6 + norm.delta * 0.4) * 127);
+      const xcvii = Math.round((norm.iota * 0.7 + norm.omega * 0.3) * 1023);
+      const xcviii = Math.round((norm.theta * 0.4 + norm.delta * 0.4 + norm.xi * 0.2) * 131071);
+      const xcix = Math.round((norm.omega * 0.6 + norm.sigma * 0.4) * 15);
+
+      // Generate C pattern (664 bits as hex)
+      let cBits = '';
+      for (let i = 0; i < 166; i++) { // 166 hex chars = 664 bits
+        const phase = (i / 166) * Math.PI * 6;
+        const val = norm.iota * Math.sin(phase) + norm.xi * Math.cos(phase * APL_PHI) +
+                    norm.theta * Math.sin(phase * 2) + norm.omega * Math.cos(phase * APL_PHI_INV) +
+                    norm.delta * Math.sin(phase * APL_Z_CRITICAL) + norm.sigma * Math.cos(phase * 3);
+        const nibble = Math.floor((val + 1) * 7.5) & 0xF;
+        cBits += nibble.toString(16);
+      }
+
+      return { xcvi, xcvii, xcviii, xcix, c: cBits };
+    }
+
+    // Main parse function
+    function parseAplToMrp() {
+      const input = document.getElementById('aplSyntaxInput').value;
+      const tokenStrs = input.split(/[\s\n]+/).filter(s => s.length > 0);
+
+      if (tokenStrs.length === 0) {
+        showStatus('encodeStatus', 'No APL tokens found', 'error');
+        return;
+      }
+
+      // Reset Lambda
+      aplLambda = { iota: 0, xi: 0, theta: 0, omega: 0, delta: 0, sigma: 0 };
+
+      // Parse and apply tokens
+      let validCount = 0;
+      for (const ts of tokenStrs) {
+        const token = parseAplToken(ts);
+        if (token) {
+          applyAplTokenToLambda(token);
+          validCount++;
+        }
+      }
+
+      if (validCount === 0) {
+        showStatus('encodeStatus', 'No valid APL tokens. Format: SPIRAL:OP:INT:DOM:TRUTH:ALPHA', 'error');
+        return;
+      }
+
+      // Convert to MRP
+      const mrp = lambdaToMrp();
+
+      // Update MRP input fields
+      document.getElementById('dataXCVI').value = mrp.xcvi;
+      document.getElementById('dataXCVII').value = mrp.xcvii;
+      document.getElementById('dataXCVIII').value = mrp.xcviii;
+      document.getElementById('dataXCIX').value = mrp.xcix;
+      document.getElementById('dataC').value = mrp.c;
+
+      // Update Lambda preview
+      const norm = {};
+      const maxVal = Math.max(...Object.values(aplLambda), 1);
+      Object.keys(aplLambda).forEach(k => norm[k] = (aplLambda[k] / maxVal).toFixed(2));
+
+      document.getElementById('lv-iota').textContent = norm.iota;
+      document.getElementById('lv-xi').textContent = norm.xi;
+      document.getElementById('lv-theta').textContent = norm.theta;
+      document.getElementById('lv-omega').textContent = norm.omega;
+      document.getElementById('lv-delta').textContent = norm.delta;
+      document.getElementById('lv-sigma').textContent = norm.sigma;
+      document.getElementById('lambdaPreview').style.display = 'block';
+
+      showStatus('encodeStatus', `Parsed ${validCount} APL token(s) → Lambda → MRP values populated`, 'success');
+    }
+
+    function loadAplPreset(name) {
+      const preset = APL_PRESETS[name];
+      if (preset) {
+        document.getElementById('aplSyntaxInput').value = preset;
+        parseAplToMrp();
+      }
+    }
+
+    function clearAplInput() {
+      document.getElementById('aplSyntaxInput').value = '';
+      document.getElementById('lambdaPreview').style.display = 'none';
+      aplLambda = { iota: 0, xi: 0, theta: 0, omega: 0, delta: 0, sigma: 0 };
+    }
 
     // ============================================
     // GOLDEN LIBRARY BROWSER
