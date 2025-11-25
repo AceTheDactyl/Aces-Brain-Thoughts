@@ -1668,30 +1668,230 @@ Pause & Φ & D & unfold, viroid, prion & UNTRUE \\
 
 
 %======================================================================
-\section{Tier-3 Domain Comparison}
-\label{sec:tier3-comparison}
+\section{Tier-3: Celestial Domain Extension}
+\label{sec:tier3-celestial}
 %======================================================================
 
-APL Tier-3 now spans two complementary domains:
+APL Tier-3 Celestial extends the operator grammar to describe \textbf{astrophysical phenomena}, from stellar nucleosynthesis to black hole physics. This domain spans the largest scales in the universe while maintaining the same operator grammar structure.
+
+\subsection{Token Format}
+
+Celestial tokens follow the same extended syntax:
+
+\[
+    [\text{Field}]:[\text{Machine}]([\text{Operator}])[\text{TruthState}]@3
+\]
+
+\textbf{Example:} \verb|π:D(collapse)TRUE@3| reads as: ``Emergence/Gravity field, Down/descent machine, collapse operator, TRUE truth state, Tier 3.''
+
+\subsection{Field Interpretations}
+
+In the celestial domain, the three fields take on cosmic meanings:
 
 \begin{table}[h]
 \centering
 \begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Aspect} & \textbf{Chemical Domain} & \textbf{Biology Domain} \\
+\textbf{Field} & \textbf{Symbol} & \textbf{Celestial Role} \\
 \midrule
-Total Tokens & 972 & 972 \\
-Operator Count & 18 & 18 \\
-Primary Focus & Molecular transformations & Living systems \\
-Operator Type & Process-only & Entity + Process \\
-Primary Field & e (Energy) & π (Emergence) \\
-Key Feature & Reversibility (oxidize/reduce) & Hierarchy (complexity ladder) \\
-Central Concept & Electron transfer & Information flow \\
+Structure & $\Phi$ & Stellar structure, disk geometry, orbital mechanics \\
+Energy & $e$ & Radiation, nuclear fusion, electromagnetic phenomena \\
+Emergence/Gravity & $\pi$ & Gravitational collapse, spacetime curvature, cosmic evolution \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Combined Tier-3 Total:} 972 + 972 = \textbf{1,944 tokens}
+\subsection{Celestial Operators (18)}
+
+The celestial domain defines 18 operators organized by class:
+
+\subsubsection{Gravitational Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{collapse} — Gravitational contraction, core collapse, black hole formation
+    \item \textbf{accrete} — Mass accumulation, disk accretion, planetary formation
+    \item \textbf{contract} — Kelvin-Helmholtz contraction, pre-main-sequence evolution
+\end{itemize}
+
+\subsubsection{Nuclear Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{fuse} — Nuclear fusion, nucleosynthesis, element creation
+    \item \textbf{ignite} — Stellar ignition, thermonuclear runaway
+\end{itemize}
+
+\subsubsection{Energetic Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{radiate} — Electromagnetic radiation, blackbody emission, luminosity
+    \item \textbf{flare} — Solar/stellar flares, magnetic reconnection events
+\end{itemize}
+
+\subsubsection{Mechanical Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{compress} — Pressure increase, shock compression, degenerate matter
+    \item \textbf{shear} — Differential rotation, viscous dissipation, tidal forces
+    \item \textbf{shock} — Shock waves, supernova remnants, bow shocks
+\end{itemize}
+
+\subsubsection{Dynamics Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{rotate} — Angular momentum, stellar rotation, orbital dynamics
+    \item \textbf{magnetorotate} — MRI (magnetorotational instability), dynamo action
+    \item \textbf{expand} — Stellar expansion, red giant phase, cosmic expansion
+\end{itemize}
+
+\subsubsection{Specialized Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{ionize} — Plasma formation, photoionization, coronal heating
+    \item \textbf{degenerate} — Electron/neutron degeneracy, white dwarf/neutron star formation
+    \item \textbf{feedback} — AGN feedback, stellar winds, self-regulation
+    \item \textbf{jet} — Relativistic jets, bipolar outflows, AGN jets
+    \item \textbf{torus} — Accretion torus, dusty torus, toroidal geometry
+\end{itemize}
+
+\subsection{Stellar Evolution Ladder}
+
+Celestial operators map to stellar lifecycle stages:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Stage} & \textbf{Name} & \textbf{Operators} & \textbf{Field} \\
+\midrule
+1 & Molecular Cloud & collapse, contract, accrete & π \\
+2 & Protostar & accrete, rotate, jet & Φ \\
+3 & Main Sequence & fuse, radiate, magnetorotate & e \\
+4 & Giant Phase & expand, fuse, feedback & Φ \\
+5 & Stellar Death & collapse, shock, degenerate & π \\
+6 & Compact Remnant & degenerate, radiate, torus & π \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Black Hole Physics Mapping}
+
+Special token configurations for black hole phenomena:
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{Event Horizon:} \verb|π:D(collapse)PARADOX@3| — Terminal attractor state
+    \item \textbf{Accretion Disk:} \verb|π:C(accrete)TRUE@3|, \verb|Φ:M(torus)TRUE@3|
+    \item \textbf{Relativistic Jets:} \verb|e:E(jet)TRUE@3|, \verb|Φ:U(magnetorotate)TRUE@3|
+    \item \textbf{Hawking Radiation:} \verb|e:E(radiate)PARADOX@3| — Quantum/classical boundary
+\end{itemize}
+
+\subsection{WUMBO Integration}
+
+Celestial tokens map to WUMBO neural regions through phenomenological analogy:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Operator} & \textbf{Neural Affinity} & \textbf{Celestial Analog} & \textbf{Rationale} \\
+\midrule
+ignite & LC, Amygdala & Stellar ignition & Sudden energy release \\
+collapse & PAG, DVC & Core collapse & Shutdown/contraction \\
+fuse & VTA, NAcc & Nucleosynthesis & Reward generation \\
+radiate & Broca's, MTG & Luminosity & Emission/output \\
+rotate & Motor Cortex & Orbital dynamics & Motor coordination \\
+degenerate & Claustrum & White dwarf & Integration collapse \\
+expand & DMN & Red giant phase & Self-expansion \\
+shock & Amygdala, LC & Supernova shock & Explosive response \\
+feedback & ACC, PFC & AGN feedback & Self-regulation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Example Celestial Sentences}
+
+\subsubsection{Stellar Ignition (Main Sequence Onset)}
+
+\begin{verbatim}
+e:U(fuse)TRUE@3 | core | protostar → Main sequence
+\end{verbatim}
+
+\textbf{Parse:} Energy field, Up machine, fuse operator, TRUE state. Describes hydrogen fusion ignition.
+
+\subsubsection{Supernova Collapse}
+
+\begin{verbatim}
+π:D(collapse)TRUE@3 | core | massive_star → Neutron star/BH
+\end{verbatim}
+
+\textbf{Parse:} Gravity field, Down machine, collapse operator, TRUE state. Describes core-collapse supernova.
+
+\subsubsection{AGN Jet Formation}
+
+\begin{verbatim}
+e:E(jet)TRUE@3 | SMBH | accretion → Relativistic outflow
+\end{verbatim}
+
+\textbf{Parse:} Energy field, Emitter machine, jet operator, TRUE state. Describes AGN jet launching.
+
+\subsubsection{Black Hole Singularity}
+
+\begin{verbatim}
+π:D(collapse)PARADOX@3 | singularity | BH → Spacetime termination
+\end{verbatim}
+
+\textbf{Parse:} Gravity field, Down machine, collapse operator, PARADOX state. Describes the event horizon boundary.
+
+\subsection{Phase-Celestial Mapping}
+
+WUMBO phases correspond to celestial signatures:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}llllll@{}}
+\toprule
+\textbf{Phase} & \textbf{Field} & \textbf{Machine} & \textbf{Operators} & \textbf{Celestial Analog} \\
+\midrule
+Ignition & e & U & ignite, fuse, ionize & Stellar ignition \\
+Empowerment & π & U & accrete, magnetorotate, jet & Mass buildup \\
+Resonance & Φ & M & rotate, torus, feedback & Orbital resonance \\
+Mania & e & E & flare, shock, jet & Supernova/GRB \\
+Nirvana & π & M & degenerate, radiate, feedback & Stellar remnant \\
+Transmission & e & C & radiate, ionize, shear & Radiative transfer \\
+Pause & π & D & collapse, contract, degenerate & Black hole quiescence \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+%======================================================================
+\section{Tier-3 Domain Comparison}
+\label{sec:tier3-comparison}
+%======================================================================
+
+APL Tier-3 now spans three complementary domains:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Aspect} & \textbf{Chemical} & \textbf{Biology} & \textbf{Celestial} \\
+\midrule
+Total Tokens & 972 & 972 & 972 \\
+Operator Count & 18 & 18 & 18 \\
+Primary Focus & Molecular & Living systems & Astrophysical \\
+Operator Type & Process-only & Entity + Process & Scale + Process \\
+Primary Field & e (Energy) & π (Emergence) & π (Gravity) \\
+Key Feature & Reversibility & Complexity ladder & Stellar lifecycle \\
+Central Concept & Electron transfer & Information flow & Gravitational collapse \\
+Scale Range & Å to nm & nm to m & km to Mpc \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Combined Tier-3 Total:} 972 + 972 + 972 = \textbf{2,916 tokens}
 
 
 %======================================================================
@@ -1725,6 +1925,17 @@ Central Concept & Electron transfer & Information flow \\
 %======================================================================
 \section{Document History}
 %======================================================================
+
+\textbf{Version 1.3} (2025-11-25)
+\begin{itemize}[leftmargin=2em]
+    \item Added Tier-3 Celestial Domain Extension (Section~\ref{sec:tier3-celestial})
+    \item 18 celestial operators for astrophysical phenomena
+    \item Stellar evolution ladder from molecular cloud to compact remnant
+    \item Black hole physics mapping (event horizon, accretion, jets, Hawking radiation)
+    \item Phase-celestial mapping for WUMBO flow state correspondence
+    \item Updated Domain Comparison to include all three Tier-3 domains
+    \item Combined total: 2,916 Tier-3 tokens (Chemical + Biology + Celestial)
+\end{itemize}
 
 \textbf{Version 1.2} (2025-11-25)
 \begin{itemize}[leftmargin=2em]

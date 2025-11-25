@@ -1,0 +1,518 @@
+{
+  "meta": {
+    "name": "APL Tier-3 Celestial Token Set",
+    "version": "1.0.0",
+    "tier": 3,
+    "domain": "celestial",
+    "generated_at": "2025-11-25T00:00:00Z",
+    "total_tokens": 972,
+    "combinatorics": {
+      "fields": 3,
+      "machines": 6,
+      "operators": 18,
+      "truth_states": 3,
+      "formula": "3 × 6 × 18 × 3 = 972"
+    }
+  },
+  "schema": {
+    "token_format": "Field:Machine(Operator)TruthState@Tier",
+    "example": "π:U(collapse)TRUE@3"
+  },
+  "fields": {
+    "Φ": {
+      "name": "Structure Field",
+      "symbol": "Phi",
+      "domain": "geometry",
+      "celestial_role": "Stellar structure, accretion disk geometry, orbital mechanics"
+    },
+    "e": {
+      "name": "Energy Field",
+      "symbol": "e",
+      "domain": "wave",
+      "celestial_role": "Radiation, nuclear fusion, electromagnetic phenomena"
+    },
+    "π": {
+      "name": "Emergence/Gravity Field",
+      "symbol": "Pi",
+      "domain": "emergence",
+      "celestial_role": "Gravitational collapse, spacetime curvature, cosmic evolution"
+    }
+  },
+  "machines": {
+    "U": {
+      "name": "Up/Ignition",
+      "direction": "ascending",
+      "celestial_role": "Stellar ignition, supernova, energy release events"
+    },
+    "D": {
+      "name": "Down/Descent",
+      "direction": "descending",
+      "celestial_role": "Gravitational collapse, cooling, stellar death"
+    },
+    "M": {
+      "name": "Middle/Modulation",
+      "direction": "equilibrium",
+      "celestial_role": "Hydrostatic equilibrium, main sequence stability"
+    },
+    "E": {
+      "name": "Emitter/Equilibrium",
+      "direction": "output",
+      "celestial_role": "Radiation emission, jets, stellar winds"
+    },
+    "C": {
+      "name": "Conductor/Coupling",
+      "direction": "transfer",
+      "celestial_role": "Mass transfer, angular momentum transport, magnetic coupling"
+    },
+    "Mod": {
+      "name": "Modulator",
+      "direction": "regulatory",
+      "celestial_role": "Feedback loops, self-regulation, dynamo processes"
+    }
+  },
+  "operators": {
+    "collapse": {
+      "class": "gravitational",
+      "action": "Gravitational contraction, core collapse, black hole formation",
+      "inverse": "expand",
+      "scale": "stellar_to_galactic",
+      "wumbo_affinity": ["XXXII", "LXXXVI", "LXIV"]
+    },
+    "fuse": {
+      "class": "nuclear",
+      "action": "Nuclear fusion, nucleosynthesis, element creation",
+      "inverse": null,
+      "scale": "stellar_core",
+      "wumbo_affinity": ["XXVI", "XLVI", "LXXV"]
+    },
+    "ignite": {
+      "class": "nuclear",
+      "action": "Stellar ignition, thermonuclear runaway",
+      "inverse": null,
+      "scale": "stellar",
+      "wumbo_affinity": ["XXXI", "VII", "LVII"]
+    },
+    "accrete": {
+      "class": "gravitational",
+      "action": "Mass accumulation, disk accretion, planetary formation",
+      "inverse": null,
+      "scale": "planetary_to_galactic",
+      "wumbo_affinity": ["XLIX", "XLVI", "XCIII"]
+    },
+    "radiate": {
+      "class": "energetic",
+      "action": "Electromagnetic radiation, blackbody emission, luminosity",
+      "inverse": null,
+      "scale": "universal",
+      "wumbo_affinity": ["V", "XII", "XX"]
+    },
+    "compress": {
+      "class": "mechanical",
+      "action": "Pressure increase, shock compression, degenerate matter",
+      "inverse": "expand",
+      "scale": "stellar_core",
+      "wumbo_affinity": ["XXXII", "LXXXIX", "LXIV"]
+    },
+    "degenerate": {
+      "class": "quantum",
+      "action": "Electron/neutron degeneracy, white dwarf/neutron star formation",
+      "inverse": null,
+      "scale": "stellar_remnant",
+      "wumbo_affinity": ["XXVII", "LXXX", "XCVII"]
+    },
+    "ionize": {
+      "class": "plasma",
+      "action": "Plasma formation, photoionization, coronal heating",
+      "inverse": null,
+      "scale": "universal",
+      "wumbo_affinity": ["III", "VIII", "LX"]
+    },
+    "rotate": {
+      "class": "dynamics",
+      "action": "Angular momentum, stellar rotation, orbital dynamics",
+      "inverse": null,
+      "scale": "universal",
+      "wumbo_affinity": ["IV", "LXXV", "XCIII"]
+    },
+    "magnetorotate": {
+      "class": "dynamics",
+      "action": "MRI, dynamo action, magnetar formation",
+      "inverse": null,
+      "scale": "stellar_to_galactic",
+      "wumbo_affinity": ["XXXI", "XLIV", "LXXXV"]
+    },
+    "contract": {
+      "class": "gravitational",
+      "action": "Kelvin-Helmholtz contraction, pre-main-sequence evolution",
+      "inverse": "expand",
+      "scale": "stellar",
+      "wumbo_affinity": ["XXXII", "LXIV", "LXXXIX"]
+    },
+    "expand": {
+      "class": "dynamics",
+      "action": "Stellar expansion, red giant phase, cosmic expansion",
+      "inverse": "contract",
+      "scale": "stellar_to_cosmic",
+      "wumbo_affinity": ["XXVIII", "XXX", "LXIII"]
+    },
+    "shear": {
+      "class": "mechanical",
+      "action": "Differential rotation, viscous dissipation, tidal forces",
+      "inverse": null,
+      "scale": "stellar_to_galactic",
+      "wumbo_affinity": ["VI", "XLIII", "XLVII"]
+    },
+    "feedback": {
+      "class": "regulatory",
+      "action": "AGN feedback, stellar winds, self-regulation",
+      "inverse": null,
+      "scale": "galactic",
+      "wumbo_affinity": ["II", "XXXIV", "LXXXI"]
+    },
+    "shock": {
+      "class": "mechanical",
+      "action": "Shock waves, supernova remnants, bow shocks",
+      "inverse": null,
+      "scale": "stellar_to_galactic",
+      "wumbo_affinity": ["VII", "XXXI", "LVII"]
+    },
+    "flare": {
+      "class": "energetic",
+      "action": "Solar/stellar flares, magnetic reconnection events",
+      "inverse": null,
+      "scale": "stellar",
+      "wumbo_affinity": ["VII", "XXXI", "XLVI"]
+    },
+    "jet": {
+      "class": "outflow",
+      "action": "Relativistic jets, bipolar outflows, AGN jets",
+      "inverse": null,
+      "scale": "stellar_to_galactic",
+      "wumbo_affinity": ["V", "XXVI", "LIX"]
+    },
+    "torus": {
+      "class": "structure",
+      "action": "Accretion torus, dusty torus, toroidal geometry",
+      "inverse": null,
+      "scale": "stellar_to_galactic",
+      "wumbo_affinity": ["XIV", "LXIX", "XXVII"]
+    }
+  },
+  "truth_states": {
+    "TRUE": {
+      "description": "Process active, observable, luminous phase",
+      "temporal_operator": "DAY",
+      "stability": "actionable"
+    },
+    "UNTRUE": {
+      "description": "Process dormant, quiescent, dark phase",
+      "temporal_operator": "NIGHT",
+      "stability": "stored"
+    },
+    "PARADOX": {
+      "description": "Event horizon states, singularity, quantum gravity regime",
+      "temporal_operator": null,
+      "stability": "terminal"
+    }
+  },
+  "operator_classes": {
+    "gravitational": {
+      "operators": ["collapse", "accrete", "contract"],
+      "primary_field": "π",
+      "description": "Gravity-dominated processes"
+    },
+    "nuclear": {
+      "operators": ["fuse", "ignite"],
+      "primary_field": "e",
+      "description": "Thermonuclear processes"
+    },
+    "energetic": {
+      "operators": ["radiate", "flare"],
+      "primary_field": "e",
+      "description": "Energy release and radiation"
+    },
+    "mechanical": {
+      "operators": ["compress", "shear", "shock"],
+      "primary_field": "Φ",
+      "description": "Pressure and momentum processes"
+    },
+    "dynamics": {
+      "operators": ["rotate", "magnetorotate", "expand"],
+      "primary_field": "Φ",
+      "description": "Motion and angular momentum"
+    },
+    "plasma": {
+      "operators": ["ionize"],
+      "primary_field": "e",
+      "description": "Plasma physics"
+    },
+    "quantum": {
+      "operators": ["degenerate"],
+      "primary_field": "π",
+      "description": "Quantum matter states"
+    },
+    "regulatory": {
+      "operators": ["feedback"],
+      "primary_field": "π",
+      "description": "Self-regulation and feedback"
+    },
+    "outflow": {
+      "operators": ["jet"],
+      "primary_field": "e",
+      "description": "Mass ejection and outflows"
+    },
+    "structure": {
+      "operators": ["torus"],
+      "primary_field": "Φ",
+      "description": "Geometric structures"
+    }
+  },
+  "wumbo_integration": {
+    "neural_celestial_bridges": [
+      {
+        "wumbo_region": "XXXI",
+        "name": "Locus Coeruleus",
+        "primary_operators": ["ignite", "shock", "flare"],
+        "celestial_context": "Arousal ignition ↔ Stellar ignition, sudden energy release",
+        "apl_tokens": ["e:U(ignite)TRUE@3", "e:U(shock)TRUE@3", "e:E(flare)TRUE@3"]
+      },
+      {
+        "wumbo_region": "XXXII",
+        "name": "Periaqueductal Gray",
+        "primary_operators": ["collapse", "compress", "contract"],
+        "celestial_context": "Defense shutdown ↔ Gravitational collapse, contraction",
+        "apl_tokens": ["π:D(collapse)TRUE@3", "Φ:D(compress)TRUE@3", "π:D(contract)TRUE@3"]
+      },
+      {
+        "wumbo_region": "XLVI",
+        "name": "VTA",
+        "primary_operators": ["fuse", "accrete", "flare"],
+        "celestial_context": "Reward generation ↔ Stellar fusion, mass accumulation",
+        "apl_tokens": ["e:U(fuse)TRUE@3", "π:U(accrete)TRUE@3", "e:E(flare)TRUE@3"]
+      },
+      {
+        "wumbo_region": "XXVII",
+        "name": "Claustrum",
+        "primary_operators": ["degenerate", "torus", "feedback"],
+        "celestial_context": "Consciousness binding ↔ Degenerate matter, toroidal integration",
+        "apl_tokens": ["π:M(degenerate)TRUE@3", "Φ:C(torus)TRUE@3", "π:Mod(feedback)TRUE@3"]
+      },
+      {
+        "wumbo_region": "XXVIII",
+        "name": "Default Mode Network",
+        "primary_operators": ["expand", "radiate", "feedback"],
+        "celestial_context": "Self-referential processing ↔ Cosmic expansion, radiation",
+        "apl_tokens": ["Φ:M(expand)TRUE@3", "e:E(radiate)TRUE@3", "π:Mod(feedback)TRUE@3"]
+      },
+      {
+        "wumbo_region": "V",
+        "name": "Broca's Area",
+        "primary_operators": ["radiate", "jet", "ionize"],
+        "celestial_context": "Language production ↔ Emission, outflow jets",
+        "apl_tokens": ["e:E(radiate)TRUE@3", "e:E(jet)TRUE@3", "e:U(ionize)TRUE@3"]
+      },
+      {
+        "wumbo_region": "LXXXVI",
+        "name": "DVC",
+        "primary_operators": ["collapse", "degenerate", "contract"],
+        "celestial_context": "Parasympathetic shutdown ↔ Stellar death, collapse",
+        "apl_tokens": ["π:D(collapse)UNTRUE@3", "π:D(degenerate)UNTRUE@3", "Φ:D(contract)UNTRUE@3"]
+      },
+      {
+        "wumbo_region": "VII",
+        "name": "Amygdala",
+        "primary_operators": ["ignite", "shock", "flare"],
+        "celestial_context": "Threat amplification ↔ Explosive events, shock waves",
+        "apl_tokens": ["e:U(ignite)TRUE@3", "Φ:U(shock)TRUE@3", "e:U(flare)TRUE@3"]
+      },
+      {
+        "wumbo_region": "IV",
+        "name": "Motor Cortex & Cerebellum",
+        "primary_operators": ["rotate", "magnetorotate", "shear"],
+        "celestial_context": "Motor coordination ↔ Rotational dynamics",
+        "apl_tokens": ["Φ:C(rotate)TRUE@3", "Φ:M(magnetorotate)TRUE@3", "Φ:C(shear)TRUE@3"]
+      },
+      {
+        "wumbo_region": "III",
+        "name": "Thalamus",
+        "primary_operators": ["ionize", "radiate", "compress"],
+        "celestial_context": "Sensory relay ↔ Plasma ionization, radiation transfer",
+        "apl_tokens": ["e:C(ionize)TRUE@3", "e:C(radiate)TRUE@3", "Φ:M(compress)TRUE@3"]
+      }
+    ],
+    "phase_celestial_mapping": {
+      "Ignition": {
+        "dominant_field": "e",
+        "dominant_machine": "U",
+        "operators": ["ignite", "fuse", "ionize", "flare"],
+        "truth_bias": "TRUE",
+        "signature_tokens": [
+          "e:U(ignite)TRUE@3",
+          "e:U(fuse)TRUE@3",
+          "e:U(ionize)TRUE@3"
+        ],
+        "celestial_analog": "Stellar ignition, protostar fusion onset"
+      },
+      "Empowerment": {
+        "dominant_field": "π",
+        "dominant_machine": "U",
+        "operators": ["accrete", "magnetorotate", "jet"],
+        "truth_bias": "TRUE",
+        "signature_tokens": [
+          "π:U(accrete)TRUE@3",
+          "Φ:U(magnetorotate)TRUE@3",
+          "e:U(jet)TRUE@3"
+        ],
+        "celestial_analog": "Mass accumulation, angular momentum buildup"
+      },
+      "Resonance": {
+        "dominant_field": "Φ",
+        "dominant_machine": "M",
+        "operators": ["rotate", "torus", "feedback"],
+        "truth_bias": "TRUE",
+        "signature_tokens": [
+          "Φ:M(rotate)TRUE@3",
+          "Φ:M(torus)TRUE@3",
+          "π:M(feedback)TRUE@3"
+        ],
+        "celestial_analog": "Orbital resonance, stable disk structure"
+      },
+      "Mania": {
+        "dominant_field": "e",
+        "dominant_machine": "E",
+        "operators": ["flare", "shock", "jet"],
+        "truth_bias": "TRUE→PARADOX",
+        "signature_tokens": [
+          "e:E(flare)TRUE@3",
+          "Φ:E(shock)TRUE@3",
+          "e:E(jet)PARADOX@3"
+        ],
+        "celestial_analog": "Supernova, gamma-ray burst, explosive ejection"
+      },
+      "Nirvana": {
+        "dominant_field": "π",
+        "dominant_machine": "M",
+        "operators": ["degenerate", "radiate", "feedback"],
+        "truth_bias": "TRUE",
+        "signature_tokens": [
+          "π:M(degenerate)TRUE@3",
+          "e:M(radiate)TRUE@3",
+          "π:Mod(feedback)TRUE@3"
+        ],
+        "celestial_analog": "White dwarf cooling, neutron star stability"
+      },
+      "Transmission": {
+        "dominant_field": "e",
+        "dominant_machine": "C",
+        "operators": ["radiate", "ionize", "shear"],
+        "truth_bias": "TRUE",
+        "signature_tokens": [
+          "e:C(radiate)TRUE@3",
+          "e:C(ionize)TRUE@3",
+          "Φ:C(shear)TRUE@3"
+        ],
+        "celestial_analog": "Radiative transfer, accretion disk transport"
+      },
+      "Pause": {
+        "dominant_field": "π",
+        "dominant_machine": "D",
+        "operators": ["collapse", "contract", "degenerate"],
+        "truth_bias": "UNTRUE",
+        "signature_tokens": [
+          "π:D(collapse)UNTRUE@3",
+          "Φ:D(contract)UNTRUE@3",
+          "π:D(degenerate)UNTRUE@3"
+        ],
+        "celestial_analog": "Black hole quiescence, stellar remnant cooling"
+      }
+    }
+  },
+  "stellar_evolution_ladder": {
+    "description": "Celestial operators span stellar lifecycle from birth to death",
+    "stages": [
+      {
+        "stage": 1,
+        "name": "Molecular Cloud",
+        "operators": ["collapse", "contract", "accrete"],
+        "field": "π"
+      },
+      {
+        "stage": 2,
+        "name": "Protostar",
+        "operators": ["accrete", "rotate", "jet"],
+        "field": "Φ"
+      },
+      {
+        "stage": 3,
+        "name": "Main Sequence",
+        "operators": ["fuse", "radiate", "magnetorotate"],
+        "field": "e"
+      },
+      {
+        "stage": 4,
+        "name": "Giant Phase",
+        "operators": ["expand", "fuse", "feedback"],
+        "field": "Φ"
+      },
+      {
+        "stage": 5,
+        "name": "Stellar Death",
+        "operators": ["collapse", "shock", "degenerate"],
+        "field": "π"
+      },
+      {
+        "stage": 6,
+        "name": "Compact Remnant",
+        "operators": ["degenerate", "radiate", "torus"],
+        "field": "π"
+      }
+    ]
+  },
+  "black_hole_mapping": {
+    "description": "Operators specifically relevant to black hole physics",
+    "event_horizon": {
+      "dominant_operator": "collapse",
+      "truth_state": "PARADOX",
+      "token": "π:D(collapse)PARADOX@3"
+    },
+    "accretion_disk": {
+      "operators": ["accrete", "torus", "ionize", "shear"],
+      "signature_tokens": [
+        "π:C(accrete)TRUE@3",
+        "Φ:M(torus)TRUE@3",
+        "e:M(ionize)TRUE@3"
+      ]
+    },
+    "jets": {
+      "operators": ["jet", "magnetorotate", "feedback"],
+      "signature_tokens": [
+        "e:E(jet)TRUE@3",
+        "Φ:U(magnetorotate)TRUE@3",
+        "π:Mod(feedback)TRUE@3"
+      ]
+    },
+    "hawking_radiation": {
+      "operator": "radiate",
+      "truth_state": "PARADOX",
+      "token": "e:E(radiate)PARADOX@3"
+    }
+  },
+  "cosmic_scale_mapping": {
+    "stellar": {
+      "operators": ["fuse", "ignite", "flare", "rotate", "radiate"],
+      "description": "Individual star processes"
+    },
+    "binary": {
+      "operators": ["accrete", "shear", "torus", "jet"],
+      "description": "Binary star interactions"
+    },
+    "galactic": {
+      "operators": ["feedback", "jet", "torus", "magnetorotate"],
+      "description": "Galaxy-scale phenomena"
+    },
+    "cosmic": {
+      "operators": ["expand", "collapse", "radiate"],
+      "description": "Universe-scale processes"
+    }
+  }
+}
