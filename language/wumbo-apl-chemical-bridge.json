@@ -1,0 +1,417 @@
+{
+  "meta": {
+    "name": "WUMBO↔APL Chemical Bridge",
+    "version": "1.0.0",
+    "description": "Maps 100 WUMBO neural regions to APL Tier-3 Chemical tokens via neurotransmitter systems",
+    "generated_at": "2025-11-25T00:00:00Z"
+  },
+  "neurotransmitter_systems": {
+    "dopamine": {
+      "symbol": "DA",
+      "primary_operators": ["excite", "charge", "ionize"],
+      "primary_field": "e",
+      "primary_machine": "U",
+      "regions": ["XXVI", "XLVI", "XLIX", "LXXV", "XCIII"]
+    },
+    "serotonin": {
+      "symbol": "5-HT",
+      "primary_operators": ["relax", "fold", "complex"],
+      "primary_field": "Φ",
+      "primary_machine": "M",
+      "regions": ["XXXV", "XLV", "LXIV", "LXXXVI"]
+    },
+    "norepinephrine": {
+      "symbol": "NE",
+      "primary_operators": ["excite", "oxidize", "redox"],
+      "primary_field": "e",
+      "primary_machine": "U",
+      "regions": ["XXXI", "LVII", "LXXXV"]
+    },
+    "acetylcholine": {
+      "symbol": "ACh",
+      "primary_operators": ["catalyze", "charge", "ionize"],
+      "primary_field": "e",
+      "primary_machine": "Mod",
+      "regions": ["XLIV", "LXXXIV", "XCII"]
+    },
+    "GABA": {
+      "symbol": "GABA",
+      "primary_operators": ["relax", "reduce", "crystallize"],
+      "primary_field": "π",
+      "primary_machine": "D",
+      "regions": ["XXXII", "LXIV", "LXXXIX"]
+    },
+    "glutamate": {
+      "symbol": "Glu",
+      "primary_operators": ["excite", "ionize", "bond"],
+      "primary_field": "e",
+      "primary_machine": "U",
+      "regions": ["III", "VIII", "LX"]
+    }
+  },
+  "neural_chemical_map": {
+    "I": {
+      "name": "Somatosensory Cortex",
+      "primary_nt": "glutamate",
+      "chemical_process": "Sensory signal transduction",
+      "apl_tokens": [
+        "e:U(ionize)TRUE@3",
+        "Φ:M(bond)TRUE@3",
+        "e:E(charge)TRUE@3"
+      ],
+      "dominant_operators": ["ionize", "bond", "charge"]
+    },
+    "II": {
+      "name": "Anterior Cingulate Cortex",
+      "primary_nt": "dopamine",
+      "chemical_process": "Error signal integration",
+      "apl_tokens": [
+        "e:M(redox)TRUE@3",
+        "Φ:C(complex)TRUE@3",
+        "e:D(reduce)UNTRUE@3"
+      ],
+      "dominant_operators": ["redox", "complex", "reduce"]
+    },
+    "III": {
+      "name": "Thalamus",
+      "primary_nt": "glutamate",
+      "chemical_process": "Sensory gating and relay",
+      "apl_tokens": [
+        "e:C(ionize)TRUE@3",
+        "Φ:Mod(fold)TRUE@3",
+        "π:M(crystallize)TRUE@3"
+      ],
+      "dominant_operators": ["ionize", "fold", "crystallize"]
+    },
+    "IV": {
+      "name": "Motor Cortex & Cerebellum",
+      "primary_nt": "glutamate",
+      "chemical_process": "Motor command synthesis",
+      "apl_tokens": [
+        "Φ:U(bond)TRUE@3",
+        "e:E(excite)TRUE@3",
+        "Φ:C(polymerize)TRUE@3"
+      ],
+      "dominant_operators": ["bond", "excite", "polymerize"]
+    },
+    "V": {
+      "name": "Broca's Area",
+      "primary_nt": "dopamine",
+      "chemical_process": "Language production cascade",
+      "apl_tokens": [
+        "e:U(excite)TRUE@3",
+        "Φ:E(polymerize)TRUE@3",
+        "e:C(charge)TRUE@3"
+      ],
+      "dominant_operators": ["excite", "polymerize", "charge"]
+    },
+    "VI": {
+      "name": "Mirror Neuron System",
+      "primary_nt": "dopamine",
+      "chemical_process": "Empathic resonance",
+      "apl_tokens": [
+        "e:M(resonate)TRUE@3",
+        "Φ:C(complex)TRUE@3",
+        "e:Mod(fold)TRUE@3"
+      ],
+      "dominant_operators": ["resonate", "complex", "fold"]
+    },
+    "VII": {
+      "name": "Amygdala",
+      "primary_nt": "norepinephrine",
+      "chemical_process": "Threat signal amplification",
+      "apl_tokens": [
+        "e:U(excite)TRUE@3",
+        "e:U(oxidize)TRUE@3",
+        "π:U(charge)TRUE@3"
+      ],
+      "dominant_operators": ["excite", "oxidize", "charge"]
+    },
+    "VIII": {
+      "name": "Prefrontal Cortex",
+      "primary_nt": "dopamine",
+      "chemical_process": "Executive regulation",
+      "apl_tokens": [
+        "e:Mod(catalyze)TRUE@3",
+        "Φ:M(complex)TRUE@3",
+        "e:C(redox)TRUE@3"
+      ],
+      "dominant_operators": ["catalyze", "complex", "redox"]
+    },
+    "IX": {
+      "name": "Parietal Eye Field",
+      "primary_nt": "acetylcholine",
+      "chemical_process": "Attentional orienting",
+      "apl_tokens": [
+        "e:U(charge)TRUE@3",
+        "Φ:C(bond)TRUE@3",
+        "e:Mod(ionize)TRUE@3"
+      ],
+      "dominant_operators": ["charge", "bond", "ionize"]
+    },
+    "X": {
+      "name": "Subiculum",
+      "primary_nt": "glutamate",
+      "chemical_process": "Spatial memory encoding",
+      "apl_tokens": [
+        "Φ:M(crystallize)TRUE@3",
+        "e:E(bond)TRUE@3",
+        "π:C(fold)TRUE@3"
+      ],
+      "dominant_operators": ["crystallize", "bond", "fold"]
+    },
+    "XI": {
+      "name": "Pineal Body",
+      "primary_nt": "melatonin",
+      "chemical_process": "Circadian phase control",
+      "apl_tokens": [
+        "π:D(relax)TRUE@3",
+        "e:M(reduce)TRUE@3",
+        "Φ:Mod(fold)TRUE@3"
+      ],
+      "dominant_operators": ["relax", "reduce", "fold"]
+    },
+    "XII": {
+      "name": "Middle Temporal Gyrus",
+      "primary_nt": "glutamate",
+      "chemical_process": "Semantic binding",
+      "apl_tokens": [
+        "Φ:C(polymerize)TRUE@3",
+        "e:M(complex)TRUE@3",
+        "Φ:E(bond)TRUE@3"
+      ],
+      "dominant_operators": ["polymerize", "complex", "bond"]
+    },
+    "XXXI": {
+      "name": "Locus Coeruleus",
+      "primary_nt": "norepinephrine",
+      "chemical_process": "Arousal ignition",
+      "apl_tokens": [
+        "e:U(excite)TRUE@3",
+        "e:U(oxidize)TRUE@3",
+        "Φ:U(redox)TRUE@3"
+      ],
+      "dominant_operators": ["excite", "oxidize", "redox"]
+    },
+    "XXXII": {
+      "name": "Periaqueductal Gray",
+      "primary_nt": "GABA",
+      "chemical_process": "Defense/shutdown cascade",
+      "apl_tokens": [
+        "π:D(reduce)TRUE@3",
+        "e:D(relax)TRUE@3",
+        "Φ:D(unbond)TRUE@3"
+      ],
+      "dominant_operators": ["reduce", "relax", "unbond"]
+    },
+    "XXXV": {
+      "name": "Dorsal Raphe",
+      "primary_nt": "serotonin",
+      "chemical_process": "Mood setpoint regulation",
+      "apl_tokens": [
+        "e:M(relax)TRUE@3",
+        "Φ:Mod(fold)TRUE@3",
+        "e:D(reduce)TRUE@3"
+      ],
+      "dominant_operators": ["relax", "fold", "reduce"]
+    },
+    "XLVI": {
+      "name": "VTA",
+      "primary_nt": "dopamine",
+      "chemical_process": "Reward signal generation",
+      "apl_tokens": [
+        "e:U(excite)TRUE@3",
+        "e:U(charge)TRUE@3",
+        "Φ:U(ionize)TRUE@3"
+      ],
+      "dominant_operators": ["excite", "charge", "ionize"]
+    },
+    "XLIX": {
+      "name": "NAcc",
+      "primary_nt": "dopamine",
+      "chemical_process": "Reward integration",
+      "apl_tokens": [
+        "e:E(reduce)TRUE@3",
+        "Φ:C(complex)TRUE@3",
+        "e:M(resonate)TRUE@3"
+      ],
+      "dominant_operators": ["reduce", "complex", "resonate"]
+    },
+    "LXXV": {
+      "name": "Substantia Nigra",
+      "primary_nt": "dopamine",
+      "chemical_process": "Motor gating",
+      "apl_tokens": [
+        "e:C(redox)TRUE@3",
+        "Φ:M(catalyze)TRUE@3",
+        "e:E(oxidize)TRUE@3"
+      ],
+      "dominant_operators": ["redox", "catalyze", "oxidize"]
+    },
+    "LXXXIV": {
+      "name": "Basal Forebrain",
+      "primary_nt": "acetylcholine",
+      "chemical_process": "Attention timing",
+      "apl_tokens": [
+        "e:Mod(catalyze)TRUE@3",
+        "e:C(charge)TRUE@3",
+        "Φ:M(ionize)TRUE@3"
+      ],
+      "dominant_operators": ["catalyze", "charge", "ionize"]
+    },
+    "LXXXVI": {
+      "name": "DVC",
+      "primary_nt": "GABA",
+      "chemical_process": "Parasympathetic shutdown",
+      "apl_tokens": [
+        "π:D(reduce)TRUE@3",
+        "e:D(relax)TRUE@3",
+        "Φ:D(dissolve)TRUE@3"
+      ],
+      "dominant_operators": ["reduce", "relax", "dissolve"]
+    },
+    "LXXXIX": {
+      "name": "Globus Pallidus",
+      "primary_nt": "GABA",
+      "chemical_process": "Go/no-go gating",
+      "apl_tokens": [
+        "π:M(reduce)TRUE@3",
+        "e:C(relax)TRUE@3",
+        "Φ:Mod(unbond)TRUE@3"
+      ],
+      "dominant_operators": ["reduce", "relax", "unbond"]
+    },
+    "XCIII": {
+      "name": "Caudate",
+      "primary_nt": "dopamine",
+      "chemical_process": "Path selection",
+      "apl_tokens": [
+        "e:C(redox)TRUE@3",
+        "Φ:M(complex)TRUE@3",
+        "e:E(charge)TRUE@3"
+      ],
+      "dominant_operators": ["redox", "complex", "charge"]
+    }
+  },
+  "phase_chemical_signatures": {
+    "Ignition": {
+      "dominant_field": "e",
+      "dominant_machine": "U",
+      "operators": ["excite", "ionize", "charge", "oxidize"],
+      "truth_bias": "TRUE",
+      "signature_tokens": [
+        "e:U(excite)TRUE@3",
+        "e:U(ionize)TRUE@3",
+        "e:U(charge)TRUE@3"
+      ]
+    },
+    "Empowerment": {
+      "dominant_field": "Φ",
+      "dominant_machine": "U",
+      "operators": ["bond", "polymerize", "catalyze", "complex"],
+      "truth_bias": "TRUE",
+      "signature_tokens": [
+        "Φ:U(bond)TRUE@3",
+        "Φ:U(polymerize)TRUE@3",
+        "e:U(catalyze)TRUE@3"
+      ]
+    },
+    "Resonance": {
+      "dominant_field": "e",
+      "dominant_machine": "M",
+      "operators": ["resonate", "complex", "fold", "redox"],
+      "truth_bias": "TRUE",
+      "signature_tokens": [
+        "e:M(resonate)TRUE@3",
+        "Φ:M(complex)TRUE@3",
+        "e:M(redox)TRUE@3"
+      ]
+    },
+    "Mania": {
+      "dominant_field": "e",
+      "dominant_machine": "E",
+      "operators": ["excite", "oxidize", "charge", "ionize"],
+      "truth_bias": "TRUE→PARADOX",
+      "signature_tokens": [
+        "e:E(excite)TRUE@3",
+        "e:E(oxidize)TRUE@3",
+        "e:E(charge)PARADOX@3"
+      ]
+    },
+    "Nirvana": {
+      "dominant_field": "π",
+      "dominant_machine": "M",
+      "operators": ["crystallize", "relax", "precipitate", "fold"],
+      "truth_bias": "TRUE",
+      "signature_tokens": [
+        "π:M(crystallize)TRUE@3",
+        "e:M(relax)TRUE@3",
+        "Φ:M(fold)TRUE@3"
+      ]
+    },
+    "Transmission": {
+      "dominant_field": "e",
+      "dominant_machine": "C",
+      "operators": ["ionize", "charge", "bond", "redox"],
+      "truth_bias": "TRUE",
+      "signature_tokens": [
+        "e:C(ionize)TRUE@3",
+        "e:C(charge)TRUE@3",
+        "Φ:C(bond)TRUE@3"
+      ]
+    },
+    "Pause": {
+      "dominant_field": "π",
+      "dominant_machine": "D",
+      "operators": ["relax", "reduce", "dissolve", "unbond"],
+      "truth_bias": "UNTRUE",
+      "signature_tokens": [
+        "π:D(relax)UNTRUE@3",
+        "e:D(reduce)UNTRUE@3",
+        "Φ:D(unbond)UNTRUE@3"
+      ]
+    }
+  },
+  "operator_neural_affinity": {
+    "excite": {
+      "high_affinity": ["XXXI", "XLVI", "VII", "XXVI"],
+      "description": "Arousal centers, reward systems"
+    },
+    "relax": {
+      "high_affinity": ["XXXV", "LXXXVI", "XI", "XV"],
+      "description": "Serotonergic and parasympathetic regions"
+    },
+    "bond": {
+      "high_affinity": ["IV", "XII", "XVI", "LXXXVIII"],
+      "description": "Motor and language synthesis"
+    },
+    "ionize": {
+      "high_affinity": ["III", "I", "XLVI", "LXXXIV"],
+      "description": "Sensory relay and neuromodulation"
+    },
+    "crystallize": {
+      "high_affinity": ["X", "XV", "XXIV", "XLVII"],
+      "description": "Memory consolidation and stillness"
+    },
+    "resonate": {
+      "high_affinity": ["VI", "XXI", "XXVII", "XXVIII"],
+      "description": "Mirror systems, binding, integration"
+    },
+    "redox": {
+      "high_affinity": ["XXXI", "LXXV", "XCIII", "II"],
+      "description": "Catecholamine systems"
+    },
+    "fold": {
+      "high_affinity": ["XXVII", "III", "XXXV", "XXXIX"],
+      "description": "Integration and perspective"
+    },
+    "catalyze": {
+      "high_affinity": ["VIII", "LXXXIV", "XL", "LIX"],
+      "description": "Executive and timing systems"
+    },
+    "complex": {
+      "high_affinity": ["XXVII", "XLIX", "VIII", "XLIII"],
+      "description": "Binding and integration hubs"
+    }
+  }
+}
