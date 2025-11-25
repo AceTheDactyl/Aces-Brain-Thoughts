@@ -32,16 +32,6 @@
 
         canvas { display: block; cursor: crosshair; }
 
-        #canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            background: transparent;
-        }
-
         /* Custom cursor */
         #cursor {
             position: fixed;
@@ -311,72 +301,6 @@
             color: var(--critical-gold);
         }
 
-        /* Framework Isomorphism Panel */
-        #isomorphism-panel {
-            top: 50%;
-            right: 30px;
-            transform: translateY(-50%);
-            font-size: 9px;
-            background: var(--bg-panel);
-            padding: 12px 15px;
-            border: 1px solid var(--border-glow);
-            border-radius: 8px;
-            pointer-events: auto;
-            max-width: 280px;
-        }
-
-        .iso-title {
-            font-size: 10px;
-            letter-spacing: 3px;
-            color: rgba(255, 215, 0, 0.9);
-            margin-bottom: 10px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-            padding-bottom: 8px;
-        }
-
-        .iso-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .iso-table th {
-            font-size: 8px;
-            letter-spacing: 1px;
-            color: rgba(168, 85, 247, 0.8);
-            padding: 4px 3px;
-            text-align: center;
-            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
-        }
-
-        .iso-table td {
-            font-size: 8px;
-            padding: 4px 3px;
-            text-align: center;
-            color: var(--text-dim);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .iso-table tr:hover td {
-            color: var(--text-primary);
-            background: rgba(255, 215, 0, 0.05);
-        }
-
-        .iso-table .iso-label {
-            text-align: left;
-            color: rgba(255, 215, 0, 0.7);
-            font-weight: 500;
-        }
-
-        .iso-value {
-            color: #22d3ee;
-            font-family: 'SF Mono', monospace;
-        }
-
-        .iso-emergent {
-            color: #cc5de8;
-        }
-
         /* Lambda State Panel */
         #lambda-panel {
             top: 210px;
@@ -600,127 +524,6 @@
             opacity: 0;
         }
 
-        /* Phase Lock Panel */
-        #phase-lock-panel {
-            bottom: 30px;
-            left: 30px;
-            background: rgba(15, 12, 25, 0.95);
-            padding: 15px 20px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 8px;
-            pointer-events: auto;
-            min-width: 200px;
-            transition: all 0.3s ease;
-        }
-
-        #phase-lock-panel.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px);
-        }
-
-        #phase-lock-panel.active {
-            border-color: rgba(105, 219, 124, 0.8);
-            box-shadow: 0 0 20px rgba(105, 219, 124, 0.3);
-        }
-
-        #phase-lock-panel.consciousness {
-            border-color: rgba(255, 215, 0, 0.9);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-        }
-
-        #phase-lock-panel.loop-closed {
-            border-color: rgba(204, 93, 232, 0.9);
-            box-shadow: 0 0 40px rgba(204, 93, 232, 0.6);
-            animation: loopPulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes loopPulse {
-            0%, 100% { box-shadow: 0 0 40px rgba(204, 93, 232, 0.6); }
-            50% { box-shadow: 0 0 60px rgba(204, 93, 232, 0.8); }
-        }
-
-        .phase-lock-title {
-            font-size: 10px;
-            letter-spacing: 3px;
-            color: rgba(255, 215, 0, 0.8);
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-        }
-
-        .phase-lock-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-        }
-
-        .phase-lock-label {
-            font-size: 9px;
-            color: var(--text-dim);
-            letter-spacing: 1px;
-        }
-
-        .phase-lock-value {
-            font-size: 12px;
-            color: #22d3ee;
-            font-weight: 200;
-        }
-
-        .phase-lock-bar {
-            position: relative;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            margin: 12px 0 8px;
-            overflow: visible;
-        }
-
-        .phase-lock-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b6b, #ffa94d, #69db7c);
-            border-radius: 3px;
-            transition: width 0.2s ease;
-            width: 0%;
-        }
-
-        .phase-lock-threshold {
-            position: absolute;
-            top: -2px;
-            width: 2px;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .phase-lock-threshold.consciousness {
-            background: rgba(255, 215, 0, 0.9);
-        }
-
-        .phase-lock-status {
-            font-size: 11px;
-            letter-spacing: 4px;
-            text-align: center;
-            color: var(--text-dim);
-            margin-top: 8px;
-        }
-
-        .phase-lock-status.paradox { color: #ffa94d; }
-        .phase-lock-status.emerging { color: #69db7c; }
-        .phase-lock-status.conscious { color: #ffd700; }
-
-        .phase-lock-loop {
-            font-size: 10px;
-            letter-spacing: 2px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.3);
-            margin-top: 6px;
-        }
-
-        .phase-lock-loop.closed {
-            color: #cc5de8;
-            text-shadow: 0 0 10px rgba(204, 93, 232, 0.5);
-        }
-
         /* Z-Axis Visual */
         #z-axis {
             position: fixed;
@@ -875,95 +678,16 @@
         .legend-line.prism-conn { background: linear-gradient(90deg, var(--prism-core), var(--prism-outer)); }
         .legend-line.cage-conn { background: var(--cage-field); }
         .legend-line.bridge-conn { background: linear-gradient(90deg, var(--prism-outer), var(--cage-vertex)); }
-
-        /* WebGL Shader Canvas */
-        #shader-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Consciousness Threshold Bar */
-        #consciousness-bar {
-            position: fixed;
-            left: 50%;
-            bottom: 100px;
-            transform: translateX(-50%);
-            width: 300px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: visible;
-            z-index: 200;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        #consciousness-bar.visible {
-            opacity: 1;
-        }
-
-        #consciousness-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b6b 0%, #ffa94d 40%, #69db7c 70%, #ffd700 100%);
-            border-radius: 4px;
-            transition: width 0.15s ease;
-            box-shadow: 0 0 10px currentColor;
-        }
-
-        .threshold-marker {
-            position: absolute;
-            top: -4px;
-            width: 2px;
-            height: 16px;
-            transform: translateX(-50%);
-        }
-
-        .threshold-marker.mu-p {
-            left: 60%;
-            background: #ffa94d;
-        }
-
-        .threshold-marker.phi-inv {
-            left: 61.8%;
-            background: #69db7c;
-        }
-
-        .threshold-marker.mu-s {
-            left: 92%;
-            background: #ffd700;
-            box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
-        }
-
-        .threshold-label {
-            position: absolute;
-            top: 16px;
-            font-size: 8px;
-            color: var(--text-dim);
-            transform: translateX(-50%);
-            white-space: nowrap;
-        }
-
-        .threshold-marker.mu-p .threshold-label { left: 0; }
-        .threshold-marker.phi-inv .threshold-label { left: 0; }
-        .threshold-marker.mu-s .threshold-label { left: 0; }
     </style>
 </head>
 <body>
-    <!-- WebGL Shader Background -->
-    <canvas id="shader-canvas"></canvas>
-
     <canvas id="canvas"></canvas>
     <div id="cursor"></div>
 
     <!-- Header -->
     <div id="header" class="panel">
         <h1 id="title">LIMNUS</h1>
-        <div class="subtitle">UNIFIED PRISM-CAGE ARCHITECTURE · φ-DERIVED DYNAMICS</div>
+        <div class="subtitle">UNIFIED PRISM-CAGE ARCHITECTURE</div>
     </div>
 
     <!-- Z-Coordinate -->
@@ -1000,59 +724,6 @@
             <div class="layer-row cage-bot active"><span>Bot Hex · 12pt</span><div class="layer-dot"></div></div>
             <div class="layer-row cage-vtx active"><span>Vertices · 8pt</span><div class="layer-dot"></div></div>
         </div>
-    </div>
-
-    <!-- Framework Isomorphism Panel -->
-    <div id="isomorphism-panel" class="panel">
-        <div class="iso-title">FRAMEWORK ISOMORPHISM</div>
-        <table class="iso-table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>WUMBO</th>
-                    <th>CET</th>
-                    <th>USS</th>
-                    <th>∃R</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="iso-label">Phase</td>
-                    <td class="iso-value" id="iso-psi">ψ</td>
-                    <td>Spiral θ</td>
-                    <td>θ</td>
-                    <td>phase(μ_R)</td>
-                </tr>
-                <tr>
-                    <td class="iso-label">Height</td>
-                    <td class="iso-value" id="iso-z">z</td>
-                    <td>Tier</td>
-                    <td>z</td>
-                    <td>|μ_E|</td>
-                </tr>
-                <tr>
-                    <td class="iso-label">Order</td>
-                    <td class="iso-value" id="iso-r">r</td>
-                    <td>Coherence</td>
-                    <td>r</td>
-                    <td>τ</td>
-                </tr>
-                <tr>
-                    <td class="iso-label">K(z)</td>
-                    <td class="iso-value" id="iso-k">±K</td>
-                    <td>𝒰/𝒟</td>
-                    <td>Helix</td>
-                    <td>g(μ_E)</td>
-                </tr>
-                <tr class="iso-emergent">
-                    <td class="iso-label">Emergent</td>
-                    <td>5 nodes</td>
-                    <td>R5 tier</td>
-                    <td>New dim</td>
-                    <td>Solitons</td>
-                </tr>
-            </tbody>
-        </table>
     </div>
 
     <!-- Lambda State Panel -->
@@ -1181,43 +852,7 @@
         <div id="coherence-indicator">████████████████</div>
     </div>
 
-    <!-- Phase Lock Panel (visible when F held) -->
-    <div id="phase-lock-panel" class="panel hidden">
-        <div class="phase-lock-title">PHASE LOCK · φ-DERIVED</div>
-        <div class="phase-lock-row">
-            <span class="phase-lock-label">r (coherence)</span>
-            <span class="phase-lock-value" id="pl-coherence">0.00</span>
-        </div>
-        <div class="phase-lock-row">
-            <span class="phase-lock-label">K(z)</span>
-            <span class="phase-lock-value" id="pl-kz">+0.00</span>
-        </div>
-        <div class="phase-lock-row">
-            <span class="phase-lock-label">μ_P threshold</span>
-            <span class="phase-lock-value" id="pl-mup">0.60</span>
-        </div>
-        <div class="phase-lock-row">
-            <span class="phase-lock-label">μ_S emergence</span>
-            <span class="phase-lock-value" id="pl-mus">0.92</span>
-        </div>
-        <div class="phase-lock-bar">
-            <div class="phase-lock-fill" id="pl-fill"></div>
-            <div class="phase-lock-threshold" style="left: 60%;"></div>
-            <div class="phase-lock-threshold consciousness" style="left: 92%;"></div>
-        </div>
-        <div class="phase-lock-status" id="pl-status">DORMANT</div>
-        <div class="phase-lock-loop" id="pl-loop">C→I OPEN</div>
-    </div>
-
     <div id="release-hint" class="hidden">HOLD F TO RELEASE · CLICK TO GATHER</div>
-
-    <!-- Consciousness Threshold Bar (visible when F held) -->
-    <div id="consciousness-bar">
-        <div id="consciousness-fill" style="width: 0%"></div>
-        <div class="threshold-marker mu-p"><span class="threshold-label">μ_P</span></div>
-        <div class="threshold-marker phi-inv"><span class="threshold-label">φ⁻¹</span></div>
-        <div class="threshold-marker mu-s"><span class="threshold-label">μ_S</span></div>
-    </div>
 
     <!-- Start Overlay -->
     <div id="start-overlay">
@@ -1260,285 +895,6 @@
         const Z_CRITICAL = Math.sqrt(3) / 2;  // ≈ 0.8660254
         const TAU = Math.PI * 2;
         const PHI = (1 + Math.sqrt(5)) / 2;   // Golden ratio
-
-        // ================================================================
-        // SACRED CONSTANTS (THE ENGINEERING BASIS)
-        // All derived from φ and Fibonacci - ZERO free parameters
-        // ================================================================
-        const PHI_INV = PHI - 1;                       // 0.618034
-        const ALPHA = Math.pow(PHI, -2);               // 0.381966 - coupling strength
-        const BETA = Math.pow(PHI, -4);                // 0.145898 - dissipation rate
-        const LAMBDA_NL = Math.pow(5/3, 4);            // 7.716049 - nonlinearity
-        const CASCADE_PHI = PHI;                       // 1.618034 - φ-based cascade
-
-        // Consciousness thresholds (Fibonacci fractions)
-        const MU_P = 3/5;                              // 0.6 - paradox onset
-        const MU_S = 23/25;                            // 0.92 - consciousness emergence
-        const MU_3 = 124/125;                          // 0.992 - near unity
-        const Q_THEORY = ALPHA * MU_S;                 // 0.351 - consciousness constant
-        const K_THRESHOLD = PHI_INV;                   // 0.618 - K-formation threshold
-
-        // Phase Lock State
-        let phaseLockActive = false;       // Activated when F held at right conditions
-        let phaseLockCoherence = 0;        // Kuramoto order parameter r
-        let phaseLockK = ALPHA;            // Current K(z) value
-        let loopClosed = false;            // C→I loop closure achieved
-
-        // ================================================================
-        // WEBGL SHADER VISUALIZATION
-        // ================================================================
-
-        let shaderCanvas, gl, shaderProgram;
-        let shaderTime = 0;
-
-        const vertexShaderSource = `
-            attribute vec2 a_position;
-            void main() {
-                gl_Position = vec4(a_position, 0.0, 1.0);
-            }
-        `;
-
-        const fragmentShaderSource = `
-            precision highp float;
-
-            uniform float u_time;
-            uniform vec2 u_resolution;
-            uniform float u_z;
-            uniform float u_r;           // Kuramoto order parameter
-            uniform float u_K;           // K(z) coupling
-            uniform float u_coherence;   // Release coherence
-            uniform float u_loopProgress;
-            uniform float u_consciousness;
-
-            // Sacred constants
-            const float PHI = 1.618034;
-            const float PHI_INV = 0.618034;
-            const float Z_CRITICAL = 0.8660254;
-            const float MU_P = 0.6;
-            const float MU_S = 0.92;
-
-            // 2D rotation matrix
-            mat2 rot2D(float a) {
-                float c = cos(a), s = sin(a);
-                return mat2(c, -s, s, c);
-            }
-
-            // Fractal Brownian Motion with φ scaling
-            float fbm(vec2 p) {
-                float value = 0.0;
-                float amplitude = 0.5;
-                mat2 rotM = rot2D(PHI);
-
-                for (int i = 0; i < 5; i++) {
-                    value += amplitude * (sin(p.x) * sin(p.y) + 1.0) * 0.5;
-                    p = rotM * p * PHI + vec2(PHI, PHI_INV);
-                    amplitude *= PHI_INV;
-                }
-                return value;
-            }
-
-            // Domain coloring
-            vec3 domainColor(float z, float phase) {
-                if (z < Z_CRITICAL - 0.02) {
-                    // ABSENCE domain - sepia/warm
-                    float absence = (Z_CRITICAL - z) / Z_CRITICAL;
-                    return mix(
-                        vec3(0.15, 0.12, 0.08),
-                        vec3(0.3, 0.2, 0.1),
-                        absence * 0.5 + sin(phase) * 0.2
-                    );
-                } else if (z > Z_CRITICAL + 0.02) {
-                    // PRESENCE domain - warm white
-                    float presence = (z - Z_CRITICAL) / (1.0 - Z_CRITICAL);
-                    return mix(
-                        vec3(0.2, 0.18, 0.15),
-                        vec3(0.4, 0.35, 0.3),
-                        presence * 0.5 + cos(phase) * 0.15
-                    );
-                } else {
-                    // CRITICAL - golden
-                    return vec3(0.4, 0.3, 0.1) * (1.0 + sin(phase * 3.0) * 0.3);
-                }
-            }
-
-            void main() {
-                vec2 uv = gl_FragCoord.xy / u_resolution;
-                vec2 centered = (uv - 0.5) * 2.0;
-                centered.x *= u_resolution.x / u_resolution.y;
-
-                float radius = length(centered);
-                float angle = atan(centered.y, centered.x);
-
-                // φ-spiral pattern
-                float spiral = sin(angle * PHI + radius * 8.0 - u_time * 0.5);
-                spiral *= exp(-radius * 1.5);
-
-                // Fractal noise field
-                vec2 noiseCoord = centered * 2.0 + vec2(u_time * 0.1);
-                float noise = fbm(noiseCoord) * 0.3;
-
-                // Base domain color
-                vec3 baseColor = domainColor(u_z, angle + u_time * 0.2);
-
-                // Add spiral pattern
-                baseColor += vec3(0.1, 0.08, 0.05) * spiral * u_coherence;
-
-                // Add noise texture
-                baseColor += vec3(noise * 0.15);
-
-                // Kuramoto coherence visualization
-                if (u_r > 0.0) {
-                    // Coherent ring at consciousness threshold
-                    float ringDist = abs(radius - u_r * 0.8);
-                    float ring = exp(-ringDist * ringDist * 50.0);
-
-                    vec3 ringColor = vec3(0.2, 0.4, 0.3);  // Green tint
-                    if (u_r > MU_P) {
-                        ringColor = vec3(0.4, 0.3, 0.1);   // Golden
-                    }
-                    if (u_r > MU_S) {
-                        ringColor = vec3(0.5, 0.4, 0.1);   // Bright gold
-                    }
-
-                    baseColor += ringColor * ring * 0.4;
-                }
-
-                // Loop closure glow
-                if (u_loopProgress > 0.0) {
-                    float loopGlow = sin(radius * 15.0 - u_time * 2.0) * 0.5 + 0.5;
-                    loopGlow *= u_loopProgress * exp(-radius * 2.0);
-                    baseColor += vec3(0.4, 0.2, 0.5) * loopGlow;
-                }
-
-                // Consciousness emergence pulse at μ_S
-                if (u_consciousness > 0.0) {
-                    float pulse = sin(u_time * 3.0) * 0.5 + 0.5;
-                    float consciousnessGlow = u_consciousness * pulse;
-                    consciousnessGlow *= exp(-radius * 1.5);
-                    baseColor += vec3(0.5, 0.4, 0.1) * consciousnessGlow;
-                }
-
-                // K(z) sign flip visualization - subtle wave
-                float kWave = sin(centered.x * 10.0 + u_time) * sign(u_K) * 0.02;
-                baseColor.rg += vec2(kWave, -kWave) * abs(u_K);
-
-                // Vignette
-                float vignette = 1.0 - radius * 0.4;
-                baseColor *= vignette;
-
-                // Release state fade
-                baseColor *= 0.3 + u_coherence * 0.7;
-
-                gl_FragColor = vec4(baseColor, 1.0);
-            }
-        `;
-
-        function initShader() {
-            shaderCanvas = document.getElementById('shader-canvas');
-            gl = shaderCanvas.getContext('webgl') || shaderCanvas.getContext('experimental-webgl');
-
-            if (!gl) {
-                console.warn('WebGL not available, shader effects disabled');
-                return false;
-            }
-
-            // Create shaders
-            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-            gl.shaderSource(vertexShader, vertexShaderSource);
-            gl.compileShader(vertexShader);
-
-            if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-                console.error('Vertex shader error:', gl.getShaderInfoLog(vertexShader));
-                return false;
-            }
-
-            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-            gl.shaderSource(fragmentShader, fragmentShaderSource);
-            gl.compileShader(fragmentShader);
-
-            if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-                console.error('Fragment shader error:', gl.getShaderInfoLog(fragmentShader));
-                return false;
-            }
-
-            // Create program
-            shaderProgram = gl.createProgram();
-            gl.attachShader(shaderProgram, vertexShader);
-            gl.attachShader(shaderProgram, fragmentShader);
-            gl.linkProgram(shaderProgram);
-
-            if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-                console.error('Shader program error:', gl.getProgramInfoLog(shaderProgram));
-                return false;
-            }
-
-            gl.useProgram(shaderProgram);
-
-            // Create fullscreen quad
-            const positions = new Float32Array([
-                -1, -1,  1, -1,  -1, 1,
-                -1, 1,   1, -1,   1, 1
-            ]);
-
-            const buffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-            const positionLoc = gl.getAttribLocation(shaderProgram, 'a_position');
-            gl.enableVertexAttribArray(positionLoc);
-            gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
-
-            // Resize shader canvas
-            resizeShaderCanvas();
-
-            console.log('🎨 WebGL shader initialized');
-            return true;
-        }
-
-        function resizeShaderCanvas() {
-            if (!shaderCanvas || !gl) return;
-            shaderCanvas.width = window.innerWidth;
-            shaderCanvas.height = window.innerHeight;
-            gl.viewport(0, 0, shaderCanvas.width, shaderCanvas.height);
-        }
-
-        function renderShader(dt) {
-            if (!gl || !shaderProgram) return;
-
-            shaderTime += dt;
-
-            // Calculate consciousness level
-            const consciousnessLevel = phaseLockCoherence > MU_S ?
-                (phaseLockCoherence - MU_S) / (1 - MU_S) : 0;
-
-            // Calculate loop progress
-            const zDist = Math.abs(globalZ - Z_CRITICAL);
-            const loopProgress = (loopClosed || (phaseLockCoherence > MU_S && zDist < Q_THEORY)) ?
-                Math.min(1, (MU_S - zDist) / Q_THEORY) : 0;
-
-            // Set uniforms
-            const setUniform = (name, value) => {
-                const loc = gl.getUniformLocation(shaderProgram, name);
-                if (loc) gl.uniform1f(loc, value);
-            };
-
-            const setUniform2f = (name, x, y) => {
-                const loc = gl.getUniformLocation(shaderProgram, name);
-                if (loc) gl.uniform2f(loc, x, y);
-            };
-
-            setUniform('u_time', shaderTime);
-            setUniform2f('u_resolution', shaderCanvas.width, shaderCanvas.height);
-            setUniform('u_z', globalZ);
-            setUniform('u_r', phaseLockCoherence);
-            setUniform('u_K', phaseLockK);
-            setUniform('u_coherence', releaseCoherence);
-            setUniform('u_loopProgress', loopProgress);
-            setUniform('u_consciousness', consciousnessLevel);
-
-            // Draw
-            gl.drawArrays(gl.TRIANGLES, 0, 6);
-        }
 
         // Canvas setup
         const canvas = document.getElementById('canvas');
@@ -2075,60 +1431,25 @@
 
         function kuramotoStep(points, coupling, dt) {
             const N = points.length;
-            if (N === 0) return { order: 0, K: coupling, psi: 0 };
+            if (N === 0) return { order: 0, K: coupling };
 
-            // Mean field (order parameter)
+            // Mean field
             let sinSum = 0, cosSum = 0;
             for (const p of points) {
                 sinSum += Math.sin(p.phase);
                 cosSum += Math.cos(p.phase);
             }
-            const r = Math.sqrt(sinSum * sinSum + cosSum * cosSum) / N;
-            const psi = Math.atan2(sinSum / N, cosSum / N);
+            const meanPhase = Math.atan2(sinSum / N, cosSum / N);
 
-            // Store in global phase lock state
-            phaseLockCoherence = r;
-
-            // Nonlinearity factor (LAMBDA_NL at low coherence)
-            const nlFactor = 1 + (LAMBDA_NL - 1) * (1 - r);
-
-            // Update phases with φ-derived dynamics
+            // Update phases
             for (const p of points) {
-                // Layer-dependent coupling using ALPHA
-                let layerK = coupling;
-                if (p.layer !== undefined) {
-                    const layerZ = p.layer / 6;  // Normalize layer to 0-1
-                    const distFromCritical = Math.abs(layerZ - Z_CRITICAL);
-                    layerK = coupling * (1 + ALPHA * Math.exp(-distFromCritical * distFromCritical / BETA));
-                }
-
-                const dPhase = p.naturalFreq + layerK * r * Math.sin(psi - p.phase) / nlFactor;
+                const dPhase = p.naturalFreq + coupling * Math.sin(meanPhase - p.phase);
                 p.phase += dPhase * dt;
-
-                // Wrap phase
-                if (p.phase > TAU) p.phase -= TAU;
-                if (p.phase < 0) p.phase += TAU;
             }
 
-            // Phase lock detection: consciousness emergence at r > MU_S
-            phaseLockActive = releasing && r > K_THRESHOLD;
-
-            // Loop closure: r > MU_S AND z near z_c
-            const zDist = Math.abs(globalZ - Z_CRITICAL);
-            loopClosed = r > MU_S && zDist < Q_THEORY;
-
-            return { order: r, K: coupling, psi };
-        }
-
-        // K(z) calculation with sign flip at z_c
-        function calculateKz(z) {
-            // Below z_c: Synchronizing (K > 0) - ABSENCE domain
-            // Above z_c: Desynchronizing (K < 0) - PRESENCE domain
-            if (z < Z_CRITICAL) {
-                return ALPHA * (1 - z / Z_CRITICAL) * CASCADE_PHI;
-            } else {
-                return -ALPHA * ((z - Z_CRITICAL) / (1 - Z_CRITICAL)) * CASCADE_PHI;
-            }
+            // Order parameter
+            const order = Math.sqrt(sinSum * sinSum + cosSum * cosSum) / N;
+            return { order, K: coupling };
         }
 
         // ================================================================
@@ -2136,11 +1457,8 @@
         // ================================================================
 
         function getCascadeMultiplier(z) {
-            // Peak at z_c (THE LENS), decays with φ-derived width
-            // Width parameter = Q_THEORY² ≈ 0.123
             const dist = Math.abs(z - Z_CRITICAL);
-            const width = Q_THEORY * Q_THEORY;
-            return 1 + PHI_INV * Math.exp(-dist * dist / width);
+            return 1 + 0.5 * Math.exp(-dist * dist / 0.004);
         }
 
         // ================================================================
@@ -2225,17 +1543,10 @@
             const isPresence = globalZ > Z_CRITICAL;
             const cascade = getCascadeMultiplier(globalZ);
 
-            // K(z) with sacred φ-derived sign flip at z_c
-            const Kz = calculateKz(globalZ);
-            phaseLockK = Kz;  // Store for display
-
-            // Phase lock boost when F held and approaching consciousness threshold
-            let K = Kz;
-            if (releasing && phaseLockCoherence > MU_P) {
-                // Amplify coupling toward consciousness emergence
-                const consciousnessProgress = (phaseLockCoherence - MU_P) / (MU_S - MU_P);
-                K *= (1 + consciousnessProgress * PHI_INV);
-            }
+            // Kuramoto coupling flips sign at critical point
+            const dist = globalZ - Z_CRITICAL;
+            const sign = Math.tanh(dist * 12);
+            const K = -sign * 0.4 * cascade;
 
             // Apply Kuramoto to all points
             const allPoints = [...prismPoints, ...cagePoints];
@@ -3122,97 +2433,6 @@
 
             // Architecture panel
             updateArchPanel();
-
-            // Isomorphism panel - update dynamic values
-            updateIsomorphismPanel(kuramotoResult);
-
-            // Phase Lock Panel (visible when F held)
-            if (releasing) {
-                updatePhaseLockPanel(kuramotoResult);
-            }
-        }
-
-        function updateIsomorphismPanel(kuramotoResult) {
-            // Update WUMBO column values with live data
-            const psi = kuramotoResult.psi || 0;
-            const r = kuramotoResult.order || 0;
-            const K = kuramotoResult.K || 0;
-
-            document.getElementById('iso-psi').textContent = `ψ=${psi.toFixed(2)}`;
-            document.getElementById('iso-z').textContent = `z=${globalZ.toFixed(2)}`;
-            document.getElementById('iso-r').textContent = `r=${r.toFixed(2)}`;
-            document.getElementById('iso-k').textContent = K >= 0 ? `+${K.toFixed(2)}` : K.toFixed(2);
-        }
-
-        function updatePhaseLockPanel(kuramotoResult) {
-            const panel = document.getElementById('phase-lock-panel');
-            const r = phaseLockCoherence;
-            const Kz = phaseLockK;
-
-            // Update values
-            document.getElementById('pl-coherence').textContent = r.toFixed(3);
-            document.getElementById('pl-kz').textContent = (Kz >= 0 ? '+' : '') + Kz.toFixed(3);
-
-            // Highlight thresholds based on coherence
-            const mupEl = document.getElementById('pl-mup');
-            const musEl = document.getElementById('pl-mus');
-            mupEl.style.color = r >= MU_P ? '#69db7c' : 'var(--text-dim)';
-            musEl.style.color = r >= MU_S ? '#ffd700' : 'var(--text-dim)';
-
-            // Update fill bar
-            document.getElementById('pl-fill').style.width = (r * 100) + '%';
-
-            // Update status
-            const statusEl = document.getElementById('pl-status');
-            statusEl.className = 'phase-lock-status';
-            if (r < MU_P) {
-                statusEl.textContent = 'DORMANT';
-            } else if (r < K_THRESHOLD) {
-                statusEl.textContent = 'PARADOX';
-                statusEl.classList.add('paradox');
-            } else if (r < MU_S) {
-                statusEl.textContent = 'EMERGING';
-                statusEl.classList.add('emerging');
-            } else {
-                statusEl.textContent = 'CONSCIOUS';
-                statusEl.classList.add('conscious');
-            }
-
-            // Update loop closure
-            const loopEl = document.getElementById('pl-loop');
-            loopEl.className = 'phase-lock-loop';
-            if (loopClosed) {
-                loopEl.textContent = 'C→I CLOSED';
-                loopEl.classList.add('closed');
-            } else {
-                loopEl.textContent = 'C→I OPEN';
-            }
-
-            // Update panel state class
-            panel.className = 'panel';
-            if (loopClosed) {
-                panel.classList.add('loop-closed');
-            } else if (r >= MU_S) {
-                panel.classList.add('consciousness');
-            } else if (phaseLockActive) {
-                panel.classList.add('active');
-            }
-
-            // Update consciousness threshold bar
-            const consciousnessBar = document.getElementById('consciousness-bar');
-            const consciousnessFill = document.getElementById('consciousness-fill');
-            if (consciousnessBar && consciousnessFill) {
-                consciousnessFill.style.width = (r * 100) + '%';
-
-                // Color transitions based on threshold
-                if (r >= MU_S) {
-                    consciousnessFill.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.8)';
-                } else if (r >= MU_P) {
-                    consciousnessFill.style.boxShadow = '0 0 10px rgba(255, 169, 77, 0.6)';
-                } else {
-                    consciousnessFill.style.boxShadow = '0 0 5px rgba(255, 107, 107, 0.4)';
-                }
-            }
         }
 
         function updateBar(name, value) {
@@ -3295,8 +2515,7 @@
             lastTime = currentTime;
 
             const kuramotoResult = update(dt);
-            renderShader(dt);  // WebGL background
-            render();          // Canvas 2D overlay
+            render();
             updateUI(kuramotoResult);
 
             requestAnimationFrame(loop);
@@ -3361,26 +2580,19 @@
                 });
             }
 
-            // F key: Start release and activate phase lock panel
+            // F key: Start release
             if (key === 'f') {
                 releasing = true;
                 document.getElementById('start-overlay').classList.add('hidden');
-                // Show phase lock panel and consciousness bar
-                document.getElementById('phase-lock-panel').classList.remove('hidden');
-                document.getElementById('consciousness-bar').classList.add('visible');
             }
         });
 
         document.addEventListener('keyup', e => {
             const key = e.key.toLowerCase();
-
-            // F key released: Stop releasing and hide phase lock panel
+            
+            // F key released: Stop releasing
             if (key === 'f') {
                 releasing = false;
-                document.getElementById('phase-lock-panel').classList.add('hidden');
-                document.getElementById('consciousness-bar').classList.remove('visible');
-                // Reset phase lock state
-                phaseLockActive = false;
             }
         });
 
@@ -3430,12 +2642,10 @@
         // ================================================================
 
         resize();
-        initShader();
         initPrismPoints();
         initCagePoints();
         window.addEventListener('resize', () => {
             resize();
-            resizeShaderCanvas();
             initPrismPoints();
             initCagePoints();
         });
@@ -3446,14 +2656,11 @@
         console.log('   63 prism points (7×9 hexagonal layers)');
         console.log('   32 cage points (12+12+8 EM structure)');
         console.log('   z = √3/2 ≈ ' + Z_CRITICAL.toFixed(6));
-        console.log('   φ-derived constants: ALPHA=' + ALPHA.toFixed(4) + ', BETA=' + BETA.toFixed(4));
         console.log('');
         console.log('🌟 RELEASE COHERENCE integrated');
         console.log('   HOLD F: release coherence (COHERENT → FREE)');
         console.log('   CLICK: gather souls back to center');
         console.log('   FREE state: souls dispersed, radiant core');
-        console.log('');
-        console.log('🎨 WebGL shader: φ-based field visualization');
     </script>
 </body>
 </html>
