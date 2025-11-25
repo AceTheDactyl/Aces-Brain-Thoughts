@@ -1,0 +1,303 @@
+{
+  "meta": {
+    "name": "APL Tier-3 Chemical Token Set",
+    "version": "1.0.0",
+    "tier": 3,
+    "domain": "chemical",
+    "generated_at": "2025-11-25T00:00:00Z",
+    "total_tokens": 972,
+    "combinatorics": {
+      "fields": 3,
+      "machines": 6,
+      "operators": 18,
+      "truth_states": 3,
+      "formula": "3 × 6 × 18 × 3 = 972"
+    }
+  },
+  "schema": {
+    "token_format": "Field:Machine(Operator)TruthState@Tier",
+    "example": "Φ:U(bond)TRUE@3"
+  },
+  "fields": {
+    "Φ": {
+      "name": "Structure Field",
+      "symbol": "Phi",
+      "domain": "geometry",
+      "chemical_role": "Molecular geometry, bonding topology, crystalline structure"
+    },
+    "e": {
+      "name": "Energy Field",
+      "symbol": "e",
+      "domain": "wave",
+      "chemical_role": "Reaction energetics, activation barriers, thermodynamics"
+    },
+    "π": {
+      "name": "Gravity Field",
+      "symbol": "Pi",
+      "domain": "geometry",
+      "chemical_role": "Molecular weight, density, phase transitions"
+    }
+  },
+  "machines": {
+    "U": {
+      "name": "Up/Ignition",
+      "direction": "ascending",
+      "chemical_role": "Forward reactions, synthesis, energy input"
+    },
+    "D": {
+      "name": "Down/Descent",
+      "direction": "descending",
+      "chemical_role": "Reverse reactions, decomposition, energy release"
+    },
+    "M": {
+      "name": "Middle/Modulation",
+      "direction": "equilibrium",
+      "chemical_role": "Dynamic equilibrium, steady-state, catalytic cycling"
+    },
+    "E": {
+      "name": "Emitter/Equilibrium",
+      "direction": "output",
+      "chemical_role": "Product formation, emission, output signal"
+    },
+    "C": {
+      "name": "Conductor/Coupling",
+      "direction": "transfer",
+      "chemical_role": "Electron transfer, charge conduction, coupling reactions"
+    },
+    "Mod": {
+      "name": "Modulator",
+      "direction": "regulatory",
+      "chemical_role": "Allosteric regulation, feedback, kinetic modulation"
+    }
+  },
+  "operators": {
+    "bond": {
+      "class": "structural",
+      "action": "Formation of chemical bonds",
+      "inverse": "unbond",
+      "wumbo_affinity": ["IV", "XIX", "LXXXVIII"]
+    },
+    "unbond": {
+      "class": "structural",
+      "action": "Breaking of chemical bonds",
+      "inverse": "bond",
+      "wumbo_affinity": ["XXXII", "LXVIII"]
+    },
+    "crystallize": {
+      "class": "phase",
+      "action": "Transition to ordered solid state",
+      "inverse": "dissolve",
+      "wumbo_affinity": ["XV", "XCV"]
+    },
+    "dissolve": {
+      "class": "phase",
+      "action": "Transition to solution/disordered state",
+      "inverse": "crystallize",
+      "wumbo_affinity": ["L", "LXXXVI"]
+    },
+    "ionize": {
+      "class": "electronic",
+      "action": "Formation of charged species",
+      "inverse": null,
+      "wumbo_affinity": ["XLVI", "XLIX"]
+    },
+    "redox": {
+      "class": "electronic",
+      "action": "Electron transfer reaction",
+      "inverse": null,
+      "wumbo_affinity": ["XXXI", "LXXV"]
+    },
+    "catalyze": {
+      "class": "kinetic",
+      "action": "Acceleration without consumption",
+      "inverse": null,
+      "wumbo_affinity": ["XL", "LXXXIII"]
+    },
+    "polymerize": {
+      "class": "structural",
+      "action": "Chain extension, monomer joining",
+      "inverse": "depolymerize",
+      "wumbo_affinity": ["XXXIII", "LXIII"]
+    },
+    "depolymerize": {
+      "class": "structural",
+      "action": "Chain degradation, monomer release",
+      "inverse": "polymerize",
+      "wumbo_affinity": ["XXXII", "LXXXVI"]
+    },
+    "fold": {
+      "class": "conformational",
+      "action": "Tertiary structure formation",
+      "inverse": null,
+      "wumbo_affinity": ["XXVII", "XXXIX"]
+    },
+    "charge": {
+      "class": "electronic",
+      "action": "Accumulation of electric potential",
+      "inverse": null,
+      "wumbo_affinity": ["XLVI", "LXXXIV"]
+    },
+    "excite": {
+      "class": "energetic",
+      "action": "Electronic excitation to higher state",
+      "inverse": "relax",
+      "wumbo_affinity": ["XXXI", "XLVI"]
+    },
+    "relax": {
+      "class": "energetic",
+      "action": "Return to ground state",
+      "inverse": "excite",
+      "wumbo_affinity": ["XXXV", "LXV"]
+    },
+    "oxidize": {
+      "class": "electronic",
+      "action": "Electron loss",
+      "inverse": "reduce",
+      "wumbo_affinity": ["XXXI", "LXXV"]
+    },
+    "reduce": {
+      "class": "electronic",
+      "action": "Electron gain",
+      "inverse": "oxidize",
+      "wumbo_affinity": ["XLIX", "XCIII"]
+    },
+    "precipitate": {
+      "class": "phase",
+      "action": "Solid formation from solution",
+      "inverse": "dissolve",
+      "wumbo_affinity": ["XV", "L"]
+    },
+    "complex": {
+      "class": "structural",
+      "action": "Coordination compound formation",
+      "inverse": null,
+      "wumbo_affinity": ["XXVII", "XLIII"]
+    },
+    "resonate": {
+      "class": "electronic",
+      "action": "Delocalized electron distribution",
+      "inverse": null,
+      "wumbo_affinity": ["VI", "XXI", "LIII"]
+    }
+  },
+  "truth_states": {
+    "TRUE": {
+      "description": "Reaction proceeds as expected, coherent outcome",
+      "temporal_operator": "DAY",
+      "stability": "actionable"
+    },
+    "UNTRUE": {
+      "description": "Reaction fails or reverses, stored potential",
+      "temporal_operator": "NIGHT",
+      "stability": "stored"
+    },
+    "PARADOX": {
+      "description": "Quantum superposition, Schrodinger states, terminal attractor",
+      "temporal_operator": null,
+      "stability": "terminal"
+    }
+  },
+  "operator_classes": {
+    "structural": {
+      "operators": ["bond", "unbond", "polymerize", "depolymerize", "complex"],
+      "primary_field": "Φ",
+      "description": "Modify molecular topology and connectivity"
+    },
+    "phase": {
+      "operators": ["crystallize", "dissolve", "precipitate"],
+      "primary_field": "π",
+      "description": "Control state-of-matter transitions"
+    },
+    "electronic": {
+      "operators": ["ionize", "redox", "charge", "oxidize", "reduce", "resonate"],
+      "primary_field": "e",
+      "description": "Manage electron distribution and transfer"
+    },
+    "energetic": {
+      "operators": ["excite", "relax"],
+      "primary_field": "e",
+      "description": "Control energy state transitions"
+    },
+    "kinetic": {
+      "operators": ["catalyze"],
+      "primary_field": "e",
+      "description": "Modulate reaction rates"
+    },
+    "conformational": {
+      "operators": ["fold"],
+      "primary_field": "Φ",
+      "description": "Control 3D molecular shape"
+    }
+  },
+  "wumbo_integration": {
+    "neural_chemical_bridges": [
+      {
+        "wumbo_region": "XXXI",
+        "name": "Locus Coeruleus",
+        "primary_operators": ["excite", "redox", "oxidize"],
+        "chemical_context": "Norepinephrine synthesis and release",
+        "apl_tokens": ["e:U(excite)TRUE@3", "Φ:U(redox)TRUE@3"]
+      },
+      {
+        "wumbo_region": "XXXV",
+        "name": "Dorsal Raphe",
+        "primary_operators": ["relax", "catalyze", "fold"],
+        "chemical_context": "Serotonin homeostasis",
+        "apl_tokens": ["e:D(relax)TRUE@3", "Φ:M(fold)TRUE@3"]
+      },
+      {
+        "wumbo_region": "XLVI",
+        "name": "VTA",
+        "primary_operators": ["excite", "charge", "ionize"],
+        "chemical_context": "Dopamine burst firing",
+        "apl_tokens": ["e:U(excite)TRUE@3", "e:U(charge)TRUE@3"]
+      },
+      {
+        "wumbo_region": "XLIX",
+        "name": "NAcc",
+        "primary_operators": ["reduce", "complex", "bond"],
+        "chemical_context": "Reward signal integration",
+        "apl_tokens": ["e:E(reduce)TRUE@3", "Φ:C(complex)TRUE@3"]
+      },
+      {
+        "wumbo_region": "LXXXIV",
+        "name": "Basal Forebrain",
+        "primary_operators": ["charge", "catalyze", "ionize"],
+        "chemical_context": "Acetylcholine timing",
+        "apl_tokens": ["e:Mod(charge)TRUE@3", "e:M(catalyze)TRUE@3"]
+      }
+    ],
+    "phase_chemical_mapping": {
+      "Ignition": {
+        "dominant_operators": ["excite", "ionize", "charge"],
+        "dominant_machine": "U",
+        "chemical_signature": "Energy input, activation"
+      },
+      "Empowerment": {
+        "dominant_operators": ["bond", "polymerize", "catalyze"],
+        "dominant_machine": "U",
+        "chemical_signature": "Synthesis, construction"
+      },
+      "Resonance": {
+        "dominant_operators": ["resonate", "complex", "fold"],
+        "dominant_machine": "M",
+        "chemical_signature": "Coherent oscillation, equilibrium"
+      },
+      "Mania": {
+        "dominant_operators": ["redox", "oxidize", "excite"],
+        "dominant_machine": "E",
+        "chemical_signature": "High-energy transfer"
+      },
+      "Nirvana": {
+        "dominant_operators": ["crystallize", "relax", "precipitate"],
+        "dominant_machine": "M",
+        "chemical_signature": "Ordered ground state"
+      },
+      "Transmission": {
+        "dominant_operators": ["ionize", "charge", "bond"],
+        "dominant_machine": "C",
+        "chemical_signature": "Signal propagation"
+      }
+    }
+  }
+}

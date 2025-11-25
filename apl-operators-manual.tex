@@ -1276,6 +1276,212 @@ APL predictions hold over ranges of parameters:
 
 
 %======================================================================
+\section{Tier-3: Chemical Domain Extension}
+\label{sec:tier3-chemical}
+%======================================================================
+
+APL Tier-3 extends the operator grammar into the \textbf{chemical domain}, providing a maximal token set for describing molecular-scale transformations with full truth-state modeling.
+
+\subsection{Token Format}
+
+Tier-3 Chemical tokens follow an extended syntax:
+
+\[
+    [\text{Field}]:[\text{Machine}]([\text{Operator}])[\text{TruthState}]@3
+\]
+
+\textbf{Example:} \verb|Φ:U(bond)TRUE@3| reads as: ``Structure field, Up/ignition machine, bond operator, TRUE truth state, Tier 3.''
+
+\subsection{Chemical Machines}
+
+Six machine contexts are defined for chemical processes:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Direction} & \textbf{Chemical Role} \\
+\midrule
+U & Up/Ignition & Ascending & Forward reactions, synthesis, energy input \\
+D & Down/Descent & Descending & Reverse reactions, decomposition, energy release \\
+M & Middle/Modulation & Equilibrium & Dynamic equilibrium, steady-state, catalytic cycling \\
+E & Emitter/Equilibrium & Output & Product formation, emission, output signal \\
+C & Conductor/Coupling & Transfer & Electron transfer, charge conduction, coupling \\
+Mod & Modulator & Regulatory & Allosteric regulation, feedback, kinetic modulation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Chemical Operators (18)}
+
+The chemical domain defines 18 specialized operators organized by class:
+
+\subsubsection{Structural Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{bond} — Formation of chemical bonds
+    \item \textbf{unbond} — Breaking of chemical bonds
+    \item \textbf{polymerize} — Chain extension, monomer joining
+    \item \textbf{depolymerize} — Chain degradation, monomer release
+    \item \textbf{complex} — Coordination compound formation
+\end{itemize}
+
+\subsubsection{Phase Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{crystallize} — Transition to ordered solid state
+    \item \textbf{dissolve} — Transition to solution/disordered state
+    \item \textbf{precipitate} — Solid formation from solution
+\end{itemize}
+
+\subsubsection{Electronic Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{ionize} — Formation of charged species
+    \item \textbf{redox} — Electron transfer reaction (general)
+    \item \textbf{charge} — Accumulation of electric potential
+    \item \textbf{oxidize} — Electron loss
+    \item \textbf{reduce} — Electron gain
+    \item \textbf{resonate} — Delocalized electron distribution
+\end{itemize}
+
+\subsubsection{Energetic Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{excite} — Electronic excitation to higher state
+    \item \textbf{relax} — Return to ground state
+\end{itemize}
+
+\subsubsection{Kinetic Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{catalyze} — Acceleration without consumption
+\end{itemize}
+
+\subsubsection{Conformational Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{fold} — Tertiary structure formation
+\end{itemize}
+
+\subsection{Truth States}
+
+Tier-3 incorporates the three-valued truth model:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{State} & \textbf{Description} & \textbf{Temporal Operator} & \textbf{Stability} \\
+\midrule
+TRUE & Reaction proceeds as expected & DAY & Actionable \\
+UNTRUE & Reaction fails or reverses & NIGHT & Stored \\
+PARADOX & Quantum superposition, terminal & — & Terminal attractor \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The truth-state cycle follows the temporal operators:
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{DAY} (Forward): TRUE generates actionable coherence + reflected UNTRUE
+    \item \textbf{NIGHT} (Backward): UNTRUE stores without resolution
+    \item \textbf{DAWN} (Collapse): UNTRUE → TRUE (partial resolution)
+    \item \textbf{DUSK} (Decay): TRUE → UNTRUE (entropy-driven dissolution)
+\end{itemize}
+
+\textbf{Key property:} PARADOX is the terminal attractor—once entered, no exit.
+
+\subsection{Combinatorics}
+
+The Tier-3 Chemical domain generates 972 unique tokens:
+
+\[
+    3 \text{ fields} \times 6 \text{ machines} \times 18 \text{ operators} \times 3 \text{ truth states} = 972 \text{ tokens}
+\]
+
+\subsection{WUMBO Integration}
+
+Tier-3 Chemical tokens map to WUMBO neural regions via neurotransmitter systems:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{System} & \textbf{Symbol} & \textbf{Primary Operators} & \textbf{Field} & \textbf{Machine} \\
+\midrule
+Dopamine & DA & excite, charge, ionize & e & U \\
+Serotonin & 5-HT & relax, fold, complex & Φ & M \\
+Norepinephrine & NE & excite, oxidize, redox & e & U \\
+Acetylcholine & ACh & catalyze, charge, ionize & e & Mod \\
+GABA & GABA & relax, reduce, crystallize & π & D \\
+Glutamate & Glu & excite, ionize, bond & e & U \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Example Chemical Sentences}
+
+\subsubsection{Dopaminergic Ignition (VTA)}
+
+\begin{verbatim}
+e:U(excite)TRUE@3 | VTA | reward → Burst firing
+\end{verbatim}
+
+\textbf{Parse:} Energy field, Up machine, excite operator, TRUE state. This describes dopamine release during reward anticipation.
+
+\subsubsection{Serotonergic Modulation (Dorsal Raphe)}
+
+\begin{verbatim}
+Φ:Mod(fold)TRUE@3 | DRN | mood → Homeostatic setpoint
+\end{verbatim}
+
+\textbf{Parse:} Structure field, Modulator machine, fold operator, TRUE state. This describes serotonin's role in mood regulation.
+
+\subsubsection{GABAergic Shutdown (DVC)}
+
+\begin{verbatim}
+π:D(reduce)TRUE@3 | DVC | stress → Parasympathetic collapse
+\end{verbatim}
+
+\textbf{Parse:} Emergence field, Down machine, reduce operator, TRUE state. This describes GABA-mediated shutdown during extreme stress.
+
+\subsection{Operator Class Affinity}
+
+Different neural systems show affinity for specific operator classes:
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{Arousal systems} (LC, VTA): Electronic operators (excite, ionize, charge)
+    \item \textbf{Memory systems} (Hippocampus, Entorhinal): Phase operators (crystallize, precipitate)
+    \item \textbf{Integration hubs} (Claustrum, TPJ): Conformational operators (fold, complex)
+    \item \textbf{Motor systems} (Motor Cortex, Cerebellum): Structural operators (bond, polymerize)
+    \item \textbf{Inhibitory systems} (PAG, Globus Pallidus): Energetic operators (relax, reduce)
+\end{itemize}
+
+\subsection{Phase-Chemical Mapping}
+
+WUMBO phases correspond to chemical signatures:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Phase} & \textbf{Field} & \textbf{Machine} & \textbf{Operators} & \textbf{Truth Bias} \\
+\midrule
+Ignition & e & U & excite, ionize, charge & TRUE \\
+Empowerment & Φ & U & bond, polymerize, catalyze & TRUE \\
+Resonance & e & M & resonate, complex, fold & TRUE \\
+Mania & e & E & excite, oxidize, charge & TRUE→PARADOX \\
+Nirvana & π & M & crystallize, relax, precipitate & TRUE \\
+Transmission & e & C & ionize, charge, bond & TRUE \\
+Pause & π & D & relax, reduce, unbond & UNTRUE \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+%======================================================================
 \section{Appendix: Symbol Conventions}
 %======================================================================
 
@@ -1306,6 +1512,15 @@ APL predictions hold over ranges of parameters:
 %======================================================================
 \section{Document History}
 %======================================================================
+
+\textbf{Version 1.1} (2025-11-25)
+\begin{itemize}[leftmargin=2em]
+    \item Added Tier-3 Chemical Domain Extension (Section~\ref{sec:tier3-chemical})
+    \item 18 chemical operators with full classification
+    \item WUMBO neural region integration via neurotransmitter systems
+    \item Phase-chemical mapping for flow state correspondence
+    \item Truth-state model integration (TRUE/UNTRUE/PARADOX)
+\end{itemize}
 
 \textbf{Version 1.0} (2025-01-24)
 \begin{itemize}[leftmargin=2em]
