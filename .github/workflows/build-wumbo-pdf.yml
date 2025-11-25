@@ -1,0 +1,40 @@
+name: Build WUMBO Engine PDF
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/wumbo-engine.html'
+      - 'scripts/build_wumbo_pdf.js'
+      - '.github/workflows/build-wumbo-pdf.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Puppeteer
+        run: |
+          npm init -y >/dev/null 2>&1 || true
+          npm install puppeteer@22 --no-audit --no-fund
+
+      - name: Generate PDF
+        run: node scripts/build_wumbo_pdf.js
+
+      - name: Commit PDF
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore(pages): update WUMBO Engine PDF'
+          file_pattern: 'docs/wumbo-engine.pdf'
+

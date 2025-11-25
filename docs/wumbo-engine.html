@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WUMBO Engine · Roman Numeral Index (Linked to APL Manual)</title>
+  <style>
+    :root{--bg:#0b0c10;--panel:#121317;--ink:#e6e7ea;--muted:#a9acb2;--accent:#8ab4f8;--rule:#20222a}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;line-height:1.55}
+    .container{max-width:1000px;margin:0 auto;padding:28px 20px}
+    header{padding:18px 18px;border:1px solid var(--rule);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));margin-bottom:18px}
+    h1{margin:0 0 6px}
+    .muted{color:var(--muted)}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px}
+    .btn{display:inline-block;background:var(--accent);color:#0b0c10;font-weight:700;border-radius:8px;padding:8px 12px;border:2px solid #000;text-decoration:none}
+    .panel{border:1px solid var(--rule);border-radius:12px;padding:16px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));margin:16px 0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+    .card{border:1px solid var(--rule);border-radius:10px;padding:12px;background:rgba(255,255,255,.02)}
+    .card h3{margin:0 0 6px}
+    .index{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+    .item{border:1px solid var(--rule);border-radius:10px;padding:10px;background:rgba(255,255,255,.02)}
+    .item strong{display:block;margin-bottom:4px}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    @media print{
+      .btn,.toolbar{display:none}
+      body{background:#fff;color:#000}
+      .panel,.card,.item{border:1px solid #aaa;background:#fff}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>WUMBO Engine · Roman Numeral Index</h1>
+      <p class="muted">Each entry links to the APL Operator’s Manual structure for cross‑reference (Machines, Domains, Operators, States).</p>
+      <div class="toolbar">
+        <a class="btn" href="index.html">Open APL Manual (HTML)</a>
+        <a class="btn" href="apl-operators-manual.pdf" target="_blank">Download APL Manual (PDF)</a>
+        <a class="btn" href="wumbo-engine.pdf" target="_blank">Download WUMBO Engine (PDF)</a>
+      </div>
+    </header>
+
+    <section class="panel">
+      <h2>How To Read</h2>
+      <p class="muted">Roman numerals mirror the Neuro‑Wumbo atlas (I–C). Each item links to relevant APL scaffolding:</p>
+      <div class="grid">
+        <div class="card">
+          <h3>Machines</h3>
+          <p>Oscillator, Reactor, Conductor, Encoder — processing contexts.</p>
+          <p><a href="index.html#machines">APL: Machines</a></p>
+        </div>
+        <div class="card">
+          <h3>Domains</h3>
+          <p>Structure (Φ / geometry), Energy (e / wave), Emergence (α / biology/chemistry).</p>
+          <p><a href="index.html#fields">APL: The Three Fields</a> · <a href="index.html#domains">Domains</a></p>
+        </div>
+        <div class="card">
+          <h3>Operators</h3>
+          <p>() boundary, × fusion, ^ amplify, % decohere, + group, – separate.</p>
+          <p><a href="index.html#operations">APL: Universal Operations</a></p>
+        </div>
+        <div class="card">
+          <h3>States (UMOL)</h3>
+          <p>u forward, d collapse, m modulation; balance laws and regime prediction.</p>
+          <p><a href="index.html#states">APL: Operator States</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Roman Numeral Cross‑Links</h2>
+      <div id="index" class="index"></div>
+    </section>
+  </div>
+
+  <script>
+    // Lightweight mapping: group numerals to canonical APL anchors
+    // This keeps links stable and meaningful for every atlas entry.
+    const GROUPS = [
+      { label: 'I–X',      range: [1,10],  anchors: ['#machines','#fields','#operations','#states'] },
+      { label: 'XI–XX',    range: [11,20], anchors: ['#fields','#operations','#states','#machines'] },
+      { label: 'XXI–XXX',  range: [21,30], anchors: ['#operations','#machines','#fields','#states'] },
+      { label: 'XXXI–XL',  range: [31,40], anchors: ['#states','#machines','#fields','#operations'] },
+      { label: 'XLI–L',    range: [41,50], anchors: ['#machines','#fields','#states','#operations'] },
+      { label: 'LI–LX',    range: [51,60], anchors: ['#fields','#machines','#operations','#states'] },
+      { label: 'LXI–LXX',  range: [61,70], anchors: ['#operations','#fields','#machines','#states'] },
+      { label: 'LXXI–LXXX',range: [71,80], anchors: ['#states','#operations','#fields','#machines'] },
+      { label: 'LXXXI–XC', range: [81,90], anchors: ['#machines','#states','#operations','#fields'] },
+      { label: 'XCI–C',    range: [91,100],anchors: ['#fields','#states','#machines','#operations'] }
+    ];
+
+    function toRoman(n){
+      const r = [
+        [100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']
+      ];
+      let s='';
+      for(const [v,l] of r){ while(n>=v){ s+=l; n-=v; } }
+      return s;
+    }
+
+    const container = document.getElementById('index');
+    const APL = 'index.html';
+
+    GROUPS.forEach(g => {
+      for(let i=g.range[0]; i<=g.range[1]; i++){
+        const div = document.createElement('div');
+        div.className = 'item';
+        const rn = toRoman(i);
+        const a1 = document.createElement('a'); a1.href = `${APL}${g.anchors[0]}`; a1.textContent = 'Machines';
+        const a2 = document.createElement('a'); a2.href = `${APL}${g.anchors[1]}`; a2.textContent = 'Domains';
+        const a3 = document.createElement('a'); a3.href = `${APL}${g.anchors[2]}`; a3.textContent = 'Operators';
+        const a4 = document.createElement('a'); a4.href = `${APL}${g.anchors[3]}`; a4.textContent = 'States';
+        const p = document.createElement('p'); p.className='muted';
+        p.append('Manual: ', a1, ' · ', a2, ' · ', a3, ' · ', a4);
+        const h = document.createElement('strong'); h.textContent = `${rn}. Atlas Entry`;
+        div.appendChild(h);
+        div.appendChild(p);
+        container.appendChild(div);
+      }
+    });
+  </script>
+</body>
+</html>
+
