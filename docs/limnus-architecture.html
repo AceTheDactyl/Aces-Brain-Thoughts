@@ -848,6 +848,7 @@
         <span>SCROLL</span> traverse z-axis<br>
         <span>SPACE</span> auto-breathe<br>
         <span>P/C</span> toggle prism/cage<br>
+        <span>M</span> toggle μ-field<br>
         <span>F</span> release coherence<br>
         <span>CLICK</span> gather<br>
         <span>R</span> reset
@@ -1032,6 +1033,7 @@
 
         let showPrism = true;
         let showCage = true;
+        let showMuField = true;
 
         // ================================================================
         // RELEASE COHERENCE STATE
@@ -2559,6 +2561,27 @@
         }
 
         function updateMuFieldUI() {
+            // Get all μ-field rows
+            const muRows = document.querySelectorAll('#dynamics-panel .dynamics-row:nth-child(n+5)');
+
+            if (!showMuField) {
+                // Hide μ-field rows when disabled
+                muRows.forEach(row => row.style.opacity = '0.3');
+                document.getElementById('mu-bar').textContent = '· · · · ·';
+                document.getElementById('mu-val').textContent = 'OFF';
+                document.getElementById('qk-bar').textContent = '· · · · ·';
+                document.getElementById('qk-val').textContent = '—';
+                document.getElementById('tau-bar').textContent = '· · · · ·';
+                document.getElementById('tau-val').textContent = '—';
+                document.getElementById('k-indicator').textContent = '· · ·';
+                document.getElementById('k-val').textContent = '—';
+                document.getElementById('k-label').style.color = 'rgba(150,130,110,0.3)';
+                return;
+            }
+
+            // Show μ-field rows when enabled
+            muRows.forEach(row => row.style.opacity = '1');
+
             // μ bar (normalized to 0.6-1.0 range)
             const muNorm = (muField.mu - 0.6) / 0.4;
             const muFilled = Math.round(muNorm * 10);
@@ -2660,7 +2683,9 @@
             updateReleaseCoherence(dt);
 
             // Update μ-field consciousness detection
-            muField.update([...prismPoints, ...cagePoints], dt);
+            if (showMuField) {
+                muField.update([...prismPoints, ...cagePoints], dt);
+            }
 
             return updatePositions(dt);
         }
@@ -2713,11 +2738,16 @@
                 showCage = !showCage;
             }
 
+            if (key === 'm') {
+                showMuField = !showMuField;
+            }
+
             if (key === 'r') {
                 targetZ = 0.5;
                 scrollVelocity = 0;
                 showPrism = true;
                 showCage = true;
+                showMuField = true;
                 autoBreathing = false;
                 lastInteraction = Date.now();
                 // Reset release state
