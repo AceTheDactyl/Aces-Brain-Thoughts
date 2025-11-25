@@ -1009,6 +1009,30 @@
 
             // Update from prism/cage field state
             update(points, dt) {
+                // Kuramoto-style coupling regulation based on release coherence
+                // K(coherence) scales from 0.1 (released) to 1.0 (coherent)
+                const kuramotoCoupling = 0.1 + releaseCoherence * 0.9;
+
+                // Early exit with safe defaults if too many points are released
+                const releasedCount = points.filter(p => p.released).length;
+                if (releasedCount > points.length * 0.7) {
+                    // System is mostly released - use minimal safe values
+                    this.mrp.R.intensity = 0.3;
+                    this.mrp.G.intensity = 0.2;
+                    this.mrp.B.intensity = 0.5;
+                    this.mrp.R.gradient = 0;
+                    this.mrp.G.gradient = 0;
+                    this.mrp.B.gradient = 0;
+                    this.mrp.J_total = 0.3;
+                    this.mrp.W = 0;
+                    this.mrp.parity = 0;
+                    this.mrp.parity_ok = false;
+                    this.Q_kappa = 0;
+                    this.tau_K = 0;
+                    this.K_formed = false;
+                    return;
+                }
+
                 // Compute curl from point velocities and positions
                 let curlSum = 0;
                 let energySum = 0;
@@ -2417,11 +2441,15 @@
             if (showMuField && muField.mrp.parity_ok) {
                 // Tricolor parity glow (R+G+B in harmony)
                 const parityGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 1.5);
-                const parityIntensity = muField.mrp.sha256_sim * 0.15;
+                const parityIntensity = (muField.mrp.sha256_sim || 0) * 0.15;
 
-                // RGB channel harmony visualization
+                // RGB channel harmony visualization (safe value access)
+                const safeR = Math.max(0, Math.min(255, Math.floor((muField.mrp.R.intensity || 0) * 200))) || 0;
+                const safeG = Math.max(0, Math.min(255, Math.floor((muField.mrp.G.intensity || 0) * 200))) || 0;
+                const safeB = Math.max(0, Math.min(255, Math.floor((muField.mrp.B.intensity || 0) * 200))) || 0;
+
                 parityGlow.addColorStop(0, `rgba(100, 255, 150, ${parityIntensity * 1.2})`);  // Green center (parity OK)
-                parityGlow.addColorStop(0.3, `rgba(${Math.floor(muField.mrp.R.intensity * 200)}, ${Math.floor(muField.mrp.G.intensity * 200)}, ${Math.floor(muField.mrp.B.intensity * 200)}, ${parityIntensity})`);
+                parityGlow.addColorStop(0.3, `rgba(${safeR}, ${safeG}, ${safeB}, ${parityIntensity})`);
                 parityGlow.addColorStop(0.6, `rgba(150, 200, 255, ${parityIntensity * 0.5})`);  // Blue stability ring
                 parityGlow.addColorStop(1, 'transparent');
 
@@ -2430,24 +2458,26 @@
             }
 
             // MRP Gradient strength visual - subtle RGB channel indicator rings
-            if (showMuField && muField.getGradientStrength() > 0.05) {
-                const gradStrength = muField.getGradientStrength();
-
+            const gradStrength = showMuField ? (muField.getGradientStrength() || 0) : 0;
+            if (showMuField && isFinite(gradStrength) && gradStrength > 0.05) {
                 // R channel (energy) - inner ring
-                ctx.strokeStyle = `rgba(255, 100, 100, ${muField.mrp.R.gradient * 0.3})`;
+                const rGrad = Math.max(0, Math.min(1, muField.mrp.R.gradient || 0));
+                ctx.strokeStyle = `rgba(255, 100, 100, ${rGrad * 0.3})`;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.arc(CX, CY, R * 0.3, 0, TAU);
                 ctx.stroke();
 
                 // G channel (relational) - middle ring
-                ctx.strokeStyle = `rgba(100, 255, 100, ${muField.mrp.G.gradient * 0.3})`;
+                const gGrad = Math.max(0, Math.min(1, muField.mrp.G.gradient || 0));
+                ctx.strokeStyle = `rgba(100, 255, 100, ${gGrad * 0.3})`;
                 ctx.beginPath();
                 ctx.arc(CX, CY, R * 0.5, 0, TAU);
                 ctx.stroke();
 
                 // B channel (stability) - outer ring
-                ctx.strokeStyle = `rgba(100, 150, 255, ${muField.mrp.B.gradient * 0.3})`;
+                const bGrad = Math.max(0, Math.min(1, muField.mrp.B.gradient || 0));
+                ctx.strokeStyle = `rgba(100, 150, 255, ${bGrad * 0.3})`;
                 ctx.beginPath();
                 ctx.arc(CX, CY, R * 0.7, 0, TAU);
                 ctx.stroke();
@@ -2468,11 +2498,11 @@
                 // Fade connections based on release coherence
                 const coherenceFade = Math.min(1, releaseCoherence * 1.5);
 
-                // MRP-enhanced connection coloring
-                const mrpBlend = showMuField ? muField.getGradientStrength() : 0;
-                const mrpR = showMuField ? Math.floor(muField.mrp.R.intensity * 255) : 0;
-                const mrpG = showMuField ? Math.floor(muField.mrp.G.intensity * 255) : 0;
-                const mrpB = showMuField ? Math.floor(muField.mrp.B.intensity * 200) : 0;
+                // MRP-enhanced connection coloring (with NaN protection)
+                const mrpBlend = showMuField ? Math.max(0, Math.min(1, muField.getGradientStrength() || 0)) : 0;
+                const mrpR = showMuField ? Math.max(0, Math.min(255, Math.floor((muField.mrp.R.intensity || 0) * 255))) : 0;
+                const mrpG = showMuField ? Math.max(0, Math.min(255, Math.floor((muField.mrp.G.intensity || 0) * 255))) : 0;
+                const mrpB = showMuField ? Math.max(0, Math.min(200, Math.floor((muField.mrp.B.intensity || 0) * 200))) : 0;
 
                 switch (conn.type) {
                     case 'prism_ring':
@@ -2961,6 +2991,18 @@
             document.getElementById(`lambda-${key}-val`).textContent = value.toFixed(2);
         }
 
+        // Safe repeat helper - prevents NaN/Infinity crashes
+        function safeRepeat(char, count) {
+            const safeCount = Math.max(0, Math.min(20, Math.round(count) || 0));
+            return char.repeat(safeCount);
+        }
+
+        // Safe number formatter
+        function safeFixed(num, digits) {
+            if (!isFinite(num)) return '—';
+            return num.toFixed(digits);
+        }
+
         function updateMuFieldUI() {
             // Get all μ-field rows
             const muRows = document.querySelectorAll('#dynamics-panel .dynamics-row:nth-child(n+5)');
@@ -3002,20 +3044,20 @@
             // μ bar (normalized to 0.6-1.0 range)
             const muNorm = (muField.mu - 0.6) / 0.4;
             const muFilled = Math.round(muNorm * 10);
-            document.getElementById('mu-bar').textContent = '█'.repeat(muFilled) + '░'.repeat(10 - muFilled);
-            document.getElementById('mu-val').textContent = muField.mu.toFixed(3);
+            document.getElementById('mu-bar').textContent = safeRepeat('█', muFilled) + safeRepeat('░', 10 - muFilled);
+            document.getElementById('mu-val').textContent = safeFixed(muField.mu, 3);
 
             // Q_κ bar (normalized, cap at 1.0)
             const qkNorm = Math.min(muField.Q_kappa / SACRED.Q_theory, 1);
             const qkFilled = Math.round(qkNorm * 10);
-            document.getElementById('qk-bar').textContent = '█'.repeat(qkFilled) + '░'.repeat(10 - qkFilled);
-            document.getElementById('qk-val').textContent = muField.Q_kappa.toFixed(4);
+            document.getElementById('qk-bar').textContent = safeRepeat('█', qkFilled) + safeRepeat('░', 10 - qkFilled);
+            document.getElementById('qk-val').textContent = safeFixed(muField.Q_kappa, 4);
 
             // τ_K bar (normalized to K_threshold)
             const tauNorm = Math.min(muField.tau_K / SACRED.K_threshold, 1);
             const tauFilled = Math.round(tauNorm * 10);
-            document.getElementById('tau-bar').textContent = '█'.repeat(tauFilled) + '░'.repeat(10 - tauFilled);
-            document.getElementById('tau-val').textContent = muField.tau_K.toFixed(3);
+            document.getElementById('tau-bar').textContent = safeRepeat('█', tauFilled) + safeRepeat('░', 10 - tauFilled);
+            document.getElementById('tau-val').textContent = safeFixed(muField.tau_K, 3);
 
             // K-formation indicator
             const kLabel = document.getElementById('k-label');
@@ -3043,19 +3085,19 @@
             // ========================================
 
             // R channel (μ_E) - red energy channel
-            const rFilled = Math.round(muField.mrp.R.intensity * 10);
-            document.getElementById('mrp-r-bar').textContent = '█'.repeat(rFilled) + '░'.repeat(10 - rFilled);
-            document.getElementById('mrp-r-val').textContent = muField.mrp.R.gradient.toFixed(2);
+            const rFilled = Math.round((muField.mrp.R.intensity || 0) * 10);
+            document.getElementById('mrp-r-bar').textContent = safeRepeat('█', rFilled) + safeRepeat('░', 10 - rFilled);
+            document.getElementById('mrp-r-val').textContent = safeFixed(muField.mrp.R.gradient, 2);
 
             // G channel (μ_R) - green relational channel
-            const gFilled = Math.round(muField.mrp.G.intensity * 10);
-            document.getElementById('mrp-g-bar').textContent = '█'.repeat(gFilled) + '░'.repeat(10 - gFilled);
-            document.getElementById('mrp-g-val').textContent = muField.mrp.G.gradient.toFixed(2);
+            const gFilled = Math.round((muField.mrp.G.intensity || 0) * 10);
+            document.getElementById('mrp-g-bar').textContent = safeRepeat('█', gFilled) + safeRepeat('░', 10 - gFilled);
+            document.getElementById('mrp-g-val').textContent = safeFixed(muField.mrp.G.gradient, 2);
 
             // B channel (ECC) - blue stability channel
-            const bFilled = Math.round(muField.mrp.B.intensity * 10);
-            document.getElementById('mrp-b-bar').textContent = '█'.repeat(bFilled) + '░'.repeat(10 - bFilled);
-            document.getElementById('mrp-b-val').textContent = muField.mrp.B.gradient.toFixed(2);
+            const bFilled = Math.round((muField.mrp.B.intensity || 0) * 10);
+            document.getElementById('mrp-b-bar').textContent = safeRepeat('█', bFilled) + safeRepeat('░', 10 - bFilled);
+            document.getElementById('mrp-b-val').textContent = safeFixed(muField.mrp.B.gradient, 2);
 
             // Parity indicator
             const parityLabel = document.getElementById('parity-label');
@@ -3074,7 +3116,7 @@
                 parityIndicator.textContent = '× × ×';
                 parityIndicator.style.color = '#ff6b6b';
                 parityIndicator.style.textShadow = 'none';
-                parityVal.textContent = muField.mrp.parity.toFixed(2);
+                parityVal.textContent = safeFixed(muField.mrp.parity, 2);
                 parityVal.style.color = '#ff6b6b';
             }
 
@@ -3083,34 +3125,42 @@
             // ========================================
 
             // |J| total field magnitude
-            const jNorm = Math.min(muField.mrp.J_total / 2, 1);  // Normalize to ~2 max
+            const jNorm = Math.min((muField.mrp.J_total || 0) / 2, 1);  // Normalize to ~2 max
             const jFilled = Math.round(jNorm * 10);
-            document.getElementById('j-total-bar').textContent = '█'.repeat(jFilled) + '░'.repeat(10 - jFilled);
-            document.getElementById('j-total-val').textContent = muField.mrp.J_total.toFixed(3);
+            document.getElementById('j-total-bar').textContent = safeRepeat('█', jFilled) + safeRepeat('░', 10 - jFilled);
+            document.getElementById('j-total-val').textContent = safeFixed(muField.mrp.J_total, 3);
 
             // W = effective growth rate (r - λ|J|²)
             const wLabel = document.getElementById('w-label');
             const wBar = document.getElementById('w-bar');
             const wVal = document.getElementById('w-val');
-            const W = muField.mrp.W;
+            const W = muField.mrp.W || 0;
 
-            if (W > 0.1) {
+            if (!isFinite(W)) {
+                // Invalid state - show dash
+                wLabel.style.color = 'rgba(150,130,110,0.3)';
+                wBar.textContent = '· · · · ·';
+                wBar.style.color = 'var(--text-dim)';
+                wBar.style.textShadow = 'none';
+                wVal.textContent = '—';
+                wVal.style.color = 'var(--text-dim)';
+            } else if (W > 0.1) {
                 // Growing (pattern forming) - green
                 wLabel.style.color = '#69db7c';
                 const wFilled = Math.min(10, Math.round(W * 20));
-                wBar.textContent = '▲'.repeat(wFilled) + '·'.repeat(10 - wFilled);
+                wBar.textContent = safeRepeat('▲', wFilled) + safeRepeat('·', 10 - wFilled);
                 wBar.style.color = '#69db7c';
                 wBar.style.textShadow = '0 0 8px rgba(105, 219, 124, 0.6)';
-                wVal.textContent = '+' + W.toFixed(3);
+                wVal.textContent = '+' + safeFixed(W, 3);
                 wVal.style.color = '#69db7c';
             } else if (W < -0.1) {
                 // Decaying (dissipating) - red
                 wLabel.style.color = '#ff6b6b';
                 const wFilled = Math.min(10, Math.round(Math.abs(W) * 20));
-                wBar.textContent = '▼'.repeat(wFilled) + '·'.repeat(10 - wFilled);
+                wBar.textContent = safeRepeat('▼', wFilled) + safeRepeat('·', 10 - wFilled);
                 wBar.style.color = '#ff6b6b';
                 wBar.style.textShadow = '0 0 8px rgba(255, 107, 107, 0.6)';
-                wVal.textContent = W.toFixed(3);
+                wVal.textContent = safeFixed(W, 3);
                 wVal.style.color = '#ff6b6b';
             } else {
                 // Near equilibrium - gold
@@ -3118,7 +3168,7 @@
                 wBar.textContent = '≈ ≈ ≈ ≈ ≈';
                 wBar.style.color = 'var(--critical-gold)';
                 wBar.style.textShadow = '0 0 8px rgba(255, 215, 0, 0.5)';
-                wVal.textContent = W.toFixed(3);
+                wVal.textContent = safeFixed(W, 3);
                 wVal.style.color = 'var(--critical-gold)';
             }
         }
@@ -3186,8 +3236,8 @@
 
             updateReleaseCoherence(dt);
 
-            // Update μ-field consciousness detection (skip during active release to prevent crash)
-            if (showMuField && releaseCoherence > 0.3) {
+            // Update μ-field consciousness detection (Kuramoto regulation handles release state)
+            if (showMuField) {
                 muField.update([...prismPoints, ...cagePoints], dt);
             }
 
