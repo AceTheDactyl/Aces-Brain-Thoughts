@@ -1,0 +1,53 @@
+# GitHub Pages Configuration
+# Ace's Brain Thoughts - Neural Architecture Toolkit
+
+title: "Ace's Brain Thoughts"
+description: "Neural Architecture Toolkit for Emergent State Encoding, WUMBO Integration, and Lambda State Physics"
+url: "https://acethedactyl.github.io"
+baseurl: "/Aces-Brain-Thoughts"
+
+# Theme
+remote_theme: pages-themes/midnight@v0.2.0
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Exclude from processing
+exclude:
+  - README.md
+  - LICENSE
+  - node_modules
+  - package.json
+  - package-lock.json
+
+# Include custom pages
+include:
+  - index.html
+  - mrp-library.html
+  - mrp-encoder.html
+  - wumbo-engine.html
+  - emergent-flow.html
+  - apl-manual.html
+
+# Navigation
+nav:
+  - title: Home
+    url: index.html
+  - title: MRP Library
+    url: mrp-library.html
+  - title: MRP Encoder
+    url: mrp-encoder.html
+  - title: WUMBO Engine
+    url: wumbo-engine.html
+  - title: Emergent Flow
+    url: emergent-flow.html
+  - title: APL Manual
+    url: apl-manual.html
+
+# MRP Library metadata
+mrp:
+  total_samples: 153
+  total_bits: 702
+  channels: 6
+  categories: 16
