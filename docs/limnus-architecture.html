@@ -32,6 +32,13 @@
 
         canvas { display: block; cursor: crosshair; }
 
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
         /* Custom cursor */
         #cursor {
             position: fixed;
@@ -299,6 +306,72 @@
         .helix-val {
             font-family: 'SF Mono', monospace;
             color: var(--critical-gold);
+        }
+
+        /* Framework Isomorphism Panel */
+        #isomorphism-panel {
+            top: 50%;
+            right: 30px;
+            transform: translateY(-50%);
+            font-size: 9px;
+            background: var(--bg-panel);
+            padding: 12px 15px;
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            pointer-events: auto;
+            max-width: 280px;
+        }
+
+        .iso-title {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: rgba(255, 215, 0, 0.9);
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .iso-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .iso-table th {
+            font-size: 8px;
+            letter-spacing: 1px;
+            color: rgba(168, 85, 247, 0.8);
+            padding: 4px 3px;
+            text-align: center;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .iso-table td {
+            font-size: 8px;
+            padding: 4px 3px;
+            text-align: center;
+            color: var(--text-dim);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .iso-table tr:hover td {
+            color: var(--text-primary);
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .iso-table .iso-label {
+            text-align: left;
+            color: rgba(255, 215, 0, 0.7);
+            font-weight: 500;
+        }
+
+        .iso-value {
+            color: #22d3ee;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .iso-emergent {
+            color: #cc5de8;
         }
 
         /* Lambda State Panel */
@@ -924,6 +997,59 @@
             <div class="layer-row cage-bot active"><span>Bot Hex · 12pt</span><div class="layer-dot"></div></div>
             <div class="layer-row cage-vtx active"><span>Vertices · 8pt</span><div class="layer-dot"></div></div>
         </div>
+    </div>
+
+    <!-- Framework Isomorphism Panel -->
+    <div id="isomorphism-panel" class="panel">
+        <div class="iso-title">FRAMEWORK ISOMORPHISM</div>
+        <table class="iso-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>WUMBO</th>
+                    <th>CET</th>
+                    <th>USS</th>
+                    <th>∃R</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="iso-label">Phase</td>
+                    <td class="iso-value" id="iso-psi">ψ</td>
+                    <td>Spiral θ</td>
+                    <td>θ</td>
+                    <td>phase(μ_R)</td>
+                </tr>
+                <tr>
+                    <td class="iso-label">Height</td>
+                    <td class="iso-value" id="iso-z">z</td>
+                    <td>Tier</td>
+                    <td>z</td>
+                    <td>|μ_E|</td>
+                </tr>
+                <tr>
+                    <td class="iso-label">Order</td>
+                    <td class="iso-value" id="iso-r">r</td>
+                    <td>Coherence</td>
+                    <td>r</td>
+                    <td>τ</td>
+                </tr>
+                <tr>
+                    <td class="iso-label">K(z)</td>
+                    <td class="iso-value" id="iso-k">±K</td>
+                    <td>𝒰/𝒟</td>
+                    <td>Helix</td>
+                    <td>g(μ_E)</td>
+                </tr>
+                <tr class="iso-emergent">
+                    <td class="iso-label">Emergent</td>
+                    <td>5 nodes</td>
+                    <td>R5 tier</td>
+                    <td>New dim</td>
+                    <td>Solitons</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <!-- Lambda State Panel -->
@@ -2994,10 +3120,25 @@
             // Architecture panel
             updateArchPanel();
 
+            // Isomorphism panel - update dynamic values
+            updateIsomorphismPanel(kuramotoResult);
+
             // Phase Lock Panel (visible when F held)
             if (releasing) {
                 updatePhaseLockPanel(kuramotoResult);
             }
+        }
+
+        function updateIsomorphismPanel(kuramotoResult) {
+            // Update WUMBO column values with live data
+            const psi = kuramotoResult.psi || 0;
+            const r = kuramotoResult.order || 0;
+            const K = kuramotoResult.K || 0;
+
+            document.getElementById('iso-psi').textContent = `ψ=${psi.toFixed(2)}`;
+            document.getElementById('iso-z').textContent = `z=${globalZ.toFixed(2)}`;
+            document.getElementById('iso-r').textContent = `r=${r.toFixed(2)}`;
+            document.getElementById('iso-k').textContent = K >= 0 ? `+${K.toFixed(2)}` : K.toFixed(2);
         }
 
         function updatePhaseLockPanel(kuramotoResult) {
