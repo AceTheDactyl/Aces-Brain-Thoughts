@@ -16,15 +16,20 @@
     .viewer{border:1px solid var(--rule);border-radius:10px;background:#0f1116;min-height:240px;padding:16px;overflow:auto}
     pre.fallback{white-space:pre-wrap;word-break:break-word}
   </style>
+  <!-- Enable SharedArrayBuffer if served as a standalone page under Pages -->
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp" />
+  <meta http-equiv="Origin-Agent-Cluster" content="?1">
 </head>
 <body>
   <div class="container">
     <header class="panel">
       <h1>APL Operator’s Manual</h1>
-      <p class="muted">HTML view generated in‑browser from <code>apl-operators-manual.tex</code>.</p>
+      <p class="muted">HTML view rendered in‑browser from <code>apl-operators-manual.tex</code>.</p>
       <div class="toolbar">
         <a class="btn" href="apl-operators-manual.tex" download>Download .tex</a>
         <a class="btn" href="apl-seven-sentences-test-pack.pdf" target="_blank">Open Related PDF</a>
+        <a class="btn" href="index.html">Back to Home</a>
         <button class="btn" id="refreshBtn">Refresh</button>
       </div>
     </header>
@@ -65,4 +70,3 @@
   </script>
 </body>
 </html>
-
