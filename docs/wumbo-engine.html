@@ -171,38 +171,128 @@
     const APL = 'index.html';
 
     // Per‑entry deep map: prioritize APL anchors per Roman numeral.
-    // Extend/adjust as needed. Fallback uses GROUPS above.
+    // Fallback uses GROUPS above.
+    const M = '#machines', F = '#fields', O = '#operations', S = '#states';
     const PER_ENTRY = {
-      1:  ['#fields','#operations','#states','#machines'],        // Somatosensory
-      2:  ['#states','#operations','#machines','#fields'],        // ACC
-      3:  ['#fields','#states','#operations','#machines'],        // Thalamus
-      4:  ['#machines','#operations','#fields','#states'],        // Motor & Cerebellum
-      5:  ['#operations','#machines','#states','#fields'],        // Broca's
-      6:  ['#states','#operations','#fields','#machines'],        // Mirror Neuron
-      7:  ['#states','#operations','#machines','#fields'],        // Amygdala
-      8:  ['#operations','#states','#machines','#fields'],        // Prefrontal Cortex
-      9:  ['#fields','#operations','#machines','#states'],        // Parietal Eye Field
-      10: ['#fields','#states','#operations','#machines'],        // Subiculum
-      11: ['#states','#fields','#machines','#operations'],        // Pineal (revisited)
-      12: ['#operations','#machines','#fields','#states'],        // MTG
-      13: ['#machines','#fields','#states','#operations'],        // Fastigial‑Vestibular Loop
-      14: ['#fields','#states','#operations','#machines'],        // Posterior Thalamic Nucleus
-      15: ['#states','#machines','#fields','#operations'],        // Cerebellar Uvula
-      16: ['#operations','#machines','#fields','#states'],        // AIPS
-      17: ['#fields','#machines','#operations','#states'],        // Ventrolateral Thalamus
-      18: ['#fields','#states','#operations','#machines'],        // Thalamus (again)
-      19: ['#machines','#operations','#fields','#states'],        // Motor & Cerebellum
-      20: ['#operations','#machines','#states','#fields'],        // Broca's
-      21: ['#states','#operations','#fields','#machines'],        // Mirror Neuron
-      22: ['#states','#operations','#machines','#fields'],        // Amygdala
-      23: ['#operations','#states','#machines','#fields'],        // PFC
-      24: ['#fields','#states','#operations','#machines'],        // Orbitofrontal
-      25: ['#states','#operations','#fields','#machines'],        // Cingulate Gyrus
-      26: ['#operations','#states','#machines','#fields'],        // Ventral Striatum
-      27: ['#states','#fields','#operations','#machines'],        // Claustrum
-      28: ['#states','#fields','#operations','#machines'],        // DMN
-      29: ['#states','#fields','#machines','#operations'],        // Pineal
-      30: ['#operations','#states','#machines','#fields']         // Corpus Callosum / sculpting
+      // I–X
+      1:  [F,S,O,M],  // Somatosensory Cortex – sensory map → state → ops
+      2:  [S,O,M,F],  // ACC – truth check
+      3:  [F,S,O,M],  // Thalamus – sensory gate
+      4:  [M,O,F,S],  // Motor Cortex & Cerebellum – execution
+      5:  [O,M,S,F],  // Broca’s – phrase/sculpt
+      6:  [S,O,F,M],  // Mirror Neuron Network – resonance
+      7:  [S,O,M,F],  // Amygdala – salience
+      8:  [O,S,M,F],  // PFC – strategy/control
+      9:  [F,O,M,S],  // Parietal Eye Field – gaze/attention
+      10: [F,S,O,M],  // Subiculum – spatial memory
+
+      // XI–XX
+      11: [S,F,M,O],  // Pineal (revisited) – state transitions
+      12: [O,M,F,S],  // MTG – semantics
+      13: [M,F,S,O],  // Fastigial‑Vestibular Loop – balance
+      14: [F,S,O,M],  // Posterior Thalamic Nucleus – final gate
+      15: [S,M,F,O],  // Cerebellar Uvula – stillness anchor
+      16: [O,M,F,S],  // AIPS – gesture translator
+      17: [F,M,O,S],  // Ventrolateral Thalamus – feedback loop
+      18: [F,S,O,M],  // Thalamus – sensory gate
+      19: [M,O,F,S],  // Motor & Cerebellum
+      20: [O,M,S,F],  // Broca’s
+
+      // XXI–XXX
+      21: [S,O,F,M],  // Mirror Neuron
+      22: [S,O,M,F],  // Amygdala
+      23: [O,S,M,F],  // PFC
+      24: [S,F,O,M],  // Orbitofrontal – social tuning
+      25: [S,O,F,M],  // Cingulate Gyrus – routing/alignment
+      26: [O,S,M,F],  // Ventral Striatum – incentive
+      27: [S,F,O,M],  // Claustrum – integration
+      28: [S,F,O,M],  // Default Mode Network
+      29: [S,F,M,O],  // Pineal – portal
+      30: [S,O,F,M],  // Corpus Callosum – bridge/balance
+
+      // XXXI–XL
+      31: [O,S,M,F],  // Locus Coeruleus – ignition priority
+      32: [S,O,M,F],  // Periaqueductal Gray – defense/shutdown
+      33: [O,F,S,M],  // Anterior Temporal Pole – story keeper
+      34: [S,O,M,F],  // vmPFC – ethical integration
+      35: [S,O,F,M],  // Dorsal Raphe – set‑point/mood
+      36: [F,O,M,S],  // Superior Colliculus – visual orienting
+      37: [S,O,F,M],  // Anterior Insula – feeling of feeling
+      38: [S,O,M,F],  // Lateral Habenula – rejection gate
+      39: [S,F,O,M],  // Precuneus – perspective
+      40: [M,O,F,S],  // Cerebellar Cognitive Zone – timing
+
+      // XLI–L
+      41: [S,O,F,M],  // Basolateral Amygdala – archive of feeling
+      42: [F,O,M,S],  // Pulvinar – spotlight shaper
+      43: [S,O,F,M],  // TPJ – mind reading
+      44: [M,F,S,O],  // Medial Septum – memory rhythms
+      45: [S,O,F,M],  // Subgenual Cingulate – sorrow inertia
+      46: [O,S,M,F],  // VTA – spark
+      47: [F,S,O,M],  // Entorhinal – identity gate
+      48: [S,O,F,M],  // Supramarginal – self/other
+      49: [O,S,M,F],  // NAcc – craving engine
+      50: [S,M,F,O],  // Cerebral Aqueduct – choke point
+
+      // LI–LX
+      51: [F,O,M,S],  // Anterior Thalamic Nuclei – compass
+      52: [F,O,M,S],  // Parafascicular – attention switch
+      53: [F,O,M,S],  // Inferior Colliculus – sonic filter
+      54: [O,F,S,M],  // Perirhinal – meaning‑maker
+      55: [M,S,F,O],  // Vermis – balance
+      56: [O,M,S,F],  // Anterior Insular‑Operculum – fusion point
+      57: [S,O,M,F],  // Paraventricular – stress switch
+      58: [S,O,M,F],  // Lateral OFC – consequence
+      59: [M,O,S,F],  // Midcingulate – engine of doing
+      60: [F,O,M,S],  // Calcarine – visual core
+
+      // LXI–LXX
+      61: [O,S,M,F],  // Rostral PFC – reflective flame
+      62: [M,O,F,S],  // MLR – will to move
+      63: [O,S,F,M],  // Anterior Temporal Sulcus – subtext
+      64: [S,F,M,O],  // Lateral Septum – calm circuit
+      65: [S,M,F,O],  // Cerebellar Tonsil – silent reactor
+      66: [M,S,F,O],  // Pontine Reticular Formation – motion catalyst
+      67: [O,M,S,F],  // Insular‑Opercular Speech – voice within fire
+      68: [S,O,M,F],  // Amygdala Central – first alarm
+      69: [F,O,M,S],  // TRN – filter grid
+      70: [F,O,M,S],  // Cuneus – background reader
+
+      // LXXI–LXXX
+      71: [S,F,M,O],  // VMH – inner balance
+      72: [S,M,O,F],  // Periventricular Gray – threshold
+      73: [O,M,S,F],  // Frontal Operculum – edge of expression
+      74: [M,F,S,O],  // Nodulus – gravity whisperer
+      75: [O,M,F,S],  // Substantia Nigra – movement gatekeeper
+      76: [F,O,M,S],  // V4 – chromatic shaper
+      77: [O,F,S,M],  // Lingual – glyph reader
+      78: [S,O,M,F],  // mPFC – identity sculptor
+      79: [O,S,M,F],  // dLPFC – gate of delivery
+      80: [S,O,F,M],  // IPL – paradox holder
+
+      // LXXXI–XC
+      81: [S,O,M,F],  // ACC – inner judge
+      82: [F,S,O,M],  // Anterior Hippocampus – context mapper
+      83: [M,O,F,S],  // Crus I/II – somatic timekeeper
+      84: [F,O,M,S],  // Basal Forebrain – timing messenger (ACh)
+      85: [M,S,F,O],  // Reticular Formation – wake thread
+      86: [S,M,F,O],  // DVC – kill‑switch
+      87: [O,M,S,F],  // Cranial Nerves – face switch
+      88: [M,O,F,S],  // Spinal Relays – carrier
+      89: [O,M,F,S],  // Globus Pallidus – go/no‑go
+      90: [S,O,M,F],  // Lateral Hypothalamus – drive switch
+
+      // XCI–C
+      91: [F,S,O,M],  // Posterior Insula – body’s edges
+      92: [F,O,M,S],  // Nucleus Basalis – attention tuner (ACh)
+      93: [O,M,S,F],  // Caudate – path chooser
+      94: [O,S,F,M],  // Superior Temporal Pole – emotional communicator
+      95: [S,M,F,O],  // Uvula (revisit) – stillness anchor
+      96: [O,M,F,S],  // AIPS (revisit) – gesture translator
+      97: [S,F,M,O],  // Pineal (revisit) – portal keeper
+      98: [O,M,F,S],  // MTG (revisit) – thought→word bridge
+      99: [M,F,S,O],  // Fastigial‑Vestibular (revisit) – inner horizon
+      100:[F,S,O,M]   // PTN (revisit) – last signal
     };
 
     function labelFor(anchor){
