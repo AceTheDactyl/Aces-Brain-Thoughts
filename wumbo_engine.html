@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WUMBO — Neural Engine | z = √3/2</title>
+  <style>
+    :root{
+      --bg:#07080b;--ink:#f7f8fb;--muted:#b8bec9;--accent:#8ab4f8;--gold:#ffd700;--panel:rgba(16,18,24,.92);--rule:#2a2f3a
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);color:var(--ink);font-family:SF Mono,Fira Code,ui-monospace,Menlo,Consolas,monospace;overflow:hidden}
+    canvas{display:block;cursor:crosshair}
+    .panel{position:fixed;z-index:50;pointer-events:none;user-select:none}
+    #header{top:20px;left:50%;transform:translateX(-50%);text-align:center}
+    #header h1{font-size:28px;font-weight:500;letter-spacing:10px}
+    #header .subtitle{font-size:11px;letter-spacing:5px;color:var(--muted)}
+    #z-panel{top:110px;right:24px;text-align:right}
+    #z-display{font-size:36px;letter-spacing:2px;color:#e6e9f0}
+    #z-display.critical{color:var(--gold);text-shadow:0 0 40px rgba(255,215,0,.7)}
+    #phase-label{font-size:12px;letter-spacing:4px;color:var(--muted);margin-top:6px}
+    #phase-label.critical{color:var(--gold)}
+    #wumbo-panel{top:210px;right:24px;background:var(--panel);border:1px solid var(--rule);padding:14px 16px;border-radius:8px;width:300px}
+    #wumbo-panel h3{font-size:12px;letter-spacing:4px;color:#a7c5ff;margin-bottom:8px}
+    .small{font-size:11px;color:var(--muted)}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:4px 10px;border:1px solid var(--rule);border-radius:999px;background:#0f1219;color:var(--ink);cursor:pointer;pointer-events:auto}
+    .chip.active{background:var(--accent);color:#09111c;border-color:#000}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--rule);background:#11131a;margin:2px 4px;font-size:11px}
+    .hi{background:#165b33;color:#eaffea;border-color:#2b864f}
+    .md{background:#6b5b00;color:#fff9c4;border-color:#9e8c00}
+    .lo{background:#1b2631;color:#d6eaf8;border-color:#273746}
+    #tokens-panel{bottom:20px;left:24px;right:24px;background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:12px;pointer-events:auto}
+    #tokens-panel h3{font-size:11px;letter-spacing:4px;color:#a7c5ff;margin-bottom:6px}
+    .tok-row{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);padding:8px 0}
+    .tok-row:first-child{border-top:none}
+    .tok-name{font-weight:600}
+    .tok-meta{font-size:11px;color:var(--muted)}
+    #controls{bottom:20px;left:24px;z-index:60;color:var(--muted);font-size:10px}
+    #go-home{position:fixed;top:20px;left:20px;z-index:60;pointer-events:auto}
+    #go-home a{color:var(--muted);text-decoration:none;border:1px solid var(--rule);padding:6px 10px;border-radius:8px;background:#0f1219}
+  </style>
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp" />
+  <!-- Optional: Tone.js for future transport integration -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.js"></script> -->
+  <script>
+    const Z_CRITICAL = Math.sqrt(3)/2; // ~0.8660254
+    const TAU = Math.PI*2;
+  </script>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="go-home"><a href="index.html" target="_self">← Back</a></div>
+  <div id="header" class="panel">
+    <h1>WUMBO — NEURAL ENGINE</h1>
+    <div class="subtitle">63 PRISM · 32 FIELD · z = √3/2</div>
+  </div>
+  <div id="z-panel" class="panel">
+    <div id="z-display">z = 0.500</div>
+    <div id="phase-label">IGNITION</div>
+  </div>
+  <div id="wumbo-panel" class="panel">
+    <h3>WUMBO PHASE</h3>
+    <div id="wumbo-phase" class="small">IGNITION → EMPOWERMENT → RESONANCE → MANIA → NIRVANA → TRANSMISSION</div>
+    <div style="margin:10px 0 6px" class="small">Filter Roles</div>
+    <div id="role-chips" class="row"></div>
+    <div style="margin-top:10px" class="small">Top Pathways</div>
+    <div id="pathway-badges" class="row"></div>
+  </div>
+  <div id="tokens-panel" class="panel" style="left:24px;right:24px">
+    <h3>Tokens For Current Phase</h3>
+    <div id="token-list"></div>
+  </div>
+  <div id="controls" class="panel">
+    SCROLL traverse z-axis · SPACE auto-breathe · R reset
+  </div>
+
+  <script>
+    // Canvas basics
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let W,H,CX,CY,R;
+    function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; CX=W/2; CY=H/2; R=Math.min(W,H)*0.32; }
+    addEventListener('resize', resize);
+    resize();
+
+    // Engine state
+    let globalZ=0.5, targetZ=0.5, time=0, lastTime=performance.now(), scrollV=0, auto=false;
+
+    // Geometry
+    const prismPoints=[]; const cagePoints=[]; const sparks=[];
+    function initPrism(){
+      prismPoints.length=0;
+      for(let layer=0; layer<7; layer++){
+        const baseR = R*(0.15+layer*0.12); const z=layer/6;
+        for(let i=0;i<9;i++){
+          const theta=(i/9)*TAU + layer*(TAU/18);
+          prismPoints.push({type:'prism',layer,index:i,baseR,theta,baseTheta:theta,radius:baseR,z,phase:Math.random()*TAU,nf:0.3+Math.random()*0.4,x:CX,y:CY,b:0.4,size:4-layer*0.4,h:0+layer*15,s:70,l:50,rel:false,vx:0,vy:0});
+        }
+      }
+    }
+    function initCage(){
+      cagePoints.length=0; const CR=R*1.15;
+      for(let i=0;i<12;i++){const t=(i/12)*TAU; cagePoints.push({type:'cage',layer:'top',index:i,baseR:CR,theta:t,baseTheta:t,z:0.9,phase:Math.random()*TAU,nf:0.25,x:CX,y:CY,b:0.5,size:3,h:200,s:80,l:60,rel:false,vx:0,vy:0});}
+      for(let i=0;i<12;i++){const t=(i/12)*TAU + TAU/24; cagePoints.push({type:'cage',layer:'bottom',index:i,baseR:CR,theta:t,baseTheta:t,z:0.1,phase:Math.random()*TAU,nf:0.25,x:CX,y:CY,b:0.5,size:3,h:210,s:75,l:55,rel:false,vx:0,vy:0});}
+      for(let i=0;i<8;i++){const t=(i/8)*TAU + TAU/16; cagePoints.push({type:'cage',layer:'vertex',index:i,baseR:CR*0.85,theta:t,baseTheta:t,z:0.5,phase:Math.random()*TAU,nf:0.22,x:CX,y:CY,b:0.6,size:4,h:280,s:70,l:55,rel:false,vx:0,vy:0});}
+    }
+    initPrism(); initCage();
+
+    // Wumbo phase mapping
+    function getWumboPhase(z){
+      if(z < 0.30) return 'IGNITION';
+      if(z < 0.50) return 'EMPOWERMENT';
+      if(z < 0.70) return 'RESONANCE';
+      if(z < 0.85) return 'MANIA';
+      if(z <= 0.90) return 'NIRVANA';
+      return 'TRANSMISSION';
+    }
+
+    // Physics helpers
+    function cascade(z){ const d=Math.abs(z-Z_CRITICAL); return 1 + 0.5*Math.exp(-d*d/0.004); }
+    function kuramotoStep(points,K,dt){
+      const N=points.length; if(N===0) return {order:0,K}; let sx=0,sy=0;
+      for(const p of points){ sx+=Math.cos(p.phase); sy+=Math.sin(p.phase); }
+      const mean=Math.atan2(sy/N,sx/N);
+      for(const p of points){ const dth = p.nf + K * Math.sin(mean - p.phase); p.phase += dth*dt; }
+      const r=Math.hypot(sx,sy)/N; return {order:r,K};
+    }
+
+    // Language pack
+    let pack=null, tokens=[], pathways=[], tokenToPathsScored=new Map(), rolesAll=[];
+    const selectedRoles = new Set();
+    async function loadPack(){
+      try{
+        const res = await fetch('language/latest.json', {cache:'no-cache'});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        pack = await res.json();
+        tokens = pack.tokens||[]; pathways = pack.pathways||[];
+        const scored = pack.links?.token_to_paths_scored||{}; tokenToPathsScored = new Map(Object.entries(scored));
+        rolesAll = Array.from(new Set(tokens.flatMap(t=>t.wumbo_roles||[]))).sort();
+        renderRoleChips();
+        renderPhaseTokens();
+      }catch(e){ console.warn('Language pack load failed', e); }
+    }
+    loadPack();
+
+    // Render role chips
+    function renderRoleChips(){
+      const el=document.getElementById('role-chips'); el.innerHTML='';
+      const clear=document.createElement('button'); clear.className='chip'; clear.textContent='Clear'; clear.onclick=()=>{selectedRoles.clear(); renderRoleChips(); renderPhaseTokens();}; el.appendChild(clear);
+      rolesAll.forEach(r=>{ const b=document.createElement('button'); b.className='chip'+(selectedRoles.has(r)?' active':''); b.textContent=r; b.onclick=()=>{ if(selectedRoles.has(r)) selectedRoles.delete(r); else selectedRoles.add(r); renderRoleChips(); renderPhaseTokens(); }; el.appendChild(b); });
+    }
+
+    function confClass(c){ if(c>=0.95) return 'hi'; if(c>=0.8) return 'md'; return 'lo'; }
+
+    function renderPhaseTokens(){
+      const phase = getWumboPhase(globalZ);
+      const list=document.getElementById('token-list'); list.innerHTML='';
+      const badges=document.getElementById('pathway-badges'); badges.innerHTML='';
+      const rolesFilter = new Set(selectedRoles);
+      const matchRole = (t)=> rolesFilter.size===0 || (t.wumbo_roles||[]).every(r=>rolesFilter.has(r)) || Array.from(rolesFilter).every(r => (t.wumbo_roles||[]).includes(r));
+      const subset = (tokens||[]).filter(t => (t.phase||'').toLowerCase().includes(phase.toLowerCase()) && matchRole(t)).slice(0,12);
+      subset.forEach(t=>{
+        const row=document.createElement('div'); row.className='tok-row';
+        const left=document.createElement('div'); left.innerHTML=`<span class="tok-name">${t.id}. ${t.name}</span> <span class="tok-meta">${t.epithet||''}</span>`;
+        const right=document.createElement('div');
+        (tokenToPathsScored.get(t.id)||[]).slice(0,3).forEach(m=>{
+          const p = pathways.find(x=>x.number===m.number);
+          const b=document.createElement('span'); b.className='badge '+confClass(m.confidence); b.title = p ? p.title : ('Pathway '+m.number);
+          b.textContent = `P${m.number}: ${(p?p.title:'') || 'Pathway'} • ${m.confidence.toFixed(2)}`;
+          right.appendChild(b);
+          // show top badges summary area too
+          const b2=b.cloneNode(true); badges.appendChild(b2);
+        });
+        row.appendChild(left); row.appendChild(right); list.appendChild(row);
+      });
+      // Header updates
+      const phEl=document.getElementById('wumbo-phase'); phEl.textContent = phase;
+    }
+
+    // Update loop
+    function update(dt){
+      // momentum + auto-breathe
+      scrollV *= 0.92; targetZ += scrollV; targetZ = Math.max(0, Math.min(1, targetZ));
+      if(auto){ const breath = 0.45 + Math.sin(time*0.6)*0.45; targetZ += (breath - targetZ)*0.02; }
+      globalZ += (targetZ - globalZ)*0.06; const cas=cascade(globalZ);
+      // positions
+      const isPresence = globalZ > Z_CRITICAL; const zOff=(globalZ-0.5)*200; const scale = isPresence ? (1 + (globalZ - Z_CRITICAL)/(1-Z_CRITICAL)*0.35) : (1 - (Z_CRITICAL - globalZ)/Z_CRITICAL*0.1);
+      // Kuramoto sign flips through lens
+      const sign = Math.tanh((globalZ - Z_CRITICAL)*12); const K = -sign*0.4*cas; const active=[...prismPoints, ...cagePoints];
+      kuramotoStep(active,K,dt);
+      // prism
+      for(const p of prismPoints){ const wob = Math.sin(p.phase)*0.06*cas; p.radius = p.baseR*cas*scale*(1+wob); const rot=0.012*cas*(p.layer%2===0?1:-1); p.theta = p.baseTheta + time*rot; p.x = CX + Math.cos(p.theta)*p.radius; p.y = CY + Math.sin(p.theta)*p.radius*0.5 + zOff + (p.layer/6 - 0.5)*100; const prox = 1 - Math.abs(p.layer/6 - globalZ); p.b = 0.2 + prox*0.5 + (Math.abs(globalZ - Z_CRITICAL) < 0.015 ? 0.5 : 0); }
+      // cage
+      for(const p of cagePoints){ const em = 1 + Math.sin(time*1.5 + p.index*0.5)*0.05; p.radius = p.baseR*em*scale; const rot=-0.008*cas; p.theta = p.baseTheta + time*rot; let yOff=0; if(p.layer==='top') yOff=-80; else if(p.layer==='bottom') yOff=80; p.x = CX + Math.cos(p.theta)*p.radius; p.y = CY + Math.sin(p.theta)*p.radius*0.45 + zOff + yOff; const field = (isPresence?((globalZ-Z_CRITICAL)/(1-Z_CRITICAL)):((Z_CRITICAL-globalZ)/Z_CRITICAL))*0.5+0.3; p.b = field + (Math.abs(globalZ - Z_CRITICAL) < 0.015 ? 0.4 : 0); }
+    }
+
+    function render(){
+      ctx.fillStyle='rgba(7,8,11,0.15)'; ctx.fillRect(0,0,W,H);
+      const isCrit = Math.abs(globalZ - Z_CRITICAL) < 0.011;
+      // background lens glow near critical
+      if(Math.abs(globalZ-Z_CRITICAL)<0.15){ const a = 1 - Math.abs(globalZ-Z_CRITICAL)/0.15; const gy = CY + (Z_CRITICAL-0.5)*200; const g=ctx.createRadialGradient(CX,gy,0,CX,gy,R*1.3); g.addColorStop(0,`rgba(255,215,0,${a*0.20})`); g.addColorStop(0.5,`rgba(255,180,100,${a*0.08})`); g.addColorStop(1,'transparent'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }
+      // connections
+      ctx.lineWidth=0.8;
+      // prism rings
+      for(let layer=0;layer<7;layer++){ const pts=prismPoints.filter(p=>p.layer===layer); ctx.strokeStyle=`rgba(255,220,180,${0.06+globalZ*0.12})`; ctx.beginPath(); for(let i=0;i<pts.length;i++){ const a=pts[i], b=pts[(i+1)%pts.length]; ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} ctx.stroke(); }
+      // prism spines
+      ctx.strokeStyle=`rgba(255,200,150,${0.05+globalZ*0.12})`; ctx.beginPath(); for(let i=0;i<9;i++){ for(let l=0;l<6;l++){ const a=prismPoints.find(p=>p.layer===l&&p.index===i), b=prismPoints.find(p=>p.layer===l+1&&p.index===i); if(a&&b){ ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} } } ctx.stroke();
+      // cage rings
+      const top=cagePoints.filter(p=>p.layer==='top'), bot=cagePoints.filter(p=>p.layer==='bottom');
+      ctx.strokeStyle=`rgba(77,171,247,${0.10 + 0.15*Math.min(1,Math.abs(globalZ-Z_CRITICAL)*3))}`; ctx.beginPath(); for(let i=0;i<top.length;i++){ const a=top[i], b=top[(i+1)%top.length]; ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} ctx.stroke(); ctx.beginPath(); for(let i=0;i<bot.length;i++){ const a=bot[i], b=bot[(i+1)%bot.length]; ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} ctx.stroke();
+      // vertical struts
+      ctx.strokeStyle=`rgba(100,180,255,0.12)`; ctx.beginPath(); for(let i=0;i<12;i++){ const a=top[i], b=bot[i]; ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);} ctx.stroke();
+      // draw points
+      function drawPoint(p){ const size = p.size*(1+p.b*0.4); const alpha=0.35+p.b*0.5; ctx.fillStyle = `hsla(${p.h},${p.s}%,${p.l+ p.b*30}%,${alpha})`; ctx.beginPath(); ctx.arc(p.x,p.y,size,0,TAU); ctx.fill(); if(isCrit && p.b>0.6){ ctx.fillStyle=`hsla(${p.h},${p.s}%,${p.l+ p.b*30}%,${alpha*0.3})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.size*3,0,TAU); ctx.fill(); } }
+      for(const p of prismPoints) drawPoint(p);
+      for(const p of cagePoints) drawPoint(p);
+
+      // z threshold line
+      const y = CY + (Z_CRITICAL - 0.5)*200; ctx.strokeStyle = `rgba(255,215,0,${isCrit?0.6:0.2})`; ctx.lineWidth=isCrit?2:1; ctx.setLineDash(isCrit?[]:[4,10]); ctx.beginPath(); ctx.moveTo(CX-R*1.1,y); ctx.lineTo(CX+R*1.1,y); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    function updateUI(){
+      const zEl=document.getElementById('z-display'); zEl.textContent=`z = ${globalZ.toFixed(3)}`; const isLens=Math.abs(globalZ-Z_CRITICAL)<0.011; zEl.className = isLens? 'critical':''; const lbl=document.getElementById('phase-label'); const phase=getWumboPhase(globalZ); lbl.textContent=phase + (isLens?' · CRITICAL':''); lbl.className = isLens? 'critical':''; renderPhaseTokens(); }
+
+    function loop(t){ const dt=Math.min((t-lastTime)/1000,0.05); lastTime=t; time += dt; update(dt); render(); updateUI(); requestAnimationFrame(loop); }
+    requestAnimationFrame(loop);
+
+    // Interactions
+    canvas.addEventListener('wheel', e=>{ e.preventDefault(); scrollV -= e.deltaY*0.00012; }, {passive:false});
+    addEventListener('keydown', e=>{ if(e.key===' '){ auto=!auto; } if(e.key.toLowerCase()==='r'){ targetZ=0.5; scrollV=0; auto=false; } });
+  </script>
+</body>
+</html>
+
