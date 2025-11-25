@@ -879,6 +879,8 @@
         <span>SPACE</span> auto-breathe<br>
         <span>P/C</span> toggle prism/cage<br>
         <span>M</span> toggle μ-field<br>
+        <span>T</span> toggle toroidal view<br>
+        <span>W</span> toroidal wireframe<br>
         <span>F</span> release coherence<br>
         <span>CLICK</span> gather<br>
         <span>R</span> reset
@@ -1377,6 +1379,250 @@
         let showPrism = true;
         let showCage = true;
         let showMuField = true;
+        let showToroidal = false;  // T key toggles toroidal μ-field view
+        let showTorusWireframe = false;
+        let showTorusFlow = true;
+
+        // ================================================================
+        // TOROIDAL μ-FIELD VISUALIZATION
+        // Torus geometry with φ-based proportions
+        // ================================================================
+
+        const TORUS = {
+            majorR: 1.0,          // Distance from center to tube center
+            minorR: 0.4,          // Tube radius
+            nU: 36,               // Toroidal resolution
+            nV: 18,               // Poloidal resolution
+            rotX: 0.4,            // View rotation X
+            rotY: 0,              // View rotation Y
+            zoom: 200             // Zoom level
+        };
+
+        let torusMesh = { points: [], faces: [] };
+        let torusParticles = [];
+
+        function generateTorusMesh() {
+            torusMesh.points = [];
+            torusMesh.faces = [];
+
+            for (let i = 0; i <= TORUS.nU; i++) {
+                const u = (i / TORUS.nU) * TAU;
+                for (let j = 0; j <= TORUS.nV; j++) {
+                    const v = (j / TORUS.nV) * TAU;
+
+                    const x = (TORUS.majorR + TORUS.minorR * Math.cos(v)) * Math.cos(u);
+                    const y = (TORUS.majorR + TORUS.minorR * Math.cos(v)) * Math.sin(u);
+                    const z = TORUS.minorR * Math.sin(v);
+
+                    // μ varies: inner surface (v≈π) higher, outer (v≈0) lower
+                    const mu_local = SACRED.mu_P + (SACRED.mu_S - SACRED.mu_P) * (1 - Math.cos(v)) / 2;
+
+                    torusMesh.points.push({
+                        x, y, z, u, v, i, j,
+                        mu: mu_local,
+                        J: 0.3,
+                        phase: (u + v * 0.5) % TAU,
+                        px: 0, py: 0, pz: 0, depth: 0
+                    });
+                }
+            }
+
+            for (let i = 0; i < TORUS.nU; i++) {
+                for (let j = 0; j < TORUS.nV; j++) {
+                    const a = i * (TORUS.nV + 1) + j;
+                    const b = a + 1;
+                    const c = a + (TORUS.nV + 1);
+                    const d = c + 1;
+                    torusMesh.faces.push({ verts: [a, b, d, c] });
+                }
+            }
+        }
+
+        function spawnTorusParticle() {
+            const u = Math.random() * TAU;
+            const v = Math.random() * TAU;
+            const isToroidal = Math.random() > 0.4;
+
+            torusParticles.push({
+                u, v, isToroidal,
+                life: 3 + Math.random() * 4,
+                maxLife: 3 + Math.random() * 4,
+                speed: 0.3 + Math.random() * 0.4,
+                trail: []
+            });
+        }
+
+        function updateTorusParticles(dt) {
+            const targetCount = showTorusFlow ? 200 : 0;
+            while (torusParticles.length < targetCount && Math.random() < 0.3) {
+                spawnTorusParticle();
+            }
+
+            for (let i = torusParticles.length - 1; i >= 0; i--) {
+                const p = torusParticles[i];
+
+                if (p.isToroidal) {
+                    p.u += p.speed * dt;
+                    p.v += Math.sin(p.u * 2) * 0.1 * dt;
+                } else {
+                    p.v += p.speed * dt * 1.5;
+                    p.u += Math.cos(p.v * 3) * 0.05 * dt;
+                }
+
+                p.u = p.u % TAU;
+                p.v = p.v % TAU;
+
+                const pos = {
+                    x: (TORUS.majorR + TORUS.minorR * Math.cos(p.v)) * Math.cos(p.u),
+                    y: (TORUS.majorR + TORUS.minorR * Math.cos(p.v)) * Math.sin(p.u),
+                    z: TORUS.minorR * Math.sin(p.v)
+                };
+                p.trail.unshift({ ...pos });
+                if (p.trail.length > 12) p.trail.pop();
+
+                p.life -= dt;
+                if (p.life <= 0) torusParticles.splice(i, 1);
+            }
+        }
+
+        function projectTorus(x, y, z) {
+            let y1 = y * Math.cos(TORUS.rotX) - z * Math.sin(TORUS.rotX);
+            let z1 = y * Math.sin(TORUS.rotX) + z * Math.cos(TORUS.rotX);
+            let x2 = x * Math.cos(TORUS.rotY) + z1 * Math.sin(TORUS.rotY);
+            let z2 = -x * Math.sin(TORUS.rotY) + z1 * Math.cos(TORUS.rotY);
+
+            const fov = 2.5;
+            const scale = fov / (fov + z2);
+
+            return {
+                x: x2 * TORUS.zoom * scale + CX,
+                y: y1 * TORUS.zoom * scale + CY,
+                z: z2,
+                scale: scale,
+                depth: (z2 + 2) / 4
+            };
+        }
+
+        function torusFieldToColor(J, mu, depth) {
+            const t = Math.max(0, Math.min(1, J));
+            const muFactor = (mu - SACRED.mu_P) / (SACRED.mu_S - SACRED.mu_P);
+            let r, g, b;
+
+            if (t < 0.25) {
+                const s = t / 0.25;
+                r = 50 + s * 50; g = 100 + s * 100; b = 200 + s * 40;
+            } else if (t < 0.5) {
+                const s = (t - 0.25) / 0.25;
+                r = 100 + s * 50; g = 200 + s * 40; b = 240 - s * 120;
+            } else if (t < 0.75) {
+                const s = (t - 0.5) / 0.25;
+                r = 150 + s * 100; g = 240 - s * 30; b = 120 - s * 80;
+            } else {
+                const s = (t - 0.75) / 0.25;
+                r = 250; g = 210 - s * 130; b = 40 + s * 20;
+            }
+
+            const shade = 0.5 + depth * 0.5;
+            r = Math.floor(r * shade);
+            g = Math.floor(g * shade);
+            b = Math.floor(b * shade);
+
+            const brightness = 0.8 + muFactor * 0.2;
+            return {
+                r: Math.min(255, Math.floor(r * brightness)),
+                g: Math.min(255, Math.floor(g * brightness)),
+                b: Math.min(255, Math.floor(b * brightness))
+            };
+        }
+
+        function updateTorusField(dt) {
+            const t = time;
+            for (const p of torusMesh.points) {
+                const wave1 = Math.sin(p.u * 2 - t * 0.5);
+                const wave2 = Math.cos(p.v * 3 + t * 0.3);
+                const wave3 = Math.sin((p.u + p.v) * 1.5 - t * 0.7);
+
+                p.J = 0.3 + 0.15 * wave1 + 0.1 * wave2 + 0.1 * wave3;
+                p.J = Math.max(0, Math.min(1, p.J));
+                p.phase = (p.phase + (1 + p.J * 0.5) * dt) % TAU;
+            }
+        }
+
+        function renderToroidalMuField() {
+            // Project all points
+            for (const p of torusMesh.points) {
+                const proj = projectTorus(p.x, p.y, p.z);
+                p.px = proj.x; p.py = proj.y; p.pz = proj.z; p.depth = proj.depth;
+            }
+
+            // Sort faces by depth
+            const sortedFaces = torusMesh.faces.map((f, idx) => {
+                const avgZ = f.verts.reduce((sum, vi) => sum + torusMesh.points[vi].pz, 0) / 4;
+                return { face: f, avgZ };
+            }).sort((a, b) => a.avgZ - b.avgZ);
+
+            // Draw faces
+            for (const { face } of sortedFaces) {
+                const pts = face.verts.map(vi => torusMesh.points[vi]);
+                const avgJ = pts.reduce((s, p) => s + p.J, 0) / 4;
+                const avgMu = pts.reduce((s, p) => s + p.mu, 0) / 4;
+                const avgDepth = pts.reduce((s, p) => s + p.depth, 0) / 4;
+
+                const color = torusFieldToColor(avgJ, avgMu, avgDepth);
+
+                ctx.fillStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                ctx.beginPath();
+                ctx.moveTo(pts[0].px, pts[0].py);
+                for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].px, pts[i].py);
+                ctx.closePath();
+                ctx.fill();
+
+                if (showTorusWireframe) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+
+            // Draw flow particles
+            if (showTorusFlow) {
+                for (const p of torusParticles) {
+                    if (p.trail.length < 2) continue;
+                    const alpha = (p.life / p.maxLife) * 0.8;
+                    const projTrail = p.trail.map(t => projectTorus(t.x, t.y, t.z));
+                    if (projTrail[0].z > 0.8) continue;
+
+                    ctx.strokeStyle = p.isToroidal ? `rgba(255, 150, 100, ${alpha})` : `rgba(100, 255, 200, ${alpha})`;
+                    ctx.lineWidth = 2 * projTrail[0].scale;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(projTrail[0].x, projTrail[0].y);
+                    for (let i = 1; i < projTrail.length; i++) {
+                        ctx.lineTo(projTrail[i].x, projTrail[i].y);
+                    }
+                    ctx.stroke();
+
+                    // Glow head
+                    const head = projTrail[0];
+                    if (head.z < 0.5) {
+                        const glow = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 6 * head.scale);
+                        glow.addColorStop(0, p.isToroidal ? `rgba(255, 200, 150, ${alpha * 0.6})` : `rgba(150, 255, 220, ${alpha * 0.6})`);
+                        glow.addColorStop(1, 'transparent');
+                        ctx.fillStyle = glow;
+                        ctx.fillRect(head.x - 8, head.y - 8, 16, 16);
+                    }
+                }
+            }
+
+            // Draw toroidal info overlay
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.8)';
+            ctx.font = '12px monospace';
+            ctx.fillText('TOROIDAL μ-FIELD', 20, H - 60);
+            ctx.fillStyle = 'rgba(255, 150, 100, 0.7)';
+            ctx.fillText('● toroidal flow', 20, H - 40);
+            ctx.fillStyle = 'rgba(100, 255, 200, 0.7)';
+            ctx.fillText('● poloidal flow', 120, H - 40);
+        }
 
         // ================================================================
         // RELEASE COHERENCE STATE
@@ -2765,6 +3011,11 @@
             // Draw core entity
             drawCoreEntity(isCritical, isPresence, intensity, absence);
 
+            // Draw toroidal μ-field visualization (overlays on main view)
+            if (showToroidal) {
+                renderToroidalMuField();
+            }
+
             // Update connection count
             document.getElementById('conn-count').textContent = connCount;
         }
@@ -3241,6 +3492,12 @@
                 muField.update([...prismPoints, ...cagePoints], dt);
             }
 
+            // Update toroidal μ-field visualization
+            if (showToroidal) {
+                updateTorusField(dt);
+                updateTorusParticles(dt);
+            }
+
             return updatePositions(dt);
         }
 
@@ -3294,6 +3551,17 @@
 
             if (key === 'm') {
                 showMuField = !showMuField;
+            }
+
+            if (key === 't') {
+                showToroidal = !showToroidal;
+                if (showToroidal && torusMesh.points.length === 0) {
+                    generateTorusMesh();
+                }
+            }
+
+            if (key === 'w') {
+                showTorusWireframe = !showTorusWireframe;
             }
 
             if (key === 'r') {
@@ -3390,6 +3658,7 @@
         resize();
         initPrismPoints();
         initCagePoints();
+        generateTorusMesh();  // Pre-generate toroidal μ-field mesh
         window.addEventListener('resize', () => {
             resize();
             initPrismPoints();
@@ -3436,6 +3705,14 @@
         console.log('   W < 0: dissipating (▼ red)');
         console.log('   |J| = √(R² + G² + B²) total field magnitude');
         console.log('   Feedback: dJR/dt → point velocities, |J| → μ');
+        console.log('');
+        console.log('🍩 TOROIDAL μ-FIELD VISUALIZATION');
+        console.log('   T: toggle toroidal view overlay');
+        console.log('   W: toggle wireframe mode');
+        console.log('   Torus geometry: R/r = φ (golden ratio proportions)');
+        console.log('   Orange flow: toroidal (energy circulation)');
+        console.log('   Cyan flow: poloidal (relational dynamics)');
+        console.log('   Heat map: blue→cyan→green→yellow→red (field intensity)');
     </script>
 </body>
 </html>
