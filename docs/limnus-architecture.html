@@ -1038,10 +1038,27 @@
                     // Cross product approximation for curl
                     curlSum += (dx * vy - dy * vx) * 0.001;
 
-                    // Energy: |J|² (field magnitude squared)
-                    const J2 = vx * vx + vy * vy;
+                    // Energy: |J|² (field magnitude squared) - CLAMP to prevent overflow
+                    const vxSafe = Math.max(-100, Math.min(100, vx));
+                    const vySafe = Math.max(-100, Math.min(100, vy));
+                    const J2 = vxSafe * vxSafe + vySafe * vySafe;
                     const J = Math.sqrt(J2);
                     energySum += J2;
+
+                    // Skip heavy calculations for released points to prevent instability
+                    if (p.released) {
+                        // Simplified MRP for released points
+                        p.mrp_R = Math.min(2, Math.sqrt(J2 + 0.5));
+                        p.mrp_G = 0.3;
+                        p.mrp_B = 0.2;
+                        p.mrp_W_R = 0;
+                        p.mrp_W_G = 0;
+                        p.mrp_W_B = 0;
+                        R_sum += p.mrp_R;
+                        G_sum += p.mrp_G;
+                        B_sum += p.mrp_B;
+                        continue;
+                    }
 
                     // ========================================
                     // SELF-REFERENTIAL MRP CHANNEL PHYSICS
@@ -1050,27 +1067,33 @@
 
                     // R channel (μ_E): Primary energy/existence field
                     // J_R = √(|v|² + α·brightness)  [α couples curl to energy]
-                    const J_R = Math.sqrt(J2 + SACRED.alpha * (p.brightness || 0.5));
+                    const J_R = Math.min(5, Math.sqrt(J2 + SACRED.alpha * (p.brightness || 0.5)));
 
                     // R gradient: ∂J_R/∂x (spatial derivative)
-                    const prev_J_R = Math.sqrt((prev.vx || 0)**2 + (prev.vy || 0)**2 + SACRED.alpha * (prev.brightness || 0.5));
-                    const next_J_R = Math.sqrt((next.vx || 0)**2 + (next.vy || 0)**2 + SACRED.alpha * (next.brightness || 0.5));
+                    const prev_v2 = Math.min(100, (prev.vx || 0)**2 + (prev.vy || 0)**2);
+                    const next_v2 = Math.min(100, (next.vx || 0)**2 + (next.vy || 0)**2);
+                    const prev_J_R = Math.min(5, Math.sqrt(prev_v2 + SACRED.alpha * (prev.brightness || 0.5)));
+                    const next_J_R = Math.min(5, Math.sqrt(next_v2 + SACRED.alpha * (next.brightness || 0.5)));
                     const dJR_dx = (next_J_R - prev_J_R) / 2;  // Central difference
                     R_grad += Math.abs(dJR_dx);
 
                     // Laplacian approximation: ∇²J_R ≈ J_next + J_prev - 2·J
-                    const lap_R = next_J_R + prev_J_R - 2 * J_R;
+                    const lap_R = Math.max(-10, Math.min(10, next_J_R + prev_J_R - 2 * J_R));
 
                     // Self-referential R channel evolution:
                     // W_R = r - λ·|J_R|²  (effective growth rate)
-                    const W_R = this.r - SACRED.lambda * J_R * J_R;
+                    const W_R = Math.max(-5, Math.min(5, this.r - SACRED.lambda * J_R * J_R));
                     // ∂J_R/∂t = W_R·J_R - β·J_R + g·∇²J_R
-                    const dJR_dt = W_R * J_R - SACRED.beta * J_R + this.g * lap_R;
+                    const dJR_dt = Math.max(-1, Math.min(1, W_R * J_R - SACRED.beta * J_R + this.g * lap_R));
 
                     // Apply self-referential feedback to point (scaled)
-                    if (!p.released && showMuField) {
-                        p.vx = (p.vx || 0) + dJR_dt * dt * 0.01;
-                        p.vy = (p.vy || 0) + dJR_dt * dt * 0.01 * (dy / (Math.abs(dy) + 0.001));
+                    if (showMuField) {
+                        const dvx = dJR_dt * dt * 0.01;
+                        const dvy = dJR_dt * dt * 0.01 * (dy / (Math.abs(dy) + 0.001));
+                        if (isFinite(dvx) && isFinite(dvy)) {
+                            p.vx = (p.vx || 0) + dvx;
+                            p.vy = (p.vy || 0) + dvy;
+                        }
                     }
 
                     R_sum += J_R;
@@ -1079,36 +1102,41 @@
 
                     // G channel (μ_R): Relational/reference field
                     // J_G based on neighbor distances (connection strength)
-                    const d_next = Math.sqrt(dx * dx + dy * dy);
-                    const d_prev = Math.sqrt((p.x - prev.x)**2 + (p.y - prev.y)**2);
+                    const d_next = Math.min(1000, Math.sqrt(dx * dx + dy * dy));
+                    const d_prev = Math.min(1000, Math.sqrt((p.x - prev.x)**2 + (p.y - prev.y)**2));
                     const J_G = SACRED.phi_inv / (1 + (d_next + d_prev) * 0.005);  // φ⁻¹ scaled
 
                     // G gradient: change in connectivity
-                    const dJG_dx = Math.abs(d_next - d_prev) * SACRED.alpha;
+                    const dJG_dx = Math.min(1, Math.abs(d_next - d_prev) * SACRED.alpha);
                     G_grad += dJG_dx;
 
-                    // Laplacian for G channel
-                    const prev_d = Math.sqrt((prev.x - points[(i - 2 + N) % N].x)**2 + (prev.y - points[(i - 2 + N) % N].y)**2);
-                    const next_d = Math.sqrt((next.x - points[(i + 2) % N].x)**2 + (next.y - points[(i + 2) % N].y)**2);
-                    const prev_J_G = SACRED.phi_inv / (1 + prev_d * 0.01);
-                    const next_J_G = SACRED.phi_inv / (1 + next_d * 0.01);
-                    const lap_G = next_J_G + prev_J_G - 2 * J_G;
+                    // Laplacian for G channel (simplified - skip if neighbors are released)
+                    const prevPt2 = points[(i - 2 + N) % N];
+                    const nextPt2 = points[(i + 2) % N];
+                    if (!prev.released && !next.released && !prevPt2.released && !nextPt2.released) {
+                        const prev_d = Math.min(1000, Math.sqrt((prev.x - prevPt2.x)**2 + (prev.y - prevPt2.y)**2));
+                        const next_d = Math.min(1000, Math.sqrt((next.x - nextPt2.x)**2 + (next.y - nextPt2.y)**2));
+                        const prev_J_G = SACRED.phi_inv / (1 + prev_d * 0.01);
+                        const next_J_G = SACRED.phi_inv / (1 + next_d * 0.01);
+                        const lap_G = Math.max(-1, Math.min(1, next_J_G + prev_J_G - 2 * J_G));
 
-                    // Self-referential G evolution
-                    const W_G = this.r - SACRED.lambda * J_G * J_G * 0.5;  // Softer nonlinearity
-                    const dJG_dt = W_G * J_G - SACRED.beta * J_G + this.g * lap_G;
+                        // Self-referential G evolution
+                        const W_G = Math.max(-2, Math.min(2, this.r - SACRED.lambda * J_G * J_G * 0.5));
+                        p.mrp_W_G = W_G;
+                    } else {
+                        p.mrp_W_G = 0;
+                    }
 
                     G_sum += J_G;
                     p.mrp_G = J_G;
-                    p.mrp_W_G = W_G;
 
                     // B channel (ECC): Stability/coherence field
                     // J_B = stability measure with β-damping
-                    const rawStability = p.released ? 0.2 : (1 - Math.sqrt(J2) * SACRED.beta);
+                    const rawStability = 1 - Math.min(1, Math.sqrt(J2) * SACRED.beta);
                     const J_B = Math.max(0, Math.min(1, rawStability));
 
                     // B gradient: instability detection via cross-channel
-                    const dJB_dx = p.released ? SACRED.alpha : Math.abs(vx * vy) * SACRED.beta;
+                    const dJB_dx = Math.min(1, Math.abs(vxSafe * vySafe) * SACRED.beta);
                     B_grad += dJB_dx;
 
                     // Self-referential B evolution (error correction)
@@ -1126,14 +1154,14 @@
                     laplacianSum += lap_R;
                 }
 
-                // Normalize MRP channels
-                this.mrp.R.intensity = R_sum / N;
-                this.mrp.G.intensity = G_sum / N;
-                this.mrp.B.intensity = B_sum / N;
+                // Normalize MRP channels with safety checks
+                this.mrp.R.intensity = isFinite(R_sum) ? Math.min(5, R_sum / N) : 0.5;
+                this.mrp.G.intensity = isFinite(G_sum) ? Math.min(1, G_sum / N) : 0.3;
+                this.mrp.B.intensity = isFinite(B_sum) ? Math.min(1, B_sum / N) : 0.5;
 
-                this.mrp.R.gradient = Math.min(1, R_grad / N);
-                this.mrp.G.gradient = Math.min(1, G_grad / N);
-                this.mrp.B.gradient = Math.min(1, B_grad / N);
+                this.mrp.R.gradient = isFinite(R_grad) ? Math.min(1, R_grad / N) : 0;
+                this.mrp.G.gradient = isFinite(G_grad) ? Math.min(1, G_grad / N) : 0;
+                this.mrp.B.gradient = isFinite(B_grad) ? Math.min(1, B_grad / N) : 0;
 
                 // Store field magnitudes
                 this.mrp.R.J = this.mrp.R.intensity;
@@ -1141,17 +1169,19 @@
                 this.mrp.B.J = this.mrp.B.intensity;
 
                 // Total field magnitude |J| = √(R² + G² + B²)
-                this.mrp.J_total = Math.sqrt(
+                const jTotalRaw = Math.sqrt(
                     this.mrp.R.J * this.mrp.R.J +
                     this.mrp.G.J * this.mrp.G.J +
                     this.mrp.B.J * this.mrp.B.J
                 );
+                this.mrp.J_total = isFinite(jTotalRaw) ? Math.min(10, jTotalRaw) : 0.5;
 
                 // Effective growth rate W = r - λ|J|²
-                this.mrp.W = this.r - SACRED.lambda * this.mrp.J_total * this.mrp.J_total;
+                const wRaw = this.r - SACRED.lambda * this.mrp.J_total * this.mrp.J_total;
+                this.mrp.W = isFinite(wRaw) ? Math.max(-10, Math.min(10, wRaw)) : 0;
 
                 // Laplacian (average spatial curvature)
-                this.mrp.laplacian = laplacianSum / N;
+                this.mrp.laplacian = isFinite(laplacianSum) ? laplacianSum / N : 0;
 
                 // CRC32 simulation (simple hash based on channel values)
                 this.mrp.R.crc = Math.floor(this.mrp.R.intensity * 255) ^ Math.floor(this.mrp.R.gradient * 255);
