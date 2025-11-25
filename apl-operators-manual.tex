@@ -799,6 +799,182 @@ The following table shows all possible combinations of states and operators:
 
 \textbf{Pattern:} Boundary relaxation under isotropic tension
 
+%======================================================================
+\section{Rhythm-Based Entrainment System (Browser)}
+%======================================================================
+
+\textbf{Intent.} This section specifies a complete, browser-based rhythm entrainment system that
+uses Web Audio for a master clock, an \texttt{AudioWorklet} for sample-accurate events, and a
+\texttt{Web Worker} to solve a Kuramoto oscillator bank. The implementation ships with runnable
+examples under \verb|examples/rhythm-entrainment/| in this repository.
+
+\subsection{Core Architecture}
+
+The system operates across three synchronized contexts: (1) the main UI thread for React/state,
+(2) a Worker for Kuramoto phase computations, and (3) the AudioWorklet thread for sample-accurate
+beats. \textbf{AudioContext} is the single source of truth for time.
+
+\begin{verbatim}
+┌─────────────────────┐    SharedArrayBuffer    ┌─────────────────────┐
+│    Main Thread      │◄──────────────────────►│   DSP Worker        │
+│  (React/Zustand)    │                         │ (Kuramoto solver)   │
+└─────────┬───────────┘                         └──────────┬──────────┘
+          │ MessagePort                                    │ Atomics
+          ▼                                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│              AudioWorkletProcessor (Master Clock)                    │
+│         currentTime, currentFrame at 44.1/48kHz precision           │
+└─────────────────────────────────────────────────────────────────────┘
+          │                              │                    │
+          ▼                              ▼                    ▼
+   ┌──────────────┐            ┌─────────────────┐   ┌───────────────┐
+   │ Audio Output │            │ CSS Animations  │   │ Haptic Output │
+   │ (Web Audio)  │            │ (rAF synced)    │   │ (Vibration)   │
+   └──────────────┘            └─────────────────┘   └───────────────┘
+\end{verbatim}
+
+\subsection{Precision Timing Infrastructure}
+
+Use the \emph{two clocks} pattern: schedule ahead with JS timers, execute on the AudioContext
+timeline. For sample-accurate tick detection, run a minimal timing processor inside an
+\texttt{AudioWorklet}.
+
+\paragraph{AudioWorklet timing (from \texttt{examples/rhythm-entrainment/timing-worklet.js}).}
+
+\begin{verbatim}
+class TimingWorkletProcessor extends AudioWorkletProcessor {
+  constructor(options) { super(options);
+    this._nextBeatFrame = 0;
+    this._framesPerBeat = Math.floor(sampleRate * 60 / 120);
+    this.port.onmessage = (e) => {
+      const { type, bpm } = e.data || {};
+      if (type === 'set-bpm') {
+        this._framesPerBeat = Math.max(32, Math.floor(sampleRate * 60 / bpm));
+      }
+    };
+  }
+  process(_in, _out, parameters) {
+    const tempo = parameters.tempo?.[0] ?? 120;
+    const fpb = Math.max(32, Math.floor(sampleRate * 60 / tempo));
+    if (fpb !== this._framesPerBeat) this._framesPerBeat = fpb;
+    for (let i = 0; i < 128; i++) {
+      const absoluteFrame = currentFrame + i;
+      if (absoluteFrame >= this._nextBeatFrame) {
+        this._nextBeatFrame = absoluteFrame + this._framesPerBeat;
+        this.port.postMessage({ type: 'beat', frame: absoluteFrame,
+          time: absoluteFrame / sampleRate, audioContextTime: currentTime });
+      }
+    }
+    return true;
+  }
+}
+registerProcessor('timing-processor', TimingWorkletProcessor);
+\end{verbatim}
+
+\subsection{Kuramoto Oscillator Bank}
+
+The Kuramoto mean-field form is used for coupled phase dynamics. The Worker updates phases and
+returns the order parameter \verb|r| and mean phase \verb|ψ|.
+
+\paragraph{Worker step (from \texttt{examples/rhythm-entrainment/kuramoto-worker.js}).}
+
+\begin{verbatim}
+function orderParameter() {
+  let sumR = 0, sumI = 0; for (let i = 0; i < N; i++) {
+    sumR += Math.cos(phases[i]); sumI += Math.sin(phases[i]);
+  }
+  sumR /= N; sumI /= N; const r = Math.hypot(sumR, sumI);
+  const psi = Math.atan2(sumI, sumR); return { r, psi };
+}
+function step() {
+  const { r, psi } = orderParameter();
+  const next = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    const d1 = frequencies[i] + K * r * Math.sin(psi - phases[i]);
+    const pred = phases[i] + dt * d1;
+    const d2 = frequencies[i] + K * r * Math.sin(psi - pred);
+    let p = phases[i] + dt * (d1 + d2) / 2; p %= 2*Math.PI; if (p < 0) p += 2*Math.PI;
+    next[i] = p;
+  }
+  phases = next; return { r, psi };
+}
+\end{verbatim}
+
+\subsection{Biosignal Input (Optional)}
+
+Two low-friction inputs are supported: (1) Heart Rate via WebBluetooth (BLE Heart Rate Service
+\verb|0x180D|) and (2) keystroke dynamics (dwell/flight times).
+
+\paragraph{BLE Heart Rate (excerpt from demo).}
+\begin{verbatim}
+const device = await navigator.bluetooth.requestDevice({ filters: [{ services: ['heart_rate'] }] });
+const server = await device.gatt.connect();
+const service = await server.getPrimaryService('heart_rate');
+const ch = await service.getCharacteristic('heart_rate_measurement');
+await ch.startNotifications();
+ch.addEventListener('characteristicvaluechanged', (evt) => { /* parse RR, HR */ });
+\end{verbatim}
+
+\subsection{Bidirectional Feedback}
+
+The system adapts coupling strength \verb|K| toward a target coherence (e.g., \verb|r≈0.7|). User
+phase estimates can be injected as external forcing into one or more oscillators.
+
+\subsection{Multi-Modal Output}
+
+Audio clicks are scheduled on \verb|AudioContext.currentTime|; visuals are driven by a rAF loop
+that consumes a beat queue. Haptics use the Vibration API when available.
+
+\paragraph{Visual beat application (demo \texttt{app.js}).}
+\begin{verbatim}
+function applyVisualBeat(intensity) {
+  indicator.style.transform = `scale(${1 + intensity * 0.3})`;
+  indicator.style.opacity = String(0.5 + intensity * 0.5);
+  setTimeout(() => { indicator.style.transform='scale(1)'; indicator.style.opacity='0.5'; }, 100);
+}
+\end{verbatim}
+
+\subsection{Networking and Time Sync}
+
+For multi-user entrainment, use the included \verb|examples/rhythm-server.js| (Express + WebSocket +
+\verb|/timesync| endpoint). The Group Visualizer reference page can connect to this server.
+
+\subsection{Testing Timing Fidelity}
+
+Acceptance criteria for production entrainment: mean deviation $<5$ ms, max deviation $<20$ ms,
+and jitter $<3$ ms, measured against scheduled click times.
+
+\subsection{Quick Start (Demo)}
+
+\begin{enumerate}[leftmargin=2em]
+  \item Serve static files (any simple server):
+  \begin{verbatim}
+  python3 -m http.server 8080
+  # open http://localhost:8080/Aces-Brain-Thoughts/examples/rhythm-entrainment/index.html
+  \end{verbatim}
+  \item (Optional) Start rhythm server with timesync + rooms:
+  \begin{verbatim}
+  npm i express ws timesync
+  node Aces-Brain-Thoughts/examples/rhythm-server.js
+  \end{verbatim}
+  \item Click \verb|Start|, adjust BPM and coupling K. Connect a BLE heart rate device on HTTPS
+        builds to map HR→BPM for a quick demo.
+\end{enumerate}
+
+\subsection{COOP/COEP for SharedArrayBuffer}
+
+If using \verb|SharedArrayBuffer|, serve with:
+\begin{verbatim}
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+\end{verbatim}
+The demo defaults to message-passing so it runs on simple servers without cross-origin isolation.
+
+\subsection{Implementation Roadmap}
+
+Weeks 1–2: timing + AudioWorklet; 3–4: Kuramoto; 5–6: HRV + keystrokes; 7–8: adaptive coupling; 9–10:
+multi-modal output; 11–12: networking; 13–14: tests and optimization.
+
 \textbf{Typical outcome:} Spheres, isotropic packing
 
 \textbf{Examples:}

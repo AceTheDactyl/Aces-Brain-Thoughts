@@ -1,6 +1,8 @@
 # Group Visualizer — Minimal WebSocket Server
 
 This folder contains two servers to test `group_visualizer.html` locally.
+It also includes a minimal browser demo of the rhythm entrainment architecture under
+`examples/rhythm-entrainment/`.
 
 ## Quick Start
 
@@ -58,3 +60,23 @@ The server exposes:
 - `GET /healthz` → health JSON
 
 For NTP-style sync, use `rhythm-server.js` and point the visualizer at `ws://localhost:8080/rhythm-sync?room=latest` (or another room). The visualizer derives the `/timesync` URL from the WS host automatically on Connect.
+
+## Rhythm Entrainment Demo
+
+Open the demo page via any static server:
+
+```
+python3 -m http.server 8080
+# then open http://localhost:8080/Aces-Brain-Thoughts/examples/rhythm-entrainment/index.html
+```
+
+- Start/Stop: runs the AudioWorklet beat source and Kuramoto Worker
+- BPM: adjusts frames-per-beat inside the worklet
+- K: sets global coupling strength in the Worker
+- Connect HR Monitor: maps BLE heart rate to BPM (requires HTTPS)
+
+Files:
+- `examples/rhythm-entrainment/index.html` – UI and controls
+- `examples/rhythm-entrainment/app.js` – wiring of AudioWorklet + Worker + UI
+- `examples/rhythm-entrainment/timing-worklet.js` – sample-accurate beat notifications
+- `examples/rhythm-entrainment/kuramoto-worker.js` – mean-field Kuramoto solver
