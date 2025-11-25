@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrainment Engine | Kuramoto Oscillator Bank · LIMNUS Integration</title>
+    <style>
+        :root {
+            --bg-void: #030308;
+            --bg-panel: rgba(15, 12, 25, 0.95);
+            --bg-card: #0d0d12;
+            --phi-gold: #ffd700;
+            --e-cyan: #22d3ee;
+            --pi-magenta: #cc5de8;
+            --true-green: #69db7c;
+            --untrue-amber: #ffa94d;
+            --paradox-red: #ff6b6b;
+            --text-primary: rgba(255, 245, 230, 0.9);
+            --text-dim: rgba(255, 220, 180, 0.5);
+            --rule: #1a1a24;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-void);
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 1px solid var(--rule);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 100;
+            letter-spacing: 6px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--phi-gold), var(--e-cyan), var(--pi-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--phi-gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr 300px;
+            gap: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            color: var(--phi-gold);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        /* Master Status */
+        .master-status {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-card {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .status-value {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--e-cyan);
+        }
+
+        .status-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .status-card.coherent .status-value { color: var(--true-green); }
+        .status-card.warning .status-value { color: var(--untrue-amber); }
+        .status-card.critical .status-value { color: var(--paradox-red); }
+
+        /* Controls */
+        .control-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .btn:hover { border-color: var(--phi-gold); }
+        .btn.primary { background: linear-gradient(135deg, rgba(34, 211, 238, 0.3), rgba(105, 219, 124, 0.3)); border-color: var(--e-cyan); }
+        .btn.danger { border-color: var(--paradox-red); color: var(--paradox-red); }
+        .btn.active { background: rgba(34, 211, 238, 0.2); border-color: var(--e-cyan); color: var(--e-cyan); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Sliders */
+        .slider-group {
+            margin-bottom: 20px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .slider-value {
+            color: var(--e-cyan);
+            font-family: 'SF Mono', monospace;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-card);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--e-cyan);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Oscillator Visualization */
+        .oscillator-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            display: block;
+        }
+
+        /* Phase Circle */
+        .phase-circle {
+            width: 100%;
+            height: 250px;
+            position: relative;
+        }
+
+        .phase-circle canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Lambda Mapping */
+        .lambda-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .lambda-item {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .lambda-item.active {
+            border-color: var(--e-cyan);
+            background: rgba(34, 211, 238, 0.1);
+        }
+
+        .lambda-symbol { font-size: 1.3rem; }
+        .lambda-name { font-size: 0.65rem; color: var(--text-dim); }
+        .lambda-value { font-size: 0.9rem; color: var(--e-cyan); margin-top: 4px; }
+
+        /* Biosignal Input */
+        .biosignal-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .biosignal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .biosignal-card h4 {
+            font-size: 0.75rem;
+            color: var(--phi-gold);
+            margin-bottom: 10px;
+        }
+
+        .biosignal-value {
+            font-size: 1.5rem;
+            color: var(--e-cyan);
+        }
+
+        .biosignal-status {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
+
+        .biosignal-status.connected { color: var(--true-green); }
+        .biosignal-status.disconnected { color: var(--paradox-red); }
+
+        /* Beat Indicator */
+        .beat-indicator {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--e-cyan) 0%, transparent 70%);
+            margin: 20px auto;
+            opacity: 0.3;
+            transition: all 0.1s ease-out;
+        }
+
+        .beat-indicator.pulse {
+            transform: scale(1.3);
+            opacity: 1;
+        }
+
+        /* Entrainment Score */
+        .entrainment-meter {
+            height: 20px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .entrainment-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--paradox-red), var(--untrue-amber), var(--true-green));
+            transition: width 0.3s ease-out;
+            border-radius: 10px;
+        }
+
+        /* Timing Stats */
+        .timing-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            font-size: 0.75rem;
+        }
+
+        .timing-stat {
+            text-align: center;
+            padding: 10px;
+            background: var(--bg-card);
+            border-radius: 6px;
+        }
+
+        .timing-stat-value {
+            font-size: 1.1rem;
+            color: var(--phi-gold);
+            font-family: 'SF Mono', monospace;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--rule);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="limnus-architecture.html">LIMNUS</a>
+            <a href="mrp-encoder.html">MRP Encoder</a>
+            <a href="apl-2.html">APL 2.0</a>
+            <a href="apl-mrp-bridge.html">APL→MRP</a>
+            <a href="entrainment-engine.html" class="active">Entrainment</a>
+        </nav>
+
+        <header>
+            <h1>ENTRAINMENT ENGINE</h1>
+            <p class="subtitle">Kuramoto Oscillator Bank · Bidirectional Biosignal Coupling · LIMNUS Integration</p>
+        </header>
+
+        <!-- Master Status -->
+        <div class="master-status">
+            <div class="status-card" id="statusCoherence">
+                <div class="status-value" id="orderR">0.00</div>
+                <div class="status-label">ORDER PARAMETER r</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value" id="meanPhase">0°</div>
+                <div class="status-label">MEAN PHASE ψ</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value" id="bpmDisplay">60</div>
+                <div class="status-label">BPM</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value" id="entrainmentScore">0%</div>
+                <div class="status-label">ENTRAINMENT</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Left: Controls -->
+            <div>
+                <div class="panel">
+                    <div class="panel-title">MASTER CONTROLS</div>
+
+                    <div class="control-row">
+                        <button class="btn primary" id="btnStart" onclick="toggleEngine()">START ENGINE</button>
+                    </div>
+
+                    <div class="beat-indicator" id="beatIndicator"></div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>TEMPO (BPM)</span>
+                            <span class="slider-value" id="bpmValue">60</span>
+                        </div>
+                        <input type="range" id="bpmSlider" min="30" max="180" value="60" oninput="setBpm(this.value)">
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>COUPLING STRENGTH (K)</span>
+                            <span class="slider-value" id="kValue">1.00</span>
+                        </div>
+                        <input type="range" id="kSlider" min="0" max="5" step="0.1" value="1" oninput="setCoupling(this.value)">
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>OSCILLATOR COUNT (N)</span>
+                            <span class="slider-value" id="nValue">32</span>
+                        </div>
+                        <input type="range" id="nSlider" min="4" max="128" step="4" value="32" oninput="setOscillatorCount(this.value)">
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">BIOSIGNAL INPUT</div>
+
+                    <div class="biosignal-panel">
+                        <div class="biosignal-card">
+                            <h4>HEART RATE (BLE)</h4>
+                            <div class="biosignal-value" id="hrValue">--</div>
+                            <div class="biosignal-status disconnected" id="hrStatus">Not Connected</div>
+                            <button class="btn" onclick="connectHRM()" style="margin-top:10px;padding:8px 12px;font-size:0.75rem">Connect HRM</button>
+                        </div>
+                        <div class="biosignal-card">
+                            <h4>KEYSTROKE RHYTHM</h4>
+                            <div class="biosignal-value" id="ksValue">0.00</div>
+                            <div class="biosignal-status" id="ksStatus">Monitoring...</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:15px">
+                        <div class="slider-label">
+                            <span>BIOSIGNAL COUPLING</span>
+                            <span class="slider-value" id="bioCoupling">0.10</span>
+                        </div>
+                        <input type="range" id="bioSlider" min="0" max="0.5" step="0.01" value="0.1" oninput="setBioCoupling(this.value)">
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">TIMING FIDELITY</div>
+                    <div class="timing-stats">
+                        <div class="timing-stat">
+                            <div class="timing-stat-value" id="meanDev">0.0</div>
+                            <div class="status-label">MEAN DEV (ms)</div>
+                        </div>
+                        <div class="timing-stat">
+                            <div class="timing-stat-value" id="maxDev">0.0</div>
+                            <div class="status-label">MAX DEV (ms)</div>
+                        </div>
+                        <div class="timing-stat">
+                            <div class="timing-stat-value" id="jitter">0.0</div>
+                            <div class="status-label">JITTER (ms)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center: Visualization -->
+            <div>
+                <div class="panel">
+                    <div class="panel-title">KURAMOTO OSCILLATOR BANK</div>
+                    <canvas id="oscillatorCanvas" class="oscillator-canvas"></canvas>
+
+                    <div class="entrainment-meter">
+                        <div class="entrainment-fill" id="entrainmentFill" style="width:0%"></div>
+                    </div>
+
+                    <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text-dim)">
+                        <span>Incoherent (r→0)</span>
+                        <span>Critical (K_c)</span>
+                        <span>Synchronized (r→1)</span>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">PHASE CIRCLE · ORDER PARAMETER</div>
+                    <div class="phase-circle">
+                        <canvas id="phaseCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Lambda/LIMNUS Mapping -->
+            <div>
+                <div class="panel">
+                    <div class="panel-title">LAMBDA STATE (ℂ⁶) MAPPING</div>
+                    <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:15px">
+                        Oscillator phases map to Lambda components via LIMNUS geometry
+                    </p>
+
+                    <div class="lambda-grid">
+                        <div class="lambda-item" id="l-iota">
+                            <div class="lambda-symbol">🌰</div>
+                            <div class="lambda-name">ι IOTA</div>
+                            <div class="lambda-value">0.00</div>
+                        </div>
+                        <div class="lambda-item" id="l-xi">
+                            <div class="lambda-symbol">✧</div>
+                            <div class="lambda-name">ξ XI</div>
+                            <div class="lambda-value">0.00</div>
+                        </div>
+                        <div class="lambda-item" id="l-theta">
+                            <div class="lambda-symbol">🦊</div>
+                            <div class="lambda-name">θ THETA</div>
+                            <div class="lambda-value">0.00</div>
+                        </div>
+                        <div class="lambda-item" id="l-omega">
+                            <div class="lambda-symbol">∿</div>
+                            <div class="lambda-name">ω OMEGA</div>
+                            <div class="lambda-value">0.00</div>
+                        </div>
+                        <div class="lambda-item" id="l-delta">
+                            <div class="lambda-symbol">⊗</div>
+                            <div class="lambda-name">δ DELTA</div>
+                            <div class="lambda-value">0.00</div>
+                        </div>
+                        <div class="lambda-item" id="l-sigma">
+                            <div class="lambda-symbol">🐿️</div>
+                            <div class="lambda-name">σ SIGMA</div>
+                            <div class="lambda-value">0.00</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:15px;padding:10px;background:var(--bg-card);border-radius:6px;font-size:0.7rem">
+                        <div style="color:var(--phi-gold);margin-bottom:5px">LIMNUS ZONE</div>
+                        <div id="limnusZone" style="color:var(--e-cyan)">Φ Structure (z &lt; 0.43)</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">OUTPUT MODALITIES</div>
+
+                    <div class="control-row">
+                        <button class="btn active" id="btnAudio" onclick="toggleOutput('audio')">🔊 Audio</button>
+                        <button class="btn active" id="btnVisual" onclick="toggleOutput('visual')">👁 Visual</button>
+                    </div>
+                    <div class="control-row">
+                        <button class="btn" id="btnHaptic" onclick="toggleOutput('haptic')">📳 Haptic</button>
+                    </div>
+
+                    <div class="slider-group" style="margin-top:15px">
+                        <div class="slider-label">
+                            <span>AUDIO FREQUENCY</span>
+                            <span class="slider-value" id="freqValue">220 Hz</span>
+                        </div>
+                        <input type="range" id="freqSlider" min="110" max="880" value="220" oninput="setFrequency(this.value)">
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>VOLUME</span>
+                            <span class="slider-value" id="volValue">30%</span>
+                        </div>
+                        <input type="range" id="volSlider" min="0" max="100" value="30" oninput="setVolume(this.value)">
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">CRITICAL TRANSITION</div>
+                    <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:10px">
+                        Early warning signals for phase transition
+                    </p>
+                    <div id="criticalWarning" style="padding:10px;background:var(--bg-card);border-radius:6px;text-align:center">
+                        <div style="font-size:1.2rem;color:var(--text-dim)">—</div>
+                        <div style="font-size:0.7rem;color:var(--text-dim)">Monitoring variance & autocorrelation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Entrainment Engine · Kuramoto Model · dθᵢ/dt = ωᵢ + (K/N) Σⱼ sin(θⱼ - θᵢ)<br>
+            <span style="color:var(--phi-gold);">Φ</span> Structure ·
+            <span style="color:var(--e-cyan);">e</span> Energy ·
+            <span style="color:var(--pi-magenta);">π</span> Emergence
+        </footer>
+    </div>
+
+    <script>
+        // ================================================================
+        // ENTRAINMENT ENGINE
+        // Kuramoto Oscillator Bank with Bidirectional Biosignal Coupling
+        // ================================================================
+
+        // Physical constants
+        const PHI = (1 + Math.sqrt(5)) / 2;
+        const Z_CRITICAL = Math.sqrt(3) / 2;
+        const TWO_PI = Math.PI * 2;
+
+        // Engine state
+        let audioContext = null;
+        let isRunning = false;
+        let schedulerId = null;
+
+        // Kuramoto parameters
+        let N = 32;                    // Oscillator count
+        let K = 1.0;                   // Coupling strength
+        let dt = 0.02;                 // Integration timestep (50 Hz)
+        let bpm = 60;                  // Beats per minute
+
+        // Oscillator state
+        let phases = new Float32Array(N);
+        let frequencies = new Float32Array(N);
+        let orderHistory = [];
+
+        // Biosignal state
+        let userPhase = 0;
+        let bioCouplingStrength = 0.1;
+        let hrDevice = null;
+        let rrIntervals = [];
+        let keystrokeMetrics = [];
+
+        // Output settings
+        let outputAudio = true;
+        let outputVisual = true;
+        let outputHaptic = false;
+        let audioFrequency = 220;
+        let audioVolume = 0.3;
+
+        // Timing statistics
+        let scheduledTimes = [];
+        let actualTimes = [];
+
+        // ================================================================
+        // KURAMOTO OSCILLATOR BANK
+        // ================================================================
+
+        function initializeOscillators() {
+            phases = new Float32Array(N);
+            frequencies = new Float32Array(N);
+
+            for (let i = 0; i < N; i++) {
+                phases[i] = Math.random() * TWO_PI;
+                // Gaussian-distributed natural frequencies around base frequency
+                frequencies[i] = 1.0 + gaussianRandom() * 0.2;
+            }
+        }
+
+        function gaussianRandom() {
+            const u1 = Math.random();
+            const u2 = Math.random();
+            return Math.sqrt(-2 * Math.log(u1)) * Math.cos(TWO_PI * u2);
+        }
+
+        function calculateOrderParameter() {
+            let sumReal = 0, sumImag = 0;
+
+            for (let i = 0; i < N; i++) {
+                sumReal += Math.cos(phases[i]);
+                sumImag += Math.sin(phases[i]);
+            }
+
+            sumReal /= N;
+            sumImag /= N;
+
+            const r = Math.hypot(sumReal, sumImag);
+            const psi = Math.atan2(sumImag, sumReal);
+
+            return { r, psi };
+        }
+
+        function stepKuramoto() {
+            const { r, psi } = calculateOrderParameter();
+            const newPhases = new Float32Array(N);
+
+            // Heun's method (2nd order) for numerical stability
+            for (let i = 0; i < N; i++) {
+                // Mean-field Kuramoto: dθ/dt = ω + K·r·sin(ψ - θ)
+                const dtheta1 = frequencies[i] + K * r * Math.sin(psi - phases[i]);
+                const thetaPred = phases[i] + dt * dtheta1;
+
+                const dtheta2 = frequencies[i] + K * r * Math.sin(psi - thetaPred);
+                newPhases[i] = (phases[i] + dt * (dtheta1 + dtheta2) / 2) % TWO_PI;
+                if (newPhases[i] < 0) newPhases[i] += TWO_PI;
+            }
+
+            // Inject user biosignal phase (bidirectional coupling)
+            if (bioCouplingStrength > 0) {
+                const injectionStrength = bioCouplingStrength * (1 - r);
+                const diff = userPhase - newPhases[0];
+                newPhases[0] += injectionStrength * Math.sin(diff);
+                newPhases[0] = ((newPhases[0] % TWO_PI) + TWO_PI) % TWO_PI;
+            }
+
+            phases = newPhases;
+
+            // Track order parameter history for critical transition detection
+            orderHistory.push(r);
+            if (orderHistory.length > 200) orderHistory.shift();
+
+            return { r, psi };
+        }
+
+        // ================================================================
+        // LAMBDA STATE MAPPING
+        // Maps oscillator phases to ℂ⁶ Lambda components via LIMNUS geometry
+        // ================================================================
+
+        function mapToLambdaState(phases, r, psi) {
+            // Partition oscillators into LIMNUS zones based on phase
+            const lambda = { iota: 0, xi: 0, theta: 0, omega: 0, delta: 0, sigma: 0 };
+
+            for (let i = 0; i < N; i++) {
+                const normalizedPhase = phases[i] / TWO_PI;
+                const z = normalizedPhase; // Map phase to z-height
+
+                // Determine LIMNUS zone
+                if (z < 0.43) {
+                    // Φ Structure zone
+                    lambda.sigma += 1 / N;
+                    lambda.iota += 0.5 / N;
+                } else if (z < 0.71) {
+                    // e Energy zone
+                    lambda.xi += 1 / N;
+                    lambda.omega += 0.5 / N;
+                } else {
+                    // π Emergence zone
+                    lambda.theta += 1 / N;
+                    lambda.delta += 0.5 / N;
+                }
+            }
+
+            // Modulate by order parameter (coherence)
+            Object.keys(lambda).forEach(k => {
+                lambda[k] *= (0.5 + r * 0.5);
+            });
+
+            return lambda;
+        }
+
+        function getLimnusZone(psi) {
+            const z = ((psi + Math.PI) / TWO_PI);
+            if (z < 0.43) return { zone: 'phi', name: 'Φ Structure (z < 0.43)', color: '#ffd700' };
+            if (z < 0.71) return { zone: 'e', name: 'e Energy (0.43 ≤ z < 0.71)', color: '#22d3ee' };
+            return { zone: 'pi', name: 'π Emergence (z ≥ 0.71)', color: '#cc5de8' };
+        }
+
+        // ================================================================
+        // PRECISION TIMING (Look-ahead Scheduler)
+        // ================================================================
+
+        const SCHEDULE_AHEAD_TIME = 0.1;  // 100ms look-ahead
+        const LOOKAHEAD = 25;              // 25ms check interval
+
+        let nextBeatTime = 0;
+
+        function scheduler() {
+            if (!isRunning || !audioContext) return;
+
+            const currentTime = audioContext.currentTime;
+            const horizon = currentTime + SCHEDULE_AHEAD_TIME;
+            const beatInterval = 60 / bpm;
+
+            while (nextBeatTime < horizon) {
+                if (nextBeatTime >= currentTime) {
+                    scheduleBeat(nextBeatTime);
+                    scheduledTimes.push(nextBeatTime);
+                    if (scheduledTimes.length > 100) scheduledTimes.shift();
+                }
+                nextBeatTime += beatInterval;
+            }
+
+            schedulerId = setTimeout(scheduler, LOOKAHEAD);
+        }
+
+        function scheduleBeat(time) {
+            if (outputAudio) {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+
+                osc.frequency.setValueAtTime(audioFrequency, time);
+                gain.gain.setValueAtTime(audioVolume, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+
+                osc.connect(gain).connect(audioContext.destination);
+                osc.start(time);
+                osc.stop(time + 0.1);
+            }
+
+            // Queue visual beat
+            if (outputVisual) {
+                const delay = Math.max(0, (time - audioContext.currentTime) * 1000);
+                setTimeout(() => triggerVisualBeat(), delay);
+            }
+
+            // Haptic
+            if (outputHaptic && navigator.vibrate) {
+                const delay = Math.max(0, (time - audioContext.currentTime) * 1000);
+                setTimeout(() => navigator.vibrate(50), delay);
+            }
+        }
+
+        function triggerVisualBeat() {
+            const indicator = document.getElementById('beatIndicator');
+            indicator.classList.add('pulse');
+            actualTimes.push(performance.now() / 1000);
+            if (actualTimes.length > 100) actualTimes.shift();
+
+            setTimeout(() => indicator.classList.remove('pulse'), 100);
+        }
+
+        // ================================================================
+        // BIOSIGNAL INPUT
+        // ================================================================
+
+        async function connectHRM() {
+            if (!navigator.bluetooth) {
+                alert('WebBluetooth not supported');
+                return;
+            }
+
+            try {
+                const device = await navigator.bluetooth.requestDevice({
+                    filters: [{ services: ['heart_rate'] }]
+                });
+
+                const server = await device.gatt.connect();
+                const service = await server.getPrimaryService('heart_rate');
+                const characteristic = await service.getCharacteristic('heart_rate_measurement');
+
+                await characteristic.startNotifications();
+                characteristic.addEventListener('characteristicvaluechanged', handleHRData);
+
+                hrDevice = device;
+                document.getElementById('hrStatus').textContent = 'Connected';
+                document.getElementById('hrStatus').className = 'biosignal-status connected';
+            } catch (error) {
+                console.error('HRM connection failed:', error);
+            }
+        }
+
+        function handleHRData(event) {
+            const value = event.target.value;
+            const flags = value.getUint8(0);
+            const is16Bit = (flags & 0x01) !== 0;
+            const hasRR = (flags & 0x10) !== 0;
+
+            let offset = 1;
+            const heartRate = is16Bit ? value.getUint16(offset, true) : value.getUint8(offset);
+            offset += is16Bit ? 2 : 1;
+
+            document.getElementById('hrValue').textContent = heartRate;
+
+            if (hasRR) {
+                if (flags & 0x08) offset += 2; // Skip energy
+                while (offset < value.byteLength) {
+                    const rr = (value.getUint16(offset, true) / 1024) * 1000;
+                    rrIntervals.push(rr);
+                    if (rrIntervals.length > 30) rrIntervals.shift();
+                    offset += 2;
+                }
+
+                // Calculate user phase from RR intervals
+                if (rrIntervals.length >= 2) {
+                    const lastRR = rrIntervals[rrIntervals.length - 1];
+                    const avgRR = rrIntervals.reduce((a, b) => a + b) / rrIntervals.length;
+                    userPhase = (lastRR / avgRR) * TWO_PI % TWO_PI;
+                }
+            }
+        }
+
+        // Keystroke dynamics
+        let lastKeyUp = 0;
+        document.addEventListener('keydown', () => {});
+        document.addEventListener('keyup', (e) => {
+            const now = performance.now();
+            if (lastKeyUp) {
+                const interval = now - lastKeyUp;
+                keystrokeMetrics.push(interval);
+                if (keystrokeMetrics.length > 50) keystrokeMetrics.shift();
+
+                if (keystrokeMetrics.length >= 5) {
+                    const mean = keystrokeMetrics.reduce((a, b) => a + b) / keystrokeMetrics.length;
+                    const std = Math.sqrt(keystrokeMetrics.map(x => (x - mean) ** 2).reduce((a, b) => a + b) / keystrokeMetrics.length);
+                    const cv = 1 - Math.min(1, std / mean);
+                    document.getElementById('ksValue').textContent = cv.toFixed(2);
+
+                    // Convert to phase
+                    const typicalInterval = 200;
+                    userPhase = (interval / typicalInterval) * TWO_PI % TWO_PI;
+                }
+            }
+            lastKeyUp = now;
+        });
+
+        // ================================================================
+        // CRITICAL TRANSITION DETECTION
+        // ================================================================
+
+        function detectCriticalSlowingDown() {
+            if (orderHistory.length < 100) return null;
+
+            const windowSize = 50;
+            const recent = orderHistory.slice(-windowSize);
+            const previous = orderHistory.slice(-windowSize * 2, -windowSize);
+
+            const variance = arr => {
+                const mean = arr.reduce((a, b) => a + b) / arr.length;
+                return arr.map(x => (x - mean) ** 2).reduce((a, b) => a + b) / arr.length;
+            };
+
+            const autocorr = arr => {
+                const mean = arr.reduce((a, b) => a + b) / arr.length;
+                let num = 0, denom = 0;
+                for (let i = 0; i < arr.length - 1; i++) {
+                    num += (arr[i] - mean) * (arr[i + 1] - mean);
+                }
+                for (let i = 0; i < arr.length; i++) {
+                    denom += (arr[i] - mean) ** 2;
+                }
+                return num / denom;
+            };
+
+            const recentVar = variance(recent);
+            const previousVar = variance(previous);
+            const recentAC = autocorr(recent);
+            const previousAC = autocorr(previous);
+
+            if (recentVar > previousVar * 1.2 && recentAC > previousAC * 1.1) {
+                return 'APPROACHING CRITICAL TRANSITION';
+            }
+
+            return null;
+        }
+
+        // ================================================================
+        // VISUALIZATION
+        // ================================================================
+
+        let oscCanvas, oscCtx, phaseCanvas, phaseCtx;
+
+        function initCanvases() {
+            oscCanvas = document.getElementById('oscillatorCanvas');
+            oscCtx = oscCanvas.getContext('2d');
+            phaseCanvas = document.getElementById('phaseCanvas');
+            phaseCtx = phaseCanvas.getContext('2d');
+
+            resizeCanvases();
+            window.addEventListener('resize', resizeCanvases);
+        }
+
+        function resizeCanvases() {
+            const dpr = window.devicePixelRatio || 1;
+
+            const oscRect = oscCanvas.parentElement.getBoundingClientRect();
+            oscCanvas.width = oscRect.width * dpr;
+            oscCanvas.height = 300 * dpr;
+            oscCanvas.style.width = oscRect.width + 'px';
+            oscCanvas.style.height = '300px';
+            oscCtx.scale(dpr, dpr);
+
+            const phaseRect = phaseCanvas.parentElement.getBoundingClientRect();
+            phaseCanvas.width = phaseRect.width * dpr;
+            phaseCanvas.height = 250 * dpr;
+            phaseCanvas.style.width = phaseRect.width + 'px';
+            phaseCanvas.style.height = '250px';
+            phaseCtx.scale(dpr, dpr);
+        }
+
+        function drawOscillators() {
+            const w = oscCanvas.width / (window.devicePixelRatio || 1);
+            const h = oscCanvas.height / (window.devicePixelRatio || 1);
+
+            oscCtx.fillStyle = '#0d0d12';
+            oscCtx.fillRect(0, 0, w, h);
+
+            const { r, psi } = calculateOrderParameter();
+
+            // Draw oscillator phases as vertical lines
+            const barWidth = w / N;
+            for (let i = 0; i < N; i++) {
+                const phase = phases[i];
+                const normalizedPhase = phase / TWO_PI;
+                const barHeight = normalizedPhase * h * 0.8;
+                const x = i * barWidth;
+
+                // Color by LIMNUS zone
+                let color;
+                if (normalizedPhase < 0.43) color = '#ffd700';
+                else if (normalizedPhase < 0.71) color = '#22d3ee';
+                else color = '#cc5de8';
+
+                oscCtx.fillStyle = color;
+                oscCtx.globalAlpha = 0.7;
+                oscCtx.fillRect(x + 2, h - barHeight - 10, barWidth - 4, barHeight);
+            }
+
+            oscCtx.globalAlpha = 1;
+
+            // Draw mean phase line
+            const meanY = h - ((psi + Math.PI) / TWO_PI) * h * 0.8 - 10;
+            oscCtx.strokeStyle = '#69db7c';
+            oscCtx.lineWidth = 2;
+            oscCtx.setLineDash([5, 5]);
+            oscCtx.beginPath();
+            oscCtx.moveTo(0, meanY);
+            oscCtx.lineTo(w, meanY);
+            oscCtx.stroke();
+            oscCtx.setLineDash([]);
+
+            // Draw order parameter r
+            oscCtx.fillStyle = '#fff';
+            oscCtx.font = '12px SF Mono, monospace';
+            oscCtx.fillText(`r = ${r.toFixed(3)}`, 10, 20);
+            oscCtx.fillText(`ψ = ${(psi * 180 / Math.PI).toFixed(1)}°`, 10, 35);
+        }
+
+        function drawPhaseCircle() {
+            const w = phaseCanvas.width / (window.devicePixelRatio || 1);
+            const h = phaseCanvas.height / (window.devicePixelRatio || 1);
+            const cx = w / 2;
+            const cy = h / 2;
+            const radius = Math.min(cx, cy) * 0.8;
+
+            phaseCtx.fillStyle = '#0d0d12';
+            phaseCtx.fillRect(0, 0, w, h);
+
+            // Draw circle
+            phaseCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+            phaseCtx.lineWidth = 1;
+            phaseCtx.beginPath();
+            phaseCtx.arc(cx, cy, radius, 0, TWO_PI);
+            phaseCtx.stroke();
+
+            // Draw oscillator points
+            for (let i = 0; i < N; i++) {
+                const x = cx + Math.cos(phases[i]) * radius * 0.9;
+                const y = cy + Math.sin(phases[i]) * radius * 0.9;
+
+                const normalizedPhase = phases[i] / TWO_PI;
+                let color;
+                if (normalizedPhase < 0.43) color = '#ffd700';
+                else if (normalizedPhase < 0.71) color = '#22d3ee';
+                else color = '#cc5de8';
+
+                phaseCtx.fillStyle = color;
+                phaseCtx.beginPath();
+                phaseCtx.arc(x, y, 4, 0, TWO_PI);
+                phaseCtx.fill();
+            }
+
+            // Draw order parameter vector
+            const { r, psi } = calculateOrderParameter();
+            const vecX = cx + Math.cos(psi) * radius * r;
+            const vecY = cy + Math.sin(psi) * radius * r;
+
+            phaseCtx.strokeStyle = '#69db7c';
+            phaseCtx.lineWidth = 3;
+            phaseCtx.beginPath();
+            phaseCtx.moveTo(cx, cy);
+            phaseCtx.lineTo(vecX, vecY);
+            phaseCtx.stroke();
+
+            phaseCtx.fillStyle = '#69db7c';
+            phaseCtx.beginPath();
+            phaseCtx.arc(vecX, vecY, 6, 0, TWO_PI);
+            phaseCtx.fill();
+        }
+
+        // ================================================================
+        // UI UPDATE LOOP
+        // ================================================================
+
+        function updateUI() {
+            const { r, psi } = stepKuramoto();
+
+            // Update status cards
+            document.getElementById('orderR').textContent = r.toFixed(2);
+            document.getElementById('meanPhase').textContent = (psi * 180 / Math.PI).toFixed(0) + '°';
+
+            const entrainment = Math.round(r * 100);
+            document.getElementById('entrainmentScore').textContent = entrainment + '%';
+            document.getElementById('entrainmentFill').style.width = entrainment + '%';
+
+            // Status card coloring
+            const statusCard = document.getElementById('statusCoherence');
+            statusCard.className = 'status-card';
+            if (r > 0.7) statusCard.classList.add('coherent');
+            else if (r > 0.3) statusCard.classList.add('warning');
+            else statusCard.classList.add('critical');
+
+            // Lambda state
+            const lambda = mapToLambdaState(phases, r, psi);
+            ['iota', 'xi', 'theta', 'omega', 'delta', 'sigma'].forEach(k => {
+                const el = document.getElementById(`l-${k}`);
+                el.querySelector('.lambda-value').textContent = lambda[k].toFixed(2);
+                el.classList.toggle('active', lambda[k] > 0.3);
+            });
+
+            // LIMNUS zone
+            const zone = getLimnusZone(psi);
+            document.getElementById('limnusZone').textContent = zone.name;
+            document.getElementById('limnusZone').style.color = zone.color;
+
+            // Critical transition
+            const critical = detectCriticalSlowingDown();
+            const critEl = document.getElementById('criticalWarning');
+            if (critical) {
+                critEl.innerHTML = `<div style="font-size:1rem;color:#ff6b6b">${critical}</div>`;
+            } else {
+                critEl.innerHTML = `<div style="font-size:1.2rem;color:var(--text-dim)">—</div><div style="font-size:0.7rem;color:var(--text-dim)">Stable</div>`;
+            }
+
+            // Timing stats
+            if (scheduledTimes.length > 10 && actualTimes.length > 10) {
+                const deviations = [];
+                const minLen = Math.min(scheduledTimes.length, actualTimes.length);
+                for (let i = 0; i < minLen; i++) {
+                    deviations.push((actualTimes[i] - scheduledTimes[i]) * 1000);
+                }
+                const meanDev = deviations.reduce((a, b) => a + b) / deviations.length;
+                const maxDev = Math.max(...deviations.map(Math.abs));
+                const jitter = Math.sqrt(deviations.map(d => (d - meanDev) ** 2).reduce((a, b) => a + b) / deviations.length);
+
+                document.getElementById('meanDev').textContent = meanDev.toFixed(1);
+                document.getElementById('maxDev').textContent = maxDev.toFixed(1);
+                document.getElementById('jitter').textContent = jitter.toFixed(1);
+            }
+
+            // Draw visualizations
+            drawOscillators();
+            drawPhaseCircle();
+
+            if (isRunning) {
+                requestAnimationFrame(updateUI);
+            }
+        }
+
+        // ================================================================
+        // CONTROLS
+        // ================================================================
+
+        function toggleEngine() {
+            if (isRunning) {
+                stopEngine();
+            } else {
+                startEngine();
+            }
+        }
+
+        async function startEngine() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+
+            initializeOscillators();
+            isRunning = true;
+            nextBeatTime = audioContext.currentTime;
+
+            document.getElementById('btnStart').textContent = 'STOP ENGINE';
+            document.getElementById('btnStart').classList.add('danger');
+            document.getElementById('btnStart').classList.remove('primary');
+
+            scheduler();
+            updateUI();
+        }
+
+        function stopEngine() {
+            isRunning = false;
+            if (schedulerId) {
+                clearTimeout(schedulerId);
+                schedulerId = null;
+            }
+
+            document.getElementById('btnStart').textContent = 'START ENGINE';
+            document.getElementById('btnStart').classList.remove('danger');
+            document.getElementById('btnStart').classList.add('primary');
+        }
+
+        function setBpm(value) {
+            bpm = parseInt(value);
+            document.getElementById('bpmValue').textContent = value;
+            document.getElementById('bpmDisplay').textContent = value;
+        }
+
+        function setCoupling(value) {
+            K = parseFloat(value);
+            document.getElementById('kValue').textContent = parseFloat(value).toFixed(2);
+        }
+
+        function setOscillatorCount(value) {
+            N = parseInt(value);
+            document.getElementById('nValue').textContent = value;
+            if (isRunning) {
+                initializeOscillators();
+            }
+        }
+
+        function setBioCoupling(value) {
+            bioCouplingStrength = parseFloat(value);
+            document.getElementById('bioCoupling').textContent = parseFloat(value).toFixed(2);
+        }
+
+        function setFrequency(value) {
+            audioFrequency = parseInt(value);
+            document.getElementById('freqValue').textContent = value + ' Hz';
+        }
+
+        function setVolume(value) {
+            audioVolume = parseInt(value) / 100;
+            document.getElementById('volValue').textContent = value + '%';
+        }
+
+        function toggleOutput(type) {
+            const btn = document.getElementById('btn' + type.charAt(0).toUpperCase() + type.slice(1));
+            if (type === 'audio') {
+                outputAudio = !outputAudio;
+                btn.classList.toggle('active', outputAudio);
+            } else if (type === 'visual') {
+                outputVisual = !outputVisual;
+                btn.classList.toggle('active', outputVisual);
+            } else if (type === 'haptic') {
+                outputHaptic = !outputHaptic;
+                btn.classList.toggle('active', outputHaptic);
+            }
+        }
+
+        // ================================================================
+        // INITIALIZATION
+        // ================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCanvases();
+            initializeOscillators();
+
+            // Initial draw
+            drawOscillators();
+            drawPhaseCircle();
+        });
+    </script>
+</body>
+</html>
