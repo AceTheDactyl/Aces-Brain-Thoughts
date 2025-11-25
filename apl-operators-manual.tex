@@ -17,6 +17,10 @@
 \newunicodechar{┼}{+}
 \newunicodechar{├}{+}
 \newunicodechar{┤}{+}
+% Arrows and markers used in diagrams
+\newunicodechar{◄}{<}
+\newunicodechar{►}{>}
+\newunicodechar{▼}{v}
 \usepackage{microtype}
 \usepackage{amsmath,amssymb}
 \usepackage{hyperref}
@@ -887,7 +891,7 @@ registerProcessor('timing-processor', TimingWorkletProcessor);
 \subsection{Kuramoto Oscillator Bank}
 
 The Kuramoto mean-field form is used for coupled phase dynamics. The Worker updates phases and
-returns the order parameter \verb|r| and mean phase \verb|ψ|.
+returns the order parameter $r$ and mean phase $\psi$.
 
 \paragraph{Worker step (from \texttt{examples/rhythm-entrainment/kuramoto-worker.js}).}
 
