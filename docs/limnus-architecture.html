@@ -1086,13 +1086,17 @@
                     // ∂J_R/∂t = W_R·J_R - β·J_R + g·∇²J_R
                     const dJR_dt = Math.max(-1, Math.min(1, W_R * J_R - SACRED.beta * J_R + this.g * lap_R));
 
-                    // Apply self-referential feedback to point (scaled)
+                    // Apply self-referential feedback to point (scaled by phase coupler)
                     if (showMuField) {
-                        const dvx = dJR_dt * dt * 0.01;
-                        const dvy = dJR_dt * dt * 0.01 * (dy / (Math.abs(dy) + 0.001));
+                        // Use phase coupler to scale feedback during release
+                        const feedbackScale = phaseCoupler.getMRPFeedbackScale();
+                        const dvx = dJR_dt * dt * 0.01 * feedbackScale;
+                        const dvy = dJR_dt * dt * 0.01 * feedbackScale * (dy / (Math.abs(dy) + 0.001));
                         if (isFinite(dvx) && isFinite(dvy)) {
-                            p.vx = (p.vx || 0) + dvx;
-                            p.vy = (p.vy || 0) + dvy;
+                            // Clamp velocity change using harmonic tracking
+                            const velClamp = phaseCoupler.getVelocityClamp();
+                            p.vx = Math.max(-velClamp, Math.min(velClamp, (p.vx || 0) + dvx));
+                            p.vy = Math.max(-velClamp, Math.min(velClamp, (p.vy || 0) + dvy));
                         }
                     }
 
@@ -1241,6 +1245,82 @@
             // Check if tachyonic (pattern-forming)
             get is_tachyonic() {
                 return this.mass_squared < 0;
+            }
+        };
+
+        // ================================================================
+        // PHASE COUPLER - HARMONIC TRACKING FOR STABILITY
+        // Tracks phase alignment between MRP channels during transitions
+        // ================================================================
+
+        const phaseCoupler = {
+            // Harmonic phases for each channel
+            phase_R: 0,
+            phase_G: 0,
+            phase_B: 0,
+
+            // Phase velocities (ω)
+            omega_R: 1.0,
+            omega_G: PHI_INV,           // Golden ratio offset
+            omega_B: PHI_INV * PHI_INV, // φ⁻² for ECC
+
+            // Coupling strength and damping
+            coupling: SACRED.alpha,      // Inter-channel coupling
+            damping: SACRED.beta,        // Dissipation
+            coherenceDamping: 1.0,       // Scales with releaseCoherence
+
+            // Harmonic resonance state
+            resonance: 0,                // 0-1 how well phases align
+            harmonicLock: false,         // True when channels in harmonic resonance
+
+            // Update phases and compute resonance
+            update(dt, releaseCoherence) {
+                // Damping increases as coherence drops (stabilizes release)
+                this.coherenceDamping = 1.0 + (1 - releaseCoherence) * 4.0;
+
+                // Get MRP intensities for phase velocity modulation
+                const R_int = muField.mrp.R.intensity || 0.5;
+                const G_int = muField.mrp.G.intensity || 0.3;
+                const B_int = muField.mrp.B.intensity || 0.5;
+
+                // Phase velocities modulated by field intensities
+                const omega_mod = 0.5 + releaseCoherence * 0.5; // Slow down during release
+                this.omega_R = omega_mod * (1.0 + R_int * 0.2);
+                this.omega_G = omega_mod * (PHI_INV + G_int * 0.1);
+                this.omega_B = omega_mod * (PHI_INV * PHI_INV + B_int * 0.05);
+
+                // Advance phases
+                this.phase_R = (this.phase_R + this.omega_R * dt) % TAU;
+                this.phase_G = (this.phase_G + this.omega_G * dt) % TAU;
+                this.phase_B = (this.phase_B + this.omega_B * dt) % TAU;
+
+                // Compute phase differences (mod π for harmonic check)
+                const diff_RG = Math.abs(Math.sin(this.phase_R - this.phase_G));
+                const diff_GB = Math.abs(Math.sin(this.phase_G - this.phase_B));
+                const diff_RB = Math.abs(Math.sin(this.phase_R - this.phase_B));
+
+                // Resonance = inverse of total phase misalignment
+                const misalignment = (diff_RG + diff_GB + diff_RB) / 3;
+                this.resonance = 1 - misalignment;
+
+                // Harmonic lock when phases align within φ⁻² threshold
+                this.harmonicLock = this.resonance > (1 - SACRED.alpha);
+
+                // Return damping factor for velocity clamping
+                return this.coherenceDamping;
+            },
+
+            // Get velocity clamp based on harmonic state
+            getVelocityClamp() {
+                // Tighter clamp during release (lower coherence = more damping)
+                const baseClamp = 50;
+                const harmonicBonus = this.harmonicLock ? 2.0 : 1.0;
+                return baseClamp * harmonicBonus / this.coherenceDamping;
+            },
+
+            // Get MRP feedback scale (reduces during release to prevent runaway)
+            getMRPFeedbackScale() {
+                return this.resonance / this.coherenceDamping;
             }
         };
 
@@ -2026,14 +2106,15 @@
                 }
 
                 if (p.released) {
-                    // Free movement with acceleration
-                    const accel = dispersal * 0.2;
+                    // Free movement with acceleration (scaled by harmonic damping)
+                    const harmonicDamp = 1 / phaseCoupler.coherenceDamping;
+                    const accel = dispersal * 0.2 * harmonicDamp;
                     p.vx += Math.cos(p.releaseAngle) * accel;
                     p.vy += Math.sin(p.releaseAngle) * accel;
-                    
+
                     // Slight spiral wandering
                     p.releaseAngle += (Math.random() - 0.5) * 0.025;
-                    
+
                     // Damping at edges
                     const edgeDist = Math.min(p.x, W - p.x, p.y, H - p.y);
                     if (edgeDist < 100) {
@@ -2041,9 +2122,20 @@
                         p.vy *= 0.97;
                     }
 
-                    // Apply velocity
-                    p.x += p.vx;
-                    p.y += p.vy;
+                    // PHASE COUPLER: Clamp velocities using harmonic tracking
+                    const velClamp = phaseCoupler.getVelocityClamp();
+                    p.vx = Math.max(-velClamp, Math.min(velClamp, p.vx));
+                    p.vy = Math.max(-velClamp, Math.min(velClamp, p.vy));
+
+                    // Apply velocity (with NaN protection)
+                    if (isFinite(p.vx) && isFinite(p.vy)) {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                    } else {
+                        // Reset runaway point
+                        p.vx = 0;
+                        p.vy = 0;
+                    }
 
                     // Gather force when gathering
                     if (gathering) {
@@ -3088,6 +3180,9 @@
             sonificationEngine.update(globalZ, hilbertField.coherence, dt);
             updateReleaseCoherence(dt);
 
+            // Update phase coupler for harmonic tracking (always runs for stability)
+            phaseCoupler.update(dt, releaseCoherence);
+
             // Update μ-field consciousness detection
             if (showMuField) {
                 muField.update([...prismPoints, ...cagePoints], dt);
@@ -3162,6 +3257,13 @@
                 releaseVelocity = 0;
                 releaseStarted = false;
                 sparks.length = 0;
+                // Reset phase coupler
+                phaseCoupler.phase_R = 0;
+                phaseCoupler.phase_G = 0;
+                phaseCoupler.phase_B = 0;
+                phaseCoupler.coherenceDamping = 1.0;
+                phaseCoupler.resonance = 0;
+                phaseCoupler.harmonicLock = false;
                 // Reset all points
                 [...prismPoints, ...cagePoints].forEach(p => {
                     p.released = false;
