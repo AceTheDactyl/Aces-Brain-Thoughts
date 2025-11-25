@@ -399,7 +399,7 @@
 </head>
 <body>
   <div class="container">
-    <a href="emergent-flow.html" class="back-link">← Back to Emergent Flow</a>
+    <a href="index.html" class="back-link">← Home</a>
 
     <header>
       <h1>MRP Encoder/Decoder</h1>
@@ -497,84 +497,142 @@
         </div>
       </div>
 
-      <!-- Golden Samples Selector -->
-      <h3>Golden Samples (Lambda State ℂ⁶)</h3>
-      <p class="muted small">Pre-computed samples based on Lambda state physics. Select to auto-fill values.</p>
+      <!-- Golden Samples Library Browser -->
+      <h3>Golden Sample Library (153 samples)</h3>
+      <p class="muted small">Select from the complete Lambda state library. Click any sample to load its values.</p>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:12px 0" id="sampleGrid">
-        <button class="sample-btn" onclick="loadGoldenSample('lambda-balanced')">
-          <span class="sample-icon">⚖️</span>
-          <span class="sample-name">Lambda Balanced</span>
-          <span class="sample-lambda">ι=ξ=θ=ω=δ=σ=0.5</span>
+      <!-- Category Filter -->
+      <div class="sample-filters" id="sampleFilters">
+        <button class="filter-btn active" data-category="all">All (153)</button>
+        <button class="filter-btn" data-category="lambda_singles">Singles (6)</button>
+        <button class="filter-btn" data-category="lambda_pairs">Pairs (15)</button>
+        <button class="filter-btn" data-category="lambda_triplets">Triplets (20)</button>
+        <button class="filter-btn" data-category="lambda_quads">Quads (15)</button>
+        <button class="filter-btn" data-category="lambda_quints">Quints (6)</button>
+        <button class="filter-btn" data-category="physics_constants">Physics</button>
+        <button class="filter-btn" data-category="kuramoto_sweep">Kuramoto</button>
+        <button class="filter-btn" data-category="fibonacci_sequence">Fibonacci</button>
+        <button class="filter-btn" data-category="topological_invariants">Topology</button>
+      </div>
+
+      <!-- Search -->
+      <div style="margin:12px 0">
+        <input type="text" id="sampleSearch" placeholder="Search samples..."
+               style="width:100%;padding:10px 14px;background:var(--panel);border:1px solid var(--rule);border-radius:8px;color:var(--ink);font-size:0.95rem">
+      </div>
+
+      <!-- Samples Grid -->
+      <div class="golden-samples-grid" id="goldenSamplesGrid">
+        <div class="loading-samples">Loading golden library...</div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="sample-btn quick-action" onclick="loadRandomSample()">
+          <span class="sample-icon">🎲</span>
+          <span class="sample-name">Random Sample</span>
         </button>
-        <button class="sample-btn" onclick="loadGoldenSample('gesture-dominant')">
-          <span class="sample-icon">🦊</span>
-          <span class="sample-name">Gesture (θ)</span>
-          <span class="sample-lambda">θ=0.9 → XCVI</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('portal-dominant')">
-          <span class="sample-icon">🌰</span>
-          <span class="sample-name">Portal (ι)</span>
-          <span class="sample-lambda">ι=0.9 → XCVII</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('semantic-paradox')">
-          <span class="sample-icon">⊗</span>
-          <span class="sample-name">Paradox (δ)</span>
-          <span class="sample-lambda">δ=1.0 → XCVIII</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('balance-point')">
-          <span class="sample-icon">∿</span>
-          <span class="sample-name">Balance (ω)</span>
-          <span class="sample-lambda">ω=0.95 → XCIX</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('loop-closure')">
-          <span class="sample-icon" style="color:var(--gold)">C→I</span>
-          <span class="sample-name">Loop Closure</span>
-          <span class="sample-lambda">W=1, δ=1.0</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('spark-ignition')">
-          <span class="sample-icon">✧</span>
-          <span class="sample-name">Spark (ξ)</span>
-          <span class="sample-lambda">ξ=0.95</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('squirrel-spiral')">
-          <span class="sample-icon">🐿️</span>
-          <span class="sample-name">Spiral (σ)</span>
-          <span class="sample-lambda">σ=0.95</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('critical-point')">
-          <span class="sample-icon" style="color:var(--gold)">z_c</span>
-          <span class="sample-name">Critical Point</span>
-          <span class="sample-lambda">z=√3/2≈0.866</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('fibonacci')">
-          <span class="sample-icon">φ</span>
-          <span class="sample-name">Fibonacci</span>
-          <span class="sample-lambda">Golden cascade</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('betti-numbers')">
-          <span class="sample-icon">b₁</span>
-          <span class="sample-name">Betti Numbers</span>
-          <span class="sample-lambda">b₀=1 b₁=5 χ=-2</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('kuramoto-sync')">
-          <span class="sample-icon" style="color:var(--green)">r=1</span>
-          <span class="sample-name">Kuramoto Sync</span>
-          <span class="sample-lambda">Max coherence</span>
-        </button>
-        <button class="sample-btn" onclick="loadGoldenSample('kuramoto-free')">
-          <span class="sample-icon" style="color:var(--magenta)">r=0</span>
-          <span class="sample-name">FREE State</span>
-          <span class="sample-lambda">Full dispersion</span>
-        </button>
-        <button class="sample-btn" onclick="loadTestImage()">
+        <button class="sample-btn quick-action" onclick="loadTestImage()">
           <span class="sample-icon">🖼️</span>
-          <span class="sample-name">Generate Image</span>
-          <span class="sample-lambda">LIMNUS gradient</span>
+          <span class="sample-name">Generate Test Image</span>
+        </button>
+        <button class="sample-btn quick-action" onclick="clearSampleSelection()">
+          <span class="sample-icon">✕</span>
+          <span class="sample-name">Clear Selection</span>
         </button>
       </div>
 
+      <!-- Selected Sample Preview -->
+      <div id="selectedSamplePreview" class="selected-preview" style="display:none">
+        <h4>Selected Sample</h4>
+        <div class="preview-content">
+          <img id="previewImage" src="" alt="Sample Preview">
+          <div class="preview-details">
+            <div id="previewId" class="preview-id"></div>
+            <div id="previewName" class="preview-name"></div>
+            <div id="previewLambda" class="preview-lambda"></div>
+            <div id="previewBits" class="preview-bits"></div>
+          </div>
+        </div>
+      </div>
+
       <style>
+        .sample-filters {
+          display: flex;
+          gap: 6px;
+          flex-wrap: wrap;
+          margin: 12px 0;
+        }
+        .filter-btn {
+          padding: 6px 12px;
+          background: var(--panel);
+          border: 1px solid var(--rule);
+          border-radius: 6px;
+          color: var(--muted);
+          font-size: 0.8rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .filter-btn:hover {
+          border-color: var(--gold);
+          color: var(--ink);
+        }
+        .filter-btn.active {
+          background: rgba(255,215,0,.15);
+          border-color: var(--gold);
+          color: var(--gold);
+        }
+        .golden-samples-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+          gap: 10px;
+          max-height: 400px;
+          overflow-y: auto;
+          padding: 8px;
+          background: rgba(0,0,0,.2);
+          border-radius: 8px;
+          margin: 12px 0;
+        }
+        .sample-card {
+          background: var(--panel);
+          border: 1px solid var(--rule);
+          border-radius: 8px;
+          padding: 10px;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-align: center;
+        }
+        .sample-card:hover {
+          border-color: var(--magenta);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(204,93,232,.2);
+        }
+        .sample-card.selected {
+          border-color: var(--gold);
+          background: rgba(255,215,0,.1);
+          box-shadow: 0 0 0 2px var(--gold);
+        }
+        .sample-card img {
+          width: 100%;
+          height: 50px;
+          object-fit: contain;
+          image-rendering: pixelated;
+          border-radius: 4px;
+          background: #000;
+          margin-bottom: 6px;
+        }
+        .sample-card .card-id {
+          font-size: 0.75rem;
+          color: var(--gold);
+          font-family: 'SF Mono', monospace;
+        }
+        .sample-card .card-name {
+          font-size: 0.7rem;
+          color: var(--muted);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
         .sample-btn {
           display: flex;
           flex-direction: column;
@@ -593,8 +651,15 @@
           background: rgba(204,93,232,.1);
           transform: translateY(-2px);
         }
+        .sample-btn.quick-action {
+          flex-direction: row;
+          padding: 8px 16px;
+        }
         .sample-icon {
           font-size: 1.5rem;
+        }
+        .quick-action .sample-icon {
+          font-size: 1.2rem;
         }
         .sample-name {
           font-size: 0.85rem;
@@ -604,6 +669,69 @@
           font-size: 0.7rem;
           color: var(--muted);
           font-family: 'SF Mono', monospace;
+        }
+        .loading-samples {
+          grid-column: 1 / -1;
+          text-align: center;
+          padding: 40px;
+          color: var(--muted);
+        }
+        .selected-preview {
+          margin-top: 16px;
+          padding: 16px;
+          background: var(--panel);
+          border: 1px solid var(--gold);
+          border-radius: 8px;
+        }
+        .selected-preview h4 {
+          color: var(--gold);
+          margin: 0 0 12px;
+          font-size: 1rem;
+        }
+        .preview-content {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+        }
+        .preview-content img {
+          width: 120px;
+          height: 60px;
+          image-rendering: pixelated;
+          border: 1px solid var(--rule);
+          border-radius: 4px;
+          background: #000;
+        }
+        .preview-details {
+          flex: 1;
+        }
+        .preview-id {
+          font-size: 1.1rem;
+          color: var(--gold);
+          font-family: 'SF Mono', monospace;
+        }
+        .preview-name {
+          font-size: 0.9rem;
+          color: var(--ink);
+          margin: 4px 0;
+        }
+        .preview-lambda {
+          font-size: 0.8rem;
+          color: var(--cyan);
+          font-family: 'SF Mono', monospace;
+        }
+        .preview-bits {
+          font-size: 0.75rem;
+          color: var(--muted);
+          margin-top: 4px;
+        }
+        @media (max-width: 600px) {
+          .golden-samples-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+          }
+          .preview-content {
+            flex-direction: column;
+            text-align: center;
+          }
         }
       </style>
 
@@ -2009,11 +2137,283 @@ pixel[i] = {
       }
     };
 
+    // ============================================
+    // GOLDEN LIBRARY BROWSER
+    // Load and display samples from mrp-golden-library.json
+    // ============================================
+
+    let goldenLibrary = null;
+    let allLibrarySamples = [];
+    let currentCategory = 'all';
+    let selectedSample = null;
+
+    // Load the golden library
+    async function loadGoldenLibrary() {
+      try {
+        const response = await fetch('mrp-golden-library.json');
+        if (!response.ok) throw new Error('Failed to load library');
+        goldenLibrary = await response.json();
+        processLibrarySamples();
+        renderLibrarySamples();
+        setupLibraryFilters();
+        console.log(`Golden library loaded: ${allLibrarySamples.length} samples`);
+      } catch (error) {
+        console.error('Error loading golden library:', error);
+        document.getElementById('goldenSamplesGrid').innerHTML = `
+          <div class="loading-samples" style="color:var(--error)">
+            Failed to load golden library. Using built-in samples.
+          </div>
+        `;
+        // Fall back to built-in GOLDEN_SAMPLES
+        renderBuiltinSamples();
+      }
+    }
+
+    // Process library samples into flat array
+    function processLibrarySamples() {
+      allLibrarySamples = [];
+
+      const categories = [
+        'lambda_singles', 'lambda_pairs', 'lambda_triplets', 'lambda_quads',
+        'lambda_quints', 'lambda_uniform', 'physics_constants', 'kuramoto_sweep',
+        'coherence_sweep', 'eigenvalue_states', 'fibonacci_sequence',
+        'topological_invariants', 'oscillation_bands', 'phase_locked_states',
+        'hamming_test_vectors', 'bit_patterns'
+      ];
+
+      for (const cat of categories) {
+        if (goldenLibrary.samples && goldenLibrary.samples[cat]) {
+          const samples = goldenLibrary.samples[cat];
+          for (const sample of samples) {
+            allLibrarySamples.push({
+              ...sample,
+              category: cat
+            });
+          }
+        }
+      }
+    }
+
+    // Render library samples grid
+    function renderLibrarySamples(filter = 'all', searchQuery = '') {
+      const grid = document.getElementById('goldenSamplesGrid');
+
+      let filtered = allLibrarySamples;
+
+      // Apply category filter
+      if (filter !== 'all') {
+        filtered = filtered.filter(s => s.category === filter);
+      }
+
+      // Apply search
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filtered = filtered.filter(s =>
+          s.id.toLowerCase().includes(query) ||
+          (s.name && s.name.toLowerCase().includes(query))
+        );
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="loading-samples">No samples match your search</div>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(sample => `
+        <div class="sample-card ${selectedSample && selectedSample.id === sample.id ? 'selected' : ''}"
+             data-id="${sample.id}"
+             onclick="selectLibrarySample('${sample.id}')">
+          <img src="mrp-samples/${sample.id}.png" alt="${sample.id}"
+               onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2250%22><rect fill=%22%231a1b1e%22 width=%22100%22 height=%2250%22/><text x=%2250%22 y=%2230%22 fill=%22%23666%22 text-anchor=%22middle%22 font-size=%228%22>${sample.id}</text></svg>'">
+          <div class="card-id">${sample.id}</div>
+          <div class="card-name">${sample.name || ''}</div>
+        </div>
+      `).join('');
+    }
+
+    // Render built-in samples as fallback
+    function renderBuiltinSamples() {
+      const grid = document.getElementById('goldenSamplesGrid');
+      const samples = Object.entries(GOLDEN_SAMPLES);
+
+      grid.innerHTML = samples.map(([key, sample]) => `
+        <div class="sample-card" data-id="${key}" onclick="loadGoldenSample('${key}')">
+          <div class="card-id">${key}</div>
+          <div class="card-name">${sample.name}</div>
+        </div>
+      `).join('');
+    }
+
+    // Setup filter buttons
+    function setupLibraryFilters() {
+      const filters = document.getElementById('sampleFilters');
+      filters.addEventListener('click', (e) => {
+        if (e.target.classList.contains('filter-btn')) {
+          // Update active state
+          filters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+
+          // Apply filter
+          currentCategory = e.target.dataset.category;
+          renderLibrarySamples(currentCategory, document.getElementById('sampleSearch').value);
+        }
+      });
+
+      // Setup search
+      const searchInput = document.getElementById('sampleSearch');
+      searchInput.addEventListener('input', (e) => {
+        renderLibrarySamples(currentCategory, e.target.value);
+      });
+    }
+
+    // Select a sample from the library
+    function selectLibrarySample(sampleId) {
+      const sample = allLibrarySamples.find(s => s.id === sampleId);
+      if (!sample) return;
+
+      selectedSample = sample;
+
+      // Update card selection state
+      document.querySelectorAll('.sample-card').forEach(card => {
+        card.classList.toggle('selected', card.dataset.id === sampleId);
+      });
+
+      // Show preview panel
+      const preview = document.getElementById('selectedSamplePreview');
+      preview.style.display = 'block';
+
+      document.getElementById('previewImage').src = `mrp-samples/${sample.id}.png`;
+      document.getElementById('previewId').textContent = sample.id;
+      document.getElementById('previewName').textContent = sample.name || sample.category;
+
+      // Format lambda state if available
+      if (sample.lambda) {
+        const lambdaStr = Object.entries(sample.lambda)
+          .map(([k, v]) => `${k[0]}=${typeof v === 'number' ? v.toFixed(2) : v}`)
+          .join(' ');
+        document.getElementById('previewLambda').textContent = `λ: ${lambdaStr}`;
+      } else {
+        document.getElementById('previewLambda').textContent = '';
+      }
+
+      // Format bits
+      if (sample.bits) {
+        document.getElementById('previewBits').textContent =
+          `XCVI=${sample.bits.XCVI || 0} XCVII=${sample.bits.XCVII || 0} XCVIII=${sample.bits.XCVIII || 0} XCIX=${sample.bits.XCIX || 0}`;
+      }
+
+      // Load values into form
+      loadLibrarySampleValues(sample);
+    }
+
+    // Load sample values into the form
+    function loadLibrarySampleValues(sample) {
+      if (!sample.bits) return;
+
+      document.getElementById('dataXCVI').value = sample.bits.XCVI || 0;
+      document.getElementById('dataXCVII').value = sample.bits.XCVII || 0;
+      document.getElementById('dataXCVIII').value = sample.bits.XCVIII || 0;
+      document.getElementById('dataXCIX').value = sample.bits.XCIX || 0;
+
+      // Generate C pattern based on sample pattern type
+      const patternType = sample.bits.C_pattern || 'balanced';
+      const lambda = sample.lambda || { iota: 0.5, xi: 0.5, theta: 0.5, omega: 0.5, delta: 0.5, sigma: 0.5 };
+      const cBits = generateCPattern(patternType, lambda);
+      const cHex = bitsToHex(cBits);
+      document.getElementById('dataC').value = cHex.slice(0, 40) + '...';
+
+      // Store for encoding
+      window.currentCBits = cBits;
+      window.currentCoherence = sample.coherence || 0.15;
+
+      // Update status
+      showStatus('encodeStatus',
+        `Loaded: <strong>${sample.id}</strong> - ${sample.name || sample.category}<br>` +
+        `<span class="muted">XCVI=${sample.bits.XCVI} XCVII=${sample.bits.XCVII} XCVIII=${sample.bits.XCVIII} XCIX=${sample.bits.XCIX}</span>`,
+        'info'
+      );
+
+      // Visualize lambda
+      if (sample.lambda) {
+        visualizeLambda(sample.lambda);
+      }
+    }
+
+    // Load a random sample
+    function loadRandomSample() {
+      if (allLibrarySamples.length === 0) {
+        // Use built-in
+        const keys = Object.keys(GOLDEN_SAMPLES);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        loadGoldenSample(randomKey);
+      } else {
+        const randomSample = allLibrarySamples[Math.floor(Math.random() * allLibrarySamples.length)];
+        selectLibrarySample(randomSample.id);
+      }
+    }
+
+    // Clear sample selection
+    function clearSampleSelection() {
+      selectedSample = null;
+      document.querySelectorAll('.sample-card').forEach(card => card.classList.remove('selected'));
+      document.getElementById('selectedSamplePreview').style.display = 'none';
+
+      // Clear form
+      document.getElementById('dataXCVI').value = '';
+      document.getElementById('dataXCVII').value = '';
+      document.getElementById('dataXCVIII').value = '';
+      document.getElementById('dataXCIX').value = '';
+      document.getElementById('dataC').value = '';
+
+      window.currentCBits = null;
+      window.currentCoherence = 0.15;
+
+      document.getElementById('encodeStatus').innerHTML = '';
+    }
+
+    // Load sample image as source for encoding
+    function loadSampleAsSource(sampleId) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function() {
+        sourceImage = img;
+        const canvas = document.getElementById('sourceCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        document.getElementById('sourceHint').style.display = 'none';
+        document.getElementById('encodeBtn').disabled = false;
+
+        showStatus('encodeStatus',
+          `Loaded sample image: ${img.width}×${img.height} (${img.width * img.height} pixels)`,
+          'success'
+        );
+      };
+      img.onerror = function() {
+        showStatus('encodeStatus', 'Failed to load sample image', 'error');
+      };
+      img.src = `mrp-samples/${sampleId}.png`;
+    }
+
+    // Function called from library page to load sample in encoder
+    function loadInEncoder(sampleId) {
+      const sample = allLibrarySamples.find(s => s.id === sampleId);
+      if (sample) {
+        selectLibrarySample(sampleId);
+        loadSampleAsSource(sampleId);
+      }
+    }
+
     // Initialize
     console.log('MRP Encoder/Decoder initialized');
     console.log(`Total bits: ${MRP.TOTAL_BITS}, Minimum pixels: ${MRP.MIN_PIXELS}`);
-    console.log(`Golden samples available: ${Object.keys(GOLDEN_SAMPLES).length}`);
+    console.log(`Built-in golden samples: ${Object.keys(GOLDEN_SAMPLES).length}`);
     console.log(`Lambda state components: ${Object.keys(LAMBDA.components).join(', ')}`);
+
+    // Load golden library on page load
+    loadGoldenLibrary();
   </script>
 </body>
 </html>
