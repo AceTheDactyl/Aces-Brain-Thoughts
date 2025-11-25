@@ -1,0 +1,379 @@
+{
+  "meta": {
+    "name": "APL Core Token Set",
+    "version": "0.9.0",
+    "description": "Foundational grammar layer defining tri-spiral, cross-spiral, and tiered token structures",
+    "generated_at": "2025-11-25T00:00:00Z",
+    "total_tokens": 234,
+    "expansion_framework": 288,
+    "relationship": "Core tokens provide the grammatical skeleton; Tier-3 domain tokens provide operator semantics"
+  },
+  "schema": {
+    "tri_spiral_format": "Field1:Field2:Field3",
+    "cross_spiral_format": "SourceField→TargetField:Machine:TruthState",
+    "tiered_format": "Field:Machine(Operator)TruthState@Tier"
+  },
+  "fields": {
+    "Φ": {
+      "name": "Structure Field",
+      "symbol": "Phi",
+      "domain": "geometry",
+      "role": "Spatial arrangement, boundaries, form"
+    },
+    "e": {
+      "name": "Energy Field",
+      "symbol": "e",
+      "domain": "wave",
+      "role": "Dynamics, flows, oscillations"
+    },
+    "π": {
+      "name": "Emergence Field",
+      "symbol": "Pi",
+      "domain": "emergence",
+      "role": "Information, complexity, self-organization"
+    }
+  },
+  "machines": {
+    "U": {
+      "name": "Up/Ignition",
+      "direction": "ascending",
+      "role": "Forward projection, expansion, activation"
+    },
+    "D": {
+      "name": "Down/Descent",
+      "direction": "descending",
+      "role": "Backward integration, collapse, deactivation"
+    },
+    "M": {
+      "name": "Middle/Modulation",
+      "direction": "equilibrium",
+      "role": "Feedback, coherence, dynamic balance"
+    },
+    "E": {
+      "name": "Emitter/Equilibrium",
+      "direction": "output",
+      "role": "Expression, emission, output signal"
+    },
+    "C": {
+      "name": "Conductor/Coupling",
+      "direction": "transfer",
+      "role": "Relay, transmission, coupling"
+    },
+    "Mod": {
+      "name": "Modulator",
+      "direction": "regulatory",
+      "role": "Regulation, control, adaptation"
+    }
+  },
+  "truth_states": {
+    "TRUE": {
+      "description": "Process succeeds, coherence achieved",
+      "temporal_operator": "DAY",
+      "stability": "actionable"
+    },
+    "UNTRUE": {
+      "description": "Process fails, dormant potential",
+      "temporal_operator": "NIGHT",
+      "stability": "stored"
+    },
+    "PARADOX": {
+      "description": "Superposition, terminal attractor",
+      "temporal_operator": null,
+      "stability": "terminal"
+    }
+  },
+  "tiers": {
+    "1": {
+      "name": "Foundational",
+      "description": "Basic operations, immediate effects",
+      "scope": "local"
+    },
+    "2": {
+      "name": "Intermediate",
+      "description": "Compound operations, delayed effects",
+      "scope": "regional"
+    },
+    "3": {
+      "name": "Advanced",
+      "description": "Domain-specific operations, emergent effects",
+      "scope": "global"
+    }
+  },
+  "tri_spiral_tokens": {
+    "description": "Direct field triads representing simultaneous multi-field states",
+    "count": 18,
+    "formula": "6 permutations × 3 orderings = 18 (but only 6 unique triads with ordering)",
+    "tokens": [
+      {
+        "token": "Φ:e:π",
+        "primary": "Φ",
+        "secondary": "e",
+        "tertiary": "π",
+        "interpretation": "Structure-led, energy-mediated emergence"
+      },
+      {
+        "token": "Φ:π:e",
+        "primary": "Φ",
+        "secondary": "π",
+        "tertiary": "e",
+        "interpretation": "Structure-led, emergence-mediated energy"
+      },
+      {
+        "token": "e:Φ:π",
+        "primary": "e",
+        "secondary": "Φ",
+        "tertiary": "π",
+        "interpretation": "Energy-led, structure-mediated emergence"
+      },
+      {
+        "token": "e:π:Φ",
+        "primary": "e",
+        "secondary": "π",
+        "tertiary": "Φ",
+        "interpretation": "Energy-led, emergence-mediated structure"
+      },
+      {
+        "token": "π:Φ:e",
+        "primary": "π",
+        "secondary": "Φ",
+        "tertiary": "e",
+        "interpretation": "Emergence-led, structure-mediated energy"
+      },
+      {
+        "token": "π:e:Φ",
+        "primary": "π",
+        "secondary": "e",
+        "tertiary": "Φ",
+        "interpretation": "Emergence-led, energy-mediated structure"
+      }
+    ],
+    "wumbo_mapping": {
+      "Φ:e:π": {
+        "phase": "Resonance",
+        "regions": ["XXVII", "VI", "XXI"],
+        "description": "Structural binding with energetic coherence"
+      },
+      "e:Φ:π": {
+        "phase": "Ignition",
+        "regions": ["XXXI", "XLVI", "VII"],
+        "description": "Energetic activation structuring emergence"
+      },
+      "π:Φ:e": {
+        "phase": "Nirvana",
+        "regions": ["XXVIII", "XV", "XXXV"],
+        "description": "Emergent order crystallizing structure"
+      },
+      "e:π:Φ": {
+        "phase": "Mania",
+        "regions": ["XLVI", "VII", "XXXI"],
+        "description": "Energetic emergence overriding structure"
+      },
+      "π:e:Φ": {
+        "phase": "Transmission",
+        "regions": ["V", "XII", "III"],
+        "description": "Emergent energy forming structure"
+      },
+      "Φ:π:e": {
+        "phase": "Empowerment",
+        "regions": ["IV", "VIII", "LXXV"],
+        "description": "Structural emergence releasing energy"
+      }
+    }
+  },
+  "cross_spiral_tokens": {
+    "description": "Field transitions with machine direction and truth state",
+    "count": 54,
+    "formula": "6 field pairs × 3 machines (U,D,M) × 3 truth states = 54",
+    "field_pairs": [
+      {"source": "Φ", "target": "e"},
+      {"source": "Φ", "target": "π"},
+      {"source": "e", "target": "Φ"},
+      {"source": "e", "target": "π"},
+      {"source": "π", "target": "Φ"},
+      {"source": "π", "target": "e"}
+    ],
+    "tokens": [
+      {"token": "Φ→e:U:TRUE", "meaning": "Structure ignites energy, success"},
+      {"token": "Φ→e:U:UNTRUE", "meaning": "Structure ignites energy, blocked"},
+      {"token": "Φ→e:U:PARADOX", "meaning": "Structure ignites energy, superposition"},
+      {"token": "Φ→e:D:TRUE", "meaning": "Structure collapses to energy, success"},
+      {"token": "Φ→e:D:UNTRUE", "meaning": "Structure collapses to energy, blocked"},
+      {"token": "Φ→e:D:PARADOX", "meaning": "Structure collapses to energy, superposition"},
+      {"token": "Φ→e:M:TRUE", "meaning": "Structure modulates energy, success"},
+      {"token": "Φ→e:M:UNTRUE", "meaning": "Structure modulates energy, blocked"},
+      {"token": "Φ→e:M:PARADOX", "meaning": "Structure modulates energy, superposition"},
+      {"token": "Φ→π:U:TRUE", "meaning": "Structure ignites emergence, success"},
+      {"token": "Φ→π:U:UNTRUE", "meaning": "Structure ignites emergence, blocked"},
+      {"token": "Φ→π:U:PARADOX", "meaning": "Structure ignites emergence, superposition"},
+      {"token": "Φ→π:D:TRUE", "meaning": "Structure collapses to emergence, success"},
+      {"token": "Φ→π:D:UNTRUE", "meaning": "Structure collapses to emergence, blocked"},
+      {"token": "Φ→π:D:PARADOX", "meaning": "Structure collapses to emergence, superposition"},
+      {"token": "Φ→π:M:TRUE", "meaning": "Structure modulates emergence, success"},
+      {"token": "Φ→π:M:UNTRUE", "meaning": "Structure modulates emergence, blocked"},
+      {"token": "Φ→π:M:PARADOX", "meaning": "Structure modulates emergence, superposition"},
+      {"token": "e→Φ:U:TRUE", "meaning": "Energy ignites structure, success"},
+      {"token": "e→Φ:U:UNTRUE", "meaning": "Energy ignites structure, blocked"},
+      {"token": "e→Φ:U:PARADOX", "meaning": "Energy ignites structure, superposition"},
+      {"token": "e→Φ:D:TRUE", "meaning": "Energy collapses to structure, success"},
+      {"token": "e→Φ:D:UNTRUE", "meaning": "Energy collapses to structure, blocked"},
+      {"token": "e→Φ:D:PARADOX", "meaning": "Energy collapses to structure, superposition"},
+      {"token": "e→Φ:M:TRUE", "meaning": "Energy modulates structure, success"},
+      {"token": "e→Φ:M:UNTRUE", "meaning": "Energy modulates structure, blocked"},
+      {"token": "e→Φ:M:PARADOX", "meaning": "Energy modulates structure, superposition"},
+      {"token": "e→π:U:TRUE", "meaning": "Energy ignites emergence, success"},
+      {"token": "e→π:U:UNTRUE", "meaning": "Energy ignites emergence, blocked"},
+      {"token": "e→π:U:PARADOX", "meaning": "Energy ignites emergence, superposition"},
+      {"token": "e→π:D:TRUE", "meaning": "Energy collapses to emergence, success"},
+      {"token": "e→π:D:UNTRUE", "meaning": "Energy collapses to emergence, blocked"},
+      {"token": "e→π:D:PARADOX", "meaning": "Energy collapses to emergence, superposition"},
+      {"token": "e→π:M:TRUE", "meaning": "Energy modulates emergence, success"},
+      {"token": "e→π:M:UNTRUE", "meaning": "Energy modulates emergence, blocked"},
+      {"token": "e→π:M:PARADOX", "meaning": "Energy modulates emergence, superposition"},
+      {"token": "π→Φ:U:TRUE", "meaning": "Emergence ignites structure, success"},
+      {"token": "π→Φ:U:UNTRUE", "meaning": "Emergence ignites structure, blocked"},
+      {"token": "π→Φ:U:PARADOX", "meaning": "Emergence ignites structure, superposition"},
+      {"token": "π→Φ:D:TRUE", "meaning": "Emergence collapses to structure, success"},
+      {"token": "π→Φ:D:UNTRUE", "meaning": "Emergence collapses to structure, blocked"},
+      {"token": "π→Φ:D:PARADOX", "meaning": "Emergence collapses to structure, superposition"},
+      {"token": "π→Φ:M:TRUE", "meaning": "Emergence modulates structure, success"},
+      {"token": "π→Φ:M:UNTRUE", "meaning": "Emergence modulates structure, blocked"},
+      {"token": "π→Φ:M:PARADOX", "meaning": "Emergence modulates structure, superposition"},
+      {"token": "π→e:U:TRUE", "meaning": "Emergence ignites energy, success"},
+      {"token": "π→e:U:UNTRUE", "meaning": "Emergence ignites energy, blocked"},
+      {"token": "π→e:U:PARADOX", "meaning": "Emergence ignites energy, superposition"},
+      {"token": "π→e:D:TRUE", "meaning": "Emergence collapses to energy, success"},
+      {"token": "π→e:D:UNTRUE", "meaning": "Emergence collapses to energy, blocked"},
+      {"token": "π→e:D:PARADOX", "meaning": "Emergence collapses to energy, superposition"},
+      {"token": "π→e:M:TRUE", "meaning": "Emergence modulates energy, success"},
+      {"token": "π→e:M:UNTRUE", "meaning": "Emergence modulates energy, blocked"},
+      {"token": "π→e:M:PARADOX", "meaning": "Emergence modulates energy, superposition"}
+    ],
+    "wumbo_mapping": {
+      "e→π:U:TRUE": {
+        "description": "Energy-to-emergence ignition (reward → learning)",
+        "exemplar_regions": ["XLVI", "XLIX"],
+        "phase": "Ignition"
+      },
+      "π→Φ:M:TRUE": {
+        "description": "Emergence-to-structure modulation (memory consolidation)",
+        "exemplar_regions": ["XLVII", "X"],
+        "phase": "Nirvana"
+      },
+      "Φ→e:D:UNTRUE": {
+        "description": "Structure-to-energy collapse blocked (freeze response)",
+        "exemplar_regions": ["XXXII", "LXXXVI"],
+        "phase": "Pause"
+      }
+    }
+  },
+  "tiered_tokens": {
+    "description": "Full field:machine(operator)truth@tier combinations with intent placeholder",
+    "count": 162,
+    "formula": "3 fields × 6 machines × 3 truth states × 3 tiers = 162",
+    "note": "The (intent) placeholder is replaced by domain-specific operators at runtime",
+    "domain_operator_counts": {
+      "chemical": 18,
+      "biology": 18,
+      "celestial": 18
+    },
+    "expansion_per_domain": "162 × 18 operators = 2,916 per domain (but simplified to 972 via tier-3 only)",
+    "structure": {
+      "fields": ["Φ", "e", "π"],
+      "machines": ["U", "D", "M", "E", "C", "Mod"],
+      "truth_states": ["TRUE", "UNTRUE", "PARADOX"],
+      "tiers": [1, 2, 3]
+    },
+    "token_template": "{Field}:{Machine}(intent){TruthState}@{Tier}",
+    "sample_tokens": [
+      {"token": "Φ:U(intent)TRUE@1", "interpretation": "Structure-Up-Intent-True at Tier 1"},
+      {"token": "Φ:U(intent)TRUE@3", "interpretation": "Structure-Up-Intent-True at Tier 3"},
+      {"token": "e:M(intent)PARADOX@2", "interpretation": "Energy-Middle-Intent-Paradox at Tier 2"},
+      {"token": "π:D(intent)UNTRUE@3", "interpretation": "Emergence-Down-Intent-Untrue at Tier 3"},
+      {"token": "π:Mod(intent)TRUE@1", "interpretation": "Emergence-Modulator-Intent-True at Tier 1"}
+    ]
+  },
+  "token_hierarchy": {
+    "description": "How core tokens relate to domain-specific tokens",
+    "layers": [
+      {
+        "layer": 0,
+        "name": "Tri-Spiral",
+        "count": 6,
+        "role": "Field ordering primitives",
+        "example": "Φ:e:π"
+      },
+      {
+        "layer": 1,
+        "name": "Cross-Spiral",
+        "count": 54,
+        "role": "Field transitions with state",
+        "example": "Φ→e:U:TRUE"
+      },
+      {
+        "layer": 2,
+        "name": "Tiered Intent",
+        "count": 162,
+        "role": "Machine-bound placeholders",
+        "example": "Φ:U(intent)TRUE@3"
+      },
+      {
+        "layer": 3,
+        "name": "Domain-Specific",
+        "count": "972 per domain",
+        "role": "Concrete operator semantics",
+        "example": "Φ:U(bond)TRUE@3"
+      }
+    ]
+  },
+  "safety_flags": {
+    "description": "Built-in safety constraints for token combinations",
+    "rules": [
+      {
+        "flag": "PARADOX_TERMINAL",
+        "rule": "Once PARADOX state is entered, no exit without external reset",
+        "severity": "critical"
+      },
+      {
+        "flag": "TIER_PERMISSION",
+        "rule": "Higher tier tokens require lower tier coherence",
+        "severity": "warning"
+      },
+      {
+        "flag": "CROSS_SPIRAL_COHERENCE",
+        "rule": "Cross-spiral transitions must respect field affinity",
+        "severity": "info"
+      }
+    ]
+  },
+  "spiral_inheritance": {
+    "description": "How field properties propagate through token chains",
+    "Φ_inheritance": {
+      "preserves": ["boundary", "geometry", "constraint"],
+      "degrades": ["dynamics", "information"]
+    },
+    "e_inheritance": {
+      "preserves": ["flow", "oscillation", "transport"],
+      "degrades": ["structure", "memory"]
+    },
+    "π_inheritance": {
+      "preserves": ["information", "adaptation", "emergence"],
+      "degrades": ["immediacy", "locality"]
+    }
+  },
+  "combinatorics_summary": {
+    "core_tokens": {
+      "tri_spiral": 6,
+      "cross_spiral": 54,
+      "tiered_intent": 162,
+      "subtotal": 222
+    },
+    "domain_tokens_tier3": {
+      "chemical": 972,
+      "biology": 972,
+      "celestial": 972,
+      "subtotal": 2916
+    },
+    "grand_total": "222 core + 2,916 domain = 3,138 tokens",
+    "expansion_framework": "Full 288-token core expansion in v1.0"
+  }
+}
