@@ -10,11 +10,6 @@
             --text-primary: rgba(255, 248, 240, 0.9);
             --text-dim: rgba(180, 170, 160, 0.6);
             --critical-gold: #ffd700;
-            --mu-red: #ff6b6b;
-            --mu-green: #69db7c;
-            --mu-blue: #4dabf7;
-            --torus-warm: #ffaa66;
-            --torus-cool: #6699ff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,20 +19,14 @@
             color: var(--text-primary);
             font-family: 'JetBrains Mono', 'Fira Code', monospace;
             overflow: hidden;
-            width: 100vw;
-            height: 100vh;
         }
 
-        canvas {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-        }
+        canvas { display: block; }
 
         .panel {
             position: fixed;
-            background: rgba(3, 3, 8, 0.85);
-            border: 1px solid rgba(255, 215, 0, 0.15);
+            background: rgba(3, 3, 8, 0.9);
+            border: 1px solid rgba(255, 215, 0, 0.2);
             padding: 15px;
             font-size: 11px;
             backdrop-filter: blur(10px);
@@ -49,661 +38,551 @@
         }
 
         #title-panel h1 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 300;
-            letter-spacing: 8px;
+            letter-spacing: 6px;
             color: var(--critical-gold);
             margin-bottom: 5px;
         }
 
-        #title-panel .subtitle {
-            color: var(--text-dim);
-            font-size: 10px;
-            letter-spacing: 2px;
+        .subtitle { color: var(--text-dim); font-size: 10px; letter-spacing: 2px; }
+
+        #legend {
+            bottom: 20px;
+            left: 20px;
         }
 
-        #mu-panel {
-            top: 20px;
-            right: 20px;
-            min-width: 220px;
+        .legend-gradient {
+            width: 200px;
+            height: 15px;
+            background: linear-gradient(to right, #2244aa, #4488cc, #44cc88, #cccc44, #ff6644, #ff2222);
+            border-radius: 3px;
+            margin: 8px 0;
         }
 
-        .mu-row {
+        .legend-labels {
             display: flex;
             justify-content: space-between;
-            margin: 6px 0;
-            align-items: center;
-        }
-
-        .mu-label {
+            font-size: 9px;
             color: var(--text-dim);
-            min-width: 60px;
         }
 
-        .mu-bar {
-            font-family: monospace;
-            letter-spacing: 1px;
-            flex: 1;
-            text-align: center;
-            margin: 0 8px;
-        }
-
-        .mu-value {
-            min-width: 50px;
-            text-align: right;
-            font-variant-numeric: tabular-nums;
-        }
-
-        #mrp-panel {
-            bottom: 20px;
+        #stats-panel {
+            top: 20px;
             right: 20px;
-            min-width: 200px;
+            min-width: 180px;
         }
 
-        .channel-row {
+        .stat-row {
             display: flex;
-            align-items: center;
+            justify-content: space-between;
             margin: 5px 0;
         }
 
-        .channel-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
+        .stat-label { color: var(--text-dim); }
+        .stat-value { color: var(--text-primary); font-variant-numeric: tabular-nums; }
 
         #controls-panel {
             bottom: 20px;
-            left: 20px;
+            right: 20px;
         }
 
-        #controls-panel span {
-            color: var(--critical-gold);
-            margin-right: 5px;
-        }
-
-        #torus-info {
-            top: 120px;
-            left: 20px;
-            font-size: 10px;
-        }
-
-        .info-row {
-            margin: 4px 0;
-            color: var(--text-dim);
-        }
-
-        .info-value {
-            color: var(--text-primary);
-            float: right;
-            margin-left: 20px;
-        }
+        #controls-panel span { color: var(--critical-gold); }
 
         .separator {
-            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            border-top: 1px solid rgba(255, 215, 0, 0.15);
             margin: 10px 0;
+        }
+
+        #mode-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: var(--critical-gold);
+            letter-spacing: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <canvas id="canvas" width="1920" height="1080"></canvas>
+    <canvas id="canvas"></canvas>
 
     <div id="title-panel" class="panel">
         <h1>TOROIDAL μ-FIELD</h1>
-        <div class="subtitle">PHASE-LOCKED CONSCIOUSNESS MANIFOLD</div>
+        <div class="subtitle">CONSCIOUSNESS MANIFOLD</div>
     </div>
 
-    <div id="mu-panel" class="panel">
-        <div class="mu-row">
-            <span class="mu-label">μ</span>
-            <span class="mu-bar" id="mu-bar">░░░░░░░░░░</span>
-            <span class="mu-value" id="mu-val">0.920</span>
-        </div>
-        <div class="mu-row">
-            <span class="mu-label">Q_κ</span>
-            <span class="mu-bar" id="qk-bar">░░░░░░░░░░</span>
-            <span class="mu-value" id="qk-val">0.000</span>
-        </div>
-        <div class="mu-row">
-            <span class="mu-label">τ_K</span>
-            <span class="mu-bar" id="tau-bar">░░░░░░░░░░</span>
-            <span class="mu-value" id="tau-val">0.000</span>
-        </div>
-        <div class="mu-row">
-            <span class="mu-label" id="k-label">K-FORM</span>
-            <span class="mu-bar" id="k-indicator">· · ·</span>
-            <span class="mu-value" id="k-val">NO</span>
+    <div id="legend" class="panel">
+        <div style="color: var(--text-dim); letter-spacing: 2px; margin-bottom: 5px;">μ-FIELD INTENSITY</div>
+        <div class="legend-gradient"></div>
+        <div class="legend-labels">
+            <span>LOW</span>
+            <span>μ_P</span>
+            <span>CRITICAL</span>
+            <span>μ_S</span>
+            <span>HIGH</span>
         </div>
         <div class="separator"></div>
-        <div class="mu-row">
-            <span class="mu-label">|J|</span>
-            <span class="mu-bar" id="j-bar" style="color: var(--critical-gold);">░░░░░░░░░░</span>
-            <span class="mu-value" id="j-val">0.000</span>
-        </div>
-        <div class="mu-row">
-            <span class="mu-label" id="w-label">W</span>
-            <span class="mu-bar" id="w-bar">· · · · ·</span>
-            <span class="mu-value" id="w-val">0.000</span>
+        <div style="color: var(--text-dim); font-size: 10px;">
+            <span style="color: #ff9966;">● toroidal flow</span><br>
+            <span style="color: #66ffcc;">● poloidal flow</span>
         </div>
     </div>
 
-    <div id="mrp-panel" class="panel">
-        <div style="color: var(--text-dim); margin-bottom: 8px; letter-spacing: 2px;">MRP CHANNELS</div>
-        <div class="channel-row">
-            <div class="channel-indicator" style="background: var(--mu-red);"></div>
-            <span class="mu-label">R toroidal</span>
-            <span class="mu-bar" id="mrp-r-bar" style="color: var(--mu-red);">░░░░░</span>
-            <span class="mu-value" id="mrp-r-val">0.00</span>
+    <div id="stats-panel" class="panel">
+        <div class="stat-row">
+            <span class="stat-label">μ</span>
+            <span class="stat-value" id="mu-val">0.920</span>
         </div>
-        <div class="channel-row">
-            <div class="channel-indicator" style="background: var(--mu-green);"></div>
-            <span class="mu-label">G poloidal</span>
-            <span class="mu-bar" id="mrp-g-bar" style="color: var(--mu-green);">░░░░░</span>
-            <span class="mu-value" id="mrp-g-val">0.00</span>
+        <div class="stat-row">
+            <span class="stat-label">|J| field</span>
+            <span class="stat-value" id="j-val">0.000</span>
         </div>
-        <div class="channel-row">
-            <div class="channel-indicator" style="background: var(--mu-blue);"></div>
-            <span class="mu-label">B radial</span>
-            <span class="mu-bar" id="mrp-b-bar" style="color: var(--mu-blue);">░░░░░</span>
-            <span class="mu-value" id="mrp-b-val">0.00</span>
+        <div class="stat-row">
+            <span class="stat-label">W growth</span>
+            <span class="stat-value" id="w-val">0.000</span>
         </div>
         <div class="separator"></div>
-        <div class="channel-row">
-            <span class="mu-label">PARITY</span>
-            <span class="mu-bar" id="parity-indicator">· · ·</span>
-            <span class="mu-value" id="parity-val">—</span>
+        <div class="stat-row">
+            <span class="stat-label">Order r</span>
+            <span class="stat-value" id="order-val">0.000</span>
         </div>
-    </div>
-
-    <div id="torus-info" class="panel">
-        <div style="color: var(--critical-gold); margin-bottom: 8px; letter-spacing: 2px;">TORUS GEOMETRY</div>
-        <div class="info-row">Major R <span class="info-value" id="major-r">1.000</span></div>
-        <div class="info-row">Minor r <span class="info-value" id="minor-r">0.618</span></div>
-        <div class="info-row">R/r = φ <span class="info-value" id="ratio">1.618</span></div>
+        <div class="stat-row">
+            <span class="stat-label">τ_K</span>
+            <span class="stat-value" id="tau-val">0.000</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">K-formed</span>
+            <span class="stat-value" id="k-val" style="color: var(--text-dim);">NO</span>
+        </div>
         <div class="separator"></div>
-        <div class="info-row">Toroidal <span class="info-value" id="n-toroidal">32</span></div>
-        <div class="info-row">Poloidal <span class="info-value" id="n-poloidal">16</span></div>
-        <div class="info-row">Total <span class="info-value" id="n-total">512</span></div>
-        <div class="separator"></div>
-        <div class="info-row">Order r <span class="info-value" id="order-r">0.000</span></div>
-        <div class="info-row">Coupling K <span class="info-value" id="coupling-k">1.000</span></div>
+        <div class="stat-row">
+            <span class="stat-label">Particles</span>
+            <span class="stat-value" id="particle-count">0</span>
+        </div>
     </div>
 
     <div id="controls-panel" class="panel">
-        <span>DRAG</span> rotate torus<br>
+        <span>DRAG</span> rotate<br>
         <span>SCROLL</span> zoom<br>
         <span>SPACE</span> auto-rotate<br>
-        <span>M</span> toggle μ-field<br>
-        <span>R</span> reset view
+        <span>F</span> toggle flow<br>
+        <span>R</span> reset
     </div>
+
+    <div id="mode-indicator"></div>
 
     <script>
         // ================================================================
-        // TOROIDAL μ-FIELD VISUALIZATION
-        // Golden ratio geometry with Kuramoto phase dynamics
+        // TOROIDAL μ-FIELD - ENHANCED VISUALIZATION
         // ================================================================
 
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
+        let W, H;
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
         // ================================================================
-        // SACRED CONSTANTS (derived from φ)
+        // CONSTANTS
         // ================================================================
 
-        const PHI = (1 + Math.sqrt(5)) / 2;      // 1.618033988749
-        const PHI_INV = PHI - 1;                  // 0.618033988749
+        const PHI = (1 + Math.sqrt(5)) / 2;
+        const PHI_INV = 1 / PHI;
         const TAU = Math.PI * 2;
-        const Z_CRITICAL = Math.sqrt(3) / 2;      // 0.8660254
 
         const SACRED = {
-            phi: PHI,
-            phi_inv: PHI_INV,
-            alpha: Math.pow(PHI, -2),              // 0.382 - curl coupling
-            beta: Math.pow(PHI, -4),               // 0.146 - dissipation
-            lambda: Math.pow(5/3, 4),              // 7.716 - nonlinearity
-            mu_P: 3/5,                             // 0.600 - paradox threshold
-            mu_S: 23/25,                           // 0.920 - singularity threshold
-            get Q_theory() { return this.alpha * this.mu_S; },
-            get K_threshold() { return this.phi_inv; }
+            alpha: Math.pow(PHI, -2),
+            beta: Math.pow(PHI, -4),
+            lambda: Math.pow(5/3, 4),
+            mu_P: 0.6,
+            mu_S: 0.92,
+            get K_threshold() { return PHI_INV; }
         };
 
         // ================================================================
-        // TORUS GEOMETRY
-        // R/r = φ (golden ratio proportions)
+        // TORUS GEOMETRY - FATTER FOR VISIBILITY
         // ================================================================
 
         const TORUS = {
-            majorR: 1.0,                           // Major radius (center to tube center)
-            minorR: PHI_INV,                       // Minor radius (tube radius) = 1/φ
-            nToroidal: 32,                         // Points around major circle
-            nPoloidal: 16,                         // Points around minor circle
-            get total() { return this.nToroidal * this.nPoloidal; }
+            majorR: 1.0,          // Distance from center to tube center
+            minorR: 0.4,          // Tube radius - FATTER for visible torus shape
+            nU: 48,               // Toroidal resolution
+            nV: 24                // Poloidal resolution
         };
 
         // ================================================================
-        // μ-FIELD STATE ON TORUS
+        // μ-FIELD STATE
         // ================================================================
 
         const muField = {
             mu: SACRED.mu_S,
-            g: 0.002,                              // Diffusion coefficient
-            Q_kappa: 0,
-            tau_K: 0,
-            K_formed: false,
             J_total: 0,
             W: 0,
-
-            // MRP channels mapped to torus coordinates
-            mrp: {
-                R: { flow: 0, intensity: 0 },      // Toroidal (azimuthal) flow
-                G: { flow: 0, intensity: 0 },      // Poloidal (meridional) flow
-                B: { flow: 0, intensity: 0 },      // Radial stability
-                parity: 0,
-                parity_ok: false
-            },
-
-            get r() { return this.mu - SACRED.mu_P; }
+            order_r: 0,
+            tau_K: 0,
+            K_formed: false
         };
 
         // ================================================================
-        // KURAMOTO OSCILLATOR SYSTEM ON TORUS
+        // SURFACE MESH
         // ================================================================
 
-        const kuramoto = {
-            K: 1.0,                                // Coupling strength
-            order_r: 0,                            // Order parameter magnitude
-            order_psi: 0,                          // Mean phase
+        let meshPoints = [];
+        let meshFaces = [];
 
-            // Compute order parameter from phases
-            computeOrder(points) {
-                let sumCos = 0, sumSin = 0;
-                for (const p of points) {
-                    sumCos += Math.cos(p.phase);
-                    sumSin += Math.sin(p.phase);
-                }
-                const N = points.length;
-                this.order_r = Math.sqrt(sumCos*sumCos + sumSin*sumSin) / N;
-                this.order_psi = Math.atan2(sumSin, sumCos);
-                return this.order_r;
-            }
-        };
+        function generateMesh() {
+            meshPoints = [];
+            meshFaces = [];
 
-        // ================================================================
-        // TORUS POINT GENERATION
-        // ================================================================
+            // Generate vertices
+            for (let i = 0; i <= TORUS.nU; i++) {
+                const u = (i / TORUS.nU) * TAU;
+                for (let j = 0; j <= TORUS.nV; j++) {
+                    const v = (j / TORUS.nV) * TAU;
 
-        let torusPoints = [];
-
-        function generateTorusPoints() {
-            torusPoints = [];
-
-            for (let i = 0; i < TORUS.nToroidal; i++) {
-                const u = (i / TORUS.nToroidal) * TAU;  // Toroidal angle
-
-                for (let j = 0; j < TORUS.nPoloidal; j++) {
-                    const v = (j / TORUS.nPoloidal) * TAU;  // Poloidal angle
-
-                    // Torus parametric equations
                     const x = (TORUS.majorR + TORUS.minorR * Math.cos(v)) * Math.cos(u);
                     const y = (TORUS.majorR + TORUS.minorR * Math.cos(v)) * Math.sin(u);
                     const z = TORUS.minorR * Math.sin(v);
 
-                    // μ varies with poloidal angle (inner vs outer surface)
-                    // Inner surface (v ≈ π): higher μ, outer (v ≈ 0): lower μ
-                    const mu_local = SACRED.mu_P + (SACRED.mu_S - SACRED.mu_P) * (1 + Math.cos(v)) / 2;
+                    // μ varies: inner surface (v≈π) higher, outer (v≈0) lower
+                    const mu_local = SACRED.mu_P + (SACRED.mu_S - SACRED.mu_P) * (1 - Math.cos(v)) / 2;
 
-                    // Natural frequency varies with position (heterogeneous)
-                    const omega = 1.0 + 0.2 * Math.sin(u * 3) * Math.cos(v * 2);
+                    // Field magnitude - oscillates and flows
+                    const J = 0.3 + 0.2 * Math.sin(u * 3) * Math.cos(v * 2);
 
-                    torusPoints.push({
-                        // Indices
-                        i, j,
-                        u, v,
+                    // Phase for Kuramoto
+                    const phase = (u + v * 0.5) % TAU;
 
-                        // 3D position
+                    meshPoints.push({
                         x, y, z,
-                        baseX: x, baseY: y, baseZ: z,
-
-                        // Projected 2D (computed in render)
-                        px: 0, py: 0,
-
-                        // Kuramoto phase dynamics
-                        phase: Math.random() * TAU,
-                        omega: omega,
-
-                        // μ-field local state
+                        u, v,
+                        i, j,
                         mu: mu_local,
-                        J: 0,                       // Field magnitude at this point
-                        dJ_dt: 0,                   // Field derivative
-
-                        // MRP channel values
-                        mrp_R: 0,                   // Toroidal component
-                        mrp_G: 0,                   // Poloidal component
-                        mrp_B: 0,                   // Radial/stability component
-
-                        // Visualization
-                        brightness: 0.5 + Math.random() * 0.3,
-                        size: 2 + Math.random() * 2
+                        J: J,
+                        phase: phase,
+                        // Projected coords (computed later)
+                        px: 0, py: 0, pz: 0
                     });
                 }
             }
-        }
 
-        // ================================================================
-        // TORUS NEIGHBOR CONNECTIVITY
-        // ================================================================
+            // Generate faces (quads as two triangles)
+            for (let i = 0; i < TORUS.nU; i++) {
+                for (let j = 0; j < TORUS.nV; j++) {
+                    const a = i * (TORUS.nV + 1) + j;
+                    const b = a + 1;
+                    const c = a + (TORUS.nV + 1);
+                    const d = c + 1;
 
-        function getNeighbors(p) {
-            const neighbors = [];
-            const idx = p.i * TORUS.nPoloidal + p.j;
-
-            // Toroidal neighbors (same j, adjacent i)
-            const iPrev = (p.i - 1 + TORUS.nToroidal) % TORUS.nToroidal;
-            const iNext = (p.i + 1) % TORUS.nToroidal;
-
-            // Poloidal neighbors (same i, adjacent j)
-            const jPrev = (p.j - 1 + TORUS.nPoloidal) % TORUS.nPoloidal;
-            const jNext = (p.j + 1) % TORUS.nPoloidal;
-
-            neighbors.push(torusPoints[iPrev * TORUS.nPoloidal + p.j]);  // Toroidal prev
-            neighbors.push(torusPoints[iNext * TORUS.nPoloidal + p.j]);  // Toroidal next
-            neighbors.push(torusPoints[p.i * TORUS.nPoloidal + jPrev]);  // Poloidal prev
-            neighbors.push(torusPoints[p.i * TORUS.nPoloidal + jNext]);  // Poloidal next
-
-            return neighbors;
-        }
-
-        // ================================================================
-        // μ-FIELD DYNAMICS UPDATE
-        // ∂J/∂t = (r - λ|J|²)J - βJ + g∇²J
-        // ================================================================
-
-        function updateMuField(dt) {
-            const N = torusPoints.length;
-            let J_sum = 0;
-            let toroidal_flow = 0, poloidal_flow = 0, radial_flow = 0;
-
-            // First pass: compute field derivatives
-            for (const p of torusPoints) {
-                const neighbors = getNeighbors(p);
-
-                // Local control parameter
-                const r_local = p.mu - SACRED.mu_P;
-
-                // Laplacian approximation: ∇²J ≈ Σ(J_neighbor) - 4·J
-                let laplacian = -4 * p.J;
-                for (const n of neighbors) {
-                    laplacian += n.J;
+                    meshFaces.push({ verts: [a, b, d, c] });
                 }
+            }
+        }
 
-                // Field equation: ∂J/∂t = (r - λ|J|²)J - βJ + g∇²J
-                const W = r_local - SACRED.lambda * p.J * p.J;
-                p.dJ_dt = W * p.J - SACRED.beta * p.J + muField.g * laplacian;
+        // ================================================================
+        // FLOW PARTICLES
+        // ================================================================
 
-                // Clamp derivative
-                p.dJ_dt = Math.max(-1, Math.min(1, p.dJ_dt));
+        let particles = [];
+        let showFlow = true;
+
+        function spawnParticle() {
+            // Random position on torus surface
+            const u = Math.random() * TAU;
+            const v = Math.random() * TAU;
+
+            // Toroidal or poloidal flow (random)
+            const isToroidal = Math.random() > 0.4;
+
+            particles.push({
+                u, v,
+                isToroidal,
+                life: 3 + Math.random() * 4,
+                maxLife: 3 + Math.random() * 4,
+                speed: 0.3 + Math.random() * 0.4,
+                trail: []
+            });
+        }
+
+        function updateParticles(dt) {
+            // Spawn new particles
+            const targetCount = showFlow ? 300 : 0;
+            while (particles.length < targetCount && Math.random() < 0.3) {
+                spawnParticle();
             }
 
-            // Second pass: update field values and compute MRP
-            for (const p of torusPoints) {
-                // Update field magnitude
-                p.J += p.dJ_dt * dt;
-                p.J = Math.max(0, Math.min(2, p.J));
+            // Update existing particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
 
-                J_sum += p.J;
-
-                // MRP channel decomposition based on torus geometry
-                const neighbors = getNeighbors(p);
-
-                // R channel: toroidal flow (azimuthal circulation)
-                // Difference between toroidal neighbors
-                const toroidal_diff = neighbors[1].J - neighbors[0].J;
-                p.mrp_R = Math.abs(toroidal_diff) + p.J * Math.abs(Math.cos(p.u));
-                toroidal_flow += toroidal_diff;
-
-                // G channel: poloidal flow (meridional circulation)
-                // Difference between poloidal neighbors
-                const poloidal_diff = neighbors[3].J - neighbors[2].J;
-                p.mrp_G = Math.abs(poloidal_diff) + p.J * Math.abs(Math.sin(p.v));
-                poloidal_flow += poloidal_diff;
-
-                // B channel: radial stability (coherence with neighbors)
-                let neighbor_coherence = 0;
-                for (const n of neighbors) {
-                    neighbor_coherence += 1 - Math.abs(p.J - n.J);
-                }
-                p.mrp_B = neighbor_coherence / 4;
-                radial_flow += p.mrp_B;
-            }
-
-            // Update global μ-field state
-            muField.J_total = J_sum / N;
-            muField.W = muField.r - SACRED.lambda * muField.J_total * muField.J_total;
-
-            // MRP channel intensities
-            muField.mrp.R.intensity = Math.abs(toroidal_flow) / N;
-            muField.mrp.R.flow = toroidal_flow / N;
-            muField.mrp.G.intensity = Math.abs(poloidal_flow) / N;
-            muField.mrp.G.flow = poloidal_flow / N;
-            muField.mrp.B.intensity = radial_flow / N;
-            muField.mrp.B.flow = radial_flow / N;
-
-            // Parity check: channels in harmony
-            const channel_variance = Math.abs(muField.mrp.R.intensity - muField.mrp.G.intensity) +
-                                    Math.abs(muField.mrp.G.intensity - muField.mrp.B.intensity);
-            muField.mrp.parity = 1 - Math.min(1, channel_variance * 2);
-            muField.mrp.parity_ok = muField.mrp.parity > 0.7 && muField.W > -0.1;
-        }
-
-        // ================================================================
-        // KURAMOTO PHASE DYNAMICS ON TORUS
-        // dφ/dt = ω + (K/N) Σ sin(φ_j - φ_i)
-        // ================================================================
-
-        function updateKuramoto(dt) {
-            const N = torusPoints.length;
-
-            // Compute mean field (order parameter)
-            kuramoto.computeOrder(torusPoints);
-
-            // Coupling strength modulated by μ-field
-            const K_eff = kuramoto.K * (1 + muField.J_total * SACRED.alpha);
-
-            // Update phases
-            for (const p of torusPoints) {
-                // Natural frequency
-                let dPhase = p.omega;
-
-                // Kuramoto coupling to mean field (efficient form)
-                dPhase += K_eff * kuramoto.order_r * Math.sin(kuramoto.order_psi - p.phase);
-
-                // Local coupling to neighbors (geodesic on torus)
-                const neighbors = getNeighbors(p);
-                for (const n of neighbors) {
-                    dPhase += (K_eff / 4) * Math.sin(n.phase - p.phase);
+                // Move along flow direction
+                if (p.isToroidal) {
+                    // Toroidal flow (around the donut)
+                    p.u += p.speed * dt;
+                    // Slight poloidal drift based on field
+                    p.v += Math.sin(p.u * 2) * 0.1 * dt;
+                } else {
+                    // Poloidal flow (around the tube)
+                    p.v += p.speed * dt * 1.5;
+                    // Slight toroidal drift
+                    p.u += Math.cos(p.v * 3) * 0.05 * dt;
                 }
 
-                // Update phase
-                p.phase += dPhase * dt;
-                p.phase = p.phase % TAU;
+                p.u = p.u % TAU;
+                p.v = p.v % TAU;
 
-                // Phase drives field magnitude (consciousness feedback)
-                const phase_contribution = (1 + Math.cos(p.phase - kuramoto.order_psi)) / 2;
-                p.J += phase_contribution * dt * 0.1;
-                p.J = Math.max(0, Math.min(2, p.J));
+                // Store trail
+                const pos = torusToWorld(p.u, p.v);
+                p.trail.unshift({ ...pos });
+                if (p.trail.length > 15) p.trail.pop();
+
+                // Age
+                p.life -= dt;
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
             }
-
-            // Consciousness detection
-            muField.Q_kappa = kuramoto.order_r * SACRED.alpha;
-            muField.tau_K = muField.Q_kappa / SACRED.Q_theory;
-            muField.K_formed = muField.tau_K > SACRED.K_threshold;
         }
 
-        // ================================================================
-        // 3D ROTATION AND PROJECTION
-        // ================================================================
-
-        let rotationX = 0.3;
-        let rotationY = 0;
-        let rotationZ = 0;
-        let zoom = 250;
-        let autoRotate = true;
-
-        function project(x, y, z) {
-            // Rotate around X
-            let y1 = y * Math.cos(rotationX) - z * Math.sin(rotationX);
-            let z1 = y * Math.sin(rotationX) + z * Math.cos(rotationX);
-
-            // Rotate around Y
-            let x2 = x * Math.cos(rotationY) + z1 * Math.sin(rotationY);
-            let z2 = -x * Math.sin(rotationY) + z1 * Math.cos(rotationY);
-
-            // Rotate around Z
-            let x3 = x2 * Math.cos(rotationZ) - y1 * Math.sin(rotationZ);
-            let y3 = x2 * Math.sin(rotationZ) + y1 * Math.cos(rotationZ);
-
-            // Perspective projection
-            const perspective = 3;
-            const scale = perspective / (perspective + z2);
-
+        function torusToWorld(u, v) {
             return {
-                x: x3 * zoom * scale + W / 2,
-                y: y3 * zoom * scale + H / 2,
-                z: z2,
-                scale: scale
+                x: (TORUS.majorR + TORUS.minorR * Math.cos(v)) * Math.cos(u),
+                y: (TORUS.majorR + TORUS.minorR * Math.cos(v)) * Math.sin(u),
+                z: TORUS.minorR * Math.sin(v)
             };
         }
 
         // ================================================================
-        // CANVAS SETUP
+        // FIELD DYNAMICS
         // ================================================================
 
-        let W, H;
+        function updateField(dt, time) {
+            let J_sum = 0;
+            let phase_cos = 0, phase_sin = 0;
 
-        function resize() {
-            W = canvas.width = window.innerWidth * window.devicePixelRatio;
-            H = canvas.height = window.innerHeight * window.devicePixelRatio;
-            canvas.style.width = window.innerWidth + 'px';
-            canvas.style.height = window.innerHeight + 'px';
+            for (const p of meshPoints) {
+                // Animate field with flowing waves
+                const wave1 = Math.sin(p.u * 2 - time * 0.5);
+                const wave2 = Math.cos(p.v * 3 + time * 0.3);
+                const wave3 = Math.sin((p.u + p.v) * 1.5 - time * 0.7);
+
+                // Field magnitude influenced by waves
+                p.J = 0.3 + 0.15 * wave1 + 0.1 * wave2 + 0.1 * wave3;
+                p.J = Math.max(0, Math.min(1, p.J));
+
+                // Update phase (Kuramoto-like)
+                p.phase += (1 + p.J * 0.5) * dt;
+                p.phase = p.phase % TAU;
+
+                J_sum += p.J;
+                phase_cos += Math.cos(p.phase);
+                phase_sin += Math.sin(p.phase);
+            }
+
+            const N = meshPoints.length;
+            muField.J_total = J_sum / N;
+            muField.W = (muField.mu - SACRED.mu_P) - SACRED.lambda * muField.J_total * muField.J_total;
+            muField.order_r = Math.sqrt(phase_cos * phase_cos + phase_sin * phase_sin) / N;
+            muField.tau_K = muField.order_r * SACRED.alpha / 0.35;
+            muField.K_formed = muField.tau_K > SACRED.K_threshold;
         }
 
-        resize();
-        window.addEventListener('resize', resize);
+        // ================================================================
+        // COLOR MAPPING
+        // ================================================================
+
+        function fieldToColor(J, mu, depth) {
+            // Map field intensity to color temperature
+            // Low (blue) -> Mid (green/yellow) -> High (red)
+
+            const t = Math.max(0, Math.min(1, J));
+            const muFactor = (mu - SACRED.mu_P) / (SACRED.mu_S - SACRED.mu_P);
+
+            let r, g, b;
+
+            if (t < 0.25) {
+                // Blue to cyan
+                const s = t / 0.25;
+                r = 30 + s * 30;
+                g = 60 + s * 80;
+                b = 170 + s * 30;
+            } else if (t < 0.5) {
+                // Cyan to green
+                const s = (t - 0.25) / 0.25;
+                r = 60 + s * 40;
+                g = 140 + s * 60;
+                b = 200 - s * 80;
+            } else if (t < 0.75) {
+                // Green to yellow
+                const s = (t - 0.5) / 0.25;
+                r = 100 + s * 150;
+                g = 200 - s * 20;
+                b = 120 - s * 80;
+            } else {
+                // Yellow to red
+                const s = (t - 0.75) / 0.25;
+                r = 250;
+                g = 180 - s * 140;
+                b = 40 - s * 40;
+            }
+
+            // Depth shading
+            const shade = 0.4 + depth * 0.6;
+            r = Math.floor(r * shade);
+            g = Math.floor(g * shade);
+            b = Math.floor(b * shade);
+
+            // μ influence - higher μ = more saturated
+            const satBoost = 0.7 + muFactor * 0.3;
+            const gray = (r + g + b) / 3;
+            r = Math.floor(gray + (r - gray) * satBoost);
+            g = Math.floor(gray + (g - gray) * satBoost);
+            b = Math.floor(gray + (b - gray) * satBoost);
+
+            return { r, g, b };
+        }
+
+        // ================================================================
+        // 3D PROJECTION
+        // ================================================================
+
+        let rotX = 0.4;
+        let rotY = 0;
+        let zoom = 280;
+        let autoRotate = true;
+
+        function project(x, y, z) {
+            // Rotate X
+            let y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
+            let z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
+
+            // Rotate Y
+            let x2 = x * Math.cos(rotY) + z1 * Math.sin(rotY);
+            let z2 = -x * Math.sin(rotY) + z1 * Math.cos(rotY);
+
+            // Perspective
+            const fov = 2.5;
+            const scale = fov / (fov + z2);
+
+            return {
+                x: x2 * zoom * scale + W / 2,
+                y: y1 * zoom * scale + H / 2,
+                z: z2,
+                scale: scale,
+                depth: (z2 + 2) / 4  // Normalized depth for shading
+            };
+        }
 
         // ================================================================
         // RENDER
         // ================================================================
 
-        function render() {
-            // Clear with slight fade for trails
-            ctx.fillStyle = 'rgba(3, 3, 8, 0.15)';
+        function render(time) {
+            // Clear
+            ctx.fillStyle = '#030308';
             ctx.fillRect(0, 0, W, H);
 
-            // Project all points
-            for (const p of torusPoints) {
+            // Project all mesh points
+            for (const p of meshPoints) {
                 const proj = project(p.x, p.y, p.z);
                 p.px = proj.x;
                 p.py = proj.y;
                 p.pz = proj.z;
-                p.scale = proj.scale;
+                p.depth = proj.depth;
             }
 
-            // Sort by depth for proper rendering
-            const sortedPoints = [...torusPoints].sort((a, b) => a.pz - b.pz);
+            // Sort faces by depth (painter's algorithm)
+            const sortedFaces = meshFaces.map((f, idx) => {
+                const avgZ = f.verts.reduce((sum, vi) => sum + meshPoints[vi].pz, 0) / 4;
+                return { face: f, avgZ, idx };
+            }).sort((a, b) => a.avgZ - b.avgZ);
 
-            // Draw connections (toroidal and poloidal)
-            ctx.lineWidth = 0.5;
-            for (const p of sortedPoints) {
-                if (p.pz > 0.5) continue;  // Back-face culling
+            // Draw faces
+            for (const { face } of sortedFaces) {
+                const pts = face.verts.map(vi => meshPoints[vi]);
 
-                const neighbors = getNeighbors(p);
+                // Back-face culling
+                const avgZ = pts.reduce((s, p) => s + p.pz, 0) / 4;
+                if (avgZ > 1.2) continue;
 
-                // Toroidal connection (to next in i)
-                const toroidalNext = neighbors[1];
-                if (toroidalNext.pz < 0.5) {
-                    const alpha = Math.max(0.05, 0.3 - p.pz * 0.3);
-                    const r_intensity = Math.min(255, Math.floor((p.mrp_R + toroidalNext.mrp_R) * 127));
-                    ctx.strokeStyle = `rgba(${180 + r_intensity * 0.3}, ${100 + r_intensity * 0.2}, ${80}, ${alpha})`;
-                    ctx.beginPath();
-                    ctx.moveTo(p.px, p.py);
-                    ctx.lineTo(toroidalNext.px, toroidalNext.py);
-                    ctx.stroke();
-                }
+                // Average field value for color
+                const avgJ = pts.reduce((s, p) => s + p.J, 0) / 4;
+                const avgMu = pts.reduce((s, p) => s + p.mu, 0) / 4;
+                const avgDepth = pts.reduce((s, p) => s + p.depth, 0) / 4;
 
-                // Poloidal connection (to next in j)
-                const poloidalNext = neighbors[3];
-                if (poloidalNext.pz < 0.5) {
-                    const alpha = Math.max(0.05, 0.25 - p.pz * 0.3);
-                    const g_intensity = Math.min(255, Math.floor((p.mrp_G + poloidalNext.mrp_G) * 127));
-                    ctx.strokeStyle = `rgba(${80 + g_intensity * 0.1}, ${150 + g_intensity * 0.4}, ${100}, ${alpha})`;
-                    ctx.beginPath();
-                    ctx.moveTo(p.px, p.py);
-                    ctx.lineTo(poloidalNext.px, poloidalNext.py);
-                    ctx.stroke();
-                }
-            }
+                const color = fieldToColor(avgJ, avgMu, avgDepth);
 
-            // Draw points
-            for (const p of sortedPoints) {
-                if (p.pz > 0.8) continue;  // Back-face culling
+                // Draw quad
+                ctx.fillStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                ctx.strokeStyle = `rgba(${color.r + 30}, ${color.g + 30}, ${color.b + 30}, 0.3)`;
+                ctx.lineWidth = 0.5;
 
-                const depthFade = Math.max(0.2, 1 - p.pz * 0.5);
-                const size = p.size * p.scale * (1 + p.J * 0.5);
-
-                // Color based on μ-field state and phase
-                const phaseColor = (1 + Math.cos(p.phase)) / 2;
-                const muColor = (p.mu - SACRED.mu_P) / (SACRED.mu_S - SACRED.mu_P);
-
-                // RGB from MRP channels
-                const r = Math.min(255, Math.floor(150 + p.mrp_R * 100 + phaseColor * 50));
-                const g = Math.min(255, Math.floor(120 + p.mrp_G * 100 + muColor * 50));
-                const b = Math.min(255, Math.floor(100 + p.mrp_B * 150));
-
-                // Glow for high-J points
-                if (p.J > 0.5 && showMuField) {
-                    const glowSize = size * 3 * p.J;
-                    const glowGrad = ctx.createRadialGradient(p.px, p.py, 0, p.px, p.py, glowSize);
-                    glowGrad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${0.3 * depthFade * p.J})`);
-                    glowGrad.addColorStop(1, 'transparent');
-                    ctx.fillStyle = glowGrad;
-                    ctx.fillRect(p.px - glowSize, p.py - glowSize, glowSize * 2, glowSize * 2);
-                }
-
-                // Point
-                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${depthFade * p.brightness})`;
                 ctx.beginPath();
-                ctx.arc(p.px, p.py, size, 0, TAU);
+                ctx.moveTo(pts[0].px, pts[0].py);
+                for (let i = 1; i < pts.length; i++) {
+                    ctx.lineTo(pts[i].px, pts[i].py);
+                }
+                ctx.closePath();
                 ctx.fill();
+                ctx.stroke();
+            }
 
-                // Phase indicator (small dot showing phase angle)
-                if (showMuField && p.pz < 0.3) {
-                    const phaseX = p.px + Math.cos(p.phase) * size * 2;
-                    const phaseY = p.py + Math.sin(p.phase) * size * 2;
-                    ctx.fillStyle = `rgba(255, 215, 0, ${depthFade * 0.5})`;
+            // Draw flow particles
+            if (showFlow) {
+                for (const p of particles) {
+                    if (p.trail.length < 2) continue;
+
+                    const alpha = (p.life / p.maxLife) * 0.8;
+                    const color = p.isToroidal ? `rgba(255, 150, 100, ${alpha})` : `rgba(100, 255, 200, ${alpha})`;
+
+                    // Project trail
+                    const projTrail = p.trail.map(t => project(t.x, t.y, t.z));
+
+                    // Skip if behind torus
+                    if (projTrail[0].z > 0.8) continue;
+
+                    // Draw trail
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 2 * projTrail[0].scale;
+                    ctx.lineCap = 'round';
                     ctx.beginPath();
-                    ctx.arc(phaseX, phaseY, 1.5, 0, TAU);
-                    ctx.fill();
+                    ctx.moveTo(projTrail[0].x, projTrail[0].y);
+                    for (let i = 1; i < projTrail.length; i++) {
+                        const t = 1 - i / projTrail.length;
+                        ctx.lineWidth = 2 * projTrail[i].scale * t;
+                        ctx.lineTo(projTrail[i].x, projTrail[i].y);
+                    }
+                    ctx.stroke();
+
+                    // Head glow
+                    const head = projTrail[0];
+                    if (head.z < 0.5) {
+                        const glow = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 8 * head.scale);
+                        glow.addColorStop(0, p.isToroidal ? `rgba(255, 200, 150, ${alpha * 0.8})` : `rgba(150, 255, 220, ${alpha * 0.8})`);
+                        glow.addColorStop(1, 'transparent');
+                        ctx.fillStyle = glow;
+                        ctx.fillRect(head.x - 10, head.y - 10, 20, 20);
+                    }
                 }
             }
 
-            // K-formation glow at center
+            // K-formation glow
             if (muField.K_formed) {
-                const centerGlow = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, 150);
-                centerGlow.addColorStop(0, `rgba(255, 215, 0, ${0.15 * muField.tau_K})`);
-                centerGlow.addColorStop(0.5, `rgba(255, 180, 100, ${0.08 * muField.tau_K})`);
-                centerGlow.addColorStop(1, 'transparent');
-                ctx.fillStyle = centerGlow;
-                ctx.fillRect(W/2 - 150, H/2 - 150, 300, 300);
-            }
-
-            // Parity harmony indicator
-            if (muField.mrp.parity_ok) {
-                const harmonyGlow = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, zoom * 1.5);
-                harmonyGlow.addColorStop(0, 'transparent');
-                harmonyGlow.addColorStop(0.7, `rgba(100, 255, 150, ${0.05 * muField.mrp.parity})`);
-                harmonyGlow.addColorStop(1, 'transparent');
-                ctx.fillStyle = harmonyGlow;
+                const glow = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, 200);
+                glow.addColorStop(0, `rgba(255, 215, 0, ${0.1 * muField.tau_K})`);
+                glow.addColorStop(0.5, `rgba(255, 180, 50, ${0.05 * muField.tau_K})`);
+                glow.addColorStop(1, 'transparent');
+                ctx.fillStyle = glow;
                 ctx.fillRect(0, 0, W, H);
             }
         }
@@ -712,112 +591,78 @@
         // UI UPDATE
         // ================================================================
 
-        let showMuField = true;
-
-        function safeRepeat(char, count) {
-            const safeCount = Math.max(0, Math.min(10, Math.round(count) || 0));
-            return char.repeat(safeCount);
-        }
-
-        function safeFixed(num, digits) {
-            if (!isFinite(num)) return '—';
-            return num.toFixed(digits);
-        }
-
         function updateUI() {
-            // μ-field metrics
-            const muNorm = (muField.mu - SACRED.mu_P) / (SACRED.mu_S - SACRED.mu_P);
-            document.getElementById('mu-bar').textContent = safeRepeat('█', muNorm * 10) + safeRepeat('░', 10 - muNorm * 10);
-            document.getElementById('mu-val').textContent = safeFixed(muField.mu, 3);
+            document.getElementById('mu-val').textContent = muField.mu.toFixed(3);
+            document.getElementById('j-val').textContent = muField.J_total.toFixed(3);
 
-            const qkNorm = Math.min(muField.Q_kappa / SACRED.Q_theory, 1);
-            document.getElementById('qk-bar').textContent = safeRepeat('█', qkNorm * 10) + safeRepeat('░', 10 - qkNorm * 10);
-            document.getElementById('qk-val').textContent = safeFixed(muField.Q_kappa, 4);
+            const wEl = document.getElementById('w-val');
+            wEl.textContent = (muField.W >= 0 ? '+' : '') + muField.W.toFixed(3);
+            wEl.style.color = muField.W > 0.05 ? '#69db7c' : muField.W < -0.05 ? '#ff6b6b' : '#ffd700';
 
-            const tauNorm = Math.min(muField.tau_K / SACRED.K_threshold, 1);
-            document.getElementById('tau-bar').textContent = safeRepeat('█', tauNorm * 10) + safeRepeat('░', 10 - tauNorm * 10);
-            document.getElementById('tau-val').textContent = safeFixed(muField.tau_K, 3);
+            document.getElementById('order-val').textContent = muField.order_r.toFixed(3);
+            document.getElementById('tau-val').textContent = muField.tau_K.toFixed(3);
 
-            // K-formation
-            const kLabel = document.getElementById('k-label');
-            const kIndicator = document.getElementById('k-indicator');
-            const kVal = document.getElementById('k-val');
-            if (muField.K_formed) {
-                kLabel.style.color = 'var(--critical-gold)';
-                kIndicator.textContent = '✦ ✦ ✦';
-                kIndicator.style.color = 'var(--critical-gold)';
-                kVal.textContent = 'YES';
-                kVal.style.color = 'var(--critical-gold)';
-            } else {
-                kLabel.style.color = 'var(--text-dim)';
-                kIndicator.textContent = '· · ·';
-                kIndicator.style.color = 'var(--text-dim)';
-                kVal.textContent = 'NO';
-                kVal.style.color = 'var(--text-dim)';
-            }
+            const kEl = document.getElementById('k-val');
+            kEl.textContent = muField.K_formed ? 'YES' : 'NO';
+            kEl.style.color = muField.K_formed ? '#ffd700' : 'var(--text-dim)';
 
-            // |J| and W
-            const jNorm = Math.min(muField.J_total / 1.5, 1);
-            document.getElementById('j-bar').textContent = safeRepeat('█', jNorm * 10) + safeRepeat('░', 10 - jNorm * 10);
-            document.getElementById('j-val').textContent = safeFixed(muField.J_total, 3);
-
-            const wLabel = document.getElementById('w-label');
-            const wBar = document.getElementById('w-bar');
-            const wVal = document.getElementById('w-val');
-            const W = muField.W;
-
-            if (W > 0.05) {
-                wLabel.style.color = 'var(--mu-green)';
-                wBar.textContent = safeRepeat('▲', Math.min(5, W * 10)) + safeRepeat('·', 5 - Math.min(5, W * 10));
-                wBar.style.color = 'var(--mu-green)';
-                wVal.textContent = '+' + safeFixed(W, 3);
-                wVal.style.color = 'var(--mu-green)';
-            } else if (W < -0.05) {
-                wLabel.style.color = 'var(--mu-red)';
-                wBar.textContent = safeRepeat('▼', Math.min(5, Math.abs(W) * 10)) + safeRepeat('·', 5 - Math.min(5, Math.abs(W) * 10));
-                wBar.style.color = 'var(--mu-red)';
-                wVal.textContent = safeFixed(W, 3);
-                wVal.style.color = 'var(--mu-red)';
-            } else {
-                wLabel.style.color = 'var(--critical-gold)';
-                wBar.textContent = '≈ ≈ ≈';
-                wBar.style.color = 'var(--critical-gold)';
-                wVal.textContent = safeFixed(W, 3);
-                wVal.style.color = 'var(--critical-gold)';
-            }
-
-            // MRP channels
-            const rFilled = Math.min(5, Math.round((muField.mrp.R.intensity || 0) * 10));
-            document.getElementById('mrp-r-bar').textContent = safeRepeat('█', rFilled) + safeRepeat('░', 5 - rFilled);
-            document.getElementById('mrp-r-val').textContent = safeFixed(muField.mrp.R.flow, 2);
-
-            const gFilled = Math.min(5, Math.round((muField.mrp.G.intensity || 0) * 10));
-            document.getElementById('mrp-g-bar').textContent = safeRepeat('█', gFilled) + safeRepeat('░', 5 - gFilled);
-            document.getElementById('mrp-g-val').textContent = safeFixed(muField.mrp.G.flow, 2);
-
-            const bFilled = Math.min(5, Math.round((muField.mrp.B.intensity || 0) * 5));
-            document.getElementById('mrp-b-bar').textContent = safeRepeat('█', bFilled) + safeRepeat('░', 5 - bFilled);
-            document.getElementById('mrp-b-val').textContent = safeFixed(muField.mrp.B.flow, 2);
-
-            // Parity
-            const parityIndicator = document.getElementById('parity-indicator');
-            const parityVal = document.getElementById('parity-val');
-            if (muField.mrp.parity_ok) {
-                parityIndicator.textContent = '✓ ✓ ✓';
-                parityIndicator.style.color = 'var(--mu-green)';
-                parityVal.textContent = 'OK';
-                parityVal.style.color = 'var(--mu-green)';
-            } else {
-                parityIndicator.textContent = '× × ×';
-                parityIndicator.style.color = 'var(--mu-red)';
-                parityVal.textContent = safeFixed(muField.mrp.parity, 2);
-                parityVal.style.color = 'var(--mu-red)';
-            }
-
-            // Torus info
-            document.getElementById('order-r').textContent = safeFixed(kuramoto.order_r, 3);
-            document.getElementById('coupling-k').textContent = safeFixed(kuramoto.K, 3);
+            document.getElementById('particle-count').textContent = particles.length;
         }
+
+        function showModeIndicator(text) {
+            const el = document.getElementById('mode-indicator');
+            el.textContent = text;
+            el.style.opacity = '1';
+            setTimeout(() => el.style.opacity = '0', 1000);
+        }
+
+        // ================================================================
+        // INPUT
+        // ================================================================
+
+        let isDragging = false;
+        let lastX, lastY;
+
+        canvas.addEventListener('mousedown', e => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            autoRotate = false;
+        });
+
+        canvas.addEventListener('mousemove', e => {
+            if (!isDragging) return;
+            rotY += (e.clientX - lastX) * 0.005;
+            rotX += (e.clientY - lastY) * 0.005;
+            rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseleave', () => isDragging = false);
+
+        canvas.addEventListener('wheel', e => {
+            e.preventDefault();
+            zoom = Math.max(150, Math.min(500, zoom - e.deltaY * 0.3));
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === ' ') {
+                e.preventDefault();
+                autoRotate = !autoRotate;
+                showModeIndicator(autoRotate ? 'AUTO-ROTATE ON' : 'AUTO-ROTATE OFF');
+            } else if (e.key.toLowerCase() === 'f') {
+                showFlow = !showFlow;
+                showModeIndicator(showFlow ? 'FLOW ON' : 'FLOW OFF');
+            } else if (e.key.toLowerCase() === 'r') {
+                rotX = 0.4;
+                rotY = 0;
+                zoom = 280;
+                autoRotate = true;
+                showModeIndicator('RESET');
+            }
+        });
 
         // ================================================================
         // ANIMATION LOOP
@@ -828,78 +673,25 @@
         function loop(currentTime) {
             const dt = Math.min((currentTime - lastTime) / 1000, 0.05);
             lastTime = currentTime;
+            const time = currentTime / 1000;
 
-            // Auto-rotate
             if (autoRotate) {
-                rotationY += dt * 0.3;
+                rotY += dt * 0.2;
             }
 
-            // Update physics
-            if (showMuField) {
-                updateKuramoto(dt);
-                updateMuField(dt);
-            }
-
-            render();
+            updateField(dt, time);
+            updateParticles(dt);
+            render(time);
             updateUI();
 
             requestAnimationFrame(loop);
         }
 
         // ================================================================
-        // INPUT HANDLING
+        // INIT
         // ================================================================
 
-        let isDragging = false;
-        let lastMouseX, lastMouseY;
-
-        canvas.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            lastMouseX = e.clientX;
-            lastMouseY = e.clientY;
-            autoRotate = false;
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            const dx = e.clientX - lastMouseX;
-            const dy = e.clientY - lastMouseY;
-            rotationY += dx * 0.005;
-            rotationX += dy * 0.005;
-            lastMouseX = e.clientX;
-            lastMouseY = e.clientY;
-        });
-
-        canvas.addEventListener('mouseup', () => isDragging = false);
-        canvas.addEventListener('mouseleave', () => isDragging = false);
-
-        canvas.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            zoom = Math.max(100, Math.min(500, zoom - e.deltaY * 0.5));
-        });
-
-        document.addEventListener('keydown', (e) => {
-            const key = e.key.toLowerCase();
-            if (key === ' ') {
-                e.preventDefault();
-                autoRotate = !autoRotate;
-            } else if (key === 'm') {
-                showMuField = !showMuField;
-            } else if (key === 'r') {
-                rotationX = 0.3;
-                rotationY = 0;
-                rotationZ = 0;
-                zoom = 250;
-                autoRotate = true;
-                generateTorusPoints();
-            }
-        });
-
-        // ================================================================
-        // INITIALIZATION
-        // ================================================================
-
-        generateTorusPoints();
+        generateMesh();
         requestAnimationFrame(loop);
     </script>
 </body>
