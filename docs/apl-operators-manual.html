@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>APL Operator’s Manual (HTML)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/latex.js@0.12.7/dist/latex.css" />
+  <style>
+    body{margin:0;background:#0b0c10;color:#e6e7ea;font-family:Inter,system-ui,Segoe UI,Roboto,Ubuntu,Arial,sans-serif}
+    .container{max-width:1000px;margin:0 auto;padding:24px}
+    .panel{border:1px solid #20222a;border-radius:12px;padding:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02))}
+    .muted{color:#a9acb2}
+    .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+    .btn{display:inline-block;background:#8ab4f8;color:#0b0c10;font-weight:700;border-radius:8px;padding:8px 12px;border:2px solid #000;cursor:pointer;text-decoration:none}
+    .viewer{border:1px solid #20222a;border-radius:10px;background:#0f1116;min-height:240px;padding:16px;overflow:auto}
+    pre.fallback{white-space:pre-wrap;word-break:break-word}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="panel">
+      <h1>APL Operator’s Manual</h1>
+      <p class="muted">HTML view rendered in‑browser from <code>docs/apl-operators-manual.tex</code>.</p>
+      <div class="toolbar">
+        <a class="btn" href="apl-operators-manual.tex" download>Download .tex</a>
+        <a class="btn" href="apl-operators-manual.pdf" target="_blank">Open PDF</a>
+        <a class="btn" href="index.html">Back to Manual Index</a>
+        <button class="btn" id="refreshBtn">Refresh</button>
+      </div>
+    </header>
+
+    <main id="viewer" class="viewer">
+      <em class="muted">Loading LaTeX…</em>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.12.7/dist/latex.min.js"></script>
+  <script>
+    async function renderManual() {
+      const viewer = document.getElementById('viewer');
+      viewer.innerHTML = '<em class="muted">Loading LaTeX…</em>';
+      try {
+        const res = await fetch('apl-operators-manual.tex', { cache: 'no-store' });
+        const tex = await res.text();
+        const generator = new latexjs.HtmlGenerator({ hyphenate: false });
+        latexjs.parse(tex, { generator });
+        viewer.innerHTML = '';
+        viewer.appendChild(generator.domFragment());
+      } catch (err) {
+        console.warn('LaTeX render failed, falling back to raw view:', err);
+        const res = await fetch('apl-operators-manual.tex', { cache: 'no-store' });
+        const tex = await res.text();
+        viewer.innerHTML = '';
+        const pre = document.createElement('pre');
+        pre.className = 'fallback';
+        pre.textContent = tex;
+        viewer.appendChild(pre);
+      }
+    }
+    document.getElementById('refreshBtn').addEventListener('click', renderManual);
+    renderManual();
+  </script>
+</body>
+</html>
+
