@@ -257,6 +257,25 @@ python -m grpc_tools.protoc -Iprotos --python_out=protos --grpc_python_out=proto
   - Audit a workspace: `python3 vesselos.py audit full --workspace example`
 - **Docs:** Check `docs/REPO_INDEX.md` and `docs/IN_DEV_SPECS.md`.
 
+### Aces‑Brain‑Thoughts (Root Site Pages)
+- **Purpose:** Front‑end visualization and interactive pages merged from the
+  `AceTheDactyl/Aces-Brain-Thoughts` project. These pages act as living demos for
+  visualizers, Wumbo engine interactions, and narrative scaffolds.
+- **Entry Points:**
+  - `index.html` – Root landing page.
+  - `group_visualizer.html` – Visualizer hub.
+  - `shape_of_absence.html` – Visual/sonic exploration surface.
+  - `wumbo_engine.html`, `wumbo_playground.html` – Interactive engine and playground.
+  - `language/` – Language indices and content data referenced by the pages.
+- **Quick Preview:**
+  ```bash
+  # From repo root
+  python3 -m http.server 8080
+  # then open http://localhost:8080/index.html
+  ```
+- **Structure Map:** See [`architecture.md`](architecture.md) for how these pages fit into the
+  wider monorepo and how to mirror external clones when needed.
+
 ### Shared Tooling
 - `agents/` – Standalone services. See [Agents](#agents) below.
 - `sigprint/` – EEG signature codec. Run `bazel test //sigprint:encoder_tests` or use `SigprintEncoder` directly (see `sigprint/README.md`).
