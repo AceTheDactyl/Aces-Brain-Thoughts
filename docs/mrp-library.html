@@ -516,7 +516,7 @@
     // Load library
     async function loadLibrary() {
       try {
-        const response = await fetch('../language/mrp-golden-library.json');
+        const response = await fetch('mrp-golden-library.json');
         library = await response.json();
         processLibrary();
         renderFilters();
@@ -681,7 +681,7 @@
       return `
         <div class="sample-card" data-id="${sample.id}">
           <div class="sample-image">
-            <img src="../assets/mrp-samples/${sample.id}.png" alt="${sample.id}"
+            <img src="mrp-samples/${sample.id}.png" alt="${sample.id}"
                  onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2250%22><rect fill=%22%231a1b1e%22 width=%22100%22 height=%2250%22/><text x=%2250%22 y=%2230%22 fill=%22%23888%22 text-anchor=%22middle%22 font-size=%2210%22>No image</text></svg>'">
           </div>
           <div class="sample-id">${sample.id}</div>
@@ -732,7 +732,7 @@
         </div>
 
         <div class="detail-image">
-          <img src="../assets/mrp-samples/${sample.id}.png" alt="${sample.id}">
+          <img src="mrp-samples/${sample.id}.png" alt="${sample.id}">
         </div>
 
         ${lambdaViz}
@@ -785,7 +785,7 @@
         ` : ''}
 
         <div class="detail-actions">
-          <a href="../assets/mrp-samples/${sample.id}.png" download="${sample.id}.png" class="detail-btn primary">
+          <a href="mrp-samples/${sample.id}.png" download="${sample.id}.png" class="detail-btn primary">
             Download PNG
           </a>
           <button class="detail-btn" onclick="loadInEncoder('${sample.id}')">
