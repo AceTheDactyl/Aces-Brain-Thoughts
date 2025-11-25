@@ -524,6 +524,127 @@
             opacity: 0;
         }
 
+        /* Phase Lock Panel */
+        #phase-lock-panel {
+            bottom: 30px;
+            left: 30px;
+            background: rgba(15, 12, 25, 0.95);
+            padding: 15px 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            pointer-events: auto;
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        #phase-lock-panel.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+
+        #phase-lock-panel.active {
+            border-color: rgba(105, 219, 124, 0.8);
+            box-shadow: 0 0 20px rgba(105, 219, 124, 0.3);
+        }
+
+        #phase-lock-panel.consciousness {
+            border-color: rgba(255, 215, 0, 0.9);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        #phase-lock-panel.loop-closed {
+            border-color: rgba(204, 93, 232, 0.9);
+            box-shadow: 0 0 40px rgba(204, 93, 232, 0.6);
+            animation: loopPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loopPulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(204, 93, 232, 0.6); }
+            50% { box-shadow: 0 0 60px rgba(204, 93, 232, 0.8); }
+        }
+
+        .phase-lock-title {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: rgba(255, 215, 0, 0.8);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .phase-lock-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .phase-lock-label {
+            font-size: 9px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+
+        .phase-lock-value {
+            font-size: 12px;
+            color: #22d3ee;
+            font-weight: 200;
+        }
+
+        .phase-lock-bar {
+            position: relative;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin: 12px 0 8px;
+            overflow: visible;
+        }
+
+        .phase-lock-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffa94d, #69db7c);
+            border-radius: 3px;
+            transition: width 0.2s ease;
+            width: 0%;
+        }
+
+        .phase-lock-threshold {
+            position: absolute;
+            top: -2px;
+            width: 2px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .phase-lock-threshold.consciousness {
+            background: rgba(255, 215, 0, 0.9);
+        }
+
+        .phase-lock-status {
+            font-size: 11px;
+            letter-spacing: 4px;
+            text-align: center;
+            color: var(--text-dim);
+            margin-top: 8px;
+        }
+
+        .phase-lock-status.paradox { color: #ffa94d; }
+        .phase-lock-status.emerging { color: #69db7c; }
+        .phase-lock-status.conscious { color: #ffd700; }
+
+        .phase-lock-loop {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 6px;
+        }
+
+        .phase-lock-loop.closed {
+            color: #cc5de8;
+            text-shadow: 0 0 10px rgba(204, 93, 232, 0.5);
+        }
+
         /* Z-Axis Visual */
         #z-axis {
             position: fixed;
@@ -852,6 +973,34 @@
         <div id="coherence-indicator">████████████████</div>
     </div>
 
+    <!-- Phase Lock Panel (visible when F held) -->
+    <div id="phase-lock-panel" class="panel hidden">
+        <div class="phase-lock-title">PHASE LOCK · φ-DERIVED</div>
+        <div class="phase-lock-row">
+            <span class="phase-lock-label">r (coherence)</span>
+            <span class="phase-lock-value" id="pl-coherence">0.00</span>
+        </div>
+        <div class="phase-lock-row">
+            <span class="phase-lock-label">K(z)</span>
+            <span class="phase-lock-value" id="pl-kz">+0.00</span>
+        </div>
+        <div class="phase-lock-row">
+            <span class="phase-lock-label">μ_P threshold</span>
+            <span class="phase-lock-value" id="pl-mup">0.60</span>
+        </div>
+        <div class="phase-lock-row">
+            <span class="phase-lock-label">μ_S emergence</span>
+            <span class="phase-lock-value" id="pl-mus">0.92</span>
+        </div>
+        <div class="phase-lock-bar">
+            <div class="phase-lock-fill" id="pl-fill"></div>
+            <div class="phase-lock-threshold" style="left: 60%;"></div>
+            <div class="phase-lock-threshold consciousness" style="left: 92%;"></div>
+        </div>
+        <div class="phase-lock-status" id="pl-status">DORMANT</div>
+        <div class="phase-lock-loop" id="pl-loop">C→I OPEN</div>
+    </div>
+
     <div id="release-hint" class="hidden">HOLD F TO RELEASE · CLICK TO GATHER</div>
 
     <!-- Start Overlay -->
@@ -895,6 +1044,29 @@
         const Z_CRITICAL = Math.sqrt(3) / 2;  // ≈ 0.8660254
         const TAU = Math.PI * 2;
         const PHI = (1 + Math.sqrt(5)) / 2;   // Golden ratio
+
+        // ================================================================
+        // SACRED CONSTANTS (THE ENGINEERING BASIS)
+        // All derived from φ and Fibonacci - ZERO free parameters
+        // ================================================================
+        const PHI_INV = PHI - 1;                       // 0.618034
+        const ALPHA = Math.pow(PHI, -2);               // 0.381966 - coupling strength
+        const BETA = Math.pow(PHI, -4);                // 0.145898 - dissipation rate
+        const LAMBDA_NL = Math.pow(5/3, 4);            // 7.716049 - nonlinearity
+        const CASCADE_PHI = PHI;                       // 1.618034 - φ-based cascade
+
+        // Consciousness thresholds (Fibonacci fractions)
+        const MU_P = 3/5;                              // 0.6 - paradox onset
+        const MU_S = 23/25;                            // 0.92 - consciousness emergence
+        const MU_3 = 124/125;                          // 0.992 - near unity
+        const Q_THEORY = ALPHA * MU_S;                 // 0.351 - consciousness constant
+        const K_THRESHOLD = PHI_INV;                   // 0.618 - K-formation threshold
+
+        // Phase Lock State
+        let phaseLockActive = false;       // Activated when F held at right conditions
+        let phaseLockCoherence = 0;        // Kuramoto order parameter r
+        let phaseLockK = ALPHA;            // Current K(z) value
+        let loopClosed = false;            // C→I loop closure achieved
 
         // Canvas setup
         const canvas = document.getElementById('canvas');
@@ -1431,25 +1603,60 @@
 
         function kuramotoStep(points, coupling, dt) {
             const N = points.length;
-            if (N === 0) return { order: 0, K: coupling };
+            if (N === 0) return { order: 0, K: coupling, psi: 0 };
 
-            // Mean field
+            // Mean field (order parameter)
             let sinSum = 0, cosSum = 0;
             for (const p of points) {
                 sinSum += Math.sin(p.phase);
                 cosSum += Math.cos(p.phase);
             }
-            const meanPhase = Math.atan2(sinSum / N, cosSum / N);
+            const r = Math.sqrt(sinSum * sinSum + cosSum * cosSum) / N;
+            const psi = Math.atan2(sinSum / N, cosSum / N);
 
-            // Update phases
+            // Store in global phase lock state
+            phaseLockCoherence = r;
+
+            // Nonlinearity factor (LAMBDA_NL at low coherence)
+            const nlFactor = 1 + (LAMBDA_NL - 1) * (1 - r);
+
+            // Update phases with φ-derived dynamics
             for (const p of points) {
-                const dPhase = p.naturalFreq + coupling * Math.sin(meanPhase - p.phase);
+                // Layer-dependent coupling using ALPHA
+                let layerK = coupling;
+                if (p.layer !== undefined) {
+                    const layerZ = p.layer / 6;  // Normalize layer to 0-1
+                    const distFromCritical = Math.abs(layerZ - Z_CRITICAL);
+                    layerK = coupling * (1 + ALPHA * Math.exp(-distFromCritical * distFromCritical / BETA));
+                }
+
+                const dPhase = p.naturalFreq + layerK * r * Math.sin(psi - p.phase) / nlFactor;
                 p.phase += dPhase * dt;
+
+                // Wrap phase
+                if (p.phase > TAU) p.phase -= TAU;
+                if (p.phase < 0) p.phase += TAU;
             }
 
-            // Order parameter
-            const order = Math.sqrt(sinSum * sinSum + cosSum * cosSum) / N;
-            return { order, K: coupling };
+            // Phase lock detection: consciousness emergence at r > MU_S
+            phaseLockActive = releasing && r > K_THRESHOLD;
+
+            // Loop closure: r > MU_S AND z near z_c
+            const zDist = Math.abs(globalZ - Z_CRITICAL);
+            loopClosed = r > MU_S && zDist < Q_THEORY;
+
+            return { order: r, K: coupling, psi };
+        }
+
+        // K(z) calculation with sign flip at z_c
+        function calculateKz(z) {
+            // Below z_c: Synchronizing (K > 0) - ABSENCE domain
+            // Above z_c: Desynchronizing (K < 0) - PRESENCE domain
+            if (z < Z_CRITICAL) {
+                return ALPHA * (1 - z / Z_CRITICAL) * CASCADE_PHI;
+            } else {
+                return -ALPHA * ((z - Z_CRITICAL) / (1 - Z_CRITICAL)) * CASCADE_PHI;
+            }
         }
 
         // ================================================================
@@ -1457,8 +1664,11 @@
         // ================================================================
 
         function getCascadeMultiplier(z) {
+            // Peak at z_c (THE LENS), decays with φ-derived width
+            // Width parameter = Q_THEORY² ≈ 0.123
             const dist = Math.abs(z - Z_CRITICAL);
-            return 1 + 0.5 * Math.exp(-dist * dist / 0.004);
+            const width = Q_THEORY * Q_THEORY;
+            return 1 + PHI_INV * Math.exp(-dist * dist / width);
         }
 
         // ================================================================
@@ -1543,10 +1753,17 @@
             const isPresence = globalZ > Z_CRITICAL;
             const cascade = getCascadeMultiplier(globalZ);
 
-            // Kuramoto coupling flips sign at critical point
-            const dist = globalZ - Z_CRITICAL;
-            const sign = Math.tanh(dist * 12);
-            const K = -sign * 0.4 * cascade;
+            // K(z) with sacred φ-derived sign flip at z_c
+            const Kz = calculateKz(globalZ);
+            phaseLockK = Kz;  // Store for display
+
+            // Phase lock boost when F held and approaching consciousness threshold
+            let K = Kz;
+            if (releasing && phaseLockCoherence > MU_P) {
+                // Amplify coupling toward consciousness emergence
+                const consciousnessProgress = (phaseLockCoherence - MU_P) / (MU_S - MU_P);
+                K *= (1 + consciousnessProgress * PHI_INV);
+            }
 
             // Apply Kuramoto to all points
             const allPoints = [...prismPoints, ...cagePoints];
@@ -2433,6 +2650,66 @@
 
             // Architecture panel
             updateArchPanel();
+
+            // Phase Lock Panel (visible when F held)
+            if (releasing) {
+                updatePhaseLockPanel(kuramotoResult);
+            }
+        }
+
+        function updatePhaseLockPanel(kuramotoResult) {
+            const panel = document.getElementById('phase-lock-panel');
+            const r = phaseLockCoherence;
+            const Kz = phaseLockK;
+
+            // Update values
+            document.getElementById('pl-coherence').textContent = r.toFixed(3);
+            document.getElementById('pl-kz').textContent = (Kz >= 0 ? '+' : '') + Kz.toFixed(3);
+
+            // Highlight thresholds based on coherence
+            const mupEl = document.getElementById('pl-mup');
+            const musEl = document.getElementById('pl-mus');
+            mupEl.style.color = r >= MU_P ? '#69db7c' : 'var(--text-dim)';
+            musEl.style.color = r >= MU_S ? '#ffd700' : 'var(--text-dim)';
+
+            // Update fill bar
+            document.getElementById('pl-fill').style.width = (r * 100) + '%';
+
+            // Update status
+            const statusEl = document.getElementById('pl-status');
+            statusEl.className = 'phase-lock-status';
+            if (r < MU_P) {
+                statusEl.textContent = 'DORMANT';
+            } else if (r < K_THRESHOLD) {
+                statusEl.textContent = 'PARADOX';
+                statusEl.classList.add('paradox');
+            } else if (r < MU_S) {
+                statusEl.textContent = 'EMERGING';
+                statusEl.classList.add('emerging');
+            } else {
+                statusEl.textContent = 'CONSCIOUS';
+                statusEl.classList.add('conscious');
+            }
+
+            // Update loop closure
+            const loopEl = document.getElementById('pl-loop');
+            loopEl.className = 'phase-lock-loop';
+            if (loopClosed) {
+                loopEl.textContent = 'C→I CLOSED';
+                loopEl.classList.add('closed');
+            } else {
+                loopEl.textContent = 'C→I OPEN';
+            }
+
+            // Update panel state class
+            panel.className = 'panel';
+            if (loopClosed) {
+                panel.classList.add('loop-closed');
+            } else if (r >= MU_S) {
+                panel.classList.add('consciousness');
+            } else if (phaseLockActive) {
+                panel.classList.add('active');
+            }
         }
 
         function updateBar(name, value) {
@@ -2580,19 +2857,24 @@
                 });
             }
 
-            // F key: Start release
+            // F key: Start release and activate phase lock panel
             if (key === 'f') {
                 releasing = true;
                 document.getElementById('start-overlay').classList.add('hidden');
+                // Show phase lock panel
+                document.getElementById('phase-lock-panel').classList.remove('hidden');
             }
         });
 
         document.addEventListener('keyup', e => {
             const key = e.key.toLowerCase();
-            
-            // F key released: Stop releasing
+
+            // F key released: Stop releasing and hide phase lock panel
             if (key === 'f') {
                 releasing = false;
+                document.getElementById('phase-lock-panel').classList.add('hidden');
+                // Reset phase lock state
+                phaseLockActive = false;
             }
         });
 
