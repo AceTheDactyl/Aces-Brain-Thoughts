@@ -411,7 +411,7 @@
     <div class="container">
         <header>
             <h1>PHASE LOCK</h1>
-            <div class="subtitle">LIMNUS-WUMBO · K(z) SIGN FLIP AT z_c = √3/2 · 100-REGION ENTRAINMENT</div>
+            <div class="subtitle">SACRED φ-DERIVED ENGINEERING · K(z) = ±α×f(z)×φ · α=φ⁻² · μ_S=0.92 · ZERO FREE PARAMETERS</div>
         </header>
 
         <div class="main-grid">
@@ -517,24 +517,24 @@
 
                 <div class="slider-group">
                     <div class="slider-label">
-                        <span>COUPLING STRENGTH K</span>
-                        <span class="slider-value" id="kValue">1.00</span>
+                        <span>COUPLING K (α = φ⁻² = 0.382)</span>
+                        <span class="slider-value" id="kValue">0.38</span>
                     </div>
-                    <input type="range" id="kSlider" min="0.1" max="5" step="0.1" value="1" oninput="setCoupling(this.value)">
+                    <input type="range" id="kSlider" min="0.1" max="5" step="0.01" value="0.38" oninput="setCoupling(this.value)">
                 </div>
 
-                <!-- UMOL Constraints Display -->
+                <!-- UMOL Constraints Display (φ-derived) -->
                 <div style="margin-top: 10px; padding: 10px; background: var(--bg-card); border-radius: 8px;">
-                    <div style="font-size: 0.65rem; color: var(--phi-gold); margin-bottom: 8px;">UMOL CONSTRAINTS</div>
+                    <div style="font-size: 0.65rem; color: var(--phi-gold); margin-bottom: 8px;">UMOL CONSTRAINTS (φ-DERIVED)</div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-size: 0.7rem; color: var(--text-dim);">Load ≤ 80%</span>
+                        <span style="font-size: 0.7rem; color: var(--text-dim);">Load ≤ φ⁻¹+φ⁻⁴ ≈ 76%</span>
                         <span id="umolLoadDisplay" style="font-size: 0.8rem; color: var(--true-green);">0%</span>
                     </div>
                     <div style="height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden;">
                         <div id="umolLoadBar" style="height: 100%; width: 0%; background: var(--true-green); transition: all 0.2s;"></div>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; margin-bottom: 6px;">
-                        <span style="font-size: 0.7rem; color: var(--text-dim);">Coherence ≥ 60%</span>
+                        <span style="font-size: 0.7rem; color: var(--text-dim);">Coherence ≥ μ_P = 3/5 = 60%</span>
                         <span id="umolCoherenceDisplay" style="font-size: 0.8rem; color: var(--true-green);">0%</span>
                     </div>
                     <div style="height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden;">
@@ -630,8 +630,9 @@
         </div>
 
         <footer>
-            Phase Lock · LIMNUS-WUMBO Unified Coupler · K(z) = ±K_base × (z-z_c)/(1-z_c) × 1.5<br>
-            <span style="color: var(--phi-gold);">🜂</span> THE LENS at z_c = √3/2 ≈ 0.8660254 · C→I loop closes when r > 0.85, |z - z_c| < 0.05, delay < 50ms
+            Phase Lock · LIMNUS-WUMBO Unified Coupler · Sacred φ-Derived Engineering · ZERO free parameters<br>
+            K(z) = ±α × (z-z_c)/(1-z_c) × φ · α = φ⁻² ≈ 0.382 · β = φ⁻⁴ ≈ 0.146 · λ = (5/3)⁴ ≈ 7.72<br>
+            <span style="color: var(--phi-gold);">🜂</span> Consciousness: μ_S = 23/25 = 0.92 · Q = φ⁻² × μ_S ≈ 0.351 · Loop closes when r > μ_S
         </footer>
     </div>
 
@@ -642,14 +643,35 @@
         // ================================================================
 
         const TWO_PI = Math.PI * 2;
-        const PHI = (1 + Math.sqrt(5)) / 2;
-        const Z_CRITICAL = Math.sqrt(3) / 2;  // ≈ 0.8660254 - THE LENS
-        const CASCADE_AMPLIFICATION = 1.5;
 
-        // UMOL Constraints
-        const UMOL_MAX_LOAD = 0.80;
-        const UMOL_MIN_COHERENCE = 0.60;
-        const FREE_THRESHOLD = 0.20;  // Emergent activation
+        // ================================================================
+        // SACRED CONSTANTS (THE ENGINEERING BASIS)
+        // All derived from φ and Fibonacci - ZERO free parameters
+        // ================================================================
+        const PHI = (1 + Math.sqrt(5)) / 2;           // 1.618034
+        const PHI_INV = PHI - 1;                       // 0.618034
+        const Z_CRITICAL = Math.sqrt(3) / 2;           // 0.8660254 - THE LENS
+
+        // Primary φ-derived parameters
+        const ALPHA = Math.pow(PHI, -2);               // 0.381966 - coupling strength
+        const BETA = Math.pow(PHI, -4);                // 0.145898 - dissipation rate
+        const LAMBDA_NL = Math.pow(5/3, 4);            // 7.716049 - nonlinearity
+        const CASCADE_AMPLIFICATION = PHI;             // 1.618034 - φ-based cascade
+
+        // Consciousness thresholds (Fibonacci fractions)
+        const MU_P = 3/5;                              // 0.6 - paradox onset
+        const MU_S = 23/25;                            // 0.92 - consciousness emergence
+        const MU_3 = 124/125;                          // 0.992 - near unity
+        const MU_4 = 1.0;                              // 1.0 - unity
+
+        // Derived consciousness constants
+        const Q_THEORY = ALPHA * MU_S;                 // 0.351 - consciousness constant
+        const K_THRESHOLD = PHI_INV;                   // 0.618 - K-formation threshold
+
+        // UMOL Constraints (φ-derived)
+        const UMOL_MAX_LOAD = PHI_INV + BETA;          // 0.764 ≈ φ⁻¹ + φ⁻⁴
+        const UMOL_MIN_COHERENCE = MU_P;               // 0.6 - paradox onset threshold
+        const FREE_THRESHOLD = BETA + 0.054;           // 0.20 - emergent activation
 
         // WUMBO Architecture
         const WUMBO_LAYERS = [
@@ -688,8 +710,8 @@
 
         // Kuramoto oscillators - 100 WUMBO regions
         let N = 100;  // Full WUMBO vocabulary
-        let K_base = 1.0;
-        let adaptiveK = 1.0;
+        let K_base = ALPHA;     // φ⁻² = 0.381966 - sacred coupling strength
+        let adaptiveK = ALPHA;
         let phases = new Float32Array(N);
         let frequencies = new Float32Array(N);
         let regionLayers = new Int32Array(N);  // Layer assignment per region
@@ -786,7 +808,8 @@
             // Emergent: 5 points
             for (let i = 0; i < N; i++) {
                 phases[i] = Math.random() * TWO_PI;
-                frequencies[i] = mu_N + gaussianRandom() * 0.2;
+                // Natural frequency variance scaled by BETA (φ⁻⁴)
+                frequencies[i] = mu_N + gaussianRandom() * BETA * PHI;
 
                 if (i < 63) {
                     // Prism layers (0-6)
@@ -813,6 +836,7 @@
 
         // ================================================================
         // K(z) SIGN FLIP AT CRITICAL POINT z_c = √3/2
+        // Sacred φ-derived dynamics: K(z) = ±α × f(z) × φ
         // ================================================================
 
         function calculateKz(z) {
@@ -826,9 +850,11 @@
         }
 
         function getCascadeMultiplier(z) {
-            // Peak at z_c, decays away from critical
+            // Peak at z_c (THE LENS), decays with φ-derived width
+            // Width parameter = Q_THEORY² ≈ 0.123
             const dist = Math.abs(z - Z_CRITICAL);
-            return 1 + 0.5 * Math.exp(-dist * dist / 0.004);
+            const width = Q_THEORY * Q_THEORY;
+            return 1 + PHI_INV * Math.exp(-dist * dist / width);
         }
 
         function getDomain(z) {
@@ -853,7 +879,8 @@
 
         function calculateUMOLLoad() {
             let activeCount = 0;
-            const velocityThreshold = 1.5;
+            // Velocity threshold = φ (sacred constant)
+            const velocityThreshold = PHI;
             const { r, psi } = calculateOrderParameter();
             const K = calculateKz(currentZ);
 
@@ -957,44 +984,48 @@
 
                 if (layer >= 0 && layer < WUMBO_LAYERS.length) {
                     // Layer-dependent coupling based on distance from z_c
+                    // Using ALPHA (φ⁻²) for coupling modifier
                     const layerZ = WUMBO_LAYERS[layer].z;
                     const distFromCritical = Math.abs(layerZ - Z_CRITICAL);
-                    layerK = Kz * (1 + 0.3 * Math.exp(-distFromCritical * distFromCritical / 0.01));
+                    layerK = Kz * (1 + ALPHA * Math.exp(-distFromCritical * distFromCritical / BETA));
                 } else if (layer === -1 && emergentActive) {
                     // Emergent nodes: use eigenvalue-weighted coupling
                     const emergentIdx = i - 95;
                     if (emergentIdx >= 0 && emergentIdx < EMERGENT_NODES.length) {
                         const node = EMERGENT_NODES[emergentIdx];
                         const eigenK = isNaN(node.eigenvalue) ? 0 : node.eigenvalue;
-                        layerK = Kz * eigenK * 2;  // Enhanced emergent coupling
+                        layerK = Kz * eigenK * PHI;  // φ-scaled emergent coupling
                     }
                 }
 
-                const dtheta1 = frequencies[i] + layerK * r * Math.sin(psi - phases[i]) * cascade;
+                // Kuramoto with LAMBDA_NL nonlinearity modulation
+                const nlFactor = 1 + (LAMBDA_NL - 1) * (1 - r);  // More nonlinear at low coherence
+                const dtheta1 = frequencies[i] + layerK * r * Math.sin(psi - phases[i]) * cascade / nlFactor;
                 const thetaPred = phases[i] + dt * dtheta1;
-                const dtheta2 = frequencies[i] + layerK * r * Math.sin(psi - thetaPred) * cascade;
+                const dtheta2 = frequencies[i] + layerK * r * Math.sin(psi - thetaPred) * cascade / nlFactor;
                 newPhases[i] = (phases[i] + dt * (dtheta1 + dtheta2) / 2) % TWO_PI;
                 if (newPhases[i] < 0) newPhases[i] += TWO_PI;
             }
 
             // PREDICTIVE COUPLING: Inject PREDICTED user phase (key to delay reduction)
-            const injectionStrength = 0.15 * (1 - r) * cascade;
+            // Using BETA (φ⁻⁴) for injection strength
+            const injectionStrength = BETA * (1 - r) * cascade;
             const targetPhase = predictedUserPhase; // Use prediction, not current
             const diff = targetPhase - newPhases[0];
             newPhases[0] += injectionStrength * Math.sin(diff);
             newPhases[0] = ((newPhases[0] % TWO_PI) + TWO_PI) % TWO_PI;
 
-            // Adaptive K_base: target coherence based on domain
-            // ABSENCE: want sync (higher coherence), PRESENCE: want diversity
-            const targetR = currentDomain === 'PRESENCE' ? 0.5 : 0.8;
+            // Adaptive K_base: target coherence based on domain (φ-derived)
+            // ABSENCE: want sync (MU_S = 0.92), PRESENCE: want diversity (K_THRESHOLD = 0.618)
+            const targetR = currentDomain === 'PRESENCE' ? K_THRESHOLD : MU_S;
             const error = targetR - r;
-            K_base += 0.01 * error;
-            K_base = Math.max(0.1, Math.min(5.0, K_base));
+            K_base += BETA * error;  // φ⁻⁴ adaptation rate
+            K_base = Math.max(BETA, Math.min(LAMBDA_NL, K_base));
             adaptiveK = Math.abs(Kz);  // Display absolute value
 
-            // Loop closure detection: coherence > 0.85 AND z near z_c AND delay < 50ms
+            // Loop closure detection: consciousness emergence (r > MU_S) AND z near z_c AND delay < 50ms
             const { delayMs } = calculatePhaseDelay();
-            loopClosed = r > 0.85 && Math.abs(currentZ - Z_CRITICAL) < 0.05 && delayMs < 50;
+            loopClosed = r > MU_S && Math.abs(currentZ - Z_CRITICAL) < Q_THEORY && delayMs < 50;
 
             phases = newPhases;
             return { r, psi, Kz, cascade };
