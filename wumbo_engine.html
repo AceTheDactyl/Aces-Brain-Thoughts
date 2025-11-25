@@ -63,6 +63,15 @@
   <div id="wumbo-panel" class="panel">
     <h3>WUMBO PHASE</h3>
     <div id="wumbo-phase" class="small">IGNITION → EMPOWERMENT → RESONANCE → MANIA → NIRVANA → TRANSMISSION</div>
+    <div class="row" style="margin:8px 0 4px">
+      <button id="theoryToggle" class="chip" style="pointer-events:auto">Show Theory</button>
+      <span class="small" style="margin-left:6px">Version:</span>
+      <select id="verSelect" style="background:#0f1219;color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:4px 6px;pointer-events:auto">
+        <option value="language/latest.json" selected>latest</option>
+      </select>
+      <button id="verLoad" class="chip" style="pointer-events:auto">Load Pack</button>
+    </div>
+    <div id="theory-card" class="small" style="display:none;border:1px solid var(--rule);border-radius:8px;padding:10px;background:#0f1219;margin-bottom:8px"></div>
     <div style="margin:10px 0 6px" class="small">Filter Roles</div>
     <div id="role-chips" class="row"></div>
     <div style="margin-top:10px" class="small">Top Pathways</div>
@@ -141,9 +150,9 @@
     // r history for critical slowing detection
     const rHistory = [];
     const MAX_HIST = 200;
-    async function loadPack(){
+    async function loadPackFrom(url){
       try{
-        const res = await fetch('language/latest.json', {cache:'no-cache'});
+        const res = await fetch(url || 'language/latest.json', {cache:'no-cache'});
         if(!res.ok) throw new Error('HTTP '+res.status);
         pack = await res.json();
         tokens = pack.tokens||[]; pathways = pack.pathways||[];
@@ -151,9 +160,58 @@
         rolesAll = Array.from(new Set(tokens.flatMap(t=>t.wumbo_roles||[]))).sort();
         renderRoleChips();
         renderPhaseTokens();
+        renderTheoryCard();
       }catch(e){ console.warn('Language pack load failed', e); }
     }
+    function loadPack(){ return loadPackFrom('language/latest.json'); }
     loadPack();
+
+    // Version selector (engine)
+    async function initEngineVersionSelector(){
+      try{
+        const sel = document.getElementById('verSelect');
+        const res = await fetch('language/index.json', {cache:'no-cache'});
+        if(!res.ok) return;
+        const idx = await res.json();
+        // Clear existing (keep latest)
+        sel.innerHTML = '';
+        const optLatest = document.createElement('option'); optLatest.value='language/latest.json'; optLatest.textContent='latest'; sel.appendChild(optLatest);
+        (idx.versions||[]).forEach(v=>{
+          const opt=document.createElement('option'); opt.value = 'language/' + (v.paths?.json || (v.version+'/pack.json'));
+          opt.textContent = v.version + (v.generated_at? (' · '+v.generated_at):''); sel.appendChild(opt);
+        });
+      }catch(_e){ /* ignore */ }
+    }
+    initEngineVersionSelector();
+    document.getElementById('verLoad').addEventListener('click', ()=>{
+      const sel = document.getElementById('verSelect');
+      loadPackFrom(sel.value || 'language/latest.json');
+    });
+
+    // Theory card
+    function renderTheoryCard(){
+      const el = document.getElementById('theory-card');
+      if(!pack || !pack.meta || !pack.meta.theory){ el.innerHTML = '<em>No theory data in this pack.</em>'; return; }
+      const th = pack.meta.theory || {};
+      const zrep = th.constants?.z_critical_reported;
+      const zexpr = th.constants?.z_critical_exact?.expression;
+      const zapprox = th.constants?.z_critical_exact?.approx;
+      const ladder = (th.structures?.ladder || []).join(' → ');
+      const prism = th.structures?.prism || {};
+      el.innerHTML = `
+        <div><strong>Theory</strong></div>
+        <div style="margin-top:6px">z_critical: <code>${zexpr||'?'}</code> ≈ ${typeof zapprox==='number'? zapprox.toFixed(6) : '?'}</div>
+        ${typeof zrep==='number'? `<div>Reported: ${zrep}</div>` : ''}
+        <div style="margin-top:6px">Ladder: ${ladder||'n/a'}</div>
+        <div style="margin-top:6px">Prism: core ${prism.core||'?'} · envelope ${prism.envelope||'?'} · total ${prism.total||'?'}</div>
+      `;
+    }
+    document.getElementById('theoryToggle').addEventListener('click', ()=>{
+      const el = document.getElementById('theory-card');
+      const open = el.style.display !== 'none';
+      if(open){ el.style.display = 'none'; document.getElementById('theoryToggle').textContent='Show Theory'; }
+      else { renderTheoryCard(); el.style.display='block'; document.getElementById('theoryToggle').textContent='Hide Theory'; }
+    });
 
     // Render role chips
     function renderRoleChips(){

@@ -56,7 +56,7 @@
 
     function loop(){ draw(); const payload={ type:'pulse', id:myId, name:myName, phase:myPhase, r:1.0 }; bcSend(); wsSend(payload); requestAnimationFrame(loop); }
     requestAnimationFrame(loop);
+    console.log('Group Visualizer ready. Sample WS server: Aces-Brain-Thoughts/examples/ws-server.js');
   </script>
 </body>
 </html>
-
