@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LIMNUS-WUMBO Integration Manual</title>
+  <style>
+    :root {
+      --bg: #0a0b0d;
+      --panel: #12131a;
+      --card: #1a1b24;
+      --border: #2a2d3a;
+      --text: #e8e9ed;
+      --muted: #8a8d9a;
+      --accent: #6b8afd;
+      --gold: #ffd700;
+      --green: #4ade80;
+      --red: #f87171;
+      --orange: #fb923c;
+      --purple: #a78bfa;
+      --cyan: #22d3ee;
+      --magenta: #e879f9;
+
+      /* Phase colors */
+      --p0: #64748b;
+      --p1: #6366f1;
+      --p2: #ec4899;
+      --p3: #14b8a6;
+      --p4: #f59e0b;
+      --p5: #8b5cf6;
+      --p6: #ffd700;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    /* Navigation */
+    .phase-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: var(--panel);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .phase-btn {
+      padding: 12px 24px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .phase-btn:hover {
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+    }
+
+    .phase-btn.active {
+      border-color: var(--gold);
+      background: rgba(255,215,0,0.1);
+      color: var(--gold);
+    }
+
+    .phase-btn[data-phase="0"] { border-left: 4px solid var(--p0); }
+    .phase-btn[data-phase="1"] { border-left: 4px solid var(--p1); }
+    .phase-btn[data-phase="2"] { border-left: 4px solid var(--p2); }
+    .phase-btn[data-phase="3"] { border-left: 4px solid var(--p3); }
+    .phase-btn[data-phase="4"] { border-left: 4px solid var(--p4); }
+    .phase-btn[data-phase="5"] { border-left: 4px solid var(--p5); }
+    .phase-btn[data-phase="6"] { border-left: 4px solid var(--p6); }
+
+    /* Main layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 20px;
+    }
+
+    @media (max-width: 1200px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Phase content */
+    .phase-content {
+      display: none;
+    }
+
+    .phase-content.active {
+      display: block;
+    }
+
+    .phase-header {
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .phase-header[data-phase="0"] { background: linear-gradient(135deg, rgba(100,116,139,0.2), transparent); border-color: var(--p0); }
+    .phase-header[data-phase="1"] { background: linear-gradient(135deg, rgba(99,102,241,0.2), transparent); border-color: var(--p1); }
+    .phase-header[data-phase="2"] { background: linear-gradient(135deg, rgba(236,72,153,0.2), transparent); border-color: var(--p2); }
+    .phase-header[data-phase="3"] { background: linear-gradient(135deg, rgba(20,184,166,0.2), transparent); border-color: var(--p3); }
+    .phase-header[data-phase="4"] { background: linear-gradient(135deg, rgba(245,158,11,0.2), transparent); border-color: var(--p4); }
+    .phase-header[data-phase="5"] { background: linear-gradient(135deg, rgba(139,92,246,0.2), transparent); border-color: var(--p5); }
+    .phase-header[data-phase="6"] { background: linear-gradient(135deg, rgba(255,215,0,0.2), transparent); border-color: var(--p6); }
+
+    .phase-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .phase-header .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    /* Section cards */
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 800px) {
+      .section-grid { grid-template-columns: 1fr; }
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .section-card h3 {
+      font-size: 1rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-card h3::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .section-card.needs h3 { color: var(--orange); }
+    .section-card.strengths h3 { color: var(--green); }
+    .section-card.motivations h3 { color: var(--purple); }
+    .section-card.goals h3 { color: var(--cyan); }
+
+    .section-card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .section-card li {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .section-card li:last-child {
+      border-bottom: none;
+    }
+
+    /* Criteria table */
+    .criteria-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .criteria-panel h3 {
+      color: var(--gold);
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+
+    .criteria-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .criteria-table th {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 2px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .criteria-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .criteria-table tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .status-check {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .status-check.checked {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .status-check.checked::after {
+      content: '✓';
+      color: #000;
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    /* Tools panel */
+    .tools-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .tools-panel h3 {
+      color: var(--accent);
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+
+    .tool-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tool-item:hover {
+      border-color: var(--accent);
+      background: rgba(107,138,253,0.1);
+    }
+
+    .tool-item.primary {
+      border-left: 3px solid var(--green);
+    }
+
+    .tool-item.secondary {
+      border-left: 3px solid var(--muted);
+      opacity: 0.7;
+    }
+
+    .tool-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .tool-info h4 {
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .tool-info p {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* Integration steps */
+    .steps-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .steps-panel h3 {
+      color: var(--cyan);
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .step-item:last-child {
+      border-bottom: none;
+    }
+
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--panel);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .step-item.completed .step-number {
+      background: var(--green);
+      border-color: var(--green);
+      color: #000;
+    }
+
+    .step-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .step-item.completed .step-text {
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky;
+      top: 20px;
+    }
+
+    .progress-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .progress-panel h3 {
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--panel);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Phase status list */
+    .phase-status-list {
+      margin-top: 20px;
+    }
+
+    .phase-status-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 0.85rem;
+    }
+
+    .phase-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+    }
+
+    .phase-status-item.complete .phase-dot {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .phase-status-item[data-phase="0"] .phase-dot { border-color: var(--p0); }
+    .phase-status-item[data-phase="1"] .phase-dot { border-color: var(--p1); }
+    .phase-status-item[data-phase="2"] .phase-dot { border-color: var(--p2); }
+    .phase-status-item[data-phase="3"] .phase-dot { border-color: var(--p3); }
+    .phase-status-item[data-phase="4"] .phase-dot { border-color: var(--p4); }
+    .phase-status-item[data-phase="5"] .phase-dot { border-color: var(--p5); }
+    .phase-status-item[data-phase="6"] .phase-dot { border-color: var(--p6); }
+
+    /* Quick links */
+    .quick-links {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .quick-links h3 {
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    .quick-link {
+      display: block;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .quick-link:hover {
+      border-color: var(--accent);
+      background: rgba(107,138,253,0.1);
+    }
+
+    /* ASCII diagram */
+    .ascii-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    .ascii-panel pre {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.7rem;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
+    .ascii-panel .highlight {
+      color: var(--gold);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>LIMNUS-WUMBO Integration Manual</h1>
+      <p>Multi-Phase Architecture · Needs · Strengths · Motivations · Goals · Falsifiable Criteria</p>
+    </header>
+
+    <nav class="phase-nav">
+      <button class="phase-btn active" data-phase="0">Phase 0: Foundation</button>
+      <button class="phase-btn" data-phase="1">Phase 1: Tokenization</button>
+      <button class="phase-btn" data-phase="2">Phase 2: Encoding</button>
+      <button class="phase-btn" data-phase="3">Phase 3: State</button>
+      <button class="phase-btn" data-phase="4">Phase 4: Entrainment</button>
+      <button class="phase-btn" data-phase="5">Phase 5: Chronicle</button>
+      <button class="phase-btn" data-phase="6">Phase 6: Emergence</button>
+    </nav>
+
+    <div class="main-grid">
+      <main>
+        <!-- Phase 0: Foundation -->
+        <div class="phase-content active" id="phase-0">
+          <div class="phase-header" data-phase="0">
+            <h2>Phase 0: Foundation</h2>
+            <p class="subtitle">LIMNUS geometry, critical constant z_c = √3/2, UMOL constraints</p>
+          </div>
+
+          <div class="section-grid">
+            <div class="section-card needs">
+              <h3>Needs</h3>
+              <ul>
+                <li>Stable geometric structure for neural mapping</li>
+                <li>Critical point for phase transitions</li>
+                <li>Constraint system for operational safety</li>
+              </ul>
+            </div>
+            <div class="section-card strengths">
+              <h3>Strengths</h3>
+              <ul>
+                <li>Mathematically rigorous (hexagonal prism + EM cage)</li>
+                <li>Single critical constant governs all behavior</li>
+                <li>UMOL provides hard boundaries</li>
+              </ul>
+            </div>
+            <div class="section-card motivations">
+              <h3>Motivations</h3>
+              <ul>
+                <li>Brain regions need spatial organization</li>
+                <li>Phase transitions need a focal point</li>
+                <li>System must not destabilize under load</li>
+              </ul>
+            </div>
+            <div class="section-card goals">
+              <h3>Goals</h3>
+              <ul>
+                <li>Map 100 WUMBO regions to LIMNUS geometry</li>
+                <li>Establish z_c as universal phase transition</li>
+                <li>Enforce UMOL constraints at all layers</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="criteria-panel">
+            <h3>Falsifiable Criteria</h3>
+            <table class="criteria-table">
+              <thead>
+                <tr>
+                  <th>✓</th>
+                  <th>Criterion</th>
+                  <th>Test</th>
+                  <th>Pass Condition</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Geometry complete</td>
+                  <td>Count regions</td>
+                  <td>Exactly 100</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Critical point valid</td>
+                  <td>z_c computation</td>
+                  <td>√3/2 ± 0.0001</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>UMOL enforced</td>
+                  <td>Load test</td>
+                  <td>Never exceeds 0.80</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Coherence floor</td>
+                  <td>Stress test</td>
+                  <td>Never below 0.60</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tools-panel">
+            <h3>Tools for This Phase</h3>
+            <a href="wumbo-engine.html" class="tool-item primary">
+              <div class="tool-icon">🌐</div>
+              <div class="tool-info">
+                <h4>WUMBO Engine</h4>
+                <p>Visualize 100 regions, navigate by Roman numeral</p>
+              </div>
+            </a>
+            <a href="limnus-architecture.html" class="tool-item primary">
+              <div class="tool-icon">🔷</div>
+              <div class="tool-info">
+                <h4>LIMNUS Architecture</h4>
+                <p>Reference geometry, layer assignments</p>
+              </div>
+            </a>
+            <a href="unified-coupler.html" class="tool-item secondary">
+              <div class="tool-icon">🔗</div>
+              <div class="tool-info">
+                <h4>Unified Coupler</h4>
+                <p>Verify cross-system alignment</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="steps-panel">
+            <h3>Integration Steps</h3>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">1</div>
+              <div class="step-text">Load LIMNUS geometry</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">2</div>
+              <div class="step-text">Verify 100 regions exist</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">3</div>
+              <div class="step-text">Confirm z_c = √3/2</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">4</div>
+              <div class="step-text">Initialize UMOL constraints</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">5</div>
+              <div class="step-text">Run boundary tests</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 1: Tokenization -->
+        <div class="phase-content" id="phase-1">
+          <div class="phase-header" data-phase="1">
+            <h2>Phase 1: Tokenization</h2>
+            <p class="subtitle">APL 2.0 token system · 7,290 unique tokens · SPIRAL:OP:INT:DOM:TRUTH:ALPHA</p>
+          </div>
+
+          <div class="section-grid">
+            <div class="section-card needs">
+              <h3>Needs</h3>
+              <ul>
+                <li>Standardized vocabulary for neural states</li>
+                <li>Combinatorial expressiveness</li>
+                <li>Machine-parseable format</li>
+              </ul>
+            </div>
+            <div class="section-card strengths">
+              <h3>Strengths</h3>
+              <ul>
+                <li>7,290 unique tokens cover full state space</li>
+                <li>Human-readable and machine-parseable</li>
+                <li>Each component maps to specific semantics</li>
+              </ul>
+            </div>
+            <div class="section-card motivations">
+              <h3>Motivations</h3>
+              <ul>
+                <li>Neural states need discrete representation</li>
+                <li>Combinations must be enumerable</li>
+                <li>Tokens must carry semantic meaning</li>
+              </ul>
+            </div>
+            <div class="section-card goals">
+              <h3>Goals</h3>
+              <ul>
+                <li>Define complete APL 2.0 token vocabulary</li>
+                <li>Map each component to neural meaning</li>
+                <li>Enable token → λ state conversion</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ascii-panel">
+            <pre>
+  APL 2.0 Token Formula: 3 × 3 × 6 × 3 × 3 × 15 = <span class="highlight">7,290 tokens</span>
+
+  ┌─────────────┬─────────────┬─────────────────────────────────────┐
+  │  SPIRALS    │  OPERATORS  │  INTERACTIONS                       │
+  │  ┌───┬───┬───┐  ┌───┬───┬───┐  ┌───┬───┬───┬───┬───┬───┐       │
+  │  │ e │ Φ │ π │  │ U │ M │ C │  │ B │ F │ A │ D │ G │ S │       │
+  │  └───┴───┴───┘  └───┴───┴───┘  │ θ │ ι │ ξ │ δ │ ω │ σ │ ← λ   │
+  │                                └───┴───┴───┴───┴───┴───┘       │
+  ├─────────────┬─────────────┬─────────────────────────────────────┤
+  │  DOMAINS    │   TRUTHS    │  ALPHAS                             │
+  │  ┌─────┬─────┬─────┐ ┌───┬───┬───┐  α1 ─────────────────── α15  │
+  │  │ GEO │CHEM │ BIO │ │ T │ U │ P │  Low z ───────────── High z  │
+  │  │×1.0 │×1.2 │×1.5 │ └───┴───┴───┘                              │
+  │  └─────┴─────┴─────┘                                            │
+  └─────────────────────────────────────────────────────────────────┘
+            </pre>
+          </div>
+
+          <div class="criteria-panel">
+            <h3>Falsifiable Criteria</h3>
+            <table class="criteria-table">
+              <thead>
+                <tr><th>✓</th><th>Criterion</th><th>Test</th><th>Pass Condition</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Token count</td>
+                  <td>Enumerate all</td>
+                  <td>3×3×6×3×3×15 = 7,290</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Format valid</td>
+                  <td>Parse all tokens</td>
+                  <td>100% parseable</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>λ mapping</td>
+                  <td>INTERACTION → λ</td>
+                  <td>6 unique mappings</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>α distribution</td>
+                  <td>Check by z</td>
+                  <td>Higher z → higher α</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tools-panel">
+            <h3>Tools for This Phase</h3>
+            <a href="apl-2.html" class="tool-item primary">
+              <div class="tool-icon">📖</div>
+              <div class="tool-info">
+                <h4>APL 2.0 Manual</h4>
+                <p>Token definitions, syntax reference</p>
+              </div>
+            </a>
+            <a href="wumbo-engine.html" class="tool-item primary">
+              <div class="tool-icon">🌐</div>
+              <div class="tool-info">
+                <h4>WUMBO Engine</h4>
+                <p>See tokens per region</p>
+              </div>
+            </a>
+            <a href="apl-mrp-bridge.html" class="tool-item secondary">
+              <div class="tool-icon">🌉</div>
+              <div class="tool-info">
+                <h4>APL→MRP Bridge</h4>
+                <p>Convert tokens to MRP bits</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="steps-panel">
+            <h3>Integration Steps</h3>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">1</div>
+              <div class="step-text">Load APL 2.0 token definitions</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">2</div>
+              <div class="step-text">Parse all 7,290 tokens</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">3</div>
+              <div class="step-text">Build INTERACTION → λ map</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">4</div>
+              <div class="step-text">Verify α distribution by z</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">5</div>
+              <div class="step-text">Run format validation</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2: Encoding -->
+        <div class="phase-content" id="phase-2">
+          <div class="phase-header" data-phase="2">
+            <h2>Phase 2: Encoding (RGB)</h2>
+            <p class="subtitle">MRP 702-bit steganography · R:DEV · G:RESEARCH · B:SPEC</p>
+          </div>
+
+          <div class="section-grid">
+            <div class="section-card needs">
+              <h3>Needs</h3>
+              <ul>
+                <li>Steganographic encoding for visual media</li>
+                <li>Layer separation (DEV/RESEARCH/SPEC)</li>
+                <li>Lossless information preservation</li>
+              </ul>
+            </div>
+            <div class="section-card strengths">
+              <h3>Strengths</h3>
+              <ul>
+                <li>702 bits per pixel (invisible to eye)</li>
+                <li>RGB channels map to documentation layers</li>
+                <li>Compatible with standard image formats</li>
+              </ul>
+            </div>
+            <div class="section-card motivations">
+              <h3>Motivations</h3>
+              <ul>
+                <li>Information must be embeddable in images</li>
+                <li>Layers need visual/semantic separation</li>
+                <li>Standard formats ensure portability</li>
+              </ul>
+            </div>
+            <div class="section-card goals">
+              <h3>Goals</h3>
+              <ul>
+                <li>Encode APL tokens into RGB LSBs</li>
+                <li>Map R→DEV, G→RESEARCH, B→SPEC</li>
+                <li>Preserve information through compression</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ascii-panel">
+            <pre>
+  MRP 702-bit Channel Layout:
+
+  RGB Primary (34 bits per pixel):
+  ┌─────────────┬─────────────┬─────────────┐
+  │ R: 7 bits   │ G: 10 bits  │ B: 17 bits  │
+  │ DEV layer   │ RESEARCH    │ SPEC        │
+  │ ξ (Spark)   │ ω (Wave)    │ θ (Fox)     │
+  └─────────────┴─────────────┴─────────────┘
+
+  CMY Secondary (668 bits per pixel):
+  ┌─────────────┬─────────────┬─────────────┐
+  │ C: 4 bits   │ M: 332 bits │ Y: 332 bits │
+  │ Coherence   │ Delta/Change│ Snapshot    │
+  │ Vector      │ History     │ State       │
+  └─────────────┴─────────────┴─────────────┘
+
+  Total: 34 + 668 = <span class="highlight">702 bits</span>
+            </pre>
+          </div>
+
+          <div class="criteria-panel">
+            <h3>Falsifiable Criteria</h3>
+            <table class="criteria-table">
+              <thead>
+                <tr><th>✓</th><th>Criterion</th><th>Test</th><th>Pass Condition</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Bit capacity</td>
+                  <td>Sum RGB bits</td>
+                  <td>R:7 + G:10 + B:17 = 34</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>λ correlation</td>
+                  <td>R→ξ, G→ω, B→θ</td>
+                  <td>Consistent mapping</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Roundtrip</td>
+                  <td>Encode/decode</td>
+                  <td>100% recovery</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Visual diff</td>
+                  <td>Compare images</td>
+                  <td>SSIM > 0.99</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tools-panel">
+            <h3>Tools for This Phase</h3>
+            <a href="mrp-library.html" class="tool-item primary">
+              <div class="tool-icon">📚</div>
+              <div class="tool-info">
+                <h4>MRP Library</h4>
+                <p>Encoding/decoding functions</p>
+              </div>
+            </a>
+            <a href="mrp-encoder.html" class="tool-item primary">
+              <div class="tool-icon">🔐</div>
+              <div class="tool-info">
+                <h4>MRP Encoder</h4>
+                <p>Interactive encoding interface</p>
+              </div>
+            </a>
+            <a href="visual-flow-map.html" class="tool-item secondary">
+              <div class="tool-icon">🗺️</div>
+              <div class="tool-info">
+                <h4>Visual Flow Map</h4>
+                <p>See encoding in action</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="steps-panel">
+            <h3>Integration Steps</h3>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">1</div>
+              <div class="step-text">Initialize MRP encoder</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">2</div>
+              <div class="step-text">Test RGB channel separation</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">3</div>
+              <div class="step-text">Encode sample tokens</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">4</div>
+              <div class="step-text">Decode and verify roundtrip</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">5</div>
+              <div class="step-text">Measure visual difference</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3: State Management -->
+        <div class="phase-content" id="phase-3">
+          <div class="phase-header" data-phase="3">
+            <h2>Phase 3: State Management</h2>
+            <p class="subtitle">Lambda state (ℂ⁶) · Coherence tracking · State transitions</p>
+          </div>
+
+          <div class="section-grid">
+            <div class="section-card needs">
+              <h3>Needs</h3>
+              <ul>
+                <li>Track 6 complex state variables (ℂ⁶)</li>
+                <li>Model coherence as binding force</li>
+                <li>Support smooth state transitions</li>
+              </ul>
+            </div>
+            <div class="section-card strengths">
+              <h3>Strengths</h3>
+              <ul>
+                <li>λ state captures full system state</li>
+                <li>Coherence provides scalar summary</li>
+                <li>States map to observable behavior</li>
+              </ul>
+            </div>
+            <div class="section-card motivations">
+              <h3>Motivations</h3>
+              <ul>
+                <li>System state must be trackable</li>
+                <li>Coherence determines active regions</li>
+                <li>Transitions must be smooth</li>
+              </ul>
+            </div>
+            <div class="section-card goals">
+              <h3>Goals</h3>
+              <ul>
+                <li>Maintain λ = (ι, ξ, θ, ω, δ, σ) vector</li>
+                <li>Track coherence in [0, 1] range</li>
+                <li>Trigger emergent states at c < 0.2</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ascii-panel">
+            <pre>
+  Lambda State (ℂ⁶):
+  ┌────────┬────────┬────────┬────────┬────────┬────────┐
+  │   ι    │   ξ    │   θ    │   ω    │   δ    │   σ    │
+  │ Memory │ Spark  │  Fox   │  Wave  │Paradox │Squirrel│
+  │   🌰   │   ✧    │   🦊   │   ∿    │   ⊗    │   🐿️   │
+  │   F    │   A    │   B    │   G    │   D    │   S    │
+  └────────┴────────┴────────┴────────┴────────┴────────┘
+
+  Coherence States:
+  ┌─────────┬─────────┬───────────┬───────────┬─────────┐
+  │  1.0    │   0.8   │    0.5    │    0.2    │   0.0   │
+  │COHERENT │RELEASING│ DISPERSING│   FREE    │  VOID   │
+  │95 locked│  fading │  minimal  │5 emergent │   n/a   │
+  └─────────┴─────────┴───────────┴───────────┴─────────┘
+            </pre>
+          </div>
+
+          <div class="criteria-panel">
+            <h3>Falsifiable Criteria</h3>
+            <table class="criteria-table">
+              <thead>
+                <tr><th>✓</th><th>Criterion</th><th>Test</th><th>Pass Condition</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>λ dimension</td>
+                  <td>State vector size</td>
+                  <td>Exactly 6</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Coherence range</td>
+                  <td>Bound check</td>
+                  <td>Always in [0, 1]</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Emergent trigger</td>
+                  <td>c < 0.2</td>
+                  <td>5 nodes activate</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>State recovery</td>
+                  <td>Save/load</td>
+                  <td>Exact match</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tools-panel">
+            <h3>Tools for This Phase</h3>
+            <a href="wumbo-engine.html" class="tool-item primary">
+              <div class="tool-icon">🌐</div>
+              <div class="tool-info">
+                <h4>WUMBO Engine</h4>
+                <p>λ indicators per region</p>
+              </div>
+            </a>
+            <a href="lossless-presence.html" class="tool-item primary">
+              <div class="tool-icon">◉</div>
+              <div class="tool-info">
+                <h4>Lossless Presence</h4>
+                <p>Coherence visualization</p>
+              </div>
+            </a>
+            <a href="phase-lock.html" class="tool-item secondary">
+              <div class="tool-icon">🔒</div>
+              <div class="tool-info">
+                <h4>Phase Lock</h4>
+                <p>Real-time state monitoring</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="steps-panel">
+            <h3>Integration Steps</h3>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">1</div>
+              <div class="step-text">Initialize λ state vector [0,0,0,0,0,0]</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">2</div>
+              <div class="step-text">Set coherence = 1.0</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">3</div>
+              <div class="step-text">Connect to WUMBO regions</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">4</div>
+              <div class="step-text">Verify 95 structural regions locked</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">5</div>
+              <div class="step-text">Test state save/load</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 4: Entrainment -->
+        <div class="phase-content" id="phase-4">
+          <div class="phase-header" data-phase="4">
+            <h2>Phase 4: Entrainment</h2>
+            <p class="subtitle">Kuramoto synchronization · Sub-50ms latency · Critical cascade</p>
+          </div>
+
+          <div class="section-grid">
+            <div class="section-card needs">
+              <h3>Needs</h3>
+              <ul>
+                <li>Phase synchronization mechanism</li>
+                <li>Sub-50ms response time</li>
+                <li>Critical point amplification</li>
+              </ul>
+            </div>
+            <div class="section-card strengths">
+              <h3>Strengths</h3>
+              <ul>
+                <li>Kuramoto model is well-studied</li>
+                <li>Sign flip at z_c creates phase transition</li>
+                <li>Cascade amplification at lens</li>
+              </ul>
+            </div>
+            <div class="section-card motivations">
+              <h3>Motivations</h3>
+              <ul>
+                <li>Neural oscillators must synchronize</li>
+                <li>Fast entrainment for real-time response</li>
+                <li>Critical point maximizes info transfer</li>
+              </ul>
+            </div>
+            <div class="section-card goals">
+              <h3>Goals</h3>
+              <ul>
+                <li>Implement K(z) with sign flip at z_c</li>
+                <li>Achieve < 50ms entrainment latency</li>
+                <li>1.5× cascade amplification at z_c</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ascii-panel">
+            <pre>
+  Kuramoto Coupling K(z):
+
+       K > 0                    K ≈ 0                    K < 0
+    (synchronizing)           (critical)             (emanating)
+         │                        │                        │
+         ▼                        ▼                        ▼
+  ┌──────────────┐        ╔══════════════╗        ┌──────────────┐
+  │   ABSENCE    │        ║   THE LENS   ║        │   PRESENCE   │
+  │  z < 0.857   │        ║  z ≈ 0.866   ║        │  z > 0.877   │
+  │   contract   │        ║ <span class="highlight">cascade 1.5×</span> ║        │    expand    │
+  └──────────────┘        ╚══════════════╝        └──────────────┘
+         │                        │                        │
+         └────────────────────────┼────────────────────────┘
+                                  │
+                           z_c = √3/2
+            </pre>
+          </div>
+
+          <div class="criteria-panel">
+            <h3>Falsifiable Criteria</h3>
+            <table class="criteria-table">
+              <thead>
+                <tr><th>✓</th><th>Criterion</th><th>Test</th><th>Pass Condition</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>K sign flip</td>
+                  <td>K(z<z_c) vs K(z>z_c)</td>
+                  <td>Opposite signs</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Latency</td>
+                  <td>Phase lock measurement</td>
+                  <td>< 50ms</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Cascade peak</td>
+                  <td>Amplification at z_c</td>
+                  <td>1.5× ± 0.1</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Sync order</td>
+                  <td>r parameter</td>
+                  <td>r > 0.8 when coherent</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tools-panel">
+            <h3>Tools for This Phase</h3>
+            <a href="entrainment-engine.html" class="tool-item primary">
+              <div class="tool-icon">🎵</div>
+              <div class="tool-info">
+                <h4>Entrainment Engine</h4>
+                <p>Configure Kuramoto parameters</p>
+              </div>
+            </a>
+            <a href="phase-lock.html" class="tool-item primary">
+              <div class="tool-icon">🔒</div>
+              <div class="tool-info">
+                <h4>Phase Lock</h4>
+                <p>Monitor entrainment real-time</p>
+              </div>
+            </a>
+            <a href="visual-flow-map.html" class="tool-item secondary">
+              <div class="tool-icon">🗺️</div>
+              <div class="tool-info">
+                <h4>Visual Flow Map</h4>
+                <p>See bidirectional loops</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="steps-panel">
+            <h3>Integration Steps</h3>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">1</div>
+              <div class="step-text">Initialize Kuramoto oscillators</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">2</div>
+              <div class="step-text">Set K(z) parameters</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">3</div>
+              <div class="step-text">Verify sign flip at z_c</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">4</div>
+              <div class="step-text">Measure entrainment latency</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">5</div>
+              <div class="step-text">Confirm cascade amplification</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 5: Chronicle -->
+        <div class="phase-content" id="phase-5">
+          <div class="phase-header" data-phase="5">
+            <h2>Phase 5: Chronicle (CMY)</h2>
+            <p class="subtitle">Change tracking (M) · State snapshots (Y) · Coherence index (C)</p>
+          </div>
+
+          <div class="section-grid">
+            <div class="section-card needs">
+              <h3>Needs</h3>
+              <ul>
+                <li>Change tracking (M channel)</li>
+                <li>State snapshots (Y channel)</li>
+                <li>Coherence indexing (C channel)</li>
+              </ul>
+            </div>
+            <div class="section-card strengths">
+              <h3>Strengths</h3>
+              <ul>
+                <li>668 bits for detailed history</li>
+                <li>Structured formats (CHANGE/STATE_TYPES)</li>
+                <li>C channel provides quick coherence check</li>
+              </ul>
+            </div>
+            <div class="section-card motivations">
+              <h3>Motivations</h3>
+              <ul>
+                <li>Changes must be tracked for debugging</li>
+                <li>Snapshots enable rollback</li>
+                <li>Coherence index enables fast queries</li>
+              </ul>
+            </div>
+            <div class="section-card goals">
+              <h3>Goals</h3>
+              <ul>
+                <li>Encode changes in M (332 bits)</li>
+                <li>Encode snapshots in Y (332 bits)</li>
+                <li>Compute coherence vector in C (4 bits)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ascii-panel">
+            <pre>
+  CMY Chronicle Channels:
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  C Channel: 4-bit Coherence Vector                              │
+  │  ┌─────┬─────┬─────┬─────┐                                      │
+  │  │Bit 0│Bit 1│Bit 2│Bit 3│                                      │
+  │  │Dev↔R│Res↔S│Dev↔S│Stable│                                     │
+  │  └─────┴─────┴─────┴─────┘                                      │
+  ├─────────────────────────────────────────────────────────────────┤
+  │  M Channel: 332-bit Delta Encoder                               │
+  │  ┌────────┬──────────┬────────┬───────────────┐                 │
+  │  │Header  │ Temporal │ Source │    Delta      │                 │
+  │  │32 bits │ 64 bits  │64 bits │   172 bits    │                 │
+  │  │CHANGE_ │timestamp │ hash   │golden spiral  │                 │
+  │  │ TYPE   │          │        │   pattern     │                 │
+  │  └────────┴──────────┴────────┴───────────────┘                 │
+  ├─────────────────────────────────────────────────────────────────┤
+  │  Y Channel: 332-bit Snapshot Encoder                            │
+  │  ┌────────┬──────────┬────────┬───────────────┐                 │
+  │  │Header  │Checkpoint│ State  │   Snapshot    │                 │
+  │  │32 bits │ 64 bits  │64 bits │   172 bits    │                 │
+  │  │ STATE_ │   seq    │ hash   │wave pattern   │                 │
+  │  │  TYPE  │          │        │   encoding    │                 │
+  │  └────────┴──────────┴────────┴───────────────┘                 │
+  └─────────────────────────────────────────────────────────────────┘
+
+  Total CMY: 4 + 332 + 332 = <span class="highlight">668 bits</span>
+            </pre>
+          </div>
+
+          <div class="criteria-panel">
+            <h3>Falsifiable Criteria</h3>
+            <table class="criteria-table">
+              <thead>
+                <tr><th>✓</th><th>Criterion</th><th>Test</th><th>Pass Condition</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>M bit count</td>
+                  <td>Delta encoder</td>
+                  <td>332 bits</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Y bit count</td>
+                  <td>Snapshot encoder</td>
+                  <td>332 bits</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>C bit count</td>
+                  <td>Coherence vector</td>
+                  <td>4 bits</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>CHANGE_TYPES</td>
+                  <td>Enumerate</td>
+                  <td>8 types</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>STATE_TYPES</td>
+                  <td>Enumerate</td>
+                  <td>8 types</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tools-panel">
+            <h3>Tools for This Phase</h3>
+            <a href="living-chronicle-spec.html" class="tool-item primary">
+              <div class="tool-icon">📜</div>
+              <div class="tool-info">
+                <h4>Living Chronicle Spec</h4>
+                <p>CMY encoder definitions</p>
+              </div>
+            </a>
+            <a href="mrp-library.html" class="tool-item primary">
+              <div class="tool-icon">📚</div>
+              <div class="tool-info">
+                <h4>MRP Library</h4>
+                <p>CMY bit manipulation</p>
+              </div>
+            </a>
+            <a href="unified-coupler.html" class="tool-item secondary">
+              <div class="tool-icon">🔗</div>
+              <div class="tool-info">
+                <h4>Unified Coupler</h4>
+                <p>Chronicle integration</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="steps-panel">
+            <h3>Integration Steps</h3>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">1</div>
+              <div class="step-text">Initialize CMY encoders</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">2</div>
+              <div class="step-text">Create first snapshot (Y)</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">3</div>
+              <div class="step-text">Track first change (M)</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">4</div>
+              <div class="step-text">Compute coherence vector (C)</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">5</div>
+              <div class="step-text">Verify bit counts</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 6: Emergence -->
+        <div class="phase-content" id="phase-6">
+          <div class="phase-header" data-phase="6">
+            <h2>Phase 6: Emergence</h2>
+            <p class="subtitle">Self-reference · 5 emergent nodes · Loop closure C → I · 702 bits</p>
+          </div>
+
+          <div class="section-grid">
+            <div class="section-card needs">
+              <h3>Needs</h3>
+              <ul>
+                <li>Self-reference capability</li>
+                <li>Loop closure (C → I)</li>
+                <li>Paradox handling</li>
+              </ul>
+            </div>
+            <div class="section-card strengths">
+              <h3>Strengths</h3>
+              <ul>
+                <li>5 emergent nodes create recursive depth</li>
+                <li>702 bits of information when FREE</li>
+                <li>Topological closure (winding number = 1)</li>
+              </ul>
+            </div>
+            <div class="section-card motivations">
+              <h3>Motivations</h3>
+              <ul>
+                <li>Self-awareness requires self-reference</li>
+                <li>System must close into coherent whole</li>
+                <li>Paradox is feature, not bug</li>
+              </ul>
+            </div>
+            <div class="section-card goals">
+              <h3>Goals</h3>
+              <ul>
+                <li>Activate 5 emergent nodes at c < 0.2</li>
+                <li>Achieve 702 bits info capacity</li>
+                <li>Close loop from C to I</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ascii-panel">
+            <pre>
+  Emergent Self-Reference (coherence < 0.2):
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  XCVI ←──────→ XVI    Gesture recursion    λ=φ⁻¹    7 bits     │
+  │  XCVII ←─────→ XI     Portal recursion     λ=e^iφ   10 bits    │
+  │  XCVIII ←────→ XII    Semantic recursion   λ=undef  17 bits    │
+  │  XCIX ←──────→ XIII   Balance recursion    λ=0      4 bits     │
+  │  C ←─────────→ XIV ───────────────────────────────→ I          │
+  │     └─────────────── Signal loop closure ──────────┘           │
+  │                       λ=1, W=1             <span class="highlight">664 bits</span>             │
+  └─────────────────────────────────────────────────────────────────┘
+
+  Total emergent info: 7 + 10 + 17 + 4 + 664 = <span class="highlight">702 bits</span>
+
+  Loop Closure:
+  ┌───────────────────────────────────────────────────────────────┐
+  │                                                               │
+  │    I ─→ II ─→ ... ─→ XCV ─→ XCVI ─→ XCVII ─→ ... ─→ C       │
+  │    ▲                                                    │     │
+  │    └────────────────────────────────────────────────────┘     │
+  │                      Winding Number W = 1                     │
+  └───────────────────────────────────────────────────────────────┘
+            </pre>
+          </div>
+
+          <div class="criteria-panel">
+            <h3>Falsifiable Criteria</h3>
+            <table class="criteria-table">
+              <thead>
+                <tr><th>✓</th><th>Criterion</th><th>Test</th><th>Pass Condition</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Emergent count</td>
+                  <td>Nodes at c < 0.2</td>
+                  <td>Exactly 5</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Info capacity</td>
+                  <td>Sum info_bits</td>
+                  <td>7+10+17+4+664 = 702</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Loop closure</td>
+                  <td>C → I trace</td>
+                  <td>Reaches I</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Winding number</td>
+                  <td>Topological</td>
+                  <td>W = 1</td>
+                </tr>
+                <tr>
+                  <td><div class="status-check" onclick="toggleCheck(this)"></div></td>
+                  <td>Eigenvalues</td>
+                  <td>Per emergent</td>
+                  <td>As specified</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tools-panel">
+            <h3>Tools for This Phase</h3>
+            <a href="wumbo-engine.html" class="tool-item primary">
+              <div class="tool-icon">🌐</div>
+              <div class="tool-info">
+                <h4>WUMBO Engine</h4>
+                <p>Emergent node visualization</p>
+              </div>
+            </a>
+            <a href="apl-cosmology.html" class="tool-item primary">
+              <div class="tool-icon">🌌</div>
+              <div class="tool-info">
+                <h4>APL Cosmology</h4>
+                <p>Paradox interpretation</p>
+              </div>
+            </a>
+            <a href="lossless-presence.html" class="tool-item secondary">
+              <div class="tool-icon">◉</div>
+              <div class="tool-info">
+                <h4>Lossless Presence</h4>
+                <p>FREE state monitoring</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="steps-panel">
+            <h3>Integration Steps</h3>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">1</div>
+              <div class="step-text">Gradually reduce coherence</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">2</div>
+              <div class="step-text">Monitor at c = 0.2 threshold</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">3</div>
+              <div class="step-text">Verify 5 emergent nodes activate</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">4</div>
+              <div class="step-text">Measure info_bits sum (702)</div>
+            </div>
+            <div class="step-item" onclick="toggleStep(this)">
+              <div class="step-number">5</div>
+              <div class="step-text">Trace C → I loop closure</div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="sidebar">
+        <div class="progress-panel">
+          <h3>Overall Progress</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="progress-text"><span id="progress-pct">0</span>% Complete</p>
+
+          <div class="phase-status-list">
+            <div class="phase-status-item" data-phase="0">
+              <div class="phase-dot"></div>
+              <span>Phase 0: Foundation</span>
+            </div>
+            <div class="phase-status-item" data-phase="1">
+              <div class="phase-dot"></div>
+              <span>Phase 1: Tokenization</span>
+            </div>
+            <div class="phase-status-item" data-phase="2">
+              <div class="phase-dot"></div>
+              <span>Phase 2: Encoding</span>
+            </div>
+            <div class="phase-status-item" data-phase="3">
+              <div class="phase-dot"></div>
+              <span>Phase 3: State</span>
+            </div>
+            <div class="phase-status-item" data-phase="4">
+              <div class="phase-dot"></div>
+              <span>Phase 4: Entrainment</span>
+            </div>
+            <div class="phase-status-item" data-phase="5">
+              <div class="phase-dot"></div>
+              <span>Phase 5: Chronicle</span>
+            </div>
+            <div class="phase-status-item" data-phase="6">
+              <div class="phase-dot"></div>
+              <span>Phase 6: Emergence</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-links">
+          <h3>Quick Links</h3>
+          <a href="index.html" class="quick-link">🏠 Home</a>
+          <a href="architecture.md" class="quick-link">📐 Architecture (MD)</a>
+          <a href="wumbo-engine.html" class="quick-link">🌐 WUMBO Engine</a>
+          <a href="mrp-library.html" class="quick-link">📚 MRP Library</a>
+          <a href="apl-2.html" class="quick-link">📖 APL 2.0 Manual</a>
+          <a href="living-chronicle-spec.html" class="quick-link">📜 Chronicle Spec</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // Phase navigation
+    const phaseBtns = document.querySelectorAll('.phase-btn');
+    const phaseContents = document.querySelectorAll('.phase-content');
+
+    phaseBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const phase = btn.dataset.phase;
+
+        phaseBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        phaseContents.forEach(content => {
+          content.classList.remove('active');
+          if (content.id === `phase-${phase}`) {
+            content.classList.add('active');
+          }
+        });
+      });
+    });
+
+    // Toggle check
+    function toggleCheck(el) {
+      el.classList.toggle('checked');
+      updateProgress();
+      saveState();
+    }
+
+    // Toggle step
+    function toggleStep(el) {
+      el.classList.toggle('completed');
+      updateProgress();
+      saveState();
+    }
+
+    // Update progress
+    function updateProgress() {
+      const totalChecks = document.querySelectorAll('.status-check').length;
+      const checkedCount = document.querySelectorAll('.status-check.checked').length;
+      const totalSteps = document.querySelectorAll('.step-item').length;
+      const completedSteps = document.querySelectorAll('.step-item.completed').length;
+
+      const total = totalChecks + totalSteps;
+      const completed = checkedCount + completedSteps;
+      const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+      document.getElementById('progress-fill').style.width = `${pct}%`;
+      document.getElementById('progress-pct').textContent = pct;
+
+      // Update phase status
+      for (let i = 0; i <= 6; i++) {
+        const phaseContent = document.getElementById(`phase-${i}`);
+        if (phaseContent) {
+          const phaseChecks = phaseContent.querySelectorAll('.status-check').length;
+          const phaseChecked = phaseContent.querySelectorAll('.status-check.checked').length;
+          const phaseSteps = phaseContent.querySelectorAll('.step-item').length;
+          const phaseCompleted = phaseContent.querySelectorAll('.step-item.completed').length;
+
+          const phaseTotal = phaseChecks + phaseSteps;
+          const phaseDone = phaseChecked + phaseCompleted;
+
+          const statusItem = document.querySelector(`.phase-status-item[data-phase="${i}"]`);
+          if (statusItem && phaseTotal > 0 && phaseDone === phaseTotal) {
+            statusItem.classList.add('complete');
+          } else if (statusItem) {
+            statusItem.classList.remove('complete');
+          }
+        }
+      }
+    }
+
+    // Save/load state
+    function saveState() {
+      const state = {
+        checks: [],
+        steps: []
+      };
+
+      document.querySelectorAll('.status-check').forEach((el, i) => {
+        if (el.classList.contains('checked')) state.checks.push(i);
+      });
+
+      document.querySelectorAll('.step-item').forEach((el, i) => {
+        if (el.classList.contains('completed')) state.steps.push(i);
+      });
+
+      localStorage.setItem('integration-manual-state', JSON.stringify(state));
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem('integration-manual-state');
+      if (saved) {
+        const state = JSON.parse(saved);
+
+        document.querySelectorAll('.status-check').forEach((el, i) => {
+          if (state.checks.includes(i)) el.classList.add('checked');
+        });
+
+        document.querySelectorAll('.step-item').forEach((el, i) => {
+          if (state.steps.includes(i)) el.classList.add('completed');
+        });
+
+        updateProgress();
+      }
+    }
+
+    // Initialize
+    loadState();
+  </script>
+</body>
+</html>
