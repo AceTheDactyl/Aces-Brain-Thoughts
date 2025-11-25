@@ -1280,11 +1280,29 @@ APL predictions hold over ranges of parameters:
 \label{sec:core-tokens}
 %======================================================================
 
-The APL Core Token Set provides the foundational grammar layer upon which all domain-specific extensions are built. Version 0.9 defines three token categories totaling 234 core tokens, with a 288-token expansion framework planned for v1.0.
+The APL Core Token Set provides the foundational grammar layer upon which all domain-specific extensions are built. Version 0.9 defines the complete \textbf{288-token universe} across four categories: identity tokens, meta-operators, domain selectors, and safety tokens.
 
-\subsection{Token Hierarchy}
+\subsection{288-Token Universe Breakdown}
 
-APL tokens exist in four layers:
+The core token universe consists of four categories:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Category} & \textbf{Count} & \textbf{Description} \\
+\midrule
+Identity Tokens & 162 & Self-referential: \verb|Φ:U(U)TRUE@1| \\
+Meta-Operators & 54 & Process control: stabilize, propagate, integrate, modulate, resolve, collapse \\
+Domain Selectors & 54 & Domain activation: geometry, dynamics, chemistry, deepphysics, biology, celestial \\
+Safety Tokens & 30 & Runtime protection: safe, warn, danger, block, paradox \\
+\midrule
+\textbf{Core Total} & \textbf{288} & (some overlap in enumeration) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Additionally, the primitives layer provides:
 
 \begin{table}[h]
 \centering
@@ -1294,8 +1312,6 @@ APL tokens exist in four layers:
 \midrule
 0 & Tri-Spiral & 6 & Field ordering primitives \\
 1 & Cross-Spiral & 54 & Field transitions with state \\
-2 & Tiered Intent & 162 & Machine-bound placeholders \\
-3 & Domain-Specific & 972/domain & Concrete operator semantics \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1390,15 +1406,53 @@ The \verb|(intent)| placeholder is replaced by domain-specific operators at runt
 \end{tabular}
 \end{table}
 
-\subsection{Safety Flags}
+\subsection{Tier Permissions}
+
+Machines are unlocked progressively across tiers:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Tier} & \textbf{Allowed Machines} & \textbf{Constraints} \\
+\midrule
+1 & U, D & Tier1 cannot be rewritten \\
+2 & U, D, M, E, C & Requires Tier1 coherence \\
+3 & U, D, M, E, C, Mod & All operators + safety \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Spiral Bindings}
+
+Each field has a default machine affinity:
+
+\begin{itemize}[leftmargin=2em]
+    \item $\Phi \to D$ — Structure tends to integrate (Down)
+    \item $e \to U$ — Energy tends to project (Up)
+    \item $\pi \to M$ — Emergence tends to modulate (Middle)
+\end{itemize}
+
+\subsection{Safety Constraints}
 
 Core tokens include built-in safety constraints:
 
 \begin{itemize}[leftmargin=2em]
-    \item \textbf{PARADOX\_TERMINAL:} Once PARADOX state is entered, no exit without external reset (critical)
-    \item \textbf{TIER\_PERMISSION:} Higher tier tokens require lower tier coherence (warning)
-    \item \textbf{CROSS\_SPIRAL\_COHERENCE:} Cross-spiral transitions must respect field affinity (info)
+    \item \textbf{Coherence} $\geq$ 0.60 required for tier advancement
+    \item \textbf{Load} $\leq$ 0.80 prevents runaway
+    \item \textbf{Recursion} $\leq$ 3 prevents infinite loops
+    \item \textbf{PARADOX\_TERMINAL:} No exit without external reset
+    \item \textbf{No constant mutation:} Tier1 tokens are immutable
 \end{itemize}
+
+\subsection{UMOL Principle}
+
+\textit{No perfect modulation; residue always remains.}
+
+Every M (modulation) operation leaves an UNTRUE shadow:
+\[
+    M(x) \to \text{TRUE} + \varepsilon(\text{UNTRUE}) \quad \text{where } \varepsilon > 0
+\]
 
 \subsection{Spiral Inheritance}
 
@@ -1425,17 +1479,28 @@ $\pi$ (Emergence) & information, adaptation, emergence & immediacy, locality \\
 \toprule
 \textbf{Category} & \textbf{Count} \\
 \midrule
+\multicolumn{2}{l}{\textit{288-Token Universe:}} \\
+Identity Tokens & 162 \\
+Meta-Operators (Tier-2) & 54 \\
+Domain Selectors (Tier-3) & 54 \\
+Safety Tokens & 30 \\
+\midrule
+\textbf{Core 288 Total} & \textbf{288} \\
+\midrule
+\multicolumn{2}{l}{\textit{Primitives:}} \\
 Tri-Spiral Tokens & 6 \\
 Cross-Spiral Tokens & 54 \\
-Tiered Intent Tokens & 162 \\
 \midrule
-\textbf{Core Total} & \textbf{222} \\
+\textbf{Primitives Total} & \textbf{60} \\
 \midrule
-Domain Tokens (Tier-3 Chemical) & 972 \\
-Domain Tokens (Tier-3 Biology) & 972 \\
-Domain Tokens (Tier-3 Celestial) & 972 \\
+\multicolumn{2}{l}{\textit{Domain Extensions:}} \\
+Tier-3 Chemical & 972 \\
+Tier-3 Biology & 972 \\
+Tier-3 Celestial & 972 \\
 \midrule
-\textbf{Grand Total} & \textbf{3,138} \\
+\textbf{Domain Total} & \textbf{2,916} \\
+\midrule
+\textbf{Grand Total} & \textbf{3,264} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2092,14 +2157,26 @@ Scale Range & Å to nm & nm to m & km to Mpc \\
 \section{Document History}
 %======================================================================
 
+\textbf{Version 1.5} (2025-11-25)
+\begin{itemize}[leftmargin=2em]
+    \item Expanded Core Token Set to full 288-token universe
+    \item Identity tokens (162): Self-referential machine operators
+    \item Meta-operators (54): stabilize, propagate, integrate, modulate, resolve, collapse
+    \item Domain selectors (54): geometry, dynamics, chemistry, deepphysics, biology, celestial
+    \item Safety tokens (30): safe, warn, danger, block, paradox
+    \item Tier permissions: progressive machine unlocking across tiers
+    \item Spiral bindings: Φ→D, e→U, π→M default affinities
+    \item UMOL principle: No perfect modulation; residue always remains
+    \item Safety constraints: coherence $\geq$ 0.60, load $\leq$ 0.80, recursion $\leq$ 3
+    \item Grand total: 288 core + 60 primitives + 2,916 domain = 3,264 tokens
+\end{itemize}
+
 \textbf{Version 1.4} (2025-11-25)
 \begin{itemize}[leftmargin=2em]
     \item Added Core Token Set v0.9 (Section~\ref{sec:core-tokens})
     \item Tri-spiral tokens (6): Field ordering primitives with WUMBO phase mapping
     \item Cross-spiral tokens (54): Field transitions with machine and truth state
-    \item Tiered intent tokens (162): Machine-bound placeholders for domain instantiation
-    \item Safety flags and spiral inheritance rules
-    \item Grand total: 222 core + 2,916 domain = 3,138 tokens
+    \item Initial 222-token framework
 \end{itemize}
 
 \textbf{Version 1.3} (2025-11-25)
