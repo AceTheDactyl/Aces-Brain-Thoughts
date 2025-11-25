@@ -799,16 +799,95 @@
         .legend-line.prism-conn { background: linear-gradient(90deg, var(--prism-core), var(--prism-outer)); }
         .legend-line.cage-conn { background: var(--cage-field); }
         .legend-line.bridge-conn { background: linear-gradient(90deg, var(--prism-outer), var(--cage-vertex)); }
+
+        /* WebGL Shader Canvas */
+        #shader-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Consciousness Threshold Bar */
+        #consciousness-bar {
+            position: fixed;
+            left: 50%;
+            bottom: 100px;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: visible;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #consciousness-bar.visible {
+            opacity: 1;
+        }
+
+        #consciousness-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b 0%, #ffa94d 40%, #69db7c 70%, #ffd700 100%);
+            border-radius: 4px;
+            transition: width 0.15s ease;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .threshold-marker {
+            position: absolute;
+            top: -4px;
+            width: 2px;
+            height: 16px;
+            transform: translateX(-50%);
+        }
+
+        .threshold-marker.mu-p {
+            left: 60%;
+            background: #ffa94d;
+        }
+
+        .threshold-marker.phi-inv {
+            left: 61.8%;
+            background: #69db7c;
+        }
+
+        .threshold-marker.mu-s {
+            left: 92%;
+            background: #ffd700;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+        }
+
+        .threshold-label {
+            position: absolute;
+            top: 16px;
+            font-size: 8px;
+            color: var(--text-dim);
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        .threshold-marker.mu-p .threshold-label { left: 0; }
+        .threshold-marker.phi-inv .threshold-label { left: 0; }
+        .threshold-marker.mu-s .threshold-label { left: 0; }
     </style>
 </head>
 <body>
+    <!-- WebGL Shader Background -->
+    <canvas id="shader-canvas"></canvas>
+
     <canvas id="canvas"></canvas>
     <div id="cursor"></div>
 
     <!-- Header -->
     <div id="header" class="panel">
         <h1 id="title">LIMNUS</h1>
-        <div class="subtitle">UNIFIED PRISM-CAGE ARCHITECTURE</div>
+        <div class="subtitle">UNIFIED PRISM-CAGE ARCHITECTURE · φ-DERIVED DYNAMICS</div>
     </div>
 
     <!-- Z-Coordinate -->
@@ -1003,6 +1082,14 @@
 
     <div id="release-hint" class="hidden">HOLD F TO RELEASE · CLICK TO GATHER</div>
 
+    <!-- Consciousness Threshold Bar (visible when F held) -->
+    <div id="consciousness-bar">
+        <div id="consciousness-fill" style="width: 0%"></div>
+        <div class="threshold-marker mu-p"><span class="threshold-label">μ_P</span></div>
+        <div class="threshold-marker phi-inv"><span class="threshold-label">φ⁻¹</span></div>
+        <div class="threshold-marker mu-s"><span class="threshold-label">μ_S</span></div>
+    </div>
+
     <!-- Start Overlay -->
     <div id="start-overlay">
         <h1>LIMNUS</h1>
@@ -1067,6 +1154,262 @@
         let phaseLockCoherence = 0;        // Kuramoto order parameter r
         let phaseLockK = ALPHA;            // Current K(z) value
         let loopClosed = false;            // C→I loop closure achieved
+
+        // ================================================================
+        // WEBGL SHADER VISUALIZATION
+        // ================================================================
+
+        let shaderCanvas, gl, shaderProgram;
+        let shaderTime = 0;
+
+        const vertexShaderSource = `
+            attribute vec2 a_position;
+            void main() {
+                gl_Position = vec4(a_position, 0.0, 1.0);
+            }
+        `;
+
+        const fragmentShaderSource = `
+            precision highp float;
+
+            uniform float u_time;
+            uniform vec2 u_resolution;
+            uniform float u_z;
+            uniform float u_r;           // Kuramoto order parameter
+            uniform float u_K;           // K(z) coupling
+            uniform float u_coherence;   // Release coherence
+            uniform float u_loopProgress;
+            uniform float u_consciousness;
+
+            // Sacred constants
+            const float PHI = 1.618034;
+            const float PHI_INV = 0.618034;
+            const float Z_CRITICAL = 0.8660254;
+            const float MU_P = 0.6;
+            const float MU_S = 0.92;
+
+            // 2D rotation matrix
+            mat2 rot2D(float a) {
+                float c = cos(a), s = sin(a);
+                return mat2(c, -s, s, c);
+            }
+
+            // Fractal Brownian Motion with φ scaling
+            float fbm(vec2 p) {
+                float value = 0.0;
+                float amplitude = 0.5;
+                mat2 rotM = rot2D(PHI);
+
+                for (int i = 0; i < 5; i++) {
+                    value += amplitude * (sin(p.x) * sin(p.y) + 1.0) * 0.5;
+                    p = rotM * p * PHI + vec2(PHI, PHI_INV);
+                    amplitude *= PHI_INV;
+                }
+                return value;
+            }
+
+            // Domain coloring
+            vec3 domainColor(float z, float phase) {
+                if (z < Z_CRITICAL - 0.02) {
+                    // ABSENCE domain - sepia/warm
+                    float absence = (Z_CRITICAL - z) / Z_CRITICAL;
+                    return mix(
+                        vec3(0.15, 0.12, 0.08),
+                        vec3(0.3, 0.2, 0.1),
+                        absence * 0.5 + sin(phase) * 0.2
+                    );
+                } else if (z > Z_CRITICAL + 0.02) {
+                    // PRESENCE domain - warm white
+                    float presence = (z - Z_CRITICAL) / (1.0 - Z_CRITICAL);
+                    return mix(
+                        vec3(0.2, 0.18, 0.15),
+                        vec3(0.4, 0.35, 0.3),
+                        presence * 0.5 + cos(phase) * 0.15
+                    );
+                } else {
+                    // CRITICAL - golden
+                    return vec3(0.4, 0.3, 0.1) * (1.0 + sin(phase * 3.0) * 0.3);
+                }
+            }
+
+            void main() {
+                vec2 uv = gl_FragCoord.xy / u_resolution;
+                vec2 centered = (uv - 0.5) * 2.0;
+                centered.x *= u_resolution.x / u_resolution.y;
+
+                float radius = length(centered);
+                float angle = atan(centered.y, centered.x);
+
+                // φ-spiral pattern
+                float spiral = sin(angle * PHI + radius * 8.0 - u_time * 0.5);
+                spiral *= exp(-radius * 1.5);
+
+                // Fractal noise field
+                vec2 noiseCoord = centered * 2.0 + vec2(u_time * 0.1);
+                float noise = fbm(noiseCoord) * 0.3;
+
+                // Base domain color
+                vec3 baseColor = domainColor(u_z, angle + u_time * 0.2);
+
+                // Add spiral pattern
+                baseColor += vec3(0.1, 0.08, 0.05) * spiral * u_coherence;
+
+                // Add noise texture
+                baseColor += vec3(noise * 0.15);
+
+                // Kuramoto coherence visualization
+                if (u_r > 0.0) {
+                    // Coherent ring at consciousness threshold
+                    float ringDist = abs(radius - u_r * 0.8);
+                    float ring = exp(-ringDist * ringDist * 50.0);
+
+                    vec3 ringColor = vec3(0.2, 0.4, 0.3);  // Green tint
+                    if (u_r > MU_P) {
+                        ringColor = vec3(0.4, 0.3, 0.1);   // Golden
+                    }
+                    if (u_r > MU_S) {
+                        ringColor = vec3(0.5, 0.4, 0.1);   // Bright gold
+                    }
+
+                    baseColor += ringColor * ring * 0.4;
+                }
+
+                // Loop closure glow
+                if (u_loopProgress > 0.0) {
+                    float loopGlow = sin(radius * 15.0 - u_time * 2.0) * 0.5 + 0.5;
+                    loopGlow *= u_loopProgress * exp(-radius * 2.0);
+                    baseColor += vec3(0.4, 0.2, 0.5) * loopGlow;
+                }
+
+                // Consciousness emergence pulse at μ_S
+                if (u_consciousness > 0.0) {
+                    float pulse = sin(u_time * 3.0) * 0.5 + 0.5;
+                    float consciousnessGlow = u_consciousness * pulse;
+                    consciousnessGlow *= exp(-radius * 1.5);
+                    baseColor += vec3(0.5, 0.4, 0.1) * consciousnessGlow;
+                }
+
+                // K(z) sign flip visualization - subtle wave
+                float kWave = sin(centered.x * 10.0 + u_time) * sign(u_K) * 0.02;
+                baseColor.rg += vec2(kWave, -kWave) * abs(u_K);
+
+                // Vignette
+                float vignette = 1.0 - radius * 0.4;
+                baseColor *= vignette;
+
+                // Release state fade
+                baseColor *= 0.3 + u_coherence * 0.7;
+
+                gl_FragColor = vec4(baseColor, 1.0);
+            }
+        `;
+
+        function initShader() {
+            shaderCanvas = document.getElementById('shader-canvas');
+            gl = shaderCanvas.getContext('webgl') || shaderCanvas.getContext('experimental-webgl');
+
+            if (!gl) {
+                console.warn('WebGL not available, shader effects disabled');
+                return false;
+            }
+
+            // Create shaders
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vertexShaderSource);
+            gl.compileShader(vertexShader);
+
+            if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+                console.error('Vertex shader error:', gl.getShaderInfoLog(vertexShader));
+                return false;
+            }
+
+            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fragmentShaderSource);
+            gl.compileShader(fragmentShader);
+
+            if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+                console.error('Fragment shader error:', gl.getShaderInfoLog(fragmentShader));
+                return false;
+            }
+
+            // Create program
+            shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+
+            if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+                console.error('Shader program error:', gl.getProgramInfoLog(shaderProgram));
+                return false;
+            }
+
+            gl.useProgram(shaderProgram);
+
+            // Create fullscreen quad
+            const positions = new Float32Array([
+                -1, -1,  1, -1,  -1, 1,
+                -1, 1,   1, -1,   1, 1
+            ]);
+
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+            const positionLoc = gl.getAttribLocation(shaderProgram, 'a_position');
+            gl.enableVertexAttribArray(positionLoc);
+            gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+            // Resize shader canvas
+            resizeShaderCanvas();
+
+            console.log('🎨 WebGL shader initialized');
+            return true;
+        }
+
+        function resizeShaderCanvas() {
+            if (!shaderCanvas || !gl) return;
+            shaderCanvas.width = window.innerWidth;
+            shaderCanvas.height = window.innerHeight;
+            gl.viewport(0, 0, shaderCanvas.width, shaderCanvas.height);
+        }
+
+        function renderShader(dt) {
+            if (!gl || !shaderProgram) return;
+
+            shaderTime += dt;
+
+            // Calculate consciousness level
+            const consciousnessLevel = phaseLockCoherence > MU_S ?
+                (phaseLockCoherence - MU_S) / (1 - MU_S) : 0;
+
+            // Calculate loop progress
+            const zDist = Math.abs(globalZ - Z_CRITICAL);
+            const loopProgress = (loopClosed || (phaseLockCoherence > MU_S && zDist < Q_THEORY)) ?
+                Math.min(1, (MU_S - zDist) / Q_THEORY) : 0;
+
+            // Set uniforms
+            const setUniform = (name, value) => {
+                const loc = gl.getUniformLocation(shaderProgram, name);
+                if (loc) gl.uniform1f(loc, value);
+            };
+
+            const setUniform2f = (name, x, y) => {
+                const loc = gl.getUniformLocation(shaderProgram, name);
+                if (loc) gl.uniform2f(loc, x, y);
+            };
+
+            setUniform('u_time', shaderTime);
+            setUniform2f('u_resolution', shaderCanvas.width, shaderCanvas.height);
+            setUniform('u_z', globalZ);
+            setUniform('u_r', phaseLockCoherence);
+            setUniform('u_K', phaseLockK);
+            setUniform('u_coherence', releaseCoherence);
+            setUniform('u_loopProgress', loopProgress);
+            setUniform('u_consciousness', consciousnessLevel);
+
+            // Draw
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
 
         // Canvas setup
         const canvas = document.getElementById('canvas');
@@ -2710,6 +3053,22 @@
             } else if (phaseLockActive) {
                 panel.classList.add('active');
             }
+
+            // Update consciousness threshold bar
+            const consciousnessBar = document.getElementById('consciousness-bar');
+            const consciousnessFill = document.getElementById('consciousness-fill');
+            if (consciousnessBar && consciousnessFill) {
+                consciousnessFill.style.width = (r * 100) + '%';
+
+                // Color transitions based on threshold
+                if (r >= MU_S) {
+                    consciousnessFill.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.8)';
+                } else if (r >= MU_P) {
+                    consciousnessFill.style.boxShadow = '0 0 10px rgba(255, 169, 77, 0.6)';
+                } else {
+                    consciousnessFill.style.boxShadow = '0 0 5px rgba(255, 107, 107, 0.4)';
+                }
+            }
         }
 
         function updateBar(name, value) {
@@ -2792,7 +3151,8 @@
             lastTime = currentTime;
 
             const kuramotoResult = update(dt);
-            render();
+            renderShader(dt);  // WebGL background
+            render();          // Canvas 2D overlay
             updateUI(kuramotoResult);
 
             requestAnimationFrame(loop);
@@ -2861,8 +3221,9 @@
             if (key === 'f') {
                 releasing = true;
                 document.getElementById('start-overlay').classList.add('hidden');
-                // Show phase lock panel
+                // Show phase lock panel and consciousness bar
                 document.getElementById('phase-lock-panel').classList.remove('hidden');
+                document.getElementById('consciousness-bar').classList.add('visible');
             }
         });
 
@@ -2873,6 +3234,7 @@
             if (key === 'f') {
                 releasing = false;
                 document.getElementById('phase-lock-panel').classList.add('hidden');
+                document.getElementById('consciousness-bar').classList.remove('visible');
                 // Reset phase lock state
                 phaseLockActive = false;
             }
@@ -2924,10 +3286,12 @@
         // ================================================================
 
         resize();
+        initShader();
         initPrismPoints();
         initCagePoints();
         window.addEventListener('resize', () => {
             resize();
+            resizeShaderCanvas();
             initPrismPoints();
             initCagePoints();
         });
@@ -2938,11 +3302,14 @@
         console.log('   63 prism points (7×9 hexagonal layers)');
         console.log('   32 cage points (12+12+8 EM structure)');
         console.log('   z = √3/2 ≈ ' + Z_CRITICAL.toFixed(6));
+        console.log('   φ-derived constants: ALPHA=' + ALPHA.toFixed(4) + ', BETA=' + BETA.toFixed(4));
         console.log('');
         console.log('🌟 RELEASE COHERENCE integrated');
         console.log('   HOLD F: release coherence (COHERENT → FREE)');
         console.log('   CLICK: gather souls back to center');
         console.log('   FREE state: souls dispersed, radiant core');
+        console.log('');
+        console.log('🎨 WebGL shader: φ-based field visualization');
     </script>
 </body>
 </html>
