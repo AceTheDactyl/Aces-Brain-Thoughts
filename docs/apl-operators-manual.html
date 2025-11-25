@@ -39,8 +39,10 @@
     async function renderManual() {
       const viewer = document.getElementById('viewer');
       viewer.innerHTML = '<em class="muted">Loading LaTeX…</em>';
+      const src = 'https://raw.githubusercontent.com/AceTheDactyl/Aces-Brain-Thoughts/main/apl-operators-manual.tex';
       try {
-        const res = await fetch('apl-operators-manual.tex', { cache: 'no-store' });
+        const res = await fetch(src, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Fetch failed: ' + res.status);
         const tex = await res.text();
         const generator = new latexjs.HtmlGenerator({ hyphenate: false });
         latexjs.parse(tex, { generator });
@@ -48,13 +50,17 @@
         viewer.appendChild(generator.domFragment());
       } catch (err) {
         console.warn('LaTeX render failed, falling back to raw view:', err);
-        const res = await fetch('apl-operators-manual.tex', { cache: 'no-store' });
-        const tex = await res.text();
-        viewer.innerHTML = '';
-        const pre = document.createElement('pre');
-        pre.className = 'fallback';
-        pre.textContent = tex;
-        viewer.appendChild(pre);
+        try {
+          const res = await fetch(src, { cache: 'no-store' });
+          const tex = await res.text();
+          viewer.innerHTML = '';
+          const pre = document.createElement('pre');
+          pre.className = 'fallback';
+          pre.textContent = tex;
+          viewer.appendChild(pre);
+        } catch (e2) {
+          viewer.innerHTML = '<em class="muted">Could not load manual.</em>';
+        }
       }
     }
     document.getElementById('refreshBtn').addEventListener('click', renderManual);
@@ -62,4 +68,3 @@
   </script>
 </body>
 </html>
-
