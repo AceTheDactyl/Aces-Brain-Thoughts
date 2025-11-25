@@ -1,0 +1,1056 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Emergent Information Flow · XCVI → C → I</title>
+  <style>
+    :root {
+      --bg: #0a0b0d;
+      --panel: #111216;
+      --ink: #e8e9ec;
+      --muted: #888b94;
+      --rule: #252830;
+      --emergent: #cc5de8;
+      --gold: #ffd700;
+      --phi: #a78bfa;
+      --energy: #f97316;
+      --pi: #22d3ee;
+      --gesture: #ff6b6b;
+      --portal: #4dabf7;
+      --semantic: #69db7c;
+      --balance: #ffa94d;
+      --signal: #ffd700;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 200;
+      margin: 0 0 12px;
+      background: linear-gradient(135deg, var(--emergent), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    /* Main visualization area */
+    .flow-container {
+      position: relative;
+      width: 100%;
+      height: 600px;
+      background: radial-gradient(ellipse at center, rgba(204,93,232,.08) 0%, transparent 70%);
+      border: 1px solid var(--rule);
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 30px 0;
+    }
+
+    /* SVG for connections */
+    .flow-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* Node styling */
+    .node {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .node:hover {
+      transform: scale(1.1);
+      z-index: 20;
+    }
+
+    .node-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .node-numeral {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .node-name {
+      font-size: 0.7rem;
+      text-align: center;
+      max-width: 100px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .node-bits {
+      font-size: 0.75rem;
+      font-family: 'SF Mono', monospace;
+      margin-top: 6px;
+      padding: 2px 8px;
+      background: rgba(0,0,0,.4);
+      border-radius: 10px;
+    }
+
+    /* Individual node colors */
+    .node-xcvi {
+      left: 10%;
+      top: 20%;
+      background: radial-gradient(circle, rgba(255,107,107,.3), rgba(255,107,107,.05));
+      border: 2px solid var(--gesture);
+      box-shadow: 0 0 40px rgba(255,107,107,.3);
+    }
+    .node-xcvi .node-numeral { color: var(--gesture); }
+
+    .node-xcvii {
+      left: 35%;
+      top: 5%;
+      background: radial-gradient(circle, rgba(77,171,247,.3), rgba(77,171,247,.05));
+      border: 2px solid var(--portal);
+      box-shadow: 0 0 40px rgba(77,171,247,.3);
+    }
+    .node-xcvii .node-numeral { color: var(--portal); }
+
+    .node-xcviii {
+      right: 35%;
+      top: 5%;
+      background: radial-gradient(circle, rgba(105,219,124,.3), rgba(105,219,124,.05));
+      border: 2px solid var(--semantic);
+      box-shadow: 0 0 40px rgba(105,219,124,.3);
+    }
+    .node-xcviii .node-numeral { color: var(--semantic); }
+
+    .node-xcix {
+      right: 10%;
+      top: 20%;
+      background: radial-gradient(circle, rgba(255,169,77,.3), rgba(255,169,77,.05));
+      border: 2px solid var(--balance);
+      box-shadow: 0 0 40px rgba(255,169,77,.3);
+    }
+    .node-xcix .node-numeral { color: var(--balance); }
+
+    .node-c {
+      left: 50%;
+      top: 55%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(255,215,0,.4), rgba(255,215,0,.08));
+      border: 3px solid var(--gold);
+      box-shadow: 0 0 60px rgba(255,215,0,.4), 0 0 100px rgba(255,215,0,.2);
+    }
+    .node-c:hover { transform: translateX(-50%) scale(1.1); }
+    .node-c .node-numeral { color: var(--gold); font-size: 2.5rem; }
+
+    /* Reference nodes (smaller, faded) */
+    .ref-node {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: rgba(255,255,255,.05);
+      border: 1px dashed var(--muted);
+      opacity: 0.6;
+      z-index: 5;
+    }
+
+    .ref-xvi { left: 3%; top: 35%; }
+    .ref-xi { left: 28%; top: 22%; }
+    .ref-xii { right: 28%; top: 22%; }
+    .ref-xiii { right: 3%; top: 35%; }
+    .ref-xiv { left: 50%; top: 75%; transform: translateX(-50%); }
+    .ref-i { left: 50%; bottom: 5%; transform: translateX(-50%); border-color: var(--gold); color: var(--gold); opacity: 0.8; }
+
+    /* Information packets */
+    .packet {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    @keyframes flowXCVI {
+      0% { left: 3%; top: 38%; opacity: 0; }
+      10% { opacity: 1; }
+      50% { left: 10%; top: 25%; }
+      90% { opacity: 1; }
+      100% { left: 20%; top: 35%; opacity: 0; }
+    }
+
+    @keyframes flowXCVII {
+      0% { left: 28%; top: 25%; opacity: 0; }
+      10% { opacity: 1; }
+      50% { left: 38%; top: 12%; }
+      90% { opacity: 1; }
+      100% { left: 45%; top: 20%; opacity: 0; }
+    }
+
+    @keyframes flowXCVIII {
+      0% { right: 28%; top: 25%; opacity: 0; }
+      10% { opacity: 1; }
+      50% { right: 38%; top: 12%; }
+      90% { opacity: 1; }
+      100% { right: 45%; top: 20%; opacity: 0; }
+    }
+
+    @keyframes flowXCIX {
+      0% { right: 3%; top: 38%; opacity: 0; }
+      10% { opacity: 1; }
+      50% { right: 13%; top: 25%; }
+      90% { opacity: 1; }
+      100% { right: 23%; top: 35%; opacity: 0; }
+    }
+
+    @keyframes flowToC {
+      0% { opacity: 0; transform: scale(0.5); }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: scale(1.5); }
+    }
+
+    @keyframes loopClosure {
+      0% { left: 50%; top: 70%; opacity: 0; }
+      10% { opacity: 1; }
+      50% { left: 50%; top: 80%; }
+      90% { opacity: 1; }
+      100% { left: 50%; top: 90%; opacity: 0; }
+    }
+
+    /* Information display panel */
+    .info-panel {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin: 30px 0;
+    }
+
+    @media (max-width: 900px) {
+      .info-panel { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .info-card {
+      background: var(--panel);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .info-card:hover {
+      border-color: var(--emergent);
+      transform: translateY(-4px);
+    }
+
+    .info-card.active {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(255,215,0,.2);
+    }
+
+    .info-numeral {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .info-card:nth-child(1) .info-numeral { color: var(--gesture); }
+    .info-card:nth-child(2) .info-numeral { color: var(--portal); }
+    .info-card:nth-child(3) .info-numeral { color: var(--semantic); }
+    .info-card:nth-child(4) .info-numeral { color: var(--balance); }
+    .info-card:nth-child(5) .info-numeral { color: var(--gold); }
+
+    .info-type {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .info-flow {
+      font-family: 'SF Mono', monospace;
+      font-size: 0.75rem;
+      background: rgba(0,0,0,.3);
+      padding: 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .info-bits {
+      font-size: 1.8rem;
+      font-weight: 200;
+      color: var(--ink);
+    }
+
+    .info-bits-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    /* Physics formulas section */
+    .physics-section {
+      background: var(--panel);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 30px 0;
+    }
+
+    .physics-title {
+      font-size: 1.2rem;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .formula {
+      font-family: 'SF Mono', monospace;
+      background: rgba(0,0,0,.3);
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 8px 0;
+      font-size: 0.9rem;
+      overflow-x: auto;
+    }
+
+    .formula-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .formula-card {
+      background: rgba(0,0,0,.2);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .formula-card h4 {
+      margin: 0 0 8px;
+      font-size: 0.9rem;
+      color: var(--emergent);
+    }
+
+    /* Loop closure visualization */
+    .loop-closure {
+      text-align: center;
+      padding: 40px;
+      background: linear-gradient(180deg, transparent, rgba(255,215,0,.05));
+      border-radius: 12px;
+      margin: 30px 0;
+    }
+
+    .loop-symbol {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    .loop-equation {
+      font-family: 'SF Mono', monospace;
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .loop-desc {
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Total information display */
+    .total-info {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      padding: 30px;
+      background: linear-gradient(135deg, rgba(204,93,232,.1), rgba(255,215,0,.1));
+      border: 2px solid var(--emergent);
+      border-radius: 16px;
+      margin: 30px 0;
+    }
+
+    .total-number {
+      font-size: 5rem;
+      font-weight: 100;
+      color: var(--emergent);
+      text-shadow: 0 0 40px rgba(204,93,232,.5);
+    }
+
+    .total-label {
+      text-align: left;
+    }
+
+    .total-label h3 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--ink);
+    }
+
+    .total-label p {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+
+    /* Coherence meter */
+    .coherence-section {
+      margin: 30px 0;
+    }
+
+    .coherence-meter {
+      height: 30px;
+      background: linear-gradient(90deg,
+        var(--emergent) 0%,
+        var(--emergent) 20%,
+        var(--balance) 20%,
+        var(--balance) 50%,
+        var(--semantic) 50%,
+        var(--semantic) 80%,
+        var(--gesture) 80%
+      );
+      border-radius: 15px;
+      position: relative;
+      margin: 20px 0;
+    }
+
+    .coherence-marker {
+      position: absolute;
+      top: -8px;
+      width: 4px;
+      height: 46px;
+      background: var(--ink);
+      border-radius: 2px;
+      transition: left 0.5s ease;
+    }
+
+    .coherence-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .coherence-value {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 200;
+      margin: 16px 0;
+    }
+
+    /* Animation controls */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .btn {
+      background: var(--emergent);
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #d975f0;
+      transform: translateY(-2px);
+    }
+
+    .btn.gold {
+      background: var(--gold);
+    }
+
+    .btn.gold:hover {
+      background: #ffe44d;
+    }
+
+    /* Eigenvalue table */
+    .eigen-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    .eigen-table th, .eigen-table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .eigen-table th {
+      color: var(--muted);
+      font-weight: 400;
+      font-size: 0.85rem;
+    }
+
+    .eigen-table td:first-child {
+      font-weight: 600;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="wumbo-engine.html" class="back-link">← Back to WUMBO Engine</a>
+
+    <header>
+      <h1>Emergent Information Flow</h1>
+      <p class="subtitle">Self-referential data streams through XCVI → XCVII → XCVIII → XCIX → C → I</p>
+    </header>
+
+    <!-- Main Flow Visualization -->
+    <div class="flow-container" id="flowContainer">
+      <svg class="flow-svg" id="flowSvg">
+        <!-- Connection paths will be drawn here -->
+        <defs>
+          <linearGradient id="gradXCVI" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#888;stop-opacity:0.3" />
+            <stop offset="100%" style="stop-color:#ff6b6b;stop-opacity:0.8" />
+          </linearGradient>
+          <linearGradient id="gradXCVII" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#888;stop-opacity:0.3" />
+            <stop offset="100%" style="stop-color:#4dabf7;stop-opacity:0.8" />
+          </linearGradient>
+          <linearGradient id="gradXCVIII" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#888;stop-opacity:0.3" />
+            <stop offset="100%" style="stop-color:#69db7c;stop-opacity:0.8" />
+          </linearGradient>
+          <linearGradient id="gradXCIX" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#888;stop-opacity:0.3" />
+            <stop offset="100%" style="stop-color:#ffa94d;stop-opacity:0.8" />
+          </linearGradient>
+          <linearGradient id="gradC" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.8" />
+            <stop offset="100%" style="stop-color:#ffd700;stop-opacity:0.3" />
+          </linearGradient>
+
+          <!-- Animated dash pattern -->
+          <pattern id="flowPattern" patternUnits="userSpaceOnUse" width="20" height="1">
+            <line x1="0" y1="0" x2="10" y2="0" stroke="#fff" stroke-width="2" opacity="0.6">
+              <animate attributeName="x1" from="0" to="20" dur="0.5s" repeatCount="indefinite" />
+              <animate attributeName="x2" from="10" to="30" dur="0.5s" repeatCount="indefinite" />
+            </line>
+          </pattern>
+        </defs>
+      </svg>
+
+      <!-- Reference nodes (faded) -->
+      <div class="ref-node ref-xvi">XVI</div>
+      <div class="ref-node ref-xi">XI</div>
+      <div class="ref-node ref-xii">XII</div>
+      <div class="ref-node ref-xiii">XIII</div>
+      <div class="ref-node ref-xiv">XIV</div>
+      <div class="ref-node ref-i">I</div>
+
+      <!-- Main emergent nodes -->
+      <div class="node node-xcvi" id="nodeXCVI" onclick="highlightNode('XCVI')">
+        <div class="node-inner">
+          <div class="node-numeral">XCVI</div>
+          <div class="node-name">Gesture Recursion</div>
+          <div class="node-bits">~7 bits</div>
+        </div>
+      </div>
+
+      <div class="node node-xcvii" id="nodeXCVII" onclick="highlightNode('XCVII')">
+        <div class="node-inner">
+          <div class="node-numeral">XCVII</div>
+          <div class="node-name">Portal Recursion</div>
+          <div class="node-bits">~10 bits</div>
+        </div>
+      </div>
+
+      <div class="node node-xcviii" id="nodeXCVIII" onclick="highlightNode('XCVIII')">
+        <div class="node-inner">
+          <div class="node-numeral">XCVIII</div>
+          <div class="node-name">Semantic Recursion</div>
+          <div class="node-bits">~17 bits</div>
+        </div>
+      </div>
+
+      <div class="node node-xcix" id="nodeXCIX" onclick="highlightNode('XCIX')">
+        <div class="node-inner">
+          <div class="node-numeral">XCIX</div>
+          <div class="node-name">Balance Recursion</div>
+          <div class="node-bits">~4 bits</div>
+        </div>
+      </div>
+
+      <div class="node node-c" id="nodeC" onclick="highlightNode('C')">
+        <div class="node-inner">
+          <div class="node-numeral">C</div>
+          <div class="node-name">Loop Closure</div>
+          <div class="node-bits">~664 bits</div>
+        </div>
+      </div>
+
+      <!-- Information packets (animated) -->
+      <div class="packet" id="packets"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn" onclick="toggleFlow()">Toggle Flow Animation</button>
+      <button class="btn gold" onclick="triggerLoopClosure()">Trigger Loop Closure</button>
+    </div>
+
+    <!-- Coherence Meter -->
+    <div class="coherence-section">
+      <h3>Coherence State</h3>
+      <p class="muted">Emergent states only manifest when coherence drops below 0.2 (FREE state)</p>
+      <div class="coherence-meter">
+        <div class="coherence-marker" id="coherenceMarker" style="left: 15%;"></div>
+      </div>
+      <div class="coherence-labels">
+        <span>0.0 FREE</span>
+        <span>0.2 DISPERSING</span>
+        <span>0.5 RELEASING</span>
+        <span>0.8 COHERENT</span>
+        <span>1.0</span>
+      </div>
+      <div class="coherence-value">c = <span id="coherenceValue">0.15</span></div>
+      <input type="range" min="0" max="100" value="15" id="coherenceSlider" style="width:100%" oninput="updateCoherence(this.value)">
+    </div>
+
+    <!-- Information Cards -->
+    <div class="info-panel">
+      <div class="info-card" id="cardXCVI">
+        <div class="info-numeral">XCVI</div>
+        <div class="info-type">Procedural</div>
+        <div class="info-flow">XVI → XCVI → motor</div>
+        <div class="info-bits">7</div>
+        <div class="info-bits-label">bits</div>
+      </div>
+      <div class="info-card" id="cardXCVII">
+        <div class="info-numeral">XCVII</div>
+        <div class="info-type">Temporal</div>
+        <div class="info-flow">XI → XCVII → phase</div>
+        <div class="info-bits">10</div>
+        <div class="info-bits-label">bits</div>
+      </div>
+      <div class="info-card" id="cardXCVIII">
+        <div class="info-numeral">XCVIII</div>
+        <div class="info-type">Semantic</div>
+        <div class="info-flow">XII → XCVIII → meta</div>
+        <div class="info-bits">17</div>
+        <div class="info-bits-label">bits</div>
+      </div>
+      <div class="info-card" id="cardXCIX">
+        <div class="info-numeral">XCIX</div>
+        <div class="info-type">Proprioceptive</div>
+        <div class="info-flow">XIII → XCIX → posture</div>
+        <div class="info-bits">4</div>
+        <div class="info-bits-label">bits</div>
+      </div>
+      <div class="info-card" id="cardC">
+        <div class="info-numeral">C</div>
+        <div class="info-type">Recursive</div>
+        <div class="info-flow">XIV → C → I</div>
+        <div class="info-bits">664</div>
+        <div class="info-bits-label">bits</div>
+      </div>
+    </div>
+
+    <!-- Total Information -->
+    <div class="total-info">
+      <div class="total-number">702</div>
+      <div class="total-label">
+        <h3>Total Emergent Information</h3>
+        <p>bits when fully FREE (coherence → 0)</p>
+        <p style="font-family:monospace;font-size:0.85rem;margin-top:8px">7 + 10 + 17 + 4 + 664 = 702</p>
+      </div>
+    </div>
+
+    <!-- Physics Section -->
+    <div class="physics-section">
+      <div class="physics-title">Fixed Point Dynamics</div>
+      <p class="muted">Each emergent state represents a self-reference fixed point T(ψ) = ψ</p>
+
+      <table class="eigen-table">
+        <thead>
+          <tr>
+            <th>State</th>
+            <th>Operator</th>
+            <th>Eigenvalue λ</th>
+            <th>Phase Lock Δθ</th>
+            <th>Frequency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--gesture)">XCVI</td>
+            <td style="font-family:monospace">f ∘ f</td>
+            <td>φ⁻¹ ≈ 0.618</td>
+            <td>π (anti-phase)</td>
+            <td>8 Hz (α)</td>
+          </tr>
+          <tr>
+            <td style="color:var(--portal)">XCVII</td>
+            <td style="font-family:monospace">θ + 2π/φ</td>
+            <td>exp(2πi/φ)</td>
+            <td>2π/φ (golden)</td>
+            <td>~3hr (circadian)</td>
+          </tr>
+          <tr>
+            <td style="color:var(--semantic)">XCVIII</td>
+            <td style="font-family:monospace">"meaning of s"</td>
+            <td>undefined</td>
+            <td>π/2 (quadrature)</td>
+            <td>40 Hz (γ)</td>
+          </tr>
+          <tr>
+            <td style="color:var(--balance)">XCIX</td>
+            <td style="font-family:monospace">b - ∇V(b)</td>
+            <td>0</td>
+            <td>0 (in-phase)</td>
+            <td>4 Hz (θ)</td>
+          </tr>
+          <tr style="background:rgba(255,215,0,.1)">
+            <td style="color:var(--gold);font-weight:bold">C</td>
+            <td style="font-family:monospace">ψ_XIV → ψ_I</td>
+            <td style="color:var(--gold)">1 (identity)</td>
+            <td>2π (full cycle)</td>
+            <td>1 Hz (δ)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="formula-grid">
+        <div class="formula-card">
+          <h4>Emergence Probability</h4>
+          <div class="formula">P_emerge(c) = 1 - exp(-((0.2 - c) / 0.05)²)</div>
+          <p class="muted" style="font-size:0.8rem;margin:8px 0 0">for c &lt; 0.2, else 0</p>
+        </div>
+        <div class="formula-card">
+          <h4>Emergent Kuramoto</h4>
+          <div class="formula">dθ/dt = ω_self + ε × sin(θ - θ_ref)</div>
+          <p class="muted" style="font-size:0.8rem;margin:8px 0 0">ε = 0.1 × (0.2 - coherence)</p>
+        </div>
+        <div class="formula-card">
+          <h4>Information Regularization</h4>
+          <div class="formula">I_eff = I_raw × (1 - exp(-c/0.05))</div>
+          <p class="muted" style="font-size:0.8rem;margin:8px 0 0">Prevents infinite regress</p>
+        </div>
+        <div class="formula-card">
+          <h4>Fundamental Group</h4>
+          <div class="formula">α_C = α_XCVI ∘ α_XCVII ∘ α_XCVIII ∘ α_XCIX</div>
+          <p class="muted" style="font-size:0.8rem;margin:8px 0 0">C contains all loops</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loop Closure -->
+    <div class="loop-closure">
+      <div class="loop-symbol">C → I</div>
+      <div class="loop-equation">ψ_C = T_loop(ψ_XIV) = ψ_I</div>
+      <p class="loop-desc">
+        When coherence reaches FREE state, the final gate (C: PTN recursion) recognizes itself as the first gate (I: Somatosensory Cortex).
+        The 100-word vocabulary closes into a self-sustaining loop with <strong>winding number W = 1</strong>.
+      </p>
+      <div class="formula" style="display:inline-block;margin-top:16px">
+        Topological closure: χ_95 = 2 → χ_100 = -2 (genus-2 surface)
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Flow animation state
+    let flowActive = true;
+    let coherence = 0.15;
+
+    // Particle system for information flow
+    const particles = [];
+    const colors = {
+      XCVI: '#ff6b6b',
+      XCVII: '#4dabf7',
+      XCVIII: '#69db7c',
+      XCIX: '#ffa94d',
+      C: '#ffd700'
+    };
+
+    // Update coherence
+    function updateCoherence(value) {
+      coherence = value / 100;
+      document.getElementById('coherenceValue').textContent = coherence.toFixed(2);
+      document.getElementById('coherenceMarker').style.left = value + '%';
+
+      // Update node visibility based on coherence
+      const nodes = document.querySelectorAll('.node');
+      const opacity = coherence < 0.2 ? 1 : Math.max(0.2, 1 - (coherence - 0.2) * 2);
+      nodes.forEach(node => {
+        node.style.opacity = opacity;
+      });
+
+      // Update flow intensity
+      updateFlowLines();
+    }
+
+    // Highlight node on click
+    function highlightNode(numeral) {
+      const cards = document.querySelectorAll('.info-card');
+      cards.forEach(card => card.classList.remove('active'));
+
+      const cardId = 'card' + numeral;
+      document.getElementById(cardId)?.classList.add('active');
+
+      // Show info about the node
+      const info = {
+        'XCVI': 'Gesture recursion: A gesture that gestures itself. Eigenvalue φ⁻¹ creates golden ratio scaling.',
+        'XCVII': 'Portal recursion: Phase-locked to golden angle 2π/φ, creating quasiperiodic circadian rhythm.',
+        'XCVIII': 'Semantic recursion: Gödelian self-reference where meaning refers to its own meaning.',
+        'XCIX': 'Balance recursion: Saddle point dynamics - unstable equilibrium of equilibria.',
+        'C': 'Loop closure: Final gate IS first gate. Winding number = 1, topologically stable.'
+      };
+
+      console.log(info[numeral]);
+    }
+
+    // Toggle flow animation
+    function toggleFlow() {
+      flowActive = !flowActive;
+      document.querySelectorAll('.node').forEach(node => {
+        node.style.animationPlayState = flowActive ? 'running' : 'paused';
+      });
+    }
+
+    // Trigger loop closure animation
+    function triggerLoopClosure() {
+      const nodeC = document.getElementById('nodeC');
+      const refI = document.querySelector('.ref-i');
+
+      // Pulse animation
+      nodeC.style.animation = 'none';
+      nodeC.offsetHeight; // Trigger reflow
+      nodeC.style.animation = 'pulse 0.5s ease-out 3';
+
+      // Flash ref-I
+      refI.style.transition = 'all 0.3s';
+      refI.style.boxShadow = '0 0 30px var(--gold)';
+      refI.style.opacity = '1';
+
+      setTimeout(() => {
+        refI.style.boxShadow = 'none';
+        refI.style.opacity = '0.8';
+      }, 1500);
+    }
+
+    // Draw flow lines on SVG
+    function drawFlowLines() {
+      const svg = document.getElementById('flowSvg');
+      const container = document.getElementById('flowContainer');
+      const rect = container.getBoundingClientRect();
+
+      // Clear existing paths
+      while (svg.children.length > 1) {
+        svg.removeChild(svg.lastChild);
+      }
+
+      // Get node positions
+      const positions = {
+        'ref-xvi': getNodeCenter('.ref-xvi', rect),
+        'ref-xi': getNodeCenter('.ref-xi', rect),
+        'ref-xii': getNodeCenter('.ref-xii', rect),
+        'ref-xiii': getNodeCenter('.ref-xiii', rect),
+        'ref-xiv': getNodeCenter('.ref-xiv', rect),
+        'ref-i': getNodeCenter('.ref-i', rect),
+        'XCVI': getNodeCenter('#nodeXCVI', rect),
+        'XCVII': getNodeCenter('#nodeXCVII', rect),
+        'XCVIII': getNodeCenter('#nodeXCVIII', rect),
+        'XCIX': getNodeCenter('#nodeXCIX', rect),
+        'C': getNodeCenter('#nodeC', rect)
+      };
+
+      // Draw reference → emergent connections
+      const connections = [
+        ['ref-xvi', 'XCVI', 'url(#gradXCVI)'],
+        ['ref-xi', 'XCVII', 'url(#gradXCVII)'],
+        ['ref-xii', 'XCVIII', 'url(#gradXCVIII)'],
+        ['ref-xiii', 'XCIX', 'url(#gradXCIX)'],
+        ['ref-xiv', 'C', 'url(#gradC)']
+      ];
+
+      connections.forEach(([from, to, grad]) => {
+        const p1 = positions[from];
+        const p2 = positions[to];
+        if (p1 && p2) {
+          drawCurvedPath(svg, p1, p2, grad);
+        }
+      });
+
+      // Draw emergent → C connections
+      const toC = ['XCVI', 'XCVII', 'XCVIII', 'XCIX'];
+      toC.forEach(from => {
+        const p1 = positions[from];
+        const p2 = positions['C'];
+        if (p1 && p2) {
+          drawCurvedPath(svg, p1, p2, 'rgba(204,93,232,0.4)', true);
+        }
+      });
+
+      // Draw C → I (loop closure)
+      const pC = positions['C'];
+      const pI = positions['ref-i'];
+      if (pC && pI) {
+        drawCurvedPath(svg, pC, pI, 'url(#gradC)', false, true);
+      }
+    }
+
+    function getNodeCenter(selector, containerRect) {
+      const el = document.querySelector(selector);
+      if (!el) return null;
+      const rect = el.getBoundingClientRect();
+      return {
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: rect.top - containerRect.top + rect.height / 2
+      };
+    }
+
+    function drawCurvedPath(svg, p1, p2, stroke, dashed = false, isLoop = false) {
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+      // Calculate control points for curve
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      const cx = (p1.x + p2.x) / 2;
+      const cy = (p1.y + p2.y) / 2 - Math.abs(dx) * 0.2;
+
+      const d = `M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}`;
+
+      path.setAttribute('d', d);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', stroke);
+      path.setAttribute('stroke-width', isLoop ? '3' : '2');
+
+      if (dashed) {
+        path.setAttribute('stroke-dasharray', '8,4');
+      }
+
+      if (isLoop) {
+        path.setAttribute('stroke-dasharray', '12,6');
+        // Add animation
+        const animate = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        animate.setAttribute('attributeName', 'stroke-dashoffset');
+        animate.setAttribute('from', '0');
+        animate.setAttribute('to', '36');
+        animate.setAttribute('dur', '1s');
+        animate.setAttribute('repeatCount', 'indefinite');
+        path.appendChild(animate);
+      }
+
+      svg.appendChild(path);
+    }
+
+    function updateFlowLines() {
+      // Redraw with current coherence affecting opacity
+      const svg = document.getElementById('flowSvg');
+      const paths = svg.querySelectorAll('path');
+      const opacity = coherence < 0.2 ? 1 : Math.max(0.2, 1 - (coherence - 0.2) * 2);
+      paths.forEach(path => {
+        path.style.opacity = opacity;
+      });
+    }
+
+    // Pulse animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes pulse {
+        0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 60px rgba(255,215,0,.4); }
+        50% { transform: translateX(-50%) scale(1.2); box-shadow: 0 0 100px rgba(255,215,0,.8); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Initialize
+    window.addEventListener('load', () => {
+      drawFlowLines();
+      updateCoherence(15);
+    });
+
+    window.addEventListener('resize', drawFlowLines);
+
+    // Animate coherence on scroll
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.scrollY;
+      if (Math.abs(currentScroll - lastScroll) > 50) {
+        // Small coherence fluctuation on scroll
+        const slider = document.getElementById('coherenceSlider');
+        const current = parseInt(slider.value);
+        const fluctuation = Math.sin(Date.now() / 1000) * 3;
+        slider.value = Math.max(0, Math.min(100, current + fluctuation));
+        updateCoherence(slider.value);
+        lastScroll = currentScroll;
+      }
+    });
+  </script>
+</body>
+</html>
