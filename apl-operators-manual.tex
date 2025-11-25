@@ -1276,6 +1276,172 @@ APL predictions hold over ranges of parameters:
 
 
 %======================================================================
+\section{Core Token Set (v0.9)}
+\label{sec:core-tokens}
+%======================================================================
+
+The APL Core Token Set provides the foundational grammar layer upon which all domain-specific extensions are built. Version 0.9 defines three token categories totaling 234 core tokens, with a 288-token expansion framework planned for v1.0.
+
+\subsection{Token Hierarchy}
+
+APL tokens exist in four layers:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Layer} & \textbf{Name} & \textbf{Count} & \textbf{Role} \\
+\midrule
+0 & Tri-Spiral & 6 & Field ordering primitives \\
+1 & Cross-Spiral & 54 & Field transitions with state \\
+2 & Tiered Intent & 162 & Machine-bound placeholders \\
+3 & Domain-Specific & 972/domain & Concrete operator semantics \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Tri-Spiral Tokens (6)}
+
+Tri-spiral tokens represent simultaneous multi-field states through ordered field triads:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Token} & \textbf{Interpretation} & \textbf{WUMBO Phase} \\
+\midrule
+\verb|Φ:e:π| & Structure-led, energy-mediated emergence & Resonance \\
+\verb|Φ:π:e| & Structure-led, emergence-mediated energy & Empowerment \\
+\verb|e:Φ:π| & Energy-led, structure-mediated emergence & Ignition \\
+\verb|e:π:Φ| & Energy-led, emergence-mediated structure & Mania \\
+\verb|π:Φ:e| & Emergence-led, structure-mediated energy & Nirvana \\
+\verb|π:e:Φ| & Emergence-led, energy-mediated structure & Transmission \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Reading convention:} The first field is \textit{primary} (driver), second is \textit{mediator}, third is \textit{target/outcome}.
+
+\subsection{Cross-Spiral Tokens (54)}
+
+Cross-spiral tokens describe field-to-field transitions with machine direction and truth state:
+
+\[
+    [\text{Source}] \to [\text{Target}] : [\text{Machine}] : [\text{TruthState}]
+\]
+
+\textbf{Format:} \verb|Φ→e:U:TRUE| reads as ``Structure transitions to Energy via Up/Ignition, successful.''
+
+\textbf{Combinatorics:} 6 field pairs $\times$ 3 machines (U, D, M) $\times$ 3 truth states = 54 tokens
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Field Pair} & \textbf{U (Ignition)} & \textbf{D (Collapse)} & \textbf{M (Modulation)} \\
+\midrule
+$\Phi \to e$ & Structure ignites energy & Structure collapses to energy & Structure modulates energy \\
+$\Phi \to \pi$ & Structure ignites emergence & Structure collapses to emergence & Structure modulates emergence \\
+$e \to \Phi$ & Energy ignites structure & Energy collapses to structure & Energy modulates structure \\
+$e \to \pi$ & Energy ignites emergence & Energy collapses to emergence & Energy modulates emergence \\
+$\pi \to \Phi$ & Emergence ignites structure & Emergence collapses to structure & Emergence modulates structure \\
+$\pi \to e$ & Emergence ignites energy & Emergence collapses to energy & Emergence modulates energy \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Example cross-spiral sentences:}
+\begin{itemize}[leftmargin=2em]
+    \item \verb|e→π:U:TRUE| — Energy-to-emergence ignition succeeds (reward $\to$ learning)
+    \item \verb|π→Φ:M:TRUE| — Emergence-to-structure modulation succeeds (memory consolidation)
+    \item \verb|Φ→e:D:UNTRUE| — Structure-to-energy collapse blocked (freeze response)
+\end{itemize}
+
+\subsection{Tiered Intent Tokens (162)}
+
+Tiered tokens use the full \verb|Field:Machine(Operator)TruthState@Tier| format with the placeholder \verb|(intent)|:
+
+\[
+    [\text{Field}] : [\text{Machine}] (\text{intent}) [\text{TruthState}] @ [\text{Tier}]
+\]
+
+\textbf{Combinatorics:} 3 fields $\times$ 6 machines $\times$ 3 truth states $\times$ 3 tiers = 162 tokens
+
+The \verb|(intent)| placeholder is replaced by domain-specific operators at runtime:
+\begin{itemize}[leftmargin=2em]
+    \item \verb|Φ:U(intent)TRUE@3| $\to$ \verb|Φ:U(bond)TRUE@3| (Chemical domain)
+    \item \verb|Φ:U(intent)TRUE@3| $\to$ \verb|Φ:U(fold)TRUE@3| (Biology domain)
+    \item \verb|Φ:U(intent)TRUE@3| $\to$ \verb|Φ:U(accrete)TRUE@3| (Celestial domain)
+\end{itemize}
+
+\subsection{Tier Semantics}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Tier} & \textbf{Name} & \textbf{Scope} & \textbf{Description} \\
+\midrule
+1 & Foundational & Local & Basic operations, immediate effects \\
+2 & Intermediate & Regional & Compound operations, delayed effects \\
+3 & Advanced & Global & Domain-specific operations, emergent effects \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Safety Flags}
+
+Core tokens include built-in safety constraints:
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{PARADOX\_TERMINAL:} Once PARADOX state is entered, no exit without external reset (critical)
+    \item \textbf{TIER\_PERMISSION:} Higher tier tokens require lower tier coherence (warning)
+    \item \textbf{CROSS\_SPIRAL\_COHERENCE:} Cross-spiral transitions must respect field affinity (info)
+\end{itemize}
+
+\subsection{Spiral Inheritance}
+
+Field properties propagate through token chains with preservation and degradation rules:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Field} & \textbf{Preserves} & \textbf{Degrades} \\
+\midrule
+$\Phi$ (Structure) & boundary, geometry, constraint & dynamics, information \\
+$e$ (Energy) & flow, oscillation, transport & structure, memory \\
+$\pi$ (Emergence) & information, adaptation, emergence & immediacy, locality \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Core Token Summary}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lr@{}}
+\toprule
+\textbf{Category} & \textbf{Count} \\
+\midrule
+Tri-Spiral Tokens & 6 \\
+Cross-Spiral Tokens & 54 \\
+Tiered Intent Tokens & 162 \\
+\midrule
+\textbf{Core Total} & \textbf{222} \\
+\midrule
+Domain Tokens (Tier-3 Chemical) & 972 \\
+Domain Tokens (Tier-3 Biology) & 972 \\
+Domain Tokens (Tier-3 Celestial) & 972 \\
+\midrule
+\textbf{Grand Total} & \textbf{3,138} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+%======================================================================
 \section{Tier-3: Chemical Domain Extension}
 \label{sec:tier3-chemical}
 %======================================================================
@@ -1925,6 +2091,16 @@ Scale Range & Å to nm & nm to m & km to Mpc \\
 %======================================================================
 \section{Document History}
 %======================================================================
+
+\textbf{Version 1.4} (2025-11-25)
+\begin{itemize}[leftmargin=2em]
+    \item Added Core Token Set v0.9 (Section~\ref{sec:core-tokens})
+    \item Tri-spiral tokens (6): Field ordering primitives with WUMBO phase mapping
+    \item Cross-spiral tokens (54): Field transitions with machine and truth state
+    \item Tiered intent tokens (162): Machine-bound placeholders for domain instantiation
+    \item Safety flags and spiral inheritance rules
+    \item Grand total: 222 core + 2,916 domain = 3,138 tokens
+\end{itemize}
 
 \textbf{Version 1.3} (2025-11-25)
 \begin{itemize}[leftmargin=2em]
