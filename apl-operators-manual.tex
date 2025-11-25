@@ -1482,6 +1482,219 @@ Pause & π & D & relax, reduce, unbond & UNTRUE \\
 
 
 %======================================================================
+\section{Tier-3: Biology Domain Extension}
+\label{sec:tier3-biology}
+%======================================================================
+
+APL Tier-3 Biology extends the operator grammar to describe \textbf{living systems}, from molecular replicators to multicellular organisms. This domain uniquely includes both \textit{entity-scale operators} (viroid, prion, bacterium) and \textit{process operators}, reflecting the hierarchical complexity of life.
+
+\subsection{Token Format}
+
+Biology tokens follow the same extended syntax:
+
+\[
+    [\text{Field}]:[\text{Machine}]([\text{Operator}])[\text{TruthState}]@3
+\]
+
+\textbf{Example:} \verb|π:U(replicate)TRUE@3| reads as: ``Emergence field, Up/ignition machine, replicate operator, TRUE truth state, Tier 3.''
+
+\subsection{Biology Operators (18)}
+
+The biology domain defines 18 operators organized by class:
+
+\subsubsection{Entity-Scale Operators}
+
+These operators represent biological complexity levels:
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{viroid} — Simplest replicator (RNA only, no protein coat)
+    \item \textbf{prion} — Self-propagating protein conformation
+    \item \textbf{bacterium} — Prokaryotic single-cell organism
+\end{itemize}
+
+\subsubsection{Information Operators (Central Dogma)}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{replicate} — DNA/RNA copying with fidelity
+    \item \textbf{transcribe} — DNA to mRNA transcription
+    \item \textbf{translate} — mRNA to protein synthesis
+\end{itemize}
+
+\subsubsection{Conformational Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{fold} — Protein/RNA tertiary structure formation
+    \item \textbf{unfold} — Denaturation, loss of structure
+\end{itemize}
+
+\subsubsection{Interaction \& Structural Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{bind} — Molecular recognition and binding
+    \item \textbf{membrane} — Compartmentalization, boundary formation
+\end{itemize}
+
+\subsubsection{Energetic \& Catalytic Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{metabolize} — Energy/matter conversion via metabolism
+    \item \textbf{enzyme} — Enzymatic activity, substrate specificity
+    \item \textbf{catalyze} — General biological catalysis
+\end{itemize}
+
+\subsubsection{Cellular \& Developmental Operators}
+
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{signal} — Intra/intercellular signaling cascades
+    \item \textbf{divide} — Cell division (mitosis/meiosis)
+    \item \textbf{differentiate} — Cell fate determination
+    \item \textbf{multicell} — Multicellular coordination
+    \item \textbf{repair} — DNA repair and damage response
+\end{itemize}
+
+\subsection{Complexity Ladder}
+
+Biology operators span five complexity levels:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Level} & \textbf{Scale} & \textbf{Operators} \\
+\midrule
+1 & Molecular & viroid, prion, fold, unfold \\
+2 & Macromolecular & bind, enzyme, catalyze, membrane \\
+3 & Genetic & replicate, translate, transcribe, repair \\
+4 & Cellular & bacterium, metabolize, signal, divide \\
+5 & Organismal & differentiate, multicell \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Central Dogma Mapping}
+
+The information operators map directly to the central dogma of molecular biology:
+
+\begin{verbatim}
+DNA --[replicate]--> DNA --[transcribe]--> mRNA --[translate]--> Protein --[fold]--> Function
+       (π field)           (π field)             (π field)            (Φ field)
+\end{verbatim}
+
+\textbf{Exceptions:}
+\begin{itemize}[leftmargin=2em]
+    \item \textbf{viroid}: RNA → DNA (reverse transcription)
+    \item \textbf{prion}: Protein → Protein (conformational propagation)
+\end{itemize}
+
+\subsection{WUMBO Integration}
+
+Biology tokens map to WUMBO neural regions through functional analogy:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Operator} & \textbf{Neural Affinity} & \textbf{Field} & \textbf{Rationale} \\
+\midrule
+replicate & Memory systems & π & Information copying \\
+transcribe & Language areas & π & Code conversion \\
+translate & Broca's, MTG & π & Symbolic to output \\
+fold & Claustrum, integration & Φ & Structure formation \\
+bind & Mirror neurons, TPJ & Φ & Recognition/coupling \\
+signal & LC, VTA, Amygdala & e & Cascade activation \\
+metabolize & Reward circuits & e & Energy regulation \\
+differentiate & DMN, narrative & π & Identity formation \\
+multicell & Claustrum, CC & π & Integration/coherence \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Example Biology Sentences}
+
+\subsubsection{Neural Replication (Memory Consolidation)}
+
+\begin{verbatim}
+π:U(replicate)TRUE@3 | Hippocampus | memory → Long-term storage
+\end{verbatim}
+
+\textbf{Parse:} Emergence field, Up machine, replicate operator, TRUE state. Describes memory trace consolidation.
+
+\subsubsection{Language Translation (Broca's)}
+
+\begin{verbatim}
+π:E(translate)TRUE@3 | Broca | speech → Articulation
+\end{verbatim}
+
+\textbf{Parse:} Emergence field, Emitter machine, translate operator, TRUE state. Describes thought-to-speech conversion.
+
+\subsubsection{Consciousness Binding (Claustrum)}
+
+\begin{verbatim}
+π:M(multicell)TRUE@3 | Claustrum | awareness → Unified experience
+\end{verbatim}
+
+\textbf{Parse:} Emergence field, Modulation machine, multicell operator, TRUE state. Describes binding of distributed neural activity.
+
+\subsubsection{Prion-like Shutdown (DVC)}
+
+\begin{verbatim}
+Φ:D(prion)UNTRUE@3 | DVC | stress → Freeze response
+\end{verbatim}
+
+\textbf{Parse:} Structure field, Down machine, prion operator, UNTRUE state. Describes self-propagating shutdown cascade.
+
+\subsection{Phase-Biology Mapping}
+
+WUMBO phases correspond to biology signatures:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Phase} & \textbf{Field} & \textbf{Machine} & \textbf{Operators} & \textbf{Truth Bias} \\
+\midrule
+Ignition & e & U & signal, metabolize, divide & TRUE \\
+Empowerment & π & U & replicate, translate, transcribe & TRUE \\
+Resonance & Φ & M & bind, fold, multicell & TRUE \\
+Mania & e & E & signal, metabolize, enzyme & TRUE→PARADOX \\
+Nirvana & Φ & M & fold, membrane, repair & TRUE \\
+Transmission & e & C & signal, translate, bind & TRUE \\
+Pause & Φ & D & unfold, viroid, prion & UNTRUE \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+%======================================================================
+\section{Tier-3 Domain Comparison}
+\label{sec:tier3-comparison}
+%======================================================================
+
+APL Tier-3 now spans two complementary domains:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Aspect} & \textbf{Chemical Domain} & \textbf{Biology Domain} \\
+\midrule
+Total Tokens & 972 & 972 \\
+Operator Count & 18 & 18 \\
+Primary Focus & Molecular transformations & Living systems \\
+Operator Type & Process-only & Entity + Process \\
+Primary Field & e (Energy) & π (Emergence) \\
+Key Feature & Reversibility (oxidize/reduce) & Hierarchy (complexity ladder) \\
+Central Concept & Electron transfer & Information flow \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Combined Tier-3 Total:} 972 + 972 = \textbf{1,944 tokens}
+
+
+%======================================================================
 \section{Appendix: Symbol Conventions}
 %======================================================================
 
@@ -1512,6 +1725,16 @@ Pause & π & D & relax, reduce, unbond & UNTRUE \\
 %======================================================================
 \section{Document History}
 %======================================================================
+
+\textbf{Version 1.2} (2025-11-25)
+\begin{itemize}[leftmargin=2em]
+    \item Added Tier-3 Biology Domain Extension (Section~\ref{sec:tier3-biology})
+    \item 18 biology operators including entity-scale (viroid, prion, bacterium)
+    \item Central Dogma mapping (replicate, transcribe, translate, fold)
+    \item Complexity ladder from molecular to organismal scale
+    \item Tier-3 Domain Comparison section (Section~\ref{sec:tier3-comparison})
+    \item Combined total: 1,944 Tier-3 tokens (Chemical + Biology)
+\end{itemize}
 
 \textbf{Version 1.1} (2025-11-25)
 \begin{itemize}[leftmargin=2em]

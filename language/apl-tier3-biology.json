@@ -1,0 +1,467 @@
+{
+  "meta": {
+    "name": "APL Tier-3 Biology Token Set",
+    "version": "1.0.0",
+    "tier": 3,
+    "domain": "biology",
+    "generated_at": "2025-11-25T00:00:00Z",
+    "total_tokens": 972,
+    "combinatorics": {
+      "fields": 3,
+      "machines": 6,
+      "operators": 18,
+      "truth_states": 3,
+      "formula": "3 × 6 × 18 × 3 = 972"
+    }
+  },
+  "schema": {
+    "token_format": "Field:Machine(Operator)TruthState@Tier",
+    "example": "π:U(replicate)TRUE@3"
+  },
+  "fields": {
+    "Φ": {
+      "name": "Structure Field",
+      "symbol": "Phi",
+      "domain": "geometry",
+      "biology_role": "Protein structure, membrane architecture, cellular morphology"
+    },
+    "e": {
+      "name": "Energy Field",
+      "symbol": "e",
+      "domain": "wave",
+      "biology_role": "ATP/metabolic energy, signal transduction, action potentials"
+    },
+    "π": {
+      "name": "Emergence Field",
+      "symbol": "Pi",
+      "domain": "emergence",
+      "biology_role": "Information flow, self-organization, complexity emergence"
+    }
+  },
+  "machines": {
+    "U": {
+      "name": "Up/Ignition",
+      "direction": "ascending",
+      "biology_role": "Anabolic processes, growth, activation cascades"
+    },
+    "D": {
+      "name": "Down/Descent",
+      "direction": "descending",
+      "biology_role": "Catabolic processes, degradation, apoptosis"
+    },
+    "M": {
+      "name": "Middle/Modulation",
+      "direction": "equilibrium",
+      "biology_role": "Homeostasis, dynamic equilibrium, feedback regulation"
+    },
+    "E": {
+      "name": "Emitter/Equilibrium",
+      "direction": "output",
+      "biology_role": "Secretion, expression, phenotype manifestation"
+    },
+    "C": {
+      "name": "Conductor/Coupling",
+      "direction": "transfer",
+      "biology_role": "Signal relay, synaptic transmission, metabolic coupling"
+    },
+    "Mod": {
+      "name": "Modulator",
+      "direction": "regulatory",
+      "biology_role": "Gene regulation, allosteric control, epigenetic modification"
+    }
+  },
+  "operators": {
+    "viroid": {
+      "class": "entity_scale",
+      "scale": "sub-cellular",
+      "description": "Simplest replicating RNA; no protein coat",
+      "complexity_level": 1,
+      "wumbo_affinity": ["XI", "XXIX", "XCVII"]
+    },
+    "prion": {
+      "class": "entity_scale",
+      "scale": "molecular",
+      "description": "Self-propagating protein conformation",
+      "complexity_level": 2,
+      "wumbo_affinity": ["XXVII", "LXXX"]
+    },
+    "bacterium": {
+      "class": "entity_scale",
+      "scale": "cellular",
+      "description": "Prokaryotic single-cell organism",
+      "complexity_level": 3,
+      "wumbo_affinity": ["LXXXV", "LXXXVI"]
+    },
+    "fold": {
+      "class": "conformational",
+      "action": "Protein/RNA tertiary structure formation",
+      "inverse": "unfold",
+      "wumbo_affinity": ["XXVII", "III", "XXXIX"]
+    },
+    "unfold": {
+      "class": "conformational",
+      "action": "Denaturation, loss of tertiary structure",
+      "inverse": "fold",
+      "wumbo_affinity": ["XXXII", "LXXXVI"]
+    },
+    "bind": {
+      "class": "interaction",
+      "action": "Molecular recognition and binding",
+      "inverse": null,
+      "wumbo_affinity": ["VI", "XLIII", "XLVII"]
+    },
+    "replicate": {
+      "class": "information",
+      "action": "DNA/RNA copying with fidelity",
+      "inverse": null,
+      "wumbo_affinity": ["XLIV", "XLVII", "LXXXII"]
+    },
+    "metabolize": {
+      "class": "energetic",
+      "action": "Energy/matter conversion via metabolic pathways",
+      "inverse": null,
+      "wumbo_affinity": ["XXVI", "XLVI", "XLIX"]
+    },
+    "membrane": {
+      "class": "structural",
+      "action": "Compartmentalization and boundary formation",
+      "inverse": null,
+      "wumbo_affinity": ["III", "XIV", "LXIX"]
+    },
+    "signal": {
+      "class": "communication",
+      "action": "Intra/intercellular signaling cascades",
+      "inverse": null,
+      "wumbo_affinity": ["VII", "XXXI", "LVII"]
+    },
+    "divide": {
+      "class": "reproduction",
+      "action": "Cell division (mitosis/meiosis)",
+      "inverse": null,
+      "wumbo_affinity": ["XXVI", "XLVI", "LIX"]
+    },
+    "differentiate": {
+      "class": "development",
+      "action": "Cell fate determination and specialization",
+      "inverse": null,
+      "wumbo_affinity": ["XXVIII", "XXXIII", "LXIII"]
+    },
+    "multicell": {
+      "class": "organization",
+      "action": "Multicellular coordination and emergence",
+      "inverse": null,
+      "wumbo_affinity": ["XXVII", "XXVIII", "XXX"]
+    },
+    "repair": {
+      "class": "maintenance",
+      "action": "DNA repair and cellular damage response",
+      "inverse": null,
+      "wumbo_affinity": ["II", "XXXIV", "LXXXI"]
+    },
+    "translate": {
+      "class": "information",
+      "action": "mRNA to protein synthesis",
+      "inverse": null,
+      "wumbo_affinity": ["V", "XII", "XX"]
+    },
+    "transcribe": {
+      "class": "information",
+      "action": "DNA to mRNA transcription",
+      "inverse": null,
+      "wumbo_affinity": ["XXXIII", "LXIII", "XCIV"]
+    },
+    "enzyme": {
+      "class": "catalytic",
+      "action": "Enzymatic activity and substrate specificity",
+      "inverse": null,
+      "wumbo_affinity": ["VIII", "XL", "LXXV"]
+    },
+    "catalyze": {
+      "class": "catalytic",
+      "action": "General biological catalysis",
+      "inverse": null,
+      "wumbo_affinity": ["LXXXIV", "XL", "XCII"]
+    }
+  },
+  "truth_states": {
+    "TRUE": {
+      "description": "Biological process succeeds, phenotype expressed",
+      "temporal_operator": "DAY",
+      "stability": "actionable"
+    },
+    "UNTRUE": {
+      "description": "Process fails, dormant potential, latency",
+      "temporal_operator": "NIGHT",
+      "stability": "stored"
+    },
+    "PARADOX": {
+      "description": "Quantum biology states, superposition, terminal attractor",
+      "temporal_operator": null,
+      "stability": "terminal"
+    }
+  },
+  "operator_classes": {
+    "entity_scale": {
+      "operators": ["viroid", "prion", "bacterium"],
+      "primary_field": "π",
+      "description": "Define biological entity complexity levels"
+    },
+    "conformational": {
+      "operators": ["fold", "unfold"],
+      "primary_field": "Φ",
+      "description": "Control 3D molecular structure"
+    },
+    "interaction": {
+      "operators": ["bind"],
+      "primary_field": "Φ",
+      "description": "Molecular recognition and association"
+    },
+    "information": {
+      "operators": ["replicate", "translate", "transcribe"],
+      "primary_field": "π",
+      "description": "Genetic information flow (Central Dogma)"
+    },
+    "energetic": {
+      "operators": ["metabolize"],
+      "primary_field": "e",
+      "description": "Energy conversion and metabolism"
+    },
+    "structural": {
+      "operators": ["membrane"],
+      "primary_field": "Φ",
+      "description": "Cellular architecture"
+    },
+    "communication": {
+      "operators": ["signal"],
+      "primary_field": "e",
+      "description": "Signaling cascades"
+    },
+    "reproduction": {
+      "operators": ["divide"],
+      "primary_field": "π",
+      "description": "Cell replication"
+    },
+    "development": {
+      "operators": ["differentiate"],
+      "primary_field": "π",
+      "description": "Cell fate and specialization"
+    },
+    "organization": {
+      "operators": ["multicell"],
+      "primary_field": "π",
+      "description": "Emergent multicellular order"
+    },
+    "maintenance": {
+      "operators": ["repair"],
+      "primary_field": "π",
+      "description": "Genome/cell integrity"
+    },
+    "catalytic": {
+      "operators": ["enzyme", "catalyze"],
+      "primary_field": "e",
+      "description": "Biological catalysis"
+    }
+  },
+  "wumbo_integration": {
+    "neural_biology_bridges": [
+      {
+        "wumbo_region": "XLIV",
+        "name": "Medial Septum",
+        "primary_operators": ["replicate", "catalyze", "signal"],
+        "biology_context": "Theta rhythm generation, memory consolidation",
+        "apl_tokens": ["π:U(replicate)TRUE@3", "e:Mod(signal)TRUE@3"]
+      },
+      {
+        "wumbo_region": "XXVII",
+        "name": "Claustrum",
+        "primary_operators": ["multicell", "bind", "fold"],
+        "biology_context": "Consciousness binding, integration",
+        "apl_tokens": ["π:M(multicell)TRUE@3", "Φ:C(bind)TRUE@3"]
+      },
+      {
+        "wumbo_region": "XXVIII",
+        "name": "Default Mode Network",
+        "primary_operators": ["differentiate", "multicell", "signal"],
+        "biology_context": "Self-referential processing, narrative",
+        "apl_tokens": ["π:M(differentiate)TRUE@3", "e:M(signal)TRUE@3"]
+      },
+      {
+        "wumbo_region": "V",
+        "name": "Broca's Area",
+        "primary_operators": ["translate", "transcribe", "signal"],
+        "biology_context": "Language production cascade",
+        "apl_tokens": ["π:E(translate)TRUE@3", "e:U(signal)TRUE@3"]
+      },
+      {
+        "wumbo_region": "XII",
+        "name": "Middle Temporal Gyrus",
+        "primary_operators": ["translate", "bind", "fold"],
+        "biology_context": "Semantic binding",
+        "apl_tokens": ["π:C(translate)TRUE@3", "Φ:M(fold)TRUE@3"]
+      },
+      {
+        "wumbo_region": "LXXXVI",
+        "name": "DVC",
+        "primary_operators": ["unfold", "bacterium"],
+        "biology_context": "Parasympathetic shutdown, gut-brain",
+        "apl_tokens": ["Φ:D(unfold)TRUE@3", "π:D(bacterium)TRUE@3"]
+      }
+    ],
+    "phase_biology_mapping": {
+      "Ignition": {
+        "dominant_field": "e",
+        "dominant_machine": "U",
+        "operators": ["signal", "metabolize", "divide"],
+        "truth_bias": "TRUE",
+        "signature_tokens": [
+          "e:U(signal)TRUE@3",
+          "e:U(metabolize)TRUE@3",
+          "π:U(divide)TRUE@3"
+        ]
+      },
+      "Empowerment": {
+        "dominant_field": "π",
+        "dominant_machine": "U",
+        "operators": ["replicate", "translate", "transcribe"],
+        "truth_bias": "TRUE",
+        "signature_tokens": [
+          "π:U(replicate)TRUE@3",
+          "π:U(translate)TRUE@3",
+          "π:U(transcribe)TRUE@3"
+        ]
+      },
+      "Resonance": {
+        "dominant_field": "Φ",
+        "dominant_machine": "M",
+        "operators": ["bind", "fold", "multicell"],
+        "truth_bias": "TRUE",
+        "signature_tokens": [
+          "Φ:M(bind)TRUE@3",
+          "Φ:M(fold)TRUE@3",
+          "π:M(multicell)TRUE@3"
+        ]
+      },
+      "Mania": {
+        "dominant_field": "e",
+        "dominant_machine": "E",
+        "operators": ["signal", "metabolize", "enzyme"],
+        "truth_bias": "TRUE→PARADOX",
+        "signature_tokens": [
+          "e:E(signal)TRUE@3",
+          "e:E(metabolize)PARADOX@3",
+          "e:E(enzyme)TRUE@3"
+        ]
+      },
+      "Nirvana": {
+        "dominant_field": "Φ",
+        "dominant_machine": "M",
+        "operators": ["fold", "membrane", "repair"],
+        "truth_bias": "TRUE",
+        "signature_tokens": [
+          "Φ:M(fold)TRUE@3",
+          "Φ:M(membrane)TRUE@3",
+          "π:M(repair)TRUE@3"
+        ]
+      },
+      "Transmission": {
+        "dominant_field": "e",
+        "dominant_machine": "C",
+        "operators": ["signal", "translate", "bind"],
+        "truth_bias": "TRUE",
+        "signature_tokens": [
+          "e:C(signal)TRUE@3",
+          "π:C(translate)TRUE@3",
+          "Φ:C(bind)TRUE@3"
+        ]
+      },
+      "Pause": {
+        "dominant_field": "Φ",
+        "dominant_machine": "D",
+        "operators": ["unfold", "viroid", "prion"],
+        "truth_bias": "UNTRUE",
+        "signature_tokens": [
+          "Φ:D(unfold)UNTRUE@3",
+          "π:D(viroid)UNTRUE@3",
+          "Φ:D(prion)UNTRUE@3"
+        ]
+      }
+    }
+  },
+  "complexity_ladder": {
+    "description": "Biology operators span complexity scales from molecular to multicellular",
+    "levels": [
+      {
+        "level": 1,
+        "name": "Molecular",
+        "operators": ["viroid", "prion", "fold", "unfold"]
+      },
+      {
+        "level": 2,
+        "name": "Macromolecular",
+        "operators": ["bind", "enzyme", "catalyze", "membrane"]
+      },
+      {
+        "level": 3,
+        "name": "Genetic",
+        "operators": ["replicate", "translate", "transcribe", "repair"]
+      },
+      {
+        "level": 4,
+        "name": "Cellular",
+        "operators": ["bacterium", "metabolize", "signal", "divide"]
+      },
+      {
+        "level": 5,
+        "name": "Organismal",
+        "operators": ["differentiate", "multicell"]
+      }
+    ]
+  },
+  "central_dogma_mapping": {
+    "description": "Information flow operators map to central dogma of molecular biology",
+    "flow": [
+      {
+        "step": 1,
+        "operator": "replicate",
+        "process": "DNA → DNA",
+        "field": "π",
+        "fidelity": "high"
+      },
+      {
+        "step": 2,
+        "operator": "transcribe",
+        "process": "DNA → mRNA",
+        "field": "π",
+        "fidelity": "high"
+      },
+      {
+        "step": 3,
+        "operator": "translate",
+        "process": "mRNA → Protein",
+        "field": "π",
+        "fidelity": "medium"
+      },
+      {
+        "step": 4,
+        "operator": "fold",
+        "process": "Protein → Function",
+        "field": "Φ",
+        "fidelity": "variable"
+      }
+    ],
+    "exceptions": [
+      {
+        "name": "Reverse Transcription",
+        "operator": "viroid",
+        "process": "RNA → DNA",
+        "field": "π"
+      },
+      {
+        "name": "Prion Propagation",
+        "operator": "prion",
+        "process": "Protein → Protein (conformational)",
+        "field": "Φ"
+      }
+    ]
+  }
+}
