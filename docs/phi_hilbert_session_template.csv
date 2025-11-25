@@ -1,0 +1,7 @@
+timestamp,speaker,text,tension
+2025-11-20T13:54:00Z,user,"Kicking off review of the integration; let's find gaps.",
+2025-11-20T13:58:30Z,assistant,"Loaded state, scanning docs and code for drift.",
+2025-11-20T14:03:00Z,user,"Docs say this tool doesn't exist, but I see it in the repo.",1
+2025-11-20T14:05:00Z,assistant,"You're right; documentation drift. Proposing reconciliation steps.",1
+2025-11-20T14:18:00Z,user,"Plan agreed. Proceeding with fixes.",0
+2025-11-20T14:45:00Z,assistant,"All fixed. Validation passing; alignment restored.",0

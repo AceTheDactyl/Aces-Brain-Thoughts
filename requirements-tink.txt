@@ -1,0 +1,9 @@
+# Minimal dependencies for Tink gallery + OCR + caption rename scripts
+numpy
+pillow
+markdown
+easyocr
+pytesseract
+transformers
+tqdm
+
