@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APL→MRP Bridge | Token-to-Steganography Encoder</title>
+    <style>
+        :root {
+            --bg-void: #030308;
+            --bg-panel: rgba(15, 12, 25, 0.95);
+            --bg-card: #0d0d12;
+            --phi-gold: #ffd700;
+            --e-cyan: #22d3ee;
+            --pi-magenta: #cc5de8;
+            --true-green: #69db7c;
+            --untrue-amber: #ffa94d;
+            --paradox-red: #ff6b6b;
+            --text-primary: rgba(255, 245, 230, 0.9);
+            --text-dim: rgba(255, 220, 180, 0.5);
+            --border-glow: rgba(168, 85, 247, 0.4);
+            --rule: #1a1a24;
+            --red: #ff6b6b;
+            --green: #69db7c;
+            --blue: #4dabf7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-void);
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 1px solid var(--rule);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 100;
+            letter-spacing: 6px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--phi-gold), var(--e-cyan), var(--pi-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--phi-gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        /* Bridge Flow Diagram */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-box {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            padding: 15px 25px;
+            text-align: center;
+        }
+
+        .flow-box.apl { border-color: var(--phi-gold); }
+        .flow-box.lambda { border-color: var(--e-cyan); }
+        .flow-box.mrp { border-color: var(--pi-magenta); }
+        .flow-box.image { border-color: var(--true-green); }
+
+        .flow-box h3 {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+        }
+
+        .flow-box .value {
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .flow-box.apl .value { color: var(--phi-gold); }
+        .flow-box.lambda .value { color: var(--e-cyan); }
+        .flow-box.mrp .value { color: var(--pi-magenta); }
+        .flow-box.image .value { color: var(--true-green); }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 1100px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Panels */
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            color: var(--phi-gold);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        /* APL Input Section */
+        .apl-input {
+            margin-bottom: 20px;
+        }
+
+        .apl-input label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .apl-textarea {
+            width: 100%;
+            height: 120px;
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        .apl-textarea:focus {
+            outline: none;
+            border-color: var(--phi-gold);
+        }
+
+        /* Quick Token Builder */
+        .quick-builder {
+            margin-bottom: 20px;
+        }
+
+        .builder-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .builder-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--text-dim);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .builder-btn:hover {
+            border-color: var(--phi-gold);
+            color: var(--text-primary);
+        }
+
+        .builder-btn.selected {
+            background: rgba(255, 215, 0, 0.15);
+            border-color: var(--phi-gold);
+            color: var(--phi-gold);
+        }
+
+        .builder-btn.spiral-phi { color: var(--phi-gold); }
+        .builder-btn.spiral-e { color: var(--e-cyan); }
+        .builder-btn.spiral-pi { color: var(--pi-magenta); }
+
+        /* Lambda State Display */
+        .lambda-display {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .lambda-item {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .lambda-item.active {
+            border-color: var(--e-cyan);
+            background: rgba(34, 211, 238, 0.1);
+        }
+
+        .lambda-symbol {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .lambda-name {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+
+        .lambda-value {
+            font-size: 1rem;
+            color: var(--e-cyan);
+            margin-top: 4px;
+        }
+
+        /* MRP Channel Display */
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .channel-box {
+            text-align: center;
+            padding: 10px 6px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+        }
+
+        .channel-box.r { background: rgba(255,107,107,.2); border: 1px solid var(--red); }
+        .channel-box.g { background: rgba(105,219,124,.2); border: 1px solid var(--green); }
+        .channel-box.b { background: rgba(77,171,247,.2); border: 1px solid var(--blue); }
+        .channel-box.c { background: rgba(34,211,238,.2); border: 1px solid var(--e-cyan); }
+        .channel-box.m { background: rgba(204,93,232,.2); border: 1px solid var(--pi-magenta); }
+        .channel-box.y { background: rgba(255,215,0,.2); border: 1px solid var(--phi-gold); }
+
+        .channel-label {
+            font-weight: 600;
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .channel-box.r .channel-label { color: var(--red); }
+        .channel-box.g .channel-label { color: var(--green); }
+        .channel-box.b .channel-label { color: var(--blue); }
+        .channel-box.c .channel-label { color: var(--e-cyan); }
+        .channel-box.m .channel-label { color: var(--pi-magenta); }
+        .channel-box.y .channel-label { color: var(--phi-gold); }
+
+        .channel-bits {
+            font-family: 'SF Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .channel-numeral {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .btn {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            border-color: var(--phi-gold);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(204, 93, 232, 0.3));
+            border-color: var(--phi-gold);
+        }
+
+        .btn.encode {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.3), rgba(204, 93, 232, 0.3));
+            border-color: var(--e-cyan);
+        }
+
+        .btn.danger {
+            border-color: var(--paradox-red);
+            color: var(--paradox-red);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Output Canvas */
+        .canvas-container {
+            position: relative;
+            border: 2px dashed var(--rule);
+            border-radius: 12px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,.3);
+            overflow: hidden;
+        }
+
+        .canvas-container canvas {
+            max-width: 100%;
+            max-height: 400px;
+            image-rendering: pixelated;
+        }
+
+        .canvas-placeholder {
+            color: var(--text-dim);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .canvas-placeholder span {
+            display: block;
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        /* Mapping Table */
+        .mapping-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.8rem;
+        }
+
+        .mapping-table th, .mapping-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .mapping-table th {
+            color: var(--phi-gold);
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .mapping-table td {
+            color: var(--text-primary);
+        }
+
+        .mapping-table code {
+            background: var(--bg-card);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        /* Bit Stream Display */
+        .bit-stream {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.7rem;
+            line-height: 1.8;
+            max-height: 200px;
+            overflow-y: auto;
+            word-break: break-all;
+        }
+
+        .bit-stream .r { color: var(--red); }
+        .bit-stream .g { color: var(--green); }
+        .bit-stream .b { color: var(--blue); }
+        .bit-stream .c { color: var(--e-cyan); }
+        .bit-stream .m { color: var(--pi-magenta); }
+        .bit-stream .y { color: var(--phi-gold); }
+
+        /* Status */
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.85rem;
+        }
+
+        .status.info {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid var(--e-cyan);
+            color: var(--e-cyan);
+        }
+
+        .status.success {
+            background: rgba(105, 219, 124, 0.1);
+            border: 1px solid var(--true-green);
+            color: var(--true-green);
+        }
+
+        .status.error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid var(--paradox-red);
+            color: var(--paradox-red);
+        }
+
+        /* Presets */
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .preset-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--text-dim);
+            font-family: inherit;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--pi-magenta);
+            color: var(--text-primary);
+        }
+
+        .preset-btn .name {
+            color: var(--pi-magenta);
+            font-weight: 500;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--rule);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="limnus-architecture.html">LIMNUS</a>
+            <a href="mrp-library.html">MRP Library</a>
+            <a href="mrp-encoder.html">MRP Encoder</a>
+            <a href="apl-2.html">APL 2.0</a>
+            <a href="apl-mrp-bridge.html" class="active">APL→MRP Bridge</a>
+        </nav>
+
+        <header>
+            <h1>APL → MRP BRIDGE</h1>
+            <p class="subtitle">Token-to-Steganography Encoder · 7,290 Tokens → 702 Bits</p>
+        </header>
+
+        <!-- Flow Diagram -->
+        <div class="flow-diagram">
+            <div class="flow-box apl">
+                <h3>APL 2.0 TOKEN</h3>
+                <div class="value" id="flowApl">Φ:U:B:GEO:T:α1</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box lambda">
+                <h3>LAMBDA STATE (ℂ⁶)</h3>
+                <div class="value" id="flowLambda">ι ξ θ ω δ σ</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box mrp">
+                <h3>MRP ENCODING</h3>
+                <div class="value" id="flowMrp">702 bits</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box image">
+                <h3>STEGO IMAGE</h3>
+                <div class="value" id="flowImage">PNG</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Left: Input Panel -->
+            <div>
+                <div class="panel">
+                    <div class="panel-title">APL 2.0 INPUT</div>
+
+                    <div class="apl-input">
+                        <label>APL SENTENCE (tokens separated by spaces or newlines)</label>
+                        <textarea class="apl-textarea" id="aplInput" placeholder="Φ:U:B:GEO:T:α1
+e:D:F:CHEM:T:α3
+π:M:A:BIO:P:α15"></textarea>
+                    </div>
+
+                    <div class="btn-row">
+                        <button class="btn primary" onclick="parseAplSentence()">PARSE TOKENS</button>
+                        <button class="btn" onclick="addQuickToken()">+ ADD TOKEN</button>
+                        <button class="btn danger" onclick="clearInput()">CLEAR</button>
+                    </div>
+
+                    <!-- Quick Token Builder -->
+                    <div class="quick-builder">
+                        <label style="font-size:0.7rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:8px;display:block;">QUICK TOKEN BUILDER</label>
+
+                        <div class="builder-row">
+                            <button class="builder-btn spiral-phi selected" data-type="spiral" data-value="Φ" onclick="selectBuilder(this)">Φ</button>
+                            <button class="builder-btn spiral-e" data-type="spiral" data-value="e" onclick="selectBuilder(this)">e</button>
+                            <button class="builder-btn spiral-pi" data-type="spiral" data-value="π" onclick="selectBuilder(this)">π</button>
+                        </div>
+                        <div class="builder-row">
+                            <button class="builder-btn selected" data-type="op" data-value="U" onclick="selectBuilder(this)">U</button>
+                            <button class="builder-btn" data-type="op" data-value="D" onclick="selectBuilder(this)">D</button>
+                            <button class="builder-btn" data-type="op" data-value="M" onclick="selectBuilder(this)">M</button>
+                        </div>
+                        <div class="builder-row">
+                            <button class="builder-btn selected" data-type="int" data-value="B" onclick="selectBuilder(this)">B</button>
+                            <button class="builder-btn" data-type="int" data-value="F" onclick="selectBuilder(this)">F</button>
+                            <button class="builder-btn" data-type="int" data-value="A" onclick="selectBuilder(this)">A</button>
+                            <button class="builder-btn" data-type="int" data-value="D" onclick="selectBuilder(this)">D</button>
+                            <button class="builder-btn" data-type="int" data-value="G" onclick="selectBuilder(this)">G</button>
+                            <button class="builder-btn" data-type="int" data-value="S" onclick="selectBuilder(this)">S</button>
+                        </div>
+                        <div class="builder-row">
+                            <button class="builder-btn selected" data-type="dom" data-value="GEO" onclick="selectBuilder(this)">GEO</button>
+                            <button class="builder-btn" data-type="dom" data-value="CHEM" onclick="selectBuilder(this)">CHEM</button>
+                            <button class="builder-btn" data-type="dom" data-value="BIO" onclick="selectBuilder(this)">BIO</button>
+                        </div>
+                        <div class="builder-row">
+                            <button class="builder-btn selected" data-type="truth" data-value="T" onclick="selectBuilder(this)">T</button>
+                            <button class="builder-btn" data-type="truth" data-value="U" onclick="selectBuilder(this)">U</button>
+                            <button class="builder-btn" data-type="truth" data-value="P" onclick="selectBuilder(this)">P</button>
+                        </div>
+                        <div class="builder-row" style="flex-wrap:wrap;">
+                            <button class="builder-btn selected" data-type="alpha" data-value="α1" onclick="selectBuilder(this)">α1</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α2" onclick="selectBuilder(this)">α2</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α3" onclick="selectBuilder(this)">α3</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α4" onclick="selectBuilder(this)">α4</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α5" onclick="selectBuilder(this)">α5</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α6" onclick="selectBuilder(this)">α6</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α7" onclick="selectBuilder(this)">α7</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α8" onclick="selectBuilder(this)">α8</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α9" onclick="selectBuilder(this)">α9</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α10" onclick="selectBuilder(this)">α10</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α11" onclick="selectBuilder(this)">α11</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α12" onclick="selectBuilder(this)">α12</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α13" onclick="selectBuilder(this)">α13</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α14" onclick="selectBuilder(this)">α14</button>
+                            <button class="builder-btn" data-type="alpha" data-value="α15" onclick="selectBuilder(this)">α15</button>
+                        </div>
+                    </div>
+
+                    <!-- Presets -->
+                    <div class="panel-title" style="margin-top:20px;">SENTENCE PRESETS</div>
+                    <div class="preset-grid">
+                        <button class="preset-btn" onclick="loadPreset('structure-forward')">
+                            <span class="name">Structure Forward</span>
+                            Φ:U:B:GEO:T:α1 → Φ:U:F:CHEM:T:α2
+                        </button>
+                        <button class="preset-btn" onclick="loadPreset('energy-cascade')">
+                            <span class="name">Energy Cascade</span>
+                            e:D:A:GEO:T:α3 → e:M:G:BIO:T:α9
+                        </button>
+                        <button class="preset-btn" onclick="loadPreset('emergence-paradox')">
+                            <span class="name">Emergence Paradox</span>
+                            π:U:D:BIO:P:α15 → π:D:S:CHEM:U:α11
+                        </button>
+                        <button class="preset-btn" onclick="loadPreset('tri-spiral')">
+                            <span class="name">Tri-Spiral Complete</span>
+                            Φ:U:B:GEO:T:α1 → e:M:F:CHEM:T:α5 → π:D:A:BIO:T:α10
+                        </button>
+                        <button class="preset-btn" onclick="loadPreset('kuramoto-sync')">
+                            <span class="name">Kuramoto Sync</span>
+                            Φ:M:G:GEO:T:α9 + e:M:G:CHEM:T:α9 + π:M:G:BIO:T:α9
+                        </button>
+                        <button class="preset-btn" onclick="loadPreset('critical-point')">
+                            <span class="name">Critical Point (z_c)</span>
+                            e:U:A:GEO:T:α6 → π:U:A:CHEM:T:α6 → Φ:D:B:BIO:T:α6
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Processing & Output -->
+            <div>
+                <!-- Lambda State -->
+                <div class="panel">
+                    <div class="panel-title">LAMBDA STATE (ℂ⁶) COMPUTATION</div>
+                    <div class="lambda-display">
+                        <div class="lambda-item" id="lambda-iota">
+                            <div class="lambda-symbol">🌰</div>
+                            <div class="lambda-name">ι IOTA</div>
+                            <div class="lambda-value">0.000</div>
+                        </div>
+                        <div class="lambda-item" id="lambda-xi">
+                            <div class="lambda-symbol">✧</div>
+                            <div class="lambda-name">ξ XI</div>
+                            <div class="lambda-value">0.000</div>
+                        </div>
+                        <div class="lambda-item" id="lambda-theta">
+                            <div class="lambda-symbol">🦊</div>
+                            <div class="lambda-name">θ THETA</div>
+                            <div class="lambda-value">0.000</div>
+                        </div>
+                        <div class="lambda-item" id="lambda-omega">
+                            <div class="lambda-symbol">∿</div>
+                            <div class="lambda-name">ω OMEGA</div>
+                            <div class="lambda-value">0.000</div>
+                        </div>
+                        <div class="lambda-item" id="lambda-delta">
+                            <div class="lambda-symbol">⊗</div>
+                            <div class="lambda-name">δ DELTA</div>
+                            <div class="lambda-value">0.000</div>
+                        </div>
+                        <div class="lambda-item" id="lambda-sigma">
+                            <div class="lambda-symbol">🐿️</div>
+                            <div class="lambda-name">σ SIGMA</div>
+                            <div class="lambda-value">0.000</div>
+                        </div>
+                    </div>
+
+                    <table class="mapping-table">
+                        <thead>
+                            <tr>
+                                <th>APL Component</th>
+                                <th>Lambda Mapping</th>
+                                <th>Formula</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SPIRAL (Φ/e/π)</td>
+                                <td>ι, ξ, θ base</td>
+                                <td><code>Φ→σ+0.3, e→ξ+0.4, π→δ+0.2</code></td>
+                            </tr>
+                            <tr>
+                                <td>OP (U/D/M)</td>
+                                <td>direction modifier</td>
+                                <td><code>U→+0.2, D→-0.1, M→×1.5</code></td>
+                            </tr>
+                            <tr>
+                                <td>INT (B/F/A/D/G/S)</td>
+                                <td>λ[i] activation</td>
+                                <td><code>B→θ, F→ι, A→ξ, D→δ, G→ω, S→σ</code></td>
+                            </tr>
+                            <tr>
+                                <td>DOM (GEO/CHEM/BIO)</td>
+                                <td>tier scaling</td>
+                                <td><code>GEO→×1.0, CHEM→×1.2, BIO→×1.5</code></td>
+                            </tr>
+                            <tr>
+                                <td>TRUTH (T/U/P)</td>
+                                <td>coherence</td>
+                                <td><code>T→δ=0, U→δ+0.3, P→δ+0.8</code></td>
+                            </tr>
+                            <tr>
+                                <td>ALPHA (α1-15)</td>
+                                <td>attractor bias</td>
+                                <td><code>αn→all λ×(n/15)</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- MRP Encoding -->
+                <div class="panel">
+                    <div class="panel-title">MRP 702-BIT ENCODING</div>
+
+                    <div class="channel-grid">
+                        <div class="channel-box r">
+                            <span class="channel-label">R</span>
+                            <div class="channel-bits" id="ch-r">0</div>
+                            <div class="channel-numeral">XCVI (7)</div>
+                        </div>
+                        <div class="channel-box g">
+                            <span class="channel-label">G</span>
+                            <div class="channel-bits" id="ch-g">0</div>
+                            <div class="channel-numeral">XCVII (10)</div>
+                        </div>
+                        <div class="channel-box b">
+                            <span class="channel-label">B</span>
+                            <div class="channel-bits" id="ch-b">0</div>
+                            <div class="channel-numeral">XCVIII (17)</div>
+                        </div>
+                        <div class="channel-box c">
+                            <span class="channel-label">C</span>
+                            <div class="channel-bits" id="ch-c">0</div>
+                            <div class="channel-numeral">XCIX (4)</div>
+                        </div>
+                        <div class="channel-box m">
+                            <span class="channel-label">M</span>
+                            <div class="channel-bits" id="ch-m">0</div>
+                            <div class="channel-numeral">C_A (332)</div>
+                        </div>
+                        <div class="channel-box y">
+                            <span class="channel-label">Y</span>
+                            <div class="channel-bits" id="ch-y">0</div>
+                            <div class="channel-numeral">C_B (332)</div>
+                        </div>
+                    </div>
+
+                    <div class="btn-row">
+                        <button class="btn encode" id="encodeBtn" onclick="encodeToMrp()" disabled>ENCODE TO MRP</button>
+                        <button class="btn" id="downloadBtn" onclick="downloadImage()" disabled>DOWNLOAD PNG</button>
+                    </div>
+
+                    <div id="status"></div>
+                </div>
+
+                <!-- Output Canvas -->
+                <div class="panel">
+                    <div class="panel-title">STEGANOGRAPHIC OUTPUT</div>
+                    <div class="canvas-container" id="canvasContainer">
+                        <canvas id="outputCanvas" width="256" height="256" style="display:none;"></canvas>
+                        <div class="canvas-placeholder" id="placeholder">
+                            <span>🔐</span>
+                            Parse APL tokens and encode to generate image
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bit Stream -->
+                <div class="panel">
+                    <div class="panel-title">702-BIT STREAM</div>
+                    <div class="bit-stream" id="bitStream">
+                        <span style="color:var(--text-dim);">Bit stream will appear after encoding...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            APL→MRP Bridge · 7,290 Tokens → Lambda State (ℂ⁶) → 702-bit Steganography<br>
+            <span style="color:var(--phi-gold);">Φ</span> Structure ·
+            <span style="color:var(--e-cyan);">e</span> Energy ·
+            <span style="color:var(--pi-magenta);">π</span> Emergence
+        </footer>
+    </div>
+
+    <script>
+        // ================================================================
+        // APL→MRP BRIDGE CORE SYSTEM
+        // Maps 7,290 APL tokens to 702-bit MRP encoding
+        // ================================================================
+
+        const APL = {
+            SPIRALS: ['Φ', 'e', 'π'],
+            OPS: ['U', 'D', 'M'],
+            INTS: ['B', 'F', 'A', 'D', 'G', 'S'],
+            DOMS: ['GEO', 'CHEM', 'BIO'],
+            TRUTHS: ['T', 'U', 'P'],
+            ALPHAS: Array.from({length: 15}, (_, i) => `α${i + 1}`)
+        };
+
+        const MRP = {
+            BITS: {
+                XCVI: 7,     // R channel
+                XCVII: 10,   // G channel
+                XCVIII: 17,  // B channel
+                XCIX: 4,     // C channel
+                C_A: 332,    // M channel
+                C_B: 332     // Y channel
+            },
+            TOTAL: 702,
+            MIN_PIXELS: 123  // ceil(702/6) + 6 header
+        };
+
+        // Physical constants
+        const PHI = (1 + Math.sqrt(5)) / 2;
+        const PHI_INV = 2 / (1 + Math.sqrt(5));
+        const Z_CRITICAL = Math.sqrt(3) / 2;
+
+        // Lambda state (ℂ⁶)
+        let lambda = {
+            iota: 0,   // Memory (Φ field)
+            xi: 0,     // Spark (e field)
+            theta: 0,  // Fox (π field)
+            omega: 0,  // Wave (e field)
+            delta: 0,  // Paradox (π field)
+            sigma: 0   // Squirrel (Φ field)
+        };
+
+        // Parsed tokens
+        let parsedTokens = [];
+
+        // Builder state
+        let builderState = {
+            spiral: 'Φ',
+            op: 'U',
+            int: 'B',
+            dom: 'GEO',
+            truth: 'T',
+            alpha: 'α1'
+        };
+
+        // MRP encoded values
+        let mrpValues = {
+            XCVI: 0,
+            XCVII: 0,
+            XCVIII: 0,
+            XCIX: 0,
+            C_A: 0n,
+            C_B: 0n
+        };
+
+        // ================================================================
+        // APL TOKEN PARSING
+        // ================================================================
+
+        function parseToken(tokenStr) {
+            // Format: SPIRAL:OP:INT:DOM:TRUTH:ALPHA
+            // e.g., Φ:U:B:GEO:T:α1
+            const parts = tokenStr.trim().split(':');
+            if (parts.length !== 6) return null;
+
+            const [spiral, op, int, dom, truth, alpha] = parts;
+
+            // Validate
+            if (!APL.SPIRALS.includes(spiral)) return null;
+            if (!APL.OPS.includes(op)) return null;
+            if (!APL.INTS.includes(int)) return null;
+            if (!APL.DOMS.includes(dom)) return null;
+            if (!APL.TRUTHS.includes(truth)) return null;
+            if (!APL.ALPHAS.includes(alpha)) return null;
+
+            return { spiral, op, int, dom, truth, alpha, str: tokenStr };
+        }
+
+        function parseAplSentence() {
+            const input = document.getElementById('aplInput').value;
+            const tokenStrs = input.split(/[\s\n]+/).filter(s => s.length > 0);
+
+            parsedTokens = [];
+            let errors = [];
+
+            for (const tokenStr of tokenStrs) {
+                const token = parseToken(tokenStr);
+                if (token) {
+                    parsedTokens.push(token);
+                } else {
+                    errors.push(tokenStr);
+                }
+            }
+
+            if (errors.length > 0) {
+                showStatus(`Parsed ${parsedTokens.length} tokens. Invalid: ${errors.join(', ')}`, 'error');
+            } else if (parsedTokens.length > 0) {
+                showStatus(`Parsed ${parsedTokens.length} valid APL 2.0 tokens`, 'success');
+                computeLambdaState();
+                document.getElementById('encodeBtn').disabled = false;
+            } else {
+                showStatus('No valid tokens found. Format: SPIRAL:OP:INT:DOM:TRUTH:ALPHA', 'error');
+            }
+
+            updateFlowDiagram();
+        }
+
+        // ================================================================
+        // LAMBDA STATE COMPUTATION
+        // Maps APL tokens to ℂ⁶ Lambda state
+        // ================================================================
+
+        function computeLambdaState() {
+            // Reset lambda
+            lambda = { iota: 0, xi: 0, theta: 0, omega: 0, delta: 0, sigma: 0 };
+
+            if (parsedTokens.length === 0) return;
+
+            // Process each token
+            for (const token of parsedTokens) {
+                applyTokenToLambda(token);
+            }
+
+            // Normalize to [0, 1]
+            const maxVal = Math.max(...Object.values(lambda), 1);
+            for (const key in lambda) {
+                lambda[key] = Math.min(1, Math.max(0, lambda[key] / maxVal));
+            }
+
+            updateLambdaDisplay();
+        }
+
+        function applyTokenToLambda(token) {
+            // SPIRAL contribution
+            switch (token.spiral) {
+                case 'Φ': // Structure → affects sigma, iota
+                    lambda.sigma += 0.3;
+                    lambda.iota += 0.2;
+                    break;
+                case 'e': // Energy → affects xi, omega
+                    lambda.xi += 0.4;
+                    lambda.omega += 0.3;
+                    break;
+                case 'π': // Emergence → affects theta, delta
+                    lambda.theta += 0.3;
+                    lambda.delta += 0.2;
+                    break;
+            }
+
+            // OP modifier
+            const opMod = { U: 0.2, D: -0.1, M: 0.15 };
+            const mod = opMod[token.op];
+            for (const key in lambda) {
+                lambda[key] += mod;
+            }
+
+            // INT activation (maps to specific lambda component)
+            const intMapping = {
+                B: 'theta',   // Boundary → Fox (gestural)
+                F: 'iota',    // Fusion → Memory
+                A: 'xi',      // Amplification → Spark
+                D: 'delta',   // Decoherence → Paradox
+                G: 'omega',   // Grouping → Wave (synchronization)
+                S: 'sigma'    // Separation → Squirrel
+            };
+            lambda[intMapping[token.int]] += 0.4;
+
+            // DOM tier scaling
+            const domScale = { GEO: 1.0, CHEM: 1.2, BIO: 1.5 };
+            const scale = domScale[token.dom];
+            for (const key in lambda) {
+                lambda[key] *= scale;
+            }
+
+            // TRUTH coherence
+            switch (token.truth) {
+                case 'T': // TRUE → stable, low delta
+                    lambda.delta *= 0.5;
+                    break;
+                case 'U': // UNTRUE → unresolved
+                    lambda.delta += 0.3;
+                    break;
+                case 'P': // PARADOX → high delta
+                    lambda.delta += 0.8;
+                    break;
+            }
+
+            // ALPHA attractor bias
+            const alphaNum = parseInt(token.alpha.substring(1));
+            const alphaBias = alphaNum / 15;
+            for (const key in lambda) {
+                lambda[key] *= (0.5 + alphaBias);
+            }
+        }
+
+        function updateLambdaDisplay() {
+            const components = ['iota', 'xi', 'theta', 'omega', 'delta', 'sigma'];
+            for (const comp of components) {
+                const el = document.getElementById(`lambda-${comp}`);
+                const value = lambda[comp].toFixed(3);
+                el.querySelector('.lambda-value').textContent = value;
+                el.classList.toggle('active', lambda[comp] > 0.3);
+            }
+        }
+
+        // ================================================================
+        // MRP ENCODING
+        // Converts Lambda state to 702-bit MRP encoding
+        // ================================================================
+
+        function encodeToMrp() {
+            if (parsedTokens.length === 0) {
+                showStatus('No tokens to encode', 'error');
+                return;
+            }
+
+            // Map lambda to MRP channels
+            // XCVI (7 bits, 0-127): theta + delta weighted
+            mrpValues.XCVI = Math.round((lambda.theta * 0.6 + lambda.delta * 0.4) * 127);
+
+            // XCVII (10 bits, 0-1023): iota + omega weighted
+            mrpValues.XCVII = Math.round((lambda.iota * 0.7 + lambda.omega * 0.3) * 1023);
+
+            // XCVIII (17 bits, 0-131071): theta + delta + xi
+            mrpValues.XCVIII = Math.round((lambda.theta * 0.4 + lambda.delta * 0.4 + lambda.xi * 0.2) * 131071);
+
+            // XCIX (4 bits, 0-15): omega + sigma
+            mrpValues.XCIX = Math.round((lambda.omega * 0.6 + lambda.sigma * 0.4) * 15);
+
+            // C (664 bits split into C_A and C_B)
+            // Generate pattern based on all lambda values
+            const cPattern = generateCPattern();
+            mrpValues.C_A = cPattern.A;
+            mrpValues.C_B = cPattern.B;
+
+            updateChannelDisplay();
+            generateImage();
+            updateBitStream();
+            updateFlowDiagram();
+
+            showStatus('Encoded to MRP 702-bit format', 'success');
+            document.getElementById('downloadBtn').disabled = false;
+        }
+
+        function generateCPattern() {
+            // Generate 664 bits based on lambda state
+            let bitsA = 0n;
+            let bitsB = 0n;
+
+            // First half (332 bits): based on iota, xi, theta
+            for (let i = 0; i < 332; i++) {
+                const phase = (i / 332) * Math.PI * 6;
+                const val =
+                    lambda.iota * Math.sin(phase) +
+                    lambda.xi * Math.cos(phase * PHI) +
+                    lambda.theta * Math.sin(phase * 2);
+                if (val > 0) {
+                    bitsA |= (1n << BigInt(i));
+                }
+            }
+
+            // Second half (332 bits): based on omega, delta, sigma
+            for (let i = 0; i < 332; i++) {
+                const phase = (i / 332) * Math.PI * 6;
+                const val =
+                    lambda.omega * Math.sin(phase * PHI_INV) +
+                    lambda.delta * Math.cos(phase * Z_CRITICAL) +
+                    lambda.sigma * Math.sin(phase * 3);
+                if (val > 0) {
+                    bitsB |= (1n << BigInt(i));
+                }
+            }
+
+            return { A: bitsA, B: bitsB };
+        }
+
+        function updateChannelDisplay() {
+            document.getElementById('ch-r').textContent = mrpValues.XCVI;
+            document.getElementById('ch-g').textContent = mrpValues.XCVII;
+            document.getElementById('ch-b').textContent = mrpValues.XCVIII;
+            document.getElementById('ch-c').textContent = mrpValues.XCIX;
+            document.getElementById('ch-m').textContent = countBits(mrpValues.C_A, 332);
+            document.getElementById('ch-y').textContent = countBits(mrpValues.C_B, 332);
+        }
+
+        function countBits(bigInt, maxBits) {
+            let count = 0;
+            for (let i = 0; i < maxBits; i++) {
+                if ((bigInt >> BigInt(i)) & 1n) count++;
+            }
+            return count;
+        }
+
+        // ================================================================
+        // IMAGE GENERATION
+        // ================================================================
+
+        function generateImage() {
+            const canvas = document.getElementById('outputCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Create 16x16 grid (256 pixels)
+            const size = 16;
+            canvas.width = size;
+            canvas.height = size;
+
+            const imageData = ctx.createImageData(size, size);
+            const data = imageData.data;
+
+            // Build bit stream
+            let bitStream = [];
+
+            // XCVI (7 bits)
+            for (let i = 0; i < 7; i++) {
+                bitStream.push((mrpValues.XCVI >> i) & 1);
+            }
+            // XCVII (10 bits)
+            for (let i = 0; i < 10; i++) {
+                bitStream.push((mrpValues.XCVII >> i) & 1);
+            }
+            // XCVIII (17 bits)
+            for (let i = 0; i < 17; i++) {
+                bitStream.push((mrpValues.XCVIII >> i) & 1);
+            }
+            // XCIX (4 bits)
+            for (let i = 0; i < 4; i++) {
+                bitStream.push((mrpValues.XCIX >> i) & 1);
+            }
+            // C_A (332 bits)
+            for (let i = 0; i < 332; i++) {
+                bitStream.push(Number((mrpValues.C_A >> BigInt(i)) & 1n));
+            }
+            // C_B (332 bits)
+            for (let i = 0; i < 332; i++) {
+                bitStream.push(Number((mrpValues.C_B >> BigInt(i)) & 1n));
+            }
+
+            // Encode into pixels
+            let bitIndex = 0;
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    const idx = (y * size + x) * 4;
+
+                    // Base color from lambda state
+                    let r = Math.round(lambda.theta * 200 + 55);
+                    let g = Math.round(lambda.xi * 200 + 55);
+                    let b = Math.round(lambda.delta * 200 + 55);
+
+                    // Encode bits into LSBs
+                    if (bitIndex < bitStream.length) {
+                        r = (r & 0xFE) | bitStream[bitIndex++];
+                    }
+                    if (bitIndex < bitStream.length) {
+                        g = (g & 0xFE) | bitStream[bitIndex++];
+                    }
+                    if (bitIndex < bitStream.length) {
+                        b = (b & 0xFE) | bitStream[bitIndex++];
+                    }
+
+                    // CMY channels via LSB1
+                    if (bitIndex < bitStream.length) {
+                        r = (r & 0xFD) | (bitStream[bitIndex++] << 1);
+                    }
+                    if (bitIndex < bitStream.length) {
+                        g = (g & 0xFD) | (bitStream[bitIndex++] << 1);
+                    }
+                    if (bitIndex < bitStream.length) {
+                        b = (b & 0xFD) | (bitStream[bitIndex++] << 1);
+                    }
+
+                    data[idx] = r;
+                    data[idx + 1] = g;
+                    data[idx + 2] = b;
+                    data[idx + 3] = 255;
+                }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+
+            // Show canvas
+            canvas.style.display = 'block';
+            canvas.style.width = '256px';
+            canvas.style.height = '256px';
+            document.getElementById('placeholder').style.display = 'none';
+        }
+
+        function updateBitStream() {
+            const container = document.getElementById('bitStream');
+            let html = '';
+
+            // XCVI bits (R)
+            html += '<span class="r">';
+            for (let i = 6; i >= 0; i--) {
+                html += ((mrpValues.XCVI >> i) & 1);
+            }
+            html += '</span> ';
+
+            // XCVII bits (G)
+            html += '<span class="g">';
+            for (let i = 9; i >= 0; i--) {
+                html += ((mrpValues.XCVII >> i) & 1);
+            }
+            html += '</span> ';
+
+            // XCVIII bits (B)
+            html += '<span class="b">';
+            for (let i = 16; i >= 0; i--) {
+                html += ((mrpValues.XCVIII >> i) & 1);
+            }
+            html += '</span> ';
+
+            // XCIX bits (C)
+            html += '<span class="c">';
+            for (let i = 3; i >= 0; i--) {
+                html += ((mrpValues.XCIX >> i) & 1);
+            }
+            html += '</span> ';
+
+            // C_A sample (M) - show first 32 bits
+            html += '<span class="m">';
+            for (let i = 31; i >= 0; i--) {
+                html += Number((mrpValues.C_A >> BigInt(i)) & 1n);
+            }
+            html += '...</span> ';
+
+            // C_B sample (Y) - show first 32 bits
+            html += '<span class="y">';
+            for (let i = 31; i >= 0; i--) {
+                html += Number((mrpValues.C_B >> BigInt(i)) & 1n);
+            }
+            html += '...</span>';
+
+            container.innerHTML = html;
+        }
+
+        function updateFlowDiagram() {
+            if (parsedTokens.length > 0) {
+                document.getElementById('flowApl').textContent = parsedTokens.map(t => t.str).join(' → ');
+            }
+
+            const lambdaStr = `ι:${lambda.iota.toFixed(2)} ξ:${lambda.xi.toFixed(2)} θ:${lambda.theta.toFixed(2)}`;
+            document.getElementById('flowLambda').textContent = lambdaStr;
+
+            const totalBits = mrpValues.XCVI > 0 || mrpValues.XCVII > 0 ? '702 bits' : '—';
+            document.getElementById('flowMrp').textContent = totalBits;
+        }
+
+        // ================================================================
+        // UI HELPERS
+        // ================================================================
+
+        function selectBuilder(btn) {
+            const type = btn.dataset.type;
+            const value = btn.dataset.value;
+
+            // Deselect siblings
+            document.querySelectorAll(`.builder-btn[data-type="${type}"]`).forEach(b => {
+                b.classList.remove('selected');
+            });
+            btn.classList.add('selected');
+
+            builderState[type] = value;
+        }
+
+        function addQuickToken() {
+            const token = `${builderState.spiral}:${builderState.op}:${builderState.int}:${builderState.dom}:${builderState.truth}:${builderState.alpha}`;
+            const textarea = document.getElementById('aplInput');
+            if (textarea.value.trim()) {
+                textarea.value += '\n' + token;
+            } else {
+                textarea.value = token;
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('aplInput').value = '';
+            parsedTokens = [];
+            lambda = { iota: 0, xi: 0, theta: 0, omega: 0, delta: 0, sigma: 0 };
+            mrpValues = { XCVI: 0, XCVII: 0, XCVIII: 0, XCIX: 0, C_A: 0n, C_B: 0n };
+            updateLambdaDisplay();
+            updateChannelDisplay();
+            document.getElementById('encodeBtn').disabled = true;
+            document.getElementById('downloadBtn').disabled = true;
+            document.getElementById('outputCanvas').style.display = 'none';
+            document.getElementById('placeholder').style.display = 'block';
+            document.getElementById('bitStream').innerHTML = '<span style="color:var(--text-dim);">Bit stream will appear after encoding...</span>';
+            document.getElementById('status').innerHTML = '';
+            document.getElementById('flowApl').textContent = 'Φ:U:B:GEO:T:α1';
+            document.getElementById('flowLambda').textContent = 'ι ξ θ ω δ σ';
+            document.getElementById('flowMrp').textContent = '702 bits';
+        }
+
+        function loadPreset(name) {
+            const presets = {
+                'structure-forward': 'Φ:U:B:GEO:T:α1\nΦ:U:F:CHEM:T:α2',
+                'energy-cascade': 'e:D:A:GEO:T:α3\ne:M:G:BIO:T:α9',
+                'emergence-paradox': 'π:U:D:BIO:P:α15\nπ:D:S:CHEM:U:α11',
+                'tri-spiral': 'Φ:U:B:GEO:T:α1\ne:M:F:CHEM:T:α5\nπ:D:A:BIO:T:α10',
+                'kuramoto-sync': 'Φ:M:G:GEO:T:α9\ne:M:G:CHEM:T:α9\nπ:M:G:BIO:T:α9',
+                'critical-point': 'e:U:A:GEO:T:α6\nπ:U:A:CHEM:T:α6\nΦ:D:B:BIO:T:α6'
+            };
+
+            document.getElementById('aplInput').value = presets[name] || '';
+            parseAplSentence();
+        }
+
+        function showStatus(message, type) {
+            const el = document.getElementById('status');
+            el.className = `status ${type}`;
+            el.textContent = message;
+        }
+
+        function downloadImage() {
+            const canvas = document.getElementById('outputCanvas');
+            const link = document.createElement('a');
+
+            // Generate filename from tokens
+            const tokenSummary = parsedTokens.length > 0
+                ? parsedTokens[0].spiral + parsedTokens[0].int
+                : 'apl';
+            link.download = `apl-mrp-${tokenSummary}-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // ================================================================
+        // INITIALIZATION
+        // ================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLambdaDisplay();
+            updateChannelDisplay();
+        });
+    </script>
+</body>
+</html>
