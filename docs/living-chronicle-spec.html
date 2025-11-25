@@ -589,6 +589,190 @@
             </div>
         </section>
 
+        <!-- CMY Specialization Section -->
+        <section class="section">
+            <h2>🎨 CMY Channel Specialization</h2>
+            <p>The CMY channels (LSB1) carry the living chronicle data. Each has a specialized bit-level structure.</p>
+
+            <!-- C Channel Detail -->
+            <h3 style="color: var(--e-cyan); margin-top: 25px;">C (Cyan) — 4-Bit Coherence Vector</h3>
+            <div class="code-block">
+<pre>
+<span class="comment">// C Channel: 4-bit coherence vector (XCIX)</span>
+<span class="comment">// Each bit tracks alignment between documentation layers</span>
+
+<span class="channel">Bit 0</span>: R↔G Alignment  <span class="comment">// Dev ↔ Research coherence</span>
+<span class="channel">Bit 1</span>: G↔B Alignment  <span class="comment">// Research ↔ Spec coherence</span>
+<span class="channel">Bit 2</span>: R↔B Alignment  <span class="comment">// Dev ↔ Spec coherence</span>
+<span class="channel">Bit 3</span>: System Stable  <span class="comment">// Overall coherence flag</span>
+
+<span class="comment">// Coherence calculation:</span>
+<span class="keyword">function</span> calculateCoherenceVector(R, G, B) {
+    <span class="keyword">const</span> rNorm = R / <span class="number">127</span>;
+    <span class="keyword">const</span> gNorm = G / <span class="number">1023</span>;
+    <span class="keyword">const</span> bNorm = B / <span class="number">131071</span>;
+
+    <span class="keyword">const</span> bit0 = Math.abs(rNorm - gNorm) < <span class="number">0.3</span> ? <span class="number">1</span> : <span class="number">0</span>;  <span class="comment">// Dev↔Research</span>
+    <span class="keyword">const</span> bit1 = Math.abs(gNorm - bNorm) < <span class="number">0.3</span> ? <span class="number">1</span> : <span class="number">0</span>;  <span class="comment">// Research↔Spec</span>
+    <span class="keyword">const</span> bit2 = Math.abs(rNorm - bNorm) < <span class="number">0.3</span> ? <span class="number">1</span> : <span class="number">0</span>;  <span class="comment">// Dev↔Spec</span>
+    <span class="keyword">const</span> bit3 = (bit0 + bit1 + bit2 >= <span class="number">2</span>) ? <span class="number">1</span> : <span class="number">0</span>;     <span class="comment">// System stable</span>
+
+    <span class="keyword">return</span> (bit3 << <span class="number">3</span>) | (bit2 << <span class="number">2</span>) | (bit1 << <span class="number">1</span>) | bit0;
+}
+
+<span class="comment">// Value interpretation:</span>
+<span class="number">0b0000</span> (0)  → No alignment    <span class="comment">// Chaos state</span>
+<span class="number">0b0111</span> (7)  → All pairs align <span class="comment">// But not stable yet</span>
+<span class="number">0b1111</span> (15) → Full coherence  <span class="comment">// System synchronized</span>
+</pre>
+            </div>
+
+            <!-- M Channel Detail -->
+            <h3 style="color: var(--pi-magenta); margin-top: 25px;">M (Magenta) — 332-Bit Delta Encoder</h3>
+            <div class="code-block">
+<pre>
+<span class="comment">// M Channel: 332-bit delta encoder (C_A - Change History)</span>
+<span class="comment">// Structured encoding of what changed and when</span>
+
+<span class="channel">Header</span> [0-31]:     32 bits  <span class="comment">// Change type + flags</span>
+<span class="channel">Temporal</span> [32-95]:  64 bits  <span class="comment">// When (timestamp hash)</span>
+<span class="channel">Source</span> [96-159]:   64 bits  <span class="comment">// What (content hash of before-state)</span>
+<span class="channel">Delta</span> [160-331]:  172 bits  <span class="comment">// The actual diff pattern</span>
+
+<span class="comment">// Header structure (32 bits):</span>
+<span class="keyword">const</span> CHANGE_TYPES = {
+    CREATE:     <span class="number">0b00000001</span>,  <span class="comment">// New entity</span>
+    MODIFY:     <span class="number">0b00000010</span>,  <span class="comment">// Edit existing</span>
+    DELETE:     <span class="number">0b00000100</span>,  <span class="comment">// Remove entity</span>
+    MERGE:      <span class="number">0b00001000</span>,  <span class="comment">// Combine entities</span>
+    SPLIT:      <span class="number">0b00010000</span>,  <span class="comment">// Divide entity</span>
+    REVERT:     <span class="number">0b00100000</span>,  <span class="comment">// Undo change</span>
+    MILESTONE:  <span class="number">0b01000000</span>,  <span class="comment">// Major checkpoint</span>
+    BREAKING:   <span class="number">0b10000000</span>,  <span class="comment">// Breaking change flag</span>
+};
+
+<span class="keyword">function</span> encodeDeltaChannel(changeType, timestamp, sourceHash, diffPattern) {
+    <span class="keyword">const</span> bits = <span class="keyword">new</span> Array(<span class="number">332</span>).fill(<span class="number">0</span>);
+
+    <span class="comment">// Header: change type + magnitude (32 bits)</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">32</span>; i++) {
+        bits[i] = (changeType >> (<span class="number">31</span> - i)) & <span class="number">1</span>;
+    }
+
+    <span class="comment">// Temporal: hash of timestamp (64 bits)</span>
+    <span class="keyword">const</span> timeHash = hashTimestamp(timestamp);
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">64</span>; i++) {
+        bits[<span class="number">32</span> + i] = (timeHash >> (<span class="number">63</span> - i)) & <span class="number">1</span>;
+    }
+
+    <span class="comment">// Source: hash of before-state (64 bits)</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">64</span>; i++) {
+        bits[<span class="number">96</span> + i] = (sourceHash >> (<span class="number">63</span> - i)) & <span class="number">1</span>;
+    }
+
+    <span class="comment">// Delta: actual diff pattern (172 bits)</span>
+    <span class="comment">// Uses golden-angle spiral sampling of diff</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">172</span>; i++) {
+        <span class="keyword">const</span> angle = i * GOLDEN_ANGLE;
+        <span class="keyword">const</span> r = Math.sqrt(i / <span class="number">172</span>);
+        bits[<span class="number">160</span> + i] = sampleDiff(diffPattern, r, angle);
+    }
+
+    <span class="keyword">return</span> bits;
+}
+</pre>
+            </div>
+
+            <!-- Y Channel Detail -->
+            <h3 style="color: var(--yellow-chronicle); margin-top: 25px;">Y (Yellow) — 332-Bit Snapshot Encoder</h3>
+            <div class="code-block">
+<pre>
+<span class="comment">// Y Channel: 332-bit snapshot encoder (C_B - State Snapshots)</span>
+<span class="comment">// Captures current state at checkpoint moments</span>
+
+<span class="channel">Header</span> [0-31]:     32 bits  <span class="comment">// State type + flags</span>
+<span class="channel">Checkpoint</span> [32-95]: 64 bits <span class="comment">// Checkpoint ID / sequence</span>
+<span class="channel">StateHash</span> [96-159]: 64 bits <span class="comment">// Hash of current state</span>
+<span class="channel">Snapshot</span> [160-331]: 172 bits <span class="comment">// State pattern encoding</span>
+
+<span class="comment">// State types (32 bits header):</span>
+<span class="keyword">const</span> STATE_TYPES = {
+    DRAFT:      <span class="number">0b00000001</span>,  <span class="comment">// Work in progress</span>
+    REVIEW:     <span class="number">0b00000010</span>,  <span class="comment">// Under review</span>
+    APPROVED:   <span class="number">0b00000100</span>,  <span class="comment">// Reviewed & approved</span>
+    PUBLISHED:  <span class="number">0b00001000</span>,  <span class="comment">// Released/public</span>
+    ARCHIVED:   <span class="number">0b00010000</span>,  <span class="comment">// Historical record</span>
+    DEPRECATED: <span class="number">0b00100000</span>,  <span class="comment">// Marked for removal</span>
+    LOCKED:     <span class="number">0b01000000</span>,  <span class="comment">// Cannot be modified</span>
+    GOLDEN:     <span class="number">0b10000000</span>,  <span class="comment">// Reference/canonical state</span>
+};
+
+<span class="keyword">function</span> encodeSnapshotChannel(stateType, checkpointId, stateHash, lambdaState) {
+    <span class="keyword">const</span> bits = <span class="keyword">new</span> Array(<span class="number">332</span>).fill(<span class="number">0</span>);
+
+    <span class="comment">// Header: state type + flags (32 bits)</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">32</span>; i++) {
+        bits[i] = (stateType >> (<span class="number">31</span> - i)) & <span class="number">1</span>;
+    }
+
+    <span class="comment">// Checkpoint: sequence ID (64 bits)</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">64</span>; i++) {
+        bits[<span class="number">32</span> + i] = (checkpointId >> (<span class="number">63</span> - i)) & <span class="number">1</span>;
+    }
+
+    <span class="comment">// State hash: current state signature (64 bits)</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">64</span>; i++) {
+        bits[<span class="number">96</span> + i] = (stateHash >> (<span class="number">63</span> - i)) & <span class="number">1</span>;
+    }
+
+    <span class="comment">// Snapshot: lambda state encoding (172 bits)</span>
+    <span class="comment">// Encodes (ω, δ, σ) as wave pattern</span>
+    <span class="keyword">const</span> { omega, delta, sigma } = lambdaState;
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">172</span>; i++) {
+        <span class="keyword">const</span> wave = Math.sin(i * omega * <span class="number">0.1</span>);
+        <span class="keyword">const</span> paradox = Math.cos(i * delta * <span class="number">0.15</span>);
+        <span class="keyword">const</span> spiral = (i / <span class="number">172</span>) * sigma;
+        bits[<span class="number">160</span> + i] = (wave + paradox + spiral) > <span class="number">1</span> ? <span class="number">1</span> : <span class="number">0</span>;
+    }
+
+    <span class="keyword">return</span> bits;
+}
+</pre>
+            </div>
+
+            <!-- CMY Visual Structure -->
+            <h3 style="margin-top: 25px;">CMY Bit Layout Visualization</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px;">
+                <div style="background: var(--bg-card); padding: 15px; border-radius: 8px; border-left: 3px solid var(--e-cyan);">
+                    <strong style="color: var(--e-cyan);">C (4 bits)</strong>
+                    <div style="font-size: 0.85em; color: var(--text-dim); margin-top: 10px;">
+                        <div>[0] Dev↔Research</div>
+                        <div>[1] Research↔Spec</div>
+                        <div>[2] Dev↔Spec</div>
+                        <div>[3] System Stable</div>
+                    </div>
+                </div>
+                <div style="background: var(--bg-card); padding: 15px; border-radius: 8px; border-left: 3px solid var(--pi-magenta);">
+                    <strong style="color: var(--pi-magenta);">M (332 bits)</strong>
+                    <div style="font-size: 0.85em; color: var(--text-dim); margin-top: 10px;">
+                        <div>[0-31] Header (32)</div>
+                        <div>[32-95] Temporal (64)</div>
+                        <div>[96-159] Source (64)</div>
+                        <div>[160-331] Delta (172)</div>
+                    </div>
+                </div>
+                <div style="background: var(--bg-card); padding: 15px; border-radius: 8px; border-left: 3px solid var(--yellow-chronicle);">
+                    <strong style="color: var(--yellow-chronicle);">Y (332 bits)</strong>
+                    <div style="font-size: 0.85em; color: var(--text-dim); margin-top: 10px;">
+                        <div>[0-31] Header (32)</div>
+                        <div>[32-95] Checkpoint (64)</div>
+                        <div>[96-159] StateHash (64)</div>
+                        <div>[160-331] Snapshot (172)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Mapping Table -->
         <section class="section">
             <h2>🗺️ Complete Channel-Lambda-Documentation Mapping</h2>
@@ -762,6 +946,41 @@
                 </div>
             </div>
 
+            <!-- CMY Specialized Controls -->
+            <h3 style="margin: 25px 0 15px; color: var(--pi-magenta);">CMY Specialized Encoding</h3>
+            <div class="controls">
+                <div class="control-group">
+                    <label style="color: var(--pi-magenta);">M: Change Type (Delta)</label>
+                    <select id="changeTypeSelect">
+                        <option value="CREATE">CREATE (New entity)</option>
+                        <option value="MODIFY" selected>MODIFY (Edit existing)</option>
+                        <option value="DELETE">DELETE (Remove)</option>
+                        <option value="MERGE">MERGE (Combine)</option>
+                        <option value="SPLIT">SPLIT (Divide)</option>
+                        <option value="REVERT">REVERT (Undo)</option>
+                        <option value="MILESTONE">MILESTONE (Major)</option>
+                        <option value="BREAKING">BREAKING (Breaking change)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label style="color: var(--yellow-chronicle);">Y: State Type (Snapshot)</label>
+                    <select id="stateTypeSelect">
+                        <option value="DRAFT" selected>DRAFT (Work in progress)</option>
+                        <option value="REVIEW">REVIEW (Under review)</option>
+                        <option value="APPROVED">APPROVED (Reviewed)</option>
+                        <option value="PUBLISHED">PUBLISHED (Released)</option>
+                        <option value="ARCHIVED">ARCHIVED (Historical)</option>
+                        <option value="DEPRECATED">DEPRECATED (For removal)</option>
+                        <option value="LOCKED">LOCKED (Cannot modify)</option>
+                        <option value="GOLDEN">GOLDEN (Canonical)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label style="color: var(--yellow-chronicle);">Y: Checkpoint ID</label>
+                    <input type="number" id="checkpointInput" min="1" max="9999" value="1" style="width: 100%; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--rule); padding: 8px 12px; border-radius: 6px; font-family: inherit;">
+                </div>
+            </div>
+
             <canvas id="demoCanvas"></canvas>
 
             <div style="text-align: center; margin-top: 20px;">
@@ -892,6 +1111,30 @@
         const PHI_INV = 1 / PHI;
         const GOLDEN_ANGLE = 2 * Math.PI / PHI;
 
+        // Change types for M channel (Delta)
+        const CHANGE_TYPES = {
+            CREATE:     0b00000001,
+            MODIFY:     0b00000010,
+            DELETE:     0b00000100,
+            MERGE:      0b00001000,
+            SPLIT:      0b00010000,
+            REVERT:     0b00100000,
+            MILESTONE:  0b01000000,
+            BREAKING:   0b10000000,
+        };
+
+        // State types for Y channel (Snapshot)
+        const STATE_TYPES = {
+            DRAFT:      0b00000001,
+            REVIEW:     0b00000010,
+            APPROVED:   0b00000100,
+            PUBLISHED:  0b00001000,
+            ARCHIVED:   0b00010000,
+            DEPRECATED: 0b00100000,
+            LOCKED:     0b01000000,
+            GOLDEN:     0b10000000,
+        };
+
         // State
         let chronicleState = {
             research: 512,
@@ -899,8 +1142,103 @@
             spec: 65536,
             doc: 8,
             chronicleA: 'fibonacci',
-            chronicleB: 'omega'
+            chronicleB: 'omega',
+            // CMY specialized state
+            changeType: 'MODIFY',
+            stateType: 'DRAFT',
+            checkpointId: 1
         };
+
+        // ========== C CHANNEL: Coherence Vector (4 bits) ==========
+        function calculateCoherenceVector(R, G, B) {
+            const rNorm = R / 127;
+            const gNorm = G / 1023;
+            const bNorm = B / 131071;
+
+            const bit0 = Math.abs(rNorm - gNorm) < 0.3 ? 1 : 0;  // Dev↔Research
+            const bit1 = Math.abs(gNorm - bNorm) < 0.3 ? 1 : 0;  // Research↔Spec
+            const bit2 = Math.abs(rNorm - bNorm) < 0.3 ? 1 : 0;  // Dev↔Spec
+            const bit3 = (bit0 + bit1 + bit2 >= 2) ? 1 : 0;      // System stable
+
+            return (bit3 << 3) | (bit2 << 2) | (bit1 << 1) | bit0;
+        }
+
+        // ========== M CHANNEL: Delta Encoder (332 bits) ==========
+        function encodeDeltaChannel(changeType, timestamp, sourceHash, diffSeed) {
+            const bits = new Array(332).fill(0);
+
+            // Header: change type (32 bits)
+            const typeVal = CHANGE_TYPES[changeType] || CHANGE_TYPES.MODIFY;
+            for (let i = 0; i < 32; i++) {
+                bits[i] = (typeVal >> (7 - (i % 8))) & 1;
+            }
+
+            // Temporal: hash of timestamp (64 bits)
+            const timeHash = simpleHash(timestamp);
+            for (let i = 0; i < 64; i++) {
+                bits[32 + i] = (timeHash >> (63 - i)) & 1;
+            }
+
+            // Source: hash of before-state (64 bits)
+            for (let i = 0; i < 64; i++) {
+                bits[96 + i] = (sourceHash >> (63 - i)) & 1;
+            }
+
+            // Delta: golden-angle spiral pattern (172 bits)
+            for (let i = 0; i < 172; i++) {
+                const angle = i * GOLDEN_ANGLE;
+                const r = Math.sqrt(i / 172);
+                const x = r * Math.cos(angle);
+                const y = r * Math.sin(angle);
+                const val = (x * diffSeed + y * (1 - diffSeed) + x * y * PHI) % 1;
+                bits[160 + i] = val > 0.5 ? 1 : 0;
+            }
+
+            return bits;
+        }
+
+        // ========== Y CHANNEL: Snapshot Encoder (332 bits) ==========
+        function encodeSnapshotChannel(stateType, checkpointId, stateHash, lambda) {
+            const bits = new Array(332).fill(0);
+
+            // Header: state type (32 bits)
+            const typeVal = STATE_TYPES[stateType] || STATE_TYPES.DRAFT;
+            for (let i = 0; i < 32; i++) {
+                bits[i] = (typeVal >> (7 - (i % 8))) & 1;
+            }
+
+            // Checkpoint: sequence ID (64 bits)
+            for (let i = 0; i < 64; i++) {
+                bits[32 + i] = ((checkpointId * 12345) >> (i % 32)) & 1;
+            }
+
+            // State hash (64 bits)
+            for (let i = 0; i < 64; i++) {
+                bits[96 + i] = (stateHash >> (63 - i)) & 1;
+            }
+
+            // Snapshot: wave pattern encoding (172 bits)
+            const { omega, delta, sigma } = lambda;
+            for (let i = 0; i < 172; i++) {
+                const wave = Math.sin(i * omega * 0.1);
+                const paradox = Math.cos(i * delta * 0.15);
+                const spiral = (i / 172) * sigma;
+                bits[160 + i] = (wave + paradox + spiral) > 1 ? 1 : 0;
+            }
+
+            return bits;
+        }
+
+        // Simple hash function for demo
+        function simpleHash(val) {
+            let hash = 0;
+            const str = String(val);
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash = hash & hash;
+            }
+            return Math.abs(hash);
+        }
 
         // Canvas setup
         const canvas = document.getElementById('demoCanvas');
@@ -1109,30 +1447,107 @@
             renderChronicle();
         });
 
+        // CMY Specialized controls
+        document.getElementById('changeTypeSelect').addEventListener('change', (e) => {
+            chronicleState.changeType = e.target.value;
+            renderChronicle();
+        });
+
+        document.getElementById('stateTypeSelect').addEventListener('change', (e) => {
+            chronicleState.stateType = e.target.value;
+            renderChronicle();
+        });
+
+        document.getElementById('checkpointInput').addEventListener('input', (e) => {
+            chronicleState.checkpointId = parseInt(e.target.value) || 1;
+            renderChronicle();
+        });
+
         // Action functions
         function encodeChronicle() {
             const state = chronicleState;
 
-            // Generate full bit stream
+            // RGB channels (LSB0)
             const devBits = state.dev.toString(2).padStart(7, '0');
             const researchBits = state.research.toString(2).padStart(10, '0');
             const specBits = state.spec.toString(2).padStart(17, '0');
-            const docBits = state.doc.toString(2).padStart(4, '0');
-            const chronA = generatePattern(state.chronicleA).join('');
-            const chronB = generatePattern(state.chronicleB).join('');
 
-            const fullStream = devBits + researchBits + specBits + docBits + chronA + chronB;
+            // C Channel: Specialized coherence vector (4 bits)
+            const coherenceVector = calculateCoherenceVector(state.dev, state.research, state.spec);
+            const cBits = coherenceVector.toString(2).padStart(4, '0');
+            const cAnalysis = {
+                devResearch: (coherenceVector & 1) ? '✓' : '✗',
+                researchSpec: (coherenceVector & 2) ? '✓' : '✗',
+                devSpec: (coherenceVector & 4) ? '✓' : '✗',
+                systemStable: (coherenceVector & 8) ? '✓' : '✗'
+            };
 
-            console.log('Chronicle MRP Encoded:');
-            console.log('  DEV (R):', devBits, '=', state.dev);
-            console.log('  RESEARCH (G):', researchBits, '=', state.research);
-            console.log('  SPEC (B):', specBits, '=', state.spec);
-            console.log('  DOC (C):', docBits, '=', state.doc);
-            console.log('  CHRONICLE-A (M):', state.chronicleA, '(332 bits)');
-            console.log('  CHRONICLE-B (Y):', state.chronicleB, '(332 bits)');
-            console.log('  Total bits:', fullStream.length);
+            // M Channel: Specialized delta encoder (332 bits)
+            const timestamp = Date.now();
+            const sourceHash = simpleHash(state.dev + state.research + state.spec);
+            const diffSeed = (state.dev / 127 + state.research / 1023) / 2;
+            const mBits = encodeDeltaChannel(state.changeType, timestamp, sourceHash, diffSeed);
+            const mHeader = mBits.slice(0, 32).join('');
 
-            alert(`Chronicle MRP Encoded!\n\nDEV: ${state.dev}\nRESEARCH: ${state.research}\nSPEC: ${state.spec}\nDOC: ${state.doc}\nCHRON-A: ${state.chronicleA}\nCHRON-B: ${state.chronicleB}\n\nTotal: ${fullStream.length} bits`);
+            // Y Channel: Specialized snapshot encoder (332 bits)
+            const stateHash = simpleHash(JSON.stringify(state));
+            const lambda = {
+                omega: state.research / 1023,
+                delta: state.spec / 131071,
+                sigma: state.dev / 127
+            };
+            const yBits = encodeSnapshotChannel(state.stateType, state.checkpointId, stateHash, lambda);
+            const yHeader = yBits.slice(0, 32).join('');
+
+            const fullStream = devBits + researchBits + specBits + cBits + mBits.join('') + yBits.join('');
+
+            console.log('=== Chronicle MRP Encoded (Specialized CMY) ===');
+            console.log('RGB (LSB0):');
+            console.log('  R (DEV):', devBits, '=', state.dev);
+            console.log('  G (RESEARCH):', researchBits, '=', state.research);
+            console.log('  B (SPEC):', specBits, '=', state.spec);
+            console.log('CMY (LSB1) - SPECIALIZED:');
+            console.log('  C (COHERENCE):', cBits, '=', coherenceVector);
+            console.log('    Dev↔Research:', cAnalysis.devResearch);
+            console.log('    Research↔Spec:', cAnalysis.researchSpec);
+            console.log('    Dev↔Spec:', cAnalysis.devSpec);
+            console.log('    System Stable:', cAnalysis.systemStable);
+            console.log('  M (DELTA):', state.changeType, '- Header:', mHeader.substring(0, 8) + '...');
+            console.log('    Change Type:', state.changeType);
+            console.log('    Timestamp:', new Date(timestamp).toISOString());
+            console.log('    Source Hash:', sourceHash);
+            console.log('  Y (SNAPSHOT):', state.stateType, '- Header:', yHeader.substring(0, 8) + '...');
+            console.log('    State Type:', state.stateType);
+            console.log('    Checkpoint:', state.checkpointId);
+            console.log('    State Hash:', stateHash);
+            console.log('Total bits:', fullStream.length);
+
+            const alertMsg = `Chronicle MRP Encoded (Specialized CMY)
+
+═══ RGB (LSB0) ═══
+R (DEV): ${state.dev}
+G (RESEARCH): ${state.research}
+B (SPEC): ${state.spec}
+
+═══ C (COHERENCE - 4 bits) ═══
+Value: ${coherenceVector} (${cBits})
+Dev↔Research: ${cAnalysis.devResearch}
+Research↔Spec: ${cAnalysis.researchSpec}
+Dev↔Spec: ${cAnalysis.devSpec}
+System Stable: ${cAnalysis.systemStable}
+
+═══ M (DELTA - 332 bits) ═══
+Change Type: ${state.changeType}
+Header: ${mHeader.substring(0, 16)}...
+
+═══ Y (SNAPSHOT - 332 bits) ═══
+State Type: ${state.stateType}
+Checkpoint: #${state.checkpointId}
+Header: ${yHeader.substring(0, 16)}...
+
+Total: ${fullStream.length} bits`;
+
+            alert(alertMsg);
         }
 
         function randomizeChronicle() {
@@ -1145,6 +1560,13 @@
             chronicleState.chronicleA = patterns[Math.floor(Math.random() * patterns.length)];
             chronicleState.chronicleB = patterns[Math.floor(Math.random() * patterns.length)];
 
+            // Randomize specialized CMY fields
+            const changeTypes = Object.keys(CHANGE_TYPES);
+            const stateTypes = Object.keys(STATE_TYPES);
+            chronicleState.changeType = changeTypes[Math.floor(Math.random() * changeTypes.length)];
+            chronicleState.stateType = stateTypes[Math.floor(Math.random() * stateTypes.length)];
+            chronicleState.checkpointId = Math.floor(Math.random() * 1000) + 1;
+
             // Update UI
             document.getElementById('devInput').value = chronicleState.dev;
             document.getElementById('researchInput').value = chronicleState.research;
@@ -1152,6 +1574,14 @@
             document.getElementById('docInput').value = chronicleState.doc;
             document.getElementById('chronicleAPattern').value = chronicleState.chronicleA;
             document.getElementById('chronicleBPattern').value = chronicleState.chronicleB;
+
+            // Update CMY controls if they exist
+            const changeTypeSelect = document.getElementById('changeTypeSelect');
+            const stateTypeSelect = document.getElementById('stateTypeSelect');
+            const checkpointInput = document.getElementById('checkpointInput');
+            if (changeTypeSelect) changeTypeSelect.value = chronicleState.changeType;
+            if (stateTypeSelect) stateTypeSelect.value = chronicleState.stateType;
+            if (checkpointInput) checkpointInput.value = chronicleState.checkpointId;
 
             renderChronicle();
         }
