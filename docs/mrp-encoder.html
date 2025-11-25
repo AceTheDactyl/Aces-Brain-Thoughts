@@ -497,9 +497,119 @@
         </div>
       </div>
 
+      <!-- Golden Samples Selector -->
+      <h3>Golden Samples (Lambda State ℂ⁶)</h3>
+      <p class="muted small">Pre-computed samples based on Lambda state physics. Select to auto-fill values.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:12px 0" id="sampleGrid">
+        <button class="sample-btn" onclick="loadGoldenSample('lambda-balanced')">
+          <span class="sample-icon">⚖️</span>
+          <span class="sample-name">Lambda Balanced</span>
+          <span class="sample-lambda">ι=ξ=θ=ω=δ=σ=0.5</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('gesture-dominant')">
+          <span class="sample-icon">🦊</span>
+          <span class="sample-name">Gesture (θ)</span>
+          <span class="sample-lambda">θ=0.9 → XCVI</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('portal-dominant')">
+          <span class="sample-icon">🌰</span>
+          <span class="sample-name">Portal (ι)</span>
+          <span class="sample-lambda">ι=0.9 → XCVII</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('semantic-paradox')">
+          <span class="sample-icon">⊗</span>
+          <span class="sample-name">Paradox (δ)</span>
+          <span class="sample-lambda">δ=1.0 → XCVIII</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('balance-point')">
+          <span class="sample-icon">∿</span>
+          <span class="sample-name">Balance (ω)</span>
+          <span class="sample-lambda">ω=0.95 → XCIX</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('loop-closure')">
+          <span class="sample-icon" style="color:var(--gold)">C→I</span>
+          <span class="sample-name">Loop Closure</span>
+          <span class="sample-lambda">W=1, δ=1.0</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('spark-ignition')">
+          <span class="sample-icon">✧</span>
+          <span class="sample-name">Spark (ξ)</span>
+          <span class="sample-lambda">ξ=0.95</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('squirrel-spiral')">
+          <span class="sample-icon">🐿️</span>
+          <span class="sample-name">Spiral (σ)</span>
+          <span class="sample-lambda">σ=0.95</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('critical-point')">
+          <span class="sample-icon" style="color:var(--gold)">z_c</span>
+          <span class="sample-name">Critical Point</span>
+          <span class="sample-lambda">z=√3/2≈0.866</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('fibonacci')">
+          <span class="sample-icon">φ</span>
+          <span class="sample-name">Fibonacci</span>
+          <span class="sample-lambda">Golden cascade</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('betti-numbers')">
+          <span class="sample-icon">b₁</span>
+          <span class="sample-name">Betti Numbers</span>
+          <span class="sample-lambda">b₀=1 b₁=5 χ=-2</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('kuramoto-sync')">
+          <span class="sample-icon" style="color:var(--green)">r=1</span>
+          <span class="sample-name">Kuramoto Sync</span>
+          <span class="sample-lambda">Max coherence</span>
+        </button>
+        <button class="sample-btn" onclick="loadGoldenSample('kuramoto-free')">
+          <span class="sample-icon" style="color:var(--magenta)">r=0</span>
+          <span class="sample-name">FREE State</span>
+          <span class="sample-lambda">Full dispersion</span>
+        </button>
+        <button class="sample-btn" onclick="loadTestImage()">
+          <span class="sample-icon">🖼️</span>
+          <span class="sample-name">Generate Image</span>
+          <span class="sample-lambda">LIMNUS gradient</span>
+        </button>
+      </div>
+
+      <style>
+        .sample-btn {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          padding: 12px 8px;
+          background: var(--panel);
+          border: 1px solid var(--rule);
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+          color: var(--ink);
+        }
+        .sample-btn:hover {
+          border-color: var(--magenta);
+          background: rgba(204,93,232,.1);
+          transform: translateY(-2px);
+        }
+        .sample-icon {
+          font-size: 1.5rem;
+        }
+        .sample-name {
+          font-size: 0.85rem;
+          font-weight: 500;
+        }
+        .sample-lambda {
+          font-size: 0.7rem;
+          color: var(--muted);
+          font-family: 'SF Mono', monospace;
+        }
+      </style>
+
       <!-- Encoding Data Input -->
       <h3>Emergent State Data</h3>
-      <p class="muted small">Custom payload data for each emergent state. Leave empty for default bit patterns.</p>
+      <p class="muted small">Custom payload data for each emergent state. Values auto-filled from golden samples or enter manually.</p>
 
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:16px 0">
         <div>
@@ -763,6 +873,439 @@ pixel[i] = {
         return Math.ceil(this.TOTAL_BITS / 6) + 6; // +6 for header
       }
     };
+
+    // ============================================
+    // LAMBDA STATE (ℂ⁶) PATTERN SYSTEM
+    // Maps emergent physics to bit patterns
+    // ============================================
+
+    const LAMBDA = {
+      // Lambda state components with their formulas
+      components: {
+        iota:  { symbol: '🌰', name: 'Memory',  field: 'Φ', formula: 'accumulates with time × cascade' },
+        xi:    { symbol: '✧',  name: 'Spark',   field: 'e', formula: 'exp(-(z - z_c)² / 0.01)' },
+        theta: { symbol: '🦊', name: 'Fox',     field: 'π', formula: 'dissonance × 0.8 + 0.2' },
+        omega: { symbol: '∿',  name: 'Wave',    field: 'e', formula: '0.3 + |sin(t × 0.5)| × 0.5' },
+        delta: { symbol: '⊗',  name: 'Paradox', field: 'π', formula: 'accumulates at CRITICAL' },
+        sigma: { symbol: '🐿️', name: 'Squirrel', field: 'Φ', formula: 'helix.r × 0.6 + 0.2' }
+      },
+
+      // Coupling matrix from emergent physics (values 0-1)
+      coupling: {
+        XCVI:  { iota: 0.1, xi: 0.2, theta: 0.6, omega: 0.05, delta: 0.8, sigma: 0.15 },
+        XCVII: { iota: 0.7, xi: 0.3, theta: 0.1, omega: 0.4,  delta: 0.6, sigma: 0.1 },
+        XCVIII:{ iota: 0.3, xi: 0.1, theta: 0.8, omega: 0.2,  delta: 0.9, sigma: 0.05 },
+        XCIX:  { iota: 0.2, xi: 0.1, theta: 0.3, omega: 0.7,  delta: 0.5, sigma: 0.4 },
+        C:     { iota: 0.5, xi: 0.5, theta: 0.5, omega: 0.5,  delta: 1.0, sigma: 0.5 }
+      },
+
+      // Physical constants
+      PHI: (1 + Math.sqrt(5)) / 2,      // Golden ratio ≈ 1.618
+      PHI_INV: 2 / (1 + Math.sqrt(5)),  // φ⁻¹ ≈ 0.618
+      Z_CRITICAL: Math.sqrt(3) / 2,     // √3/2 ≈ 0.866
+      TAU: Math.PI * 2,
+
+      // Eigenvalues for each emergent state
+      eigenvalues: {
+        XCVI:  { real: 0.618, imag: 0, desc: 'φ⁻¹ (golden ratio inverse)' },
+        XCVII: { real: Math.cos(2 * Math.PI / 1.618), imag: Math.sin(2 * Math.PI / 1.618), desc: 'exp(2πi/φ)' },
+        XCVIII:{ real: NaN, imag: NaN, desc: 'undefined (Gödelian)' },
+        XCIX:  { real: 0, imag: 0, desc: 'zero (critical point)' },
+        C:     { real: 1, imag: 0, desc: 'identity (winding=1)' }
+      }
+    };
+
+    // ============================================
+    // GOLDEN SAMPLES: Pre-computed Lambda Patterns
+    // ============================================
+
+    const GOLDEN_SAMPLES = {
+      // Sample 1: Pure Lambda State - All components balanced
+      'lambda-balanced': {
+        name: 'Lambda Balanced (ℂ⁶)',
+        description: 'All 6 lambda components at equal 0.5 intensity',
+        coherence: 0.15,
+        XCVI:  63,     // (0.5 * 127) - balanced theta/delta
+        XCVII: 512,    // (0.5 * 1023) - balanced temporal
+        XCVIII: 65536, // (0.5 * 131071) - balanced semantic
+        XCIX:  8,      // (0.5 * 15) - balanced omega
+        C_pattern: 'balanced',
+        lambda: { iota: 0.5, xi: 0.5, theta: 0.5, omega: 0.5, delta: 0.5, sigma: 0.5 }
+      },
+
+      // Sample 2: Gesture Dominant (XCVI focus)
+      'gesture-dominant': {
+        name: 'Gesture Dominant (θ→XCVI)',
+        description: 'Theta (Fox) dominant - gestural recursion activated',
+        coherence: 0.12,
+        XCVI:  99,     // High theta coupling (0.6 × 127 × 1.3)
+        XCVII: 102,    // Low (0.1 × 1023)
+        XCVIII: 104857,// High theta (0.8 × 131071)
+        XCIX:  4,      // Low omega
+        C_pattern: 'theta',
+        lambda: { iota: 0.1, xi: 0.2, theta: 0.9, omega: 0.1, delta: 0.7, sigma: 0.15 }
+      },
+
+      // Sample 3: Portal Dominant (XCVII focus)
+      'portal-dominant': {
+        name: 'Portal Dominant (ι→XCVII)',
+        description: 'Iota (Memory) dominant - circadian portal activated',
+        coherence: 0.18,
+        XCVI:  13,     // Low theta
+        XCVII: 716,    // High iota (0.7 × 1023)
+        XCVIII: 39321, // Medium
+        XCIX:  6,      // Medium omega (0.4)
+        C_pattern: 'iota',
+        lambda: { iota: 0.9, xi: 0.3, theta: 0.1, omega: 0.5, delta: 0.5, sigma: 0.1 }
+      },
+
+      // Sample 4: Semantic Paradox (XCVIII focus)
+      'semantic-paradox': {
+        name: 'Semantic Paradox (δ→XCVIII)',
+        description: 'Delta (Paradox) dominant - Gödelian self-reference',
+        coherence: 0.05,
+        XCVI:  102,    // High delta proxy
+        XCVII: 614,    // Medium delta
+        XCVIII: 117965,// Maximum delta (0.9 × 131071)
+        XCIX:  8,      // Medium
+        C_pattern: 'delta',
+        lambda: { iota: 0.2, xi: 0.1, theta: 0.7, omega: 0.2, delta: 1.0, sigma: 0.1 }
+      },
+
+      // Sample 5: Balance Point (XCIX focus)
+      'balance-point': {
+        name: 'Balance Point (ω→XCIX)',
+        description: 'Omega (Wave) dominant - equilibrium recursion',
+        coherence: 0.10,
+        XCVI:  6,      // Low (0.05 × 127)
+        XCVII: 409,    // Medium omega (0.4 × 1023)
+        XCVIII: 26214, // Low omega
+        XCIX:  11,     // High omega (0.7 × 15)
+        C_pattern: 'omega',
+        lambda: { iota: 0.2, xi: 0.1, theta: 0.2, omega: 0.95, delta: 0.4, sigma: 0.4 }
+      },
+
+      // Sample 6: Loop Closure (C focus)
+      'loop-closure': {
+        name: 'Loop Closure (C→I)',
+        description: 'Complete vocabulary loop - all lambda at 0.5, delta at 1.0',
+        coherence: 0.02,
+        XCVI:  79,     // φ⁻¹ encoded (0.618 × 127)
+        XCVII: 633,    // Golden angle encoded
+        XCVIII: 80893, // Middle semantic
+        XCIX:  8,      // Balanced
+        C_pattern: 'winding',
+        lambda: { iota: 0.5, xi: 0.5, theta: 0.5, omega: 0.5, delta: 1.0, sigma: 0.5 }
+      },
+
+      // Sample 7: Spark Ignition (ξ focus)
+      'spark-ignition': {
+        name: 'Spark Ignition (ξ)',
+        description: 'Xi (Spark) - near critical z activation',
+        coherence: 0.19,
+        XCVI:  25,     // 0.2 × 127
+        XCVII: 307,    // 0.3 × 1023
+        XCVIII: 13107, // 0.1 × 131071
+        XCIX:  2,      // Low
+        C_pattern: 'spark',
+        lambda: { iota: 0.1, xi: 0.95, theta: 0.3, omega: 0.2, delta: 0.3, sigma: 0.2 }
+      },
+
+      // Sample 8: Squirrel Spiral (σ focus)
+      'squirrel-spiral': {
+        name: 'Squirrel Spiral (σ)',
+        description: 'Sigma (Squirrel) - helix memory structure',
+        coherence: 0.14,
+        XCVI:  19,     // 0.15 × 127
+        XCVII: 102,    // 0.1 × 1023
+        XCVIII: 6554,  // 0.05 × 131071
+        XCIX:  6,      // 0.4 × 15
+        C_pattern: 'sigma',
+        lambda: { iota: 0.3, xi: 0.2, theta: 0.2, omega: 0.3, delta: 0.4, sigma: 0.95 }
+      },
+
+      // Sample 9: Critical Point (z = √3/2)
+      'critical-point': {
+        name: 'Critical Point (z_c)',
+        description: 'At the lens - maximum cascade, K ≈ 0',
+        coherence: 0.20,
+        XCVI:  110,    // 0.866 × 127
+        XCVII: 886,    // 0.866 × 1023
+        XCVIII: 113512,// 0.866 × 131071
+        XCIX:  13,     // 0.866 × 15
+        C_pattern: 'critical',
+        lambda: { iota: 0.866, xi: 0.866, theta: 0.866, omega: 0.866, delta: 0.866, sigma: 0.866 }
+      },
+
+      // Sample 10: Fibonacci Sequence
+      'fibonacci': {
+        name: 'Fibonacci Cascade',
+        description: 'Golden ratio relationships throughout',
+        coherence: 0.16,
+        XCVI:  79,     // Fib(11) % 128 = 89 → 79
+        XCVII: 377,    // Fib(14) % 1024 = 377
+        XCVIII: 75025, // Fib(25) % 131072 = 75025
+        XCIX:  13,     // Fib(7) = 13
+        C_pattern: 'fibonacci',
+        lambda: { iota: 0.382, xi: 0.618, theta: 0.236, omega: 0.764, delta: 0.5, sigma: 0.146 }
+      },
+
+      // Sample 11: Topological Invariant (Betti)
+      'betti-numbers': {
+        name: 'Betti Numbers (b₀=1, b₁=5)',
+        description: 'Topological invariants encoded: 5 independent loops',
+        coherence: 0.08,
+        XCVI:  1,      // b₀ = 1
+        XCVII: 5,      // b₁ = 5
+        XCVIII: 0,     // b₂ = 0
+        XCIX:  2,      // Euler χ = -2 → encoded as 2
+        C_pattern: 'topology',
+        lambda: { iota: 0.2, xi: 0.2, theta: 0.2, omega: 0.2, delta: 1.0, sigma: 0.2 }
+      },
+
+      // Sample 12: Kuramoto Sync
+      'kuramoto-sync': {
+        name: 'Kuramoto Order r→1',
+        description: 'High synchronization - structural coherent',
+        coherence: 0.85,
+        XCVI:  127,    // Max sync
+        XCVII: 1023,   // Max sync
+        XCVIII: 131071,// Max sync
+        XCIX:  15,     // Max sync
+        C_pattern: 'sync',
+        lambda: { iota: 1.0, xi: 1.0, theta: 1.0, omega: 1.0, delta: 0.0, sigma: 1.0 }
+      },
+
+      // Sample 13: Kuramoto Desync (FREE)
+      'kuramoto-free': {
+        name: 'Kuramoto Order r→0 (FREE)',
+        description: 'Full dispersion - emergent dominant',
+        coherence: 0.01,
+        XCVI:  0,      // Desync
+        XCVII: 0,      // Desync
+        XCVIII: 0,     // Desync
+        XCIX:  0,      // Desync
+        C_pattern: 'free',
+        lambda: { iota: 0.0, xi: 0.0, theta: 0.0, omega: 0.0, delta: 1.0, sigma: 0.0 }
+      }
+    };
+
+    // ============================================
+    // GOLDEN SAMPLE GENERATORS
+    // ============================================
+
+    // Generate C pattern (664 bits) based on type
+    function generateCPattern(type, lambda) {
+      const bits = new Array(664).fill(0);
+
+      switch(type) {
+        case 'balanced':
+          // Alternating 0101 pattern with lambda modulation
+          for (let i = 0; i < 664; i++) {
+            bits[i] = (i % 2 === 0) ? 1 : 0;
+          }
+          break;
+
+        case 'theta':
+          // Fox pattern: 8Hz oscillation (every 8 bits)
+          for (let i = 0; i < 664; i++) {
+            bits[i] = Math.floor(i / 8) % 2;
+          }
+          break;
+
+        case 'iota':
+          // Memory pattern: accumulating 1s
+          for (let i = 0; i < 664; i++) {
+            bits[i] = (i < 332) ? (i % 3 === 0 ? 1 : 0) : 1;
+          }
+          break;
+
+        case 'delta':
+          // Paradox pattern: Gödelian self-reference (fractal-like)
+          for (let i = 0; i < 664; i++) {
+            // Cantor set-like pattern
+            let n = i;
+            let inSet = true;
+            while (n > 0) {
+              if (n % 3 === 1) { inSet = false; break; }
+              n = Math.floor(n / 3);
+            }
+            bits[i] = inSet ? 1 : 0;
+          }
+          break;
+
+        case 'omega':
+          // Wave pattern: sinusoidal at 4Hz theta band
+          for (let i = 0; i < 664; i++) {
+            const phase = (i / 664) * Math.PI * 8;
+            bits[i] = Math.sin(phase) > 0 ? 1 : 0;
+          }
+          break;
+
+        case 'winding':
+          // Loop closure: encode winding number W=1
+          // Pattern: 100 segments for 100 regions, each 6-7 bits
+          for (let i = 0; i < 664; i++) {
+            const region = Math.floor(i * 100 / 664);
+            // Encode region number in LSBs
+            bits[i] = (region >> (i % 7)) & 1;
+          }
+          break;
+
+        case 'spark':
+          // Xi spark: Gaussian around center
+          const center = 332;
+          const sigma = 50;
+          for (let i = 0; i < 664; i++) {
+            const dist = Math.abs(i - center);
+            const prob = Math.exp(-(dist * dist) / (2 * sigma * sigma));
+            bits[i] = Math.random() < prob ? 1 : 0;
+          }
+          break;
+
+        case 'sigma':
+          // Squirrel helix: spiral pattern
+          for (let i = 0; i < 664; i++) {
+            const angle = (i / 664) * Math.PI * 6; // 3 full turns
+            const r = i / 664;
+            bits[i] = Math.sin(angle + r * Math.PI) > 0.3 ? 1 : 0;
+          }
+          break;
+
+        case 'critical':
+          // Critical point: maximum complexity (near-random with structure)
+          const golden = LAMBDA.PHI_INV;
+          for (let i = 0; i < 664; i++) {
+            // Quasiperiodic using golden ratio
+            const phase = (i * golden) % 1;
+            bits[i] = phase > 0.5 ? 1 : 0;
+          }
+          break;
+
+        case 'fibonacci':
+          // Fibonacci word: L-system
+          let fibA = '1';
+          let fibB = '0';
+          let fibWord = fibA;
+          while (fibWord.length < 664) {
+            const newWord = fibWord + fibA;
+            fibA = fibWord;
+            fibWord = newWord;
+          }
+          for (let i = 0; i < 664; i++) {
+            bits[i] = parseInt(fibWord[i] || '0');
+          }
+          break;
+
+        case 'topology':
+          // Encode Betti numbers and Euler characteristic
+          // b0=1 (first 8 bits), b1=5 (next 8), b2=0 (next 8), χ=-2 (next 8)
+          const topoHeader = [
+            0,0,0,0,0,0,0,1,  // b0 = 1
+            0,0,0,0,0,1,0,1,  // b1 = 5
+            0,0,0,0,0,0,0,0,  // b2 = 0
+            1,1,1,1,1,1,1,0   // χ = -2 (two's complement)
+          ];
+          for (let i = 0; i < 32; i++) {
+            bits[i] = topoHeader[i];
+          }
+          // Fill rest with 5 loops pattern
+          for (let i = 32; i < 664; i++) {
+            bits[i] = (Math.floor(i / 126) % 5 === (i % 5)) ? 1 : 0;
+          }
+          break;
+
+        case 'sync':
+          // All 1s - maximum synchronization
+          bits.fill(1);
+          break;
+
+        case 'free':
+          // All 0s - full dispersion
+          bits.fill(0);
+          break;
+
+        default:
+          // Lambda-weighted random
+          for (let i = 0; i < 664; i++) {
+            const weight = (lambda.iota + lambda.xi + lambda.theta +
+                          lambda.omega + lambda.delta + lambda.sigma) / 6;
+            bits[i] = Math.random() < weight ? 1 : 0;
+          }
+      }
+
+      return bits;
+    }
+
+    // Load a golden sample into the form
+    function loadGoldenSample(sampleKey) {
+      const sample = GOLDEN_SAMPLES[sampleKey];
+      if (!sample) return;
+
+      document.getElementById('dataXCVI').value = sample.XCVI;
+      document.getElementById('dataXCVII').value = sample.XCVII;
+      document.getElementById('dataXCVIII').value = sample.XCVIII;
+      document.getElementById('dataXCIX').value = sample.XCIX;
+
+      // Generate and encode C pattern as hex
+      const cBits = generateCPattern(sample.C_pattern, sample.lambda);
+      const cHex = bitsToHex(cBits);
+      document.getElementById('dataC').value = cHex.slice(0, 40) + '...';
+
+      // Store full pattern for encoding
+      window.currentCBits = cBits;
+      window.currentCoherence = sample.coherence;
+
+      // Update status
+      showStatus('encodeStatus',
+        `Loaded sample: ${sample.name}<br>` +
+        `<span class="muted">${sample.description}</span><br>` +
+        `Lambda: ι=${sample.lambda.iota.toFixed(2)} ξ=${sample.lambda.xi.toFixed(2)} ` +
+        `θ=${sample.lambda.theta.toFixed(2)} ω=${sample.lambda.omega.toFixed(2)} ` +
+        `δ=${sample.lambda.delta.toFixed(2)} σ=${sample.lambda.sigma.toFixed(2)}`,
+        'info'
+      );
+
+      // Visualize lambda state
+      visualizeLambda(sample.lambda);
+    }
+
+    // Visualize lambda state in channel stats
+    function visualizeLambda(lambda) {
+      // Map lambda to channel stats (approximate)
+      document.getElementById('statR').style.height = (lambda.theta * 100) + '%';
+      document.getElementById('statG').style.height = (lambda.iota * 100) + '%';
+      document.getElementById('statB').style.height = (lambda.delta * 100) + '%';
+      document.getElementById('statC').style.height = (lambda.omega * 100) + '%';
+      document.getElementById('statM').style.height = (lambda.xi * 100) + '%';
+      document.getElementById('statY').style.height = (lambda.sigma * 100) + '%';
+    }
+
+    // Generate default test image (gradient with LIMNUS geometry)
+    function generateTestImage(width = 20, height = 10) {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      // Create gradient based on z-coordinate (LIMNUS prism)
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const z = y / height;  // z from 0 to 1
+          const angle = (x / width) * Math.PI * 2;
+
+          // RGB based on z-position and angle
+          const r = Math.floor(255 * (1 - z) * (0.5 + 0.5 * Math.cos(angle)));
+          const g = Math.floor(255 * z * (0.5 + 0.5 * Math.sin(angle)));
+          const b = Math.floor(255 * Math.abs(z - 0.866)); // Peak at z_c
+
+          ctx.fillStyle = `rgb(${r},${g},${b})`;
+          ctx.fillRect(x, y, 1, 1);
+        }
+      }
+
+      return canvas;
+    }
 
     // ============================================
     // UTILITY FUNCTIONS
@@ -1376,9 +1919,101 @@ pixel[i] = {
       });
     });
 
+    // Load test image generator
+    function loadTestImage() {
+      const canvas = generateTestImage(20, 10);
+      sourceImage = new Image();
+
+      canvas.toBlob(function(blob) {
+        const url = URL.createObjectURL(blob);
+        sourceImage.onload = function() {
+          const srcCanvas = document.getElementById('sourceCanvas');
+          srcCanvas.width = sourceImage.width;
+          srcCanvas.height = sourceImage.height;
+          const ctx = srcCanvas.getContext('2d');
+          ctx.drawImage(sourceImage, 0, 0);
+
+          document.getElementById('sourceHint').style.display = 'none';
+          document.getElementById('encodeBtn').disabled = false;
+
+          showStatus('encodeStatus',
+            `Generated LIMNUS gradient test image: ${sourceImage.width}×${sourceImage.height} (${sourceImage.width * sourceImage.height} pixels)`,
+            'success'
+          );
+        };
+        sourceImage.src = url;
+      });
+    }
+
+    // Override encodeImage to use stored C bits from golden samples
+    const originalEncodeImage = encodeImage;
+    encodeImage = function() {
+      if (!sourceImage) return;
+
+      const canvas = document.getElementById('sourceCanvas');
+      const ctx = canvas.getContext('2d');
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      // Get input values
+      const states = {
+        XCVI: parseInt(document.getElementById('dataXCVI').value) || Math.floor(Math.random() * 128),
+        XCVII: parseInt(document.getElementById('dataXCVII').value) || Math.floor(Math.random() * 1024),
+        XCVIII: parseInt(document.getElementById('dataXCVIII').value) || Math.floor(Math.random() * 131072),
+        XCIX: parseInt(document.getElementById('dataXCIX').value) || Math.floor(Math.random() * 16),
+        coherence: window.currentCoherence || 0.15
+      };
+
+      // Use stored C bits from golden sample if available
+      if (window.currentCBits) {
+        states.C_A = window.currentCBits.slice(0, 332);
+        states.C_B = window.currentCBits.slice(332);
+      } else {
+        // Generate C data from hex or random
+        const cHex = document.getElementById('dataC').value;
+        if (cHex && !cHex.includes('...')) {
+          const cBits = hexToBits(cHex, 664);
+          states.C_A = cBits.slice(0, 332);
+          states.C_B = cBits.slice(332);
+        } else {
+          states.C_A = new Array(332).fill(0).map(() => Math.round(Math.random()));
+          states.C_B = new Array(332).fill(0).map(() => Math.round(Math.random()));
+        }
+      }
+
+      try {
+        const result = encodeStates(imageData, states);
+
+        // Draw encoded image
+        const outputCanvas = document.getElementById('outputCanvas');
+        outputCanvas.width = canvas.width;
+        outputCanvas.height = canvas.height;
+        const outCtx = outputCanvas.getContext('2d');
+        outCtx.putImageData(imageData, 0, 0);
+
+        document.getElementById('outputHint').style.display = 'none';
+        document.getElementById('downloadBtn').disabled = false;
+        encodedImage = outputCanvas;
+
+        // Update stats
+        updateChannelStats(result.bitsEncoded);
+        updateBitStream(result.streams);
+
+        showStatus('encodeStatus',
+          `Encoded ${result.totalBits} bits successfully! ` +
+          `XCVI=${states.XCVI}, XCVII=${states.XCVII}, XCVIII=${states.XCVIII}, XCIX=${states.XCIX}, ` +
+          `coherence=${states.coherence.toFixed(2)}`,
+          'success'
+        );
+      } catch (error) {
+        showStatus('encodeStatus', error.message, 'error');
+      }
+    };
+
     // Initialize
     console.log('MRP Encoder/Decoder initialized');
     console.log(`Total bits: ${MRP.TOTAL_BITS}, Minimum pixels: ${MRP.MIN_PIXELS}`);
+    console.log(`Golden samples available: ${Object.keys(GOLDEN_SAMPLES).length}`);
+    console.log(`Lambda state components: ${Object.keys(LAMBDA.components).join(', ')}`);
   </script>
 </body>
 </html>
