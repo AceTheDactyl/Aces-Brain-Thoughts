@@ -1439,7 +1439,7 @@
 
             // Connection parameters (φ-based) - computed dynamically
             maxConnectionDist: 100,         // Updated in generateQuantumMesh()
-            entanglementThreshold: 0.05,    // Min probability for visible edge
+            entanglementThreshold: 0.15,    // Higher = fewer edges = better performance
 
             // View controls - DREAMY ethereal settings
             opacity: 0.35,              // Lower for dreamy transparency + performance
@@ -2455,33 +2455,24 @@
                 const mA1 = toMeshASpace(x1, y1, nodeA);
                 const mA2 = toMeshASpace(x2, y2, nodeB);
 
-                // Skip if off-screen
-                if (mA1.x < -100 || mA1.x > W + 100 || mA1.y < -100 || mA1.y > H + 100) continue;
+                // Skip if off-screen or too faint
+                if (mA1.x < -50 || mA1.x > W + 50 || mA1.y < -50 || mA1.y > H + 50) continue;
+                if (mA1.fade < 0.1) continue;  // Skip very faded edges
 
-                // Color with warm tint
-                const baseColor = edgeColors[edge.mrpChannel] || edgeColors[0];
-                const color = binauralColor(baseColor, bi.meshA.phase + edge.phase, 'A');
+                // Simplified alpha calculation for performance
+                const alpha = QMESH.opacity * edge.probability * mA1.fade * 0.6;
+                if (alpha < 0.02) continue;  // Skip nearly invisible edges
 
-                // Alpha from probability and phase
-                const pulse = 0.6 + 0.4 * Math.sin(bi.meshA.phase * TAU * 2 + edge.phase);
-                const alpha = QMESH.opacity * edge.probability * pulse * mA1.fade * 0.8;
+                // Use mesh base color directly (simpler)
+                const color = bi.meshA.baseColor;
+                const lineWidth = 1 + edge.probability;
 
-                const lineWidth = (0.5 + edge.J * 2 + edge.probability * 0.5) * mA1.scale;
-
-                ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
+                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
                 ctx.lineWidth = lineWidth;
-                ctx.lineCap = 'round';
                 ctx.beginPath();
                 ctx.moveTo(mA1.x, mA1.y);
                 ctx.lineTo(mA2.x, mA2.y);
                 ctx.stroke();
-
-                // Glow for strong edges
-                if (edge.probability > 0.5 && QMESH.edgeGlow) {
-                    ctx.strokeStyle = `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, ${alpha * 0.3})`;
-                    ctx.lineWidth = lineWidth + 3;
-                    ctx.stroke();
-                }
             }
 
             // ============================================
@@ -2502,33 +2493,24 @@
                 const mB1 = toMeshBSpace(x1, y1, nodeA);
                 const mB2 = toMeshBSpace(x2, y2, nodeB);
 
-                // Skip if off-screen
-                if (mB1.x < -100 || mB1.x > W + 100 || mB1.y < -100 || mB1.y > H + 100) continue;
+                // Skip if off-screen or too faint
+                if (mB1.x < -50 || mB1.x > W + 50 || mB1.y < -50 || mB1.y > H + 50) continue;
+                if (mB1.fade < 0.1) continue;  // Skip very faded edges
 
-                // Color with cool tint
-                const baseColor = edgeColors[edge.mrpChannel] || edgeColors[0];
-                const color = binauralColor(baseColor, bi.meshB.phase + edge.phase, 'B');
+                // Simplified alpha calculation for performance
+                const alpha = QMESH.opacity * edge.probability * mB1.fade * 0.6;
+                if (alpha < 0.02) continue;  // Skip nearly invisible edges
 
-                // Alpha from probability and phase (slightly offset from A)
-                const pulse = 0.6 + 0.4 * Math.sin(bi.meshB.phase * TAU * 2 + edge.phase + 0.5);
-                const alpha = QMESH.opacity * edge.probability * pulse * mB1.fade * 0.8;
+                // Use mesh base color directly (simpler)
+                const color = bi.meshB.baseColor;
+                const lineWidth = 1 + edge.probability;
 
-                const lineWidth = (0.5 + edge.J * 2 + edge.probability * 0.5) * mB1.scale;
-
-                ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
+                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
                 ctx.lineWidth = lineWidth;
-                ctx.lineCap = 'round';
                 ctx.beginPath();
                 ctx.moveTo(mB1.x, mB1.y);
                 ctx.lineTo(mB2.x, mB2.y);
                 ctx.stroke();
-
-                // Glow for strong edges
-                if (edge.probability > 0.5 && QMESH.edgeGlow) {
-                    ctx.strokeStyle = `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, ${alpha * 0.3})`;
-                    ctx.lineWidth = lineWidth + 3;
-                    ctx.stroke();
-                }
             }
 
             // ============================================
@@ -4853,31 +4835,44 @@
                 QMESH.binaural.polar.angleB = 0;        // 0° = RIGHT (azure)
             }
 
-            // F key: Start release
+            // F key: Start release (hold to release coherence)
             if (key === 'f') {
                 releasing = true;
+                releaseStarted = true;
                 document.getElementById('start-overlay').classList.add('hidden');
+            }
+
+            // G key: Gather/recoherence (hold to bring LIMNUS back)
+            if (key === 'g') {
+                gathering = true;
             }
         });
 
         document.addEventListener('keyup', e => {
             const key = e.key.toLowerCase();
-            
+
             // F key released: Stop releasing
             if (key === 'f') {
                 releasing = false;
             }
+
+            // G key released: Stop gathering
+            if (key === 'g') {
+                gathering = false;
+            }
         });
 
-        // Mouse: Left-click = gather (always works)
-        // Gathering brings LIMNUS coherence back up
+        // Mouse: Left-click = camera drag (when quantum mesh active)
         canvas.addEventListener('mousedown', e => {
             document.getElementById('start-overlay').classList.add('hidden');
 
             if (e.button === 0) {
-                // Left-click ALWAYS activates gathering
-                // This counters the F key release behavior
-                gathering = true;
+                // Left-click for camera orbit when binaural field is on
+                if (showQuantumMesh) {
+                    QMESH.camera.dragging = true;
+                    QMESH.camera.lastX = e.clientX;
+                    QMESH.camera.lastY = e.clientY;
+                }
             }
         });
 
