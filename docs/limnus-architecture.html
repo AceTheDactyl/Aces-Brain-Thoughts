@@ -1448,32 +1448,24 @@
             pulsePhase: 0,          // Animation phase for quantum pulsing
 
             // ================================================================
-            // BINAURAL FIELD: Triquetra Geometry
+            // BINAURAL FIELD: 90° Horizontal Axis
             // ================================================================
-            // Natural triadic structure inspired by the triquetra (three-cornered):
+            // Perfect right-angle alignment centered on LIMNUS (0,0,0):
             //
-            //          [LIMNUS]  ← apex/perceiver (canvas center)
-            //            /  \
-            //           /    \    (equilateral triangle)
-            //          /      \
-            //       [A] ←beat→ [B]
-            //      150°       30°
-            //      warm       cool
+            //     [A] ←←←←← [LIMNUS] →→→→→ [B]
+            //    180°        center         0°
+            //    LEFT         (0,0)        RIGHT
+            //    warm/red               cool/blue
             //
-            // Canvas coords: Y increases downward, so:
-            //   - 150° = lower-left (cos < 0, sin > 0)
-            //   - 30° = lower-right (cos > 0, sin > 0)
-            //   - 120° separation = equilateral triangle
-            //
-            // IMPORTANT: Fields are FIXED in world space.
-            // Camera orbits around them - camera moves, not fields.
+            // 90° perpendicular to vertical axis
+            // Camera orbits around fixed field positions
             // ================================================================
             binaural: {
                 enabled: true,
                 polar: {
-                    distance: 1.25,                     // Distance from LIMNUS (in R units)
-                    angleA: (5 * Math.PI / 6),          // Mesh A at 150° (lower-left)
-                    angleB: (Math.PI / 6),              // Mesh B at 30° (lower-right)
+                    distance: 1.25,                     // Distance from LIMNUS center (in R units)
+                    angleA: Math.PI,                    // Mesh A at 180° (LEFT)
+                    angleB: 0,                          // Mesh B at 0° (RIGHT)
                     // Computed positions (updated on render)
                     posA: { x: 0, y: 0 },
                     posB: { x: 0, y: 0 },
@@ -4652,8 +4644,19 @@
             if (key === 't') {
                 showQuantumMesh = !showQuantumMesh;
                 showToroidal = showQuantumMesh;  // Sync alias
-                if (showQuantumMesh && QMESH.edges.length === 0) {
-                    generateQuantumMesh();
+                if (showQuantumMesh) {
+                    if (QMESH.edges.length === 0) {
+                        generateQuantumMesh();
+                    }
+                    // Reset to exact 90° horizontal alignment centered on LIMNUS
+                    // Red/warm (A) on LEFT, Blue/cool (B) on RIGHT
+                    QMESH.binaural.polar.angleA = Math.PI;  // 180° = LEFT
+                    QMESH.binaural.polar.angleB = 0;        // 0° = RIGHT
+                    QMESH.binaural.polar.distance = 1.25;
+                    // Reset camera to straight-on view (0,0,0)
+                    QMESH.camera.theta = 0;
+                    QMESH.camera.phi = 0;
+                    QMESH.camera.distance = 1.0;
                 }
                 console.log(`[QMESH] Toggled: ${showQuantumMesh}, edges: ${QMESH.edges.length}`);
             }
@@ -4807,10 +4810,10 @@
                 QMESH.camera.phi = 0;
                 QMESH.camera.distance = 1.0;
                 QMESH.camera.dragging = false;
-                // Reset polar positions (triquetra: 150°/30° for canvas coords)
+                // Reset polar positions (90° horizontal: LEFT/RIGHT)
                 QMESH.binaural.polar.distance = 1.25;
-                QMESH.binaural.polar.angleA = (5 * Math.PI / 6);  // 150° lower-left
-                QMESH.binaural.polar.angleB = (Math.PI / 6);      // 30° lower-right
+                QMESH.binaural.polar.angleA = Math.PI;  // 180° = LEFT (red/warm)
+                QMESH.binaural.polar.angleB = 0;        // 0° = RIGHT (blue/cool)
             }
 
             // F key: Start release
