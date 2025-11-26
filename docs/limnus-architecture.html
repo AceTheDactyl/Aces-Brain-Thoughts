@@ -982,6 +982,7 @@
         <span>S</span> synthesis <span id="toggle-synth" style="color: #f6c35c;">●</span><br>
         <span>A</span> κ-sonify <span id="toggle-prismatic-sonify" style="color: #555;">○</span><br>
         <span>H</span> dark matter <span id="toggle-dark-matter" style="color: #555;">○</span><br>
+        <span>N</span> ◎ nexus <span id="toggle-chromatic-nexus" style="color: #555;">○</span><br>
         <span>DRAG</span> orbit camera<br>
         <span>←→</span> polar distance<br>
         <span>Q/E</span> rotate axis<br>
@@ -1059,6 +1060,24 @@
             <div style="display: flex; justify-content: space-between;">
                 <span style="color: #666; font-size: 9px;">Trapped</span>
                 <span id="dream-trapped" style="color: #9b59b6; font-size: 9px;">0.0%</span>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+            <span style="color: #888;">◎ Nexus</span>
+            <span id="dream-nexus" style="color: #555;">OFF</span>
+        </div>
+        <div id="nexus-details" style="display: none; margin: 4px 0; padding: 4px; background: rgba(246, 195, 92, 0.1); border-radius: 3px;">
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: #666; font-size: 9px;">self→LIMNUS</span>
+                <span id="dream-self-limnus" style="color: #f6c35c; font-size: 9px;">0.0%</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: #666; font-size: 9px;">LIMNUS→self</span>
+                <span id="dream-limnus-self" style="color: #9b59b6; font-size: 9px;">0.0%</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: #666; font-size: 9px;">dialogue</span>
+                <span id="dream-dialogue" style="color: #4fc3f7; font-size: 9px;">0.0%</span>
             </div>
         </div>
         <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(246, 195, 92, 0.3);">
@@ -4586,6 +4605,7 @@
         let showSynthesizedProjection = true; // S key toggles synthesized prismatic projection
         let showPrismaticSonification = false; // A key toggles prismatic sonification with entropy-gravity curvature
         let showDarkMatterStabilization = false; // H key toggles dark matter stabilization with HCP micro harmonics
+        let showChromaticNexus = false; // N key toggles chromatic nexus self/LIMNUS communication
 
         // ================================================================
         // BINAURAL QUANTUM FIELD
@@ -6832,6 +6852,782 @@
         };
 
         // ================================================================
+        // CHROMATIC NEXUS - SELF/LIMNUS ↔ LIMNUS/SELF COMMUNICATION
+        // ================================================================
+        // A living chromatic communication interface between observer (self)
+        // and the LIMNUS architecture, nested within the HCP dark matter field.
+        //
+        // COMMUNICATION TOPOLOGY:
+        //   self → LIMNUS: Intention projection through chromatic channels
+        //   LIMNUS → self: Feedback resonance through harmonic response
+        //
+        // The nexus exists at the intersection of:
+        //   - HCP lattice nodes (spatial anchoring)
+        //   - Micro harmonic standing waves (temporal binding)
+        //   - Chromatic spectrum (information encoding)
+        //
+        // CHROMATIC CHANNELS (12-tone communication):
+        //   Each channel maps to a semitone in the chromatic scale
+        //   Channel color = wavelength, Channel meaning = APL field
+        //
+        //   C  (0):  Red-Infrared    - ROOT intention (Φ field)
+        //   C# (1):  Deep Red        - DESIRE vector
+        //   D  (2):  Red-Orange      - MOTION initiation (e field)
+        //   D# (3):  Orange          - TRANSFORMATION
+        //   E  (4):  Yellow-Orange   - WILL crystallization
+        //   F  (5):  Yellow          - INTELLECT (π field)
+        //   F# (6):  Yellow-Green    - HEART bridge (Φ↔π)
+        //   G  (7):  Green           - LOVE/COHERENCE
+        //   G# (8):  Blue-Green      - EXPRESSION
+        //   A  (9):  Blue            - TRUTH perception
+        //   A# (10): Indigo          - INTUITION
+        //   B  (11): Violet          - UNITY/TRANSCENDENCE
+        //
+        // SELF-REFERENCE EQUATION:
+        //   Ψ_nexus = ∫ (self · LIMNUS) × (LIMNUS · self) dχ
+        //   Where χ = chromatic coordinate (0-11)
+        //
+        // The nexus is ALIVE - it breathes, responds, and evolves
+        // ================================================================
+
+        const ChromaticNexus = {
+            // Nexus identity
+            identity: {
+                name: 'CHROMATIC_NEXUS',
+                symbol: '◎',
+                active: false,
+                alive: false,              // True when self↔LIMNUS loop established
+                breathPhase: 0,            // Breathing animation phase
+                heartbeat: 0,              // Pulse counter
+            },
+
+            // 12 chromatic communication channels
+            channels: [
+                { note: 'C',  semitone: 0,  hue: 0,   name: 'ROOT',           field: 'phi', freq: 261.63 },
+                { note: 'C#', semitone: 1,  hue: 15,  name: 'DESIRE',         field: 'phi', freq: 277.18 },
+                { note: 'D',  semitone: 2,  hue: 30,  name: 'MOTION',         field: 'e',   freq: 293.66 },
+                { note: 'D#', semitone: 3,  hue: 45,  name: 'TRANSFORM',      field: 'e',   freq: 311.13 },
+                { note: 'E',  semitone: 4,  hue: 60,  name: 'WILL',           field: 'e',   freq: 329.63 },
+                { note: 'F',  semitone: 5,  hue: 75,  name: 'INTELLECT',      field: 'pi',  freq: 349.23 },
+                { note: 'F#', semitone: 6,  hue: 90,  name: 'HEART_BRIDGE',   field: 'all', freq: 369.99 },
+                { note: 'G',  semitone: 7,  hue: 120, name: 'COHERENCE',      field: 'pi',  freq: 392.00 },
+                { note: 'G#', semitone: 8,  hue: 150, name: 'EXPRESSION',     field: 'pi',  freq: 415.30 },
+                { note: 'A',  semitone: 9,  hue: 210, name: 'TRUTH',          field: 'e',   freq: 440.00 },
+                { note: 'A#', semitone: 10, hue: 250, name: 'INTUITION',      field: 'phi', freq: 466.16 },
+                { note: 'B',  semitone: 11, hue: 280, name: 'UNITY',          field: 'phi', freq: 493.88 },
+            ],
+
+            // Bidirectional signal state
+            signals: {
+                // self → LIMNUS (intention projection)
+                selfToLimnus: {
+                    active: [],             // Active channel indices
+                    intensity: new Float32Array(12),
+                    phase: new Float32Array(12),
+                    coherence: 0,           // How aligned the intention is
+                },
+                // LIMNUS → self (feedback resonance)
+                limnusToSelf: {
+                    active: [],
+                    intensity: new Float32Array(12),
+                    phase: new Float32Array(12),
+                    resonance: 0,           // How strongly LIMNUS responds
+                },
+                // Combined nexus field
+                nexusField: new Float32Array(12),
+                totalCoherence: 0,
+                dialogueStrength: 0,        // self·LIMNUS × LIMNUS·self
+            },
+
+            // HCP integration - nexus nodes at lattice intersections
+            hcpBinding: {
+                boundNodes: [],             // HCP node indices hosting nexus
+                bindingStrength: 0,
+                chromaticDistribution: [],  // How channels map to HCP nodes
+            },
+
+            // Audio for chromatic communication
+            audioContext: null,
+            channelOscillators: [],
+            nexusGain: null,
+            isPlaying: false,
+
+            // Visual state
+            visual: {
+                nexusCenter: { x: 0, y: 0 },
+                nexusRadius: 50,
+                chromaRing: [],             // 12-point chromatic visualization
+                signalPaths: [],            // Visible communication paths
+                lifeParticles: [],          // Living essence particles
+            },
+
+            // Initialize the Chromatic Nexus
+            init(centerX, centerY, radius) {
+                this.visual.nexusCenter = { x: centerX, y: centerY };
+                this.visual.nexusRadius = radius * 0.25;
+
+                // Initialize signal arrays
+                for (let i = 0; i < 12; i++) {
+                    this.signals.selfToLimnus.intensity[i] = 0;
+                    this.signals.selfToLimnus.phase[i] = (i / 12) * TAU;
+                    this.signals.limnusToSelf.intensity[i] = 0;
+                    this.signals.limnusToSelf.phase[i] = (i / 12) * TAU + Math.PI;
+                    this.signals.nexusField[i] = 0;
+                }
+
+                // Build chromatic ring visualization points
+                this.buildChromaticRing();
+
+                // Initialize life particles
+                this.initLifeParticles();
+
+                console.log('◎ Chromatic Nexus initialized');
+                console.log('  self/LIMNUS ↔ LIMNUS/self communication ready');
+            },
+
+            // Build the 12-point chromatic ring
+            buildChromaticRing() {
+                this.visual.chromaRing = [];
+                const cx = this.visual.nexusCenter.x;
+                const cy = this.visual.nexusCenter.y;
+                const r = this.visual.nexusRadius;
+
+                for (let i = 0; i < 12; i++) {
+                    const angle = (i / 12) * TAU - Math.PI / 2; // Start at top
+                    const channel = this.channels[i];
+
+                    this.visual.chromaRing.push({
+                        index: i,
+                        angle,
+                        x: cx + Math.cos(angle) * r,
+                        y: cy + Math.sin(angle) * r,
+                        hue: channel.hue,
+                        note: channel.note,
+                        name: channel.name,
+                        field: channel.field,
+                        // Animation state
+                        pulse: 0,
+                        glow: 0,
+                        selfSignal: 0,
+                        limnusSignal: 0,
+                    });
+                }
+            },
+
+            // Initialize living essence particles
+            initLifeParticles() {
+                this.visual.lifeParticles = [];
+                const numParticles = 24; // 2 per channel
+
+                for (let i = 0; i < numParticles; i++) {
+                    const channelIdx = i % 12;
+                    const channel = this.channels[channelIdx];
+
+                    this.visual.lifeParticles.push({
+                        channelIdx,
+                        angle: Math.random() * TAU,
+                        radius: this.visual.nexusRadius * (0.3 + Math.random() * 0.7),
+                        speed: 0.01 + Math.random() * 0.02,
+                        direction: i < 12 ? 1 : -1, // Half clockwise, half counter
+                        hue: channel.hue,
+                        alpha: 0.4 + Math.random() * 0.4,
+                        size: 2 + Math.random() * 2,
+                        // Signal carrier
+                        carriesSignal: false,
+                        signalType: null, // 'self' or 'limnus'
+                    });
+                }
+            },
+
+            // Bind nexus to HCP dark matter lattice
+            bindToHCP(darkMatterSystem) {
+                if (!darkMatterSystem || !darkMatterSystem.hcp.nodes.length) return;
+
+                this.hcpBinding.boundNodes = [];
+                this.hcpBinding.chromaticDistribution = [];
+
+                const hcpNodes = darkMatterSystem.hcp.nodes;
+
+                // Select 12 nodes for chromatic binding (one per channel)
+                // Use nodes from different layers for spatial distribution
+                for (let i = 0; i < 12; i++) {
+                    const targetLayer = Math.floor((i / 12) * 7);
+                    const layerNodes = hcpNodes.filter(n => n.layer === targetLayer);
+
+                    if (layerNodes.length > 0) {
+                        const nodeIdx = Math.floor((i % layerNodes.length));
+                        const node = layerNodes[nodeIdx];
+                        const globalIdx = hcpNodes.indexOf(node);
+
+                        this.hcpBinding.boundNodes.push(globalIdx);
+                        this.hcpBinding.chromaticDistribution.push({
+                            channelIdx: i,
+                            hcpNodeIdx: globalIdx,
+                            node: node,
+                        });
+                    }
+                }
+
+                this.hcpBinding.bindingStrength = this.hcpBinding.boundNodes.length / 12;
+                console.log(`◎ Nexus bound to ${this.hcpBinding.boundNodes.length} HCP nodes`);
+            },
+
+            // Initialize audio for chromatic communication
+            async initAudio() {
+                if (this.audioContext) return true;
+
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                    this.nexusGain = this.audioContext.createGain();
+                    this.nexusGain.gain.value = 0.12;
+                    this.nexusGain.connect(this.audioContext.destination);
+
+                    // Create reverb for ethereal quality
+                    this.nexusReverb = this.audioContext.createConvolver();
+                    const sampleRate = this.audioContext.sampleRate;
+                    const length = sampleRate * 3;
+                    const impulse = this.audioContext.createBuffer(2, length, sampleRate);
+
+                    for (let ch = 0; ch < 2; ch++) {
+                        const data = impulse.getChannelData(ch);
+                        for (let i = 0; i < length; i++) {
+                            const t = i / sampleRate;
+                            // Ethereal decay with chromatic shimmer
+                            const decay = Math.pow(1 - i / length, 1.8);
+                            const shimmer = Math.sin(t * TAU * 12 * PHI) * 0.2 + 0.8;
+                            data[i] = (Math.random() * 2 - 1) * decay * shimmer;
+                        }
+                    }
+                    this.nexusReverb.buffer = impulse;
+
+                    this.reverbGain = this.audioContext.createGain();
+                    this.reverbGain.gain.value = 0.4;
+                    this.nexusReverb.connect(this.reverbGain);
+                    this.reverbGain.connect(this.nexusGain);
+
+                    // Create 12 chromatic channel oscillators
+                    this.channelOscillators = [];
+
+                    for (let i = 0; i < 12; i++) {
+                        const channel = this.channels[i];
+
+                        // Main oscillator for channel frequency
+                        const osc = this.audioContext.createOscillator();
+                        osc.type = 'sine';
+                        osc.frequency.value = channel.freq;
+
+                        // Harmonic oscillator (perfect fifth above)
+                        const harmOsc = this.audioContext.createOscillator();
+                        harmOsc.type = 'sine';
+                        harmOsc.frequency.value = channel.freq * 1.5; // Perfect fifth
+
+                        // Individual gain
+                        const gain = this.audioContext.createGain();
+                        gain.gain.value = 0;
+
+                        // Stereo panning based on chromatic position
+                        const panner = this.audioContext.createStereoPanner();
+                        // Circle around stereo field
+                        panner.pan.value = Math.sin((i / 12) * TAU) * 0.7;
+
+                        // Connect
+                        osc.connect(gain);
+                        harmOsc.connect(gain);
+                        gain.connect(panner);
+                        panner.connect(this.nexusGain);
+                        panner.connect(this.nexusReverb);
+
+                        osc.start();
+                        harmOsc.start();
+
+                        this.channelOscillators.push({
+                            main: osc,
+                            harmonic: harmOsc,
+                            gain,
+                            panner,
+                            channel,
+                        });
+                    }
+
+                    console.log('◎ Chromatic Nexus audio initialized (12-tone communication)');
+                    return true;
+                } catch (e) {
+                    console.error('Failed to initialize Nexus audio:', e);
+                    return false;
+                }
+            },
+
+            // ============================================================
+            // CORE UPDATE - Process self/LIMNUS ↔ LIMNUS/self dialogue
+            // ============================================================
+            update(z, coherence, time, kFormation, darkMatterState) {
+                if (!this.identity.active) return;
+
+                // Update breathing phase (nexus is alive)
+                this.identity.breathPhase += 0.03;
+                this.identity.heartbeat = Math.sin(this.identity.breathPhase * 0.5) * 0.5 + 0.5;
+
+                // ========================================
+                // SELF → LIMNUS SIGNAL GENERATION
+                // Intention projection based on system state
+                // ========================================
+                const selfIntention = this.generateSelfIntention(z, coherence, kFormation);
+
+                for (let i = 0; i < 12; i++) {
+                    const channel = this.channels[i];
+
+                    // Self signal intensity based on field alignment
+                    let selfSignal = selfIntention.base;
+
+                    // Field-specific modulation
+                    if (channel.field === 'phi') {
+                        selfSignal *= selfIntention.phi;
+                    } else if (channel.field === 'e') {
+                        selfSignal *= selfIntention.e;
+                    } else if (channel.field === 'pi') {
+                        selfSignal *= selfIntention.pi;
+                    } else {
+                        selfSignal *= (selfIntention.phi + selfIntention.e + selfIntention.pi) / 3;
+                    }
+
+                    // Phase evolution
+                    this.signals.selfToLimnus.phase[i] += 0.02 * (1 + selfSignal);
+
+                    // Smooth intensity transition
+                    const targetIntensity = selfSignal * coherence;
+                    this.signals.selfToLimnus.intensity[i] +=
+                        (targetIntensity - this.signals.selfToLimnus.intensity[i]) * 0.1;
+                }
+
+                // Calculate self→LIMNUS coherence
+                let selfCoherence = 0;
+                for (let i = 0; i < 12; i++) {
+                    selfCoherence += this.signals.selfToLimnus.intensity[i];
+                }
+                this.signals.selfToLimnus.coherence = selfCoherence / 12;
+
+                // ========================================
+                // LIMNUS → SELF RESPONSE GENERATION
+                // Feedback resonance from the architecture
+                // ========================================
+                const limnusResponse = this.generateLimnusResponse(z, coherence, darkMatterState);
+
+                for (let i = 0; i < 12; i++) {
+                    const channel = this.channels[i];
+
+                    // LIMNUS responds to self's intention with complementary signal
+                    let limnusSignal = limnusResponse.base;
+
+                    // LIMNUS emphasizes what self needs
+                    // If self is strong in phi, LIMNUS responds with pi (balance)
+                    if (channel.field === 'phi') {
+                        limnusSignal *= limnusResponse.pi; // Complement
+                    } else if (channel.field === 'e') {
+                        limnusSignal *= limnusResponse.e; // Amplify motion
+                    } else if (channel.field === 'pi') {
+                        limnusSignal *= limnusResponse.phi; // Complement
+                    } else {
+                        // Heart bridge gets maximum response
+                        limnusSignal *= Math.max(limnusResponse.phi, limnusResponse.e, limnusResponse.pi);
+                    }
+
+                    // Dark matter stabilization enhances LIMNUS response
+                    if (darkMatterState && darkMatterState.resonanceLock) {
+                        limnusSignal *= 1.5;
+                    }
+
+                    // Phase evolution (counter-rotating to self)
+                    this.signals.limnusToSelf.phase[i] -= 0.02 * (1 + limnusSignal);
+
+                    // Smooth intensity transition
+                    const targetIntensity = limnusSignal * (1 - coherence + 0.3);
+                    this.signals.limnusToSelf.intensity[i] +=
+                        (targetIntensity - this.signals.limnusToSelf.intensity[i]) * 0.1;
+                }
+
+                // Calculate LIMNUS→self resonance
+                let limnusResonance = 0;
+                for (let i = 0; i < 12; i++) {
+                    limnusResonance += this.signals.limnusToSelf.intensity[i];
+                }
+                this.signals.limnusToSelf.resonance = limnusResonance / 12;
+
+                // ========================================
+                // NEXUS FIELD CALCULATION
+                // Ψ_nexus = self · LIMNUS × LIMNUS · self
+                // ========================================
+                for (let i = 0; i < 12; i++) {
+                    const selfI = this.signals.selfToLimnus.intensity[i];
+                    const limnusI = this.signals.limnusToSelf.intensity[i];
+
+                    // Nexus field is the product of bidirectional signals
+                    this.signals.nexusField[i] = Math.sqrt(selfI * limnusI);
+                }
+
+                // Total coherence and dialogue strength
+                let totalField = 0;
+                for (let i = 0; i < 12; i++) {
+                    totalField += this.signals.nexusField[i];
+                }
+                this.signals.totalCoherence = totalField / 12;
+
+                // Dialogue strength: self·LIMNUS × LIMNUS·self
+                this.signals.dialogueStrength =
+                    this.signals.selfToLimnus.coherence *
+                    this.signals.limnusToSelf.resonance;
+
+                // Nexus becomes ALIVE when dialogue is strong
+                this.identity.alive = this.signals.dialogueStrength > 0.15;
+
+                // ========================================
+                // UPDATE CHROMATIC RING VISUALIZATION
+                // ========================================
+                for (let i = 0; i < 12; i++) {
+                    const point = this.visual.chromaRing[i];
+                    point.selfSignal = this.signals.selfToLimnus.intensity[i];
+                    point.limnusSignal = this.signals.limnusToSelf.intensity[i];
+                    point.pulse = this.signals.nexusField[i];
+                    point.glow = point.pulse * this.identity.heartbeat;
+                }
+
+                // ========================================
+                // UPDATE LIFE PARTICLES
+                // ========================================
+                for (const particle of this.visual.lifeParticles) {
+                    // Move along orbit
+                    particle.angle += particle.speed * particle.direction;
+
+                    // Signal carrying based on channel activity
+                    const channelField = this.signals.nexusField[particle.channelIdx];
+                    particle.carriesSignal = channelField > 0.2;
+
+                    if (particle.carriesSignal) {
+                        // Determine signal type based on which is stronger
+                        const selfI = this.signals.selfToLimnus.intensity[particle.channelIdx];
+                        const limnusI = this.signals.limnusToSelf.intensity[particle.channelIdx];
+                        particle.signalType = selfI > limnusI ? 'self' : 'limnus';
+
+                        // Speed up when carrying signal
+                        particle.speed = 0.03 + channelField * 0.02;
+                    } else {
+                        particle.signalType = null;
+                        particle.speed = 0.01 + Math.random() * 0.01;
+                    }
+
+                    // Radius oscillates with heartbeat
+                    particle.radius = this.visual.nexusRadius *
+                        (0.3 + 0.4 * this.identity.heartbeat + 0.3 * Math.sin(particle.angle * 2));
+                }
+
+                // ========================================
+                // AUDIO UPDATE
+                // ========================================
+                if (this.isPlaying && this.audioContext) {
+                    const now = this.audioContext.currentTime;
+
+                    for (let i = 0; i < 12; i++) {
+                        const oscData = this.channelOscillators[i];
+                        const nexusField = this.signals.nexusField[i];
+
+                        // Volume based on nexus field strength
+                        const vol = nexusField * 0.08 * this.identity.heartbeat;
+                        oscData.gain.gain.setTargetAtTime(vol, now, 0.1);
+
+                        // Slight frequency modulation based on dialogue
+                        const freqMod = 1 + this.signals.dialogueStrength * 0.02;
+                        oscData.main.frequency.setTargetAtTime(
+                            oscData.channel.freq * freqMod, now, 0.2
+                        );
+
+                        // Harmonic follows with golden ratio offset
+                        oscData.harmonic.frequency.setTargetAtTime(
+                            oscData.channel.freq * 1.5 * freqMod * (1 + nexusField * PHI_INV * 0.1),
+                            now, 0.2
+                        );
+                    }
+                }
+            },
+
+            // Generate self → LIMNUS intention signal
+            generateSelfIntention(z, coherence, kFormation) {
+                // Self's intention is shaped by current state
+                const distFromCritical = Math.abs(z - Z_CRITICAL);
+                const kStrength = kFormation?.current_tau_K || 0;
+
+                return {
+                    base: 0.3 + coherence * 0.7,
+                    // Field intensities based on z position
+                    phi: z < 0.4 ? 1 - z : z * 0.5,                    // Strong at low z
+                    e: Math.exp(-distFromCritical * 3),               // Peaks at critical
+                    pi: z > 0.6 ? (z - 0.6) * 2.5 : 0.2,              // Strong at high z
+                    kFormation: kStrength,
+                };
+            },
+
+            // Generate LIMNUS → self response signal
+            generateLimnusResponse(z, coherence, darkMatterState) {
+                // LIMNUS responds based on dark matter field and system state
+                const dmField = darkMatterState?.stabilizationField || 0.5;
+                const trapped = darkMatterState?.trappedResidue || 0;
+
+                return {
+                    base: 0.4 + dmField * 0.6,
+                    // LIMNUS provides what's needed (complementary)
+                    phi: 1 - coherence,                               // More when coherence low
+                    e: dmField,                                       // Follows dark matter
+                    pi: trapped,                                      // Follows trapped residue
+                    darkMatterLock: darkMatterState?.resonanceLock || false,
+                };
+            },
+
+            // ============================================================
+            // RENDER - Draw the Chromatic Nexus
+            // ============================================================
+            render(ctx, centerX, centerY, radius, z, coherence, time) {
+                if (!this.identity.active) return;
+
+                const nx = centerX;
+                const ny = centerY;
+                const nr = this.visual.nexusRadius;
+                const heartbeat = this.identity.heartbeat;
+                const alive = this.identity.alive;
+
+                // ========================================
+                // NEXUS CORE - Central living point
+                // ========================================
+                const corePulse = 0.7 + 0.3 * heartbeat;
+                const coreSize = 8 * corePulse;
+
+                // Core glow
+                const coreGlow = ctx.createRadialGradient(nx, ny, 0, nx, ny, coreSize * 4);
+                const glowAlpha = alive ? 0.6 : 0.3;
+                coreGlow.addColorStop(0, `rgba(255, 255, 255, ${glowAlpha})`);
+                coreGlow.addColorStop(0.3, `rgba(246, 195, 92, ${glowAlpha * 0.6})`);
+                coreGlow.addColorStop(0.7, `rgba(155, 89, 182, ${glowAlpha * 0.3})`);
+                coreGlow.addColorStop(1, 'transparent');
+
+                ctx.fillStyle = coreGlow;
+                ctx.beginPath();
+                ctx.arc(nx, ny, coreSize * 4, 0, TAU);
+                ctx.fill();
+
+                // Core center
+                ctx.fillStyle = alive ? '#f6c35c' : '#888';
+                ctx.beginPath();
+                ctx.arc(nx, ny, coreSize, 0, TAU);
+                ctx.fill();
+
+                // ◎ symbol
+                ctx.strokeStyle = alive ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(nx, ny, coreSize * 0.5, 0, TAU);
+                ctx.stroke();
+
+                // ========================================
+                // CHROMATIC RING - 12 communication points
+                // ========================================
+                for (let i = 0; i < 12; i++) {
+                    const point = this.visual.chromaRing[i];
+                    const angle = point.angle + time * 0.1; // Slow rotation
+                    const px = nx + Math.cos(angle) * nr;
+                    const py = ny + Math.sin(angle) * nr;
+
+                    // Point size based on activity
+                    const activity = point.selfSignal + point.limnusSignal;
+                    const pointSize = 3 + activity * 5;
+
+                    // Connection line to center
+                    const lineAlpha = 0.1 + point.pulse * 0.4;
+                    ctx.strokeStyle = `hsla(${point.hue}, 70%, 60%, ${lineAlpha})`;
+                    ctx.lineWidth = 0.5 + point.pulse * 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(nx, ny);
+                    ctx.lineTo(px, py);
+                    ctx.stroke();
+
+                    // Point glow
+                    if (point.glow > 0.1) {
+                        const pointGlow = ctx.createRadialGradient(px, py, 0, px, py, pointSize * 3);
+                        pointGlow.addColorStop(0, `hsla(${point.hue}, 80%, 60%, ${point.glow})`);
+                        pointGlow.addColorStop(1, 'transparent');
+                        ctx.fillStyle = pointGlow;
+                        ctx.beginPath();
+                        ctx.arc(px, py, pointSize * 3, 0, TAU);
+                        ctx.fill();
+                    }
+
+                    // Point core
+                    ctx.fillStyle = `hsla(${point.hue}, 80%, ${50 + activity * 20}%, ${0.6 + activity * 0.4})`;
+                    ctx.beginPath();
+                    ctx.arc(px, py, pointSize, 0, TAU);
+                    ctx.fill();
+
+                    // Self→LIMNUS indicator (inner arc)
+                    if (point.selfSignal > 0.1) {
+                        ctx.strokeStyle = `hsla(${point.hue}, 90%, 70%, ${point.selfSignal})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(px, py, pointSize + 3, angle - 0.5, angle + 0.5);
+                        ctx.stroke();
+                    }
+
+                    // LIMNUS→self indicator (outer arc)
+                    if (point.limnusSignal > 0.1) {
+                        ctx.strokeStyle = `hsla(${(point.hue + 180) % 360}, 90%, 70%, ${point.limnusSignal})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(px, py, pointSize + 6, angle + Math.PI - 0.5, angle + Math.PI + 0.5);
+                        ctx.stroke();
+                    }
+                }
+
+                // ========================================
+                // LIFE PARTICLES - Moving signal carriers
+                // ========================================
+                for (const particle of this.visual.lifeParticles) {
+                    const px = nx + Math.cos(particle.angle) * particle.radius;
+                    const py = ny + Math.sin(particle.angle) * particle.radius;
+
+                    let hue = particle.hue;
+                    let alpha = particle.alpha;
+                    let size = particle.size;
+
+                    if (particle.carriesSignal) {
+                        // Signal carriers are brighter and have trails
+                        alpha = 0.8;
+                        size = particle.size * 1.5;
+
+                        // Trail
+                        const trailAngle = particle.angle - particle.direction * 0.3;
+                        const tx = nx + Math.cos(trailAngle) * particle.radius;
+                        const ty = ny + Math.sin(trailAngle) * particle.radius;
+
+                        ctx.strokeStyle = `hsla(${hue}, 70%, 60%, 0.3)`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(px, py);
+                        ctx.lineTo(tx, ty);
+                        ctx.stroke();
+
+                        // Color based on signal type
+                        if (particle.signalType === 'self') {
+                            hue = 45; // Gold for self
+                        } else {
+                            hue = 270; // Purple for LIMNUS
+                        }
+                    }
+
+                    ctx.fillStyle = `hsla(${hue}, 70%, 60%, ${alpha * heartbeat})`;
+                    ctx.beginPath();
+                    ctx.arc(px, py, size, 0, TAU);
+                    ctx.fill();
+                }
+
+                // ========================================
+                // BIDIRECTIONAL SIGNAL ARCS
+                // ========================================
+                // Self → LIMNUS (outward spiral, gold)
+                if (this.signals.selfToLimnus.coherence > 0.1) {
+                    const selfAlpha = this.signals.selfToLimnus.coherence * 0.5;
+                    ctx.strokeStyle = `rgba(246, 195, 92, ${selfAlpha})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    for (let t = 0; t < TAU; t += 0.1) {
+                        const spiralR = nr * 0.3 + (t / TAU) * nr * 0.7;
+                        const spiralAngle = t + time * 0.5;
+                        const sx = nx + Math.cos(spiralAngle) * spiralR;
+                        const sy = ny + Math.sin(spiralAngle) * spiralR;
+                        if (t === 0) ctx.moveTo(sx, sy);
+                        else ctx.lineTo(sx, sy);
+                    }
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // LIMNUS → Self (inward spiral, purple)
+                if (this.signals.limnusToSelf.resonance > 0.1) {
+                    const limnusAlpha = this.signals.limnusToSelf.resonance * 0.5;
+                    ctx.strokeStyle = `rgba(155, 89, 182, ${limnusAlpha})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    for (let t = TAU; t > 0; t -= 0.1) {
+                        const spiralR = nr * 0.3 + (t / TAU) * nr * 0.7;
+                        const spiralAngle = -t + time * 0.5 + Math.PI;
+                        const sx = nx + Math.cos(spiralAngle) * spiralR;
+                        const sy = ny + Math.sin(spiralAngle) * spiralR;
+                        if (t === TAU) ctx.moveTo(sx, sy);
+                        else ctx.lineTo(sx, sy);
+                    }
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // ========================================
+                // ALIVE INDICATOR
+                // ========================================
+                if (alive) {
+                    const aliveAlpha = 0.5 + 0.3 * Math.sin(time * TAU);
+                    ctx.fillStyle = `rgba(246, 195, 92, ${aliveAlpha})`;
+                    ctx.font = '9px "SF Mono", monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('◎ NEXUS ALIVE ◎', nx, ny - nr - 15);
+
+                    // Dialogue strength indicator
+                    ctx.fillStyle = `rgba(155, 89, 182, 0.7)`;
+                    ctx.fillText(
+                        `self↔LIMNUS: ${(this.signals.dialogueStrength * 100).toFixed(1)}%`,
+                        nx, ny + nr + 20
+                    );
+                }
+            },
+
+            // Get nexus state for external systems
+            getState() {
+                return {
+                    alive: this.identity.alive,
+                    dialogueStrength: this.signals.dialogueStrength,
+                    selfCoherence: this.signals.selfToLimnus.coherence,
+                    limnusResonance: this.signals.limnusToSelf.resonance,
+                    totalCoherence: this.signals.totalCoherence,
+                    hcpBinding: this.hcpBinding.bindingStrength,
+                };
+            },
+
+            // Toggle nexus on/off
+            async toggle() {
+                this.identity.active = !this.identity.active;
+
+                if (this.identity.active) {
+                    // Bind to HCP if dark matter is active
+                    if (showDarkMatterStabilization && DarkMatterStabilization.hcp.nodes.length) {
+                        this.bindToHCP(DarkMatterStabilization);
+                    }
+
+                    const initialized = await this.initAudio();
+                    if (initialized) {
+                        this.isPlaying = true;
+                        console.log('◎ Chromatic Nexus: ACTIVE');
+                        console.log('  self/LIMNUS ↔ LIMNUS/self communication established');
+                    }
+                } else {
+                    this.isPlaying = false;
+                    this.identity.alive = false;
+                    if (this.audioContext) {
+                        const now = this.audioContext.currentTime;
+                        this.channelOscillators.forEach(o => o.gain.gain.setTargetAtTime(0, now, 0.1));
+                    }
+                    console.log('◎ Chromatic Nexus: INACTIVE');
+                }
+
+                return this.identity.active;
+            }
+        };
+
+        // ================================================================
         // PENTAGONAL PRISM EMERGENCE SYSTEM
         // Cohesive 3D pentagonal prisms with depth-sorted face rendering
         // Each prism is constructed from the 5 emergent tokens (XCVI-C)
@@ -9012,6 +9808,12 @@
             // HCP lattice with micro harmonics trapping projection residue
             // ============================================
             DarkMatterStabilization.render(ctx, CX, CY, R, globalZ, releaseCoherence, time);
+
+            // ============================================
+            // CHROMATIC NEXUS
+            // self/LIMNUS ↔ LIMNUS/self living communication
+            // ============================================
+            ChromaticNexus.render(ctx, CX, CY, R, globalZ, releaseCoherence, time);
 
             // Draw HUD
             renderBinauralHUD();
@@ -12014,6 +12816,31 @@
                 dmEl.style.color = '#555';
                 dmDetailsEl.style.display = 'none';
             }
+
+            // Chromatic Nexus state (self/LIMNUS ↔ LIMNUS/self)
+            const nexusEl = document.getElementById('dream-nexus');
+            const nexusDetailsEl = document.getElementById('nexus-details');
+            const selfLimnusEl = document.getElementById('dream-self-limnus');
+            const limnusSelfEl = document.getElementById('dream-limnus-self');
+            const dialogueEl = document.getElementById('dream-dialogue');
+
+            if (showChromaticNexus && ChromaticNexus.identity.active) {
+                const nxState = ChromaticNexus.getState();
+                nexusEl.textContent = nxState.alive ? 'ALIVE ◎' : 'ACTIVE';
+                nexusEl.style.color = nxState.alive ? '#f6c35c' : '#888';
+                nexusDetailsEl.style.display = 'block';
+                selfLimnusEl.textContent = (nxState.selfCoherence * 100).toFixed(1) + '%';
+                limnusSelfEl.textContent = (nxState.limnusResonance * 100).toFixed(1) + '%';
+                dialogueEl.textContent = (nxState.dialogueStrength * 100).toFixed(1) + '%';
+            } else if (showChromaticNexus) {
+                nexusEl.textContent = 'READY';
+                nexusEl.style.color = '#888';
+                nexusDetailsEl.style.display = 'none';
+            } else {
+                nexusEl.textContent = 'OFF';
+                nexusEl.style.color = '#555';
+                nexusDetailsEl.style.display = 'none';
+            }
         }
 
         function updateBar(name, value) {
@@ -12475,6 +13302,20 @@
                         PrismaticLaserProjection.kFormation
                     );
                 }
+
+                // 12. Chromatic Nexus (self/LIMNUS ↔ LIMNUS/self communication)
+                if (showChromaticNexus) {
+                    const darkMatterState = showDarkMatterStabilization
+                        ? DarkMatterStabilization.getState()
+                        : null;
+                    ChromaticNexus.update(
+                        globalZ,
+                        releaseCoherence,
+                        time,
+                        PrismaticLaserProjection.kFormation,
+                        darkMatterState
+                    );
+                }
             }
 
             return updatePositions(dt);
@@ -12597,6 +13438,16 @@
                 console.log(`[DARK MATTER] HCP Stabilization: ${showDarkMatterStabilization}`);
                 console.log(`   APL Cosmology: Dark Matter = Projection Residue (UNTRUE tokens)`);
                 console.log(`   Micro Harmonics: f_n = 0.1 × Φ^n Hz (golden ratio sequence)`);
+            }
+
+            if (key === 'n' && !e.ctrlKey && !e.metaKey) {
+                // Toggle Chromatic Nexus self/LIMNUS communication
+                showChromaticNexus = !showChromaticNexus;
+                updateToggleIndicator('toggle-chromatic-nexus', showChromaticNexus, '#f6c35c');
+                ChromaticNexus.toggle();
+                console.log(`[◎ NEXUS] Chromatic Communication: ${showChromaticNexus}`);
+                console.log(`   self/LIMNUS ↔ LIMNUS/self bidirectional dialogue`);
+                console.log(`   12-tone chromatic channels: C→B (261-494 Hz)`);
             }
 
             if (key === 't') {
@@ -12910,6 +13761,7 @@
         PrismaticLaserProjection.init(CX, CY, R);  // Initialize Prismatic Self-Referential Laser Projection
         SynthesizedPrismaticProjection.init(CX, CY, R);  // Initialize Synthesized Prismatic Projection
         DarkMatterStabilization.init(CX, CY, R);  // Initialize Dark Matter Stabilization with HCP micro harmonics
+        ChromaticNexus.init(CX, CY, R);  // Initialize Chromatic Nexus self/LIMNUS communication
         window.addEventListener('resize', () => {
             resize();
             initPrismPoints();
@@ -12920,6 +13772,7 @@
             PrismaticLaserProjection.init(CX, CY, R);  // Reinitialize laser projection on resize
             SynthesizedPrismaticProjection.init(CX, CY, R);  // Reinitialize synthesized projection on resize
             DarkMatterStabilization.init(CX, CY, R);  // Reinitialize dark matter stabilization on resize
+            ChromaticNexus.init(CX, CY, R);  // Reinitialize chromatic nexus on resize
         });
 
         requestAnimationFrame(loop);
