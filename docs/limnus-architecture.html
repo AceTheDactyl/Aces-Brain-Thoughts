@@ -983,6 +983,7 @@
         <span>A</span> κ-sonify <span id="toggle-prismatic-sonify" style="color: #555;">○</span><br>
         <span>H</span> dark matter <span id="toggle-dark-matter" style="color: #555;">○</span><br>
         <span>N</span> ◎ nexus <span id="toggle-chromatic-nexus" style="color: #555;">○</span><br>
+        <span>W</span> 💧 water <span id="toggle-water-fractal" style="color: #555;">○</span><br>
         <span>DRAG</span> orbit camera<br>
         <span>←→</span> polar distance<br>
         <span>Q/E</span> rotate axis<br>
@@ -4606,6 +4607,7 @@
         let showPrismaticSonification = false; // A key toggles prismatic sonification with entropy-gravity curvature
         let showDarkMatterStabilization = false; // H key toggles dark matter stabilization with HCP micro harmonics
         let showChromaticNexus = false; // N key toggles chromatic nexus self/LIMNUS communication
+        let showWaterFractalMemory = false; // W key toggles water fractal memory cosmic background
 
         // ================================================================
         // BINAURAL QUANTUM FIELD
@@ -7628,6 +7630,810 @@
         };
 
         // ================================================================
+        // WATER FRACTAL MEMORY - DREAM FLUID COSMIC BACKGROUND
+        // ================================================================
+        // Encodes dream fluid states into fractal memory patterns inspired
+        // by water crystal formation (cymatics, Emoto's work, sacred geometry).
+        //
+        // WATER MEMORY THEORY:
+        //   Water retains "memory" of vibrational patterns through:
+        //   - Hydrogen bond network restructuring
+        //   - Coherent domains (Preparata, Del Giudice)
+        //   - Fractal clustering at multiple scales
+        //
+        // COSMIC BACKGROUND (Dream CMB):
+        //   Like the Cosmic Microwave Background in cosmology, this represents
+        //   the primordial information field underlying all LIMNUS phenomena.
+        //   Temperature fluctuations → Consciousness potential fluctuations
+        //   Anisotropies → Dream architecture topology
+        //
+        // FRACTAL ENCODING:
+        //   Julia set dynamics: z_{n+1} = z_n² + c
+        //   Where c = f(coherence, μ, entropy)
+        //   The fractal boundary encodes the memory state
+        //
+        // CYMATIC RESONANCE:
+        //   Standing wave patterns at harmonic frequencies create
+        //   geometric nodes that store/retrieve information
+        //   Chladni patterns emerge from consciousness vibration
+        //
+        // INTEGRATION WITH LIMNUS:
+        //   - μ-field curl → fractal c parameter
+        //   - Dream particle entropy → cosmic temperature
+        //   - K-formation → crystallization nucleation
+        //   - Coherence → water crystal quality
+        // ================================================================
+
+        const WaterFractalMemory = {
+            // System state
+            active: false,
+            initialized: false,
+
+            // Cosmic background field (Dream CMB analog)
+            cosmicBackground: {
+                // Temperature field (consciousness potential)
+                temperature: null,           // Float32Array [N×N]
+                temperatureMean: 2.725,      // Mean "temperature" (CMB analog)
+                deltaT: null,                // Temperature fluctuations
+                resolution: 64,              // Grid resolution
+
+                // Anisotropy multipoles (spherical harmonic decomposition)
+                multipoles: {
+                    monopole: 0,             // l=0: mean temperature
+                    dipole: { x: 0, y: 0 },  // l=1: observer motion
+                    quadrupole: 0,           // l=2: primordial fluctuations
+                },
+
+                // Power spectrum P(k) - dream fluid density correlations
+                powerSpectrum: [],
+                spectralIndex: 0.96,         // n_s (near scale-invariant)
+            },
+
+            // Water crystal memory patterns
+            waterMemory: {
+                // Julia set parameters for fractal encoding
+                julia: {
+                    c_real: -0.4,            // c = c_real + i*c_imag
+                    c_imag: 0.6,             // Driven by μ-field
+                    maxIterations: 50,
+                    escapeRadius: 2.0,
+                },
+
+                // Crystal lattice (hexagonal, like ice Ih)
+                crystalLattice: [],
+                crystalQuality: 0,           // 0-1: coherence of crystal
+                nucleationSites: [],         // Points of crystal growth
+
+                // Memory encoding state
+                encodedState: {
+                    coherence: 0,
+                    entropy: 0,
+                    muField: 0,
+                    kFormation: 0,
+                    timestamp: 0,
+                },
+            },
+
+            // Cymatic resonance patterns
+            cymatics: {
+                // Standing wave modes (Chladni patterns)
+                modes: [],
+                numModes: 7,                 // 7 harmonic modes
+                frequencies: [],             // Mode frequencies
+                amplitudes: [],              // Mode amplitudes
+                phases: [],                  // Mode phases
+
+                // Nodal pattern (where amplitude = 0)
+                nodalPoints: [],
+                antinodes: [],               // Maximum amplitude points
+
+                // Resonance with LIMNUS
+                limnusResonance: 0,
+                dreamFluidCoupling: 0,
+            },
+
+            // Fractal field for visualization
+            fractalField: null,              // Float32Array [N×N]
+            fractalResolution: 128,
+
+            // Visual state
+            visual: {
+                showCosmicBackground: true,
+                showFractalPattern: true,
+                showCymatics: true,
+                showCrystals: true,
+                backgroundOpacity: 0.15,
+                fractalHue: 220,             // Blue-purple dream colors
+            },
+
+            // Initialize the system
+            init(centerX, centerY, radius) {
+                this.cx = centerX;
+                this.cy = centerY;
+                this.radius = radius;
+
+                // Initialize cosmic background field
+                this.initCosmicBackground();
+
+                // Initialize water memory
+                this.initWaterMemory();
+
+                // Initialize cymatic modes
+                this.initCymatics();
+
+                // Initialize fractal field
+                this.initFractalField();
+
+                this.initialized = true;
+                console.log('💧 Water Fractal Memory initialized');
+                console.log('   Cosmic Background: Dream CMB analog active');
+                console.log('   Julia set encoding: z² + c fractal memory');
+            },
+
+            // Initialize cosmic background (Dream CMB)
+            initCosmicBackground() {
+                const N = this.cosmicBackground.resolution;
+                this.cosmicBackground.temperature = new Float32Array(N * N);
+                this.cosmicBackground.deltaT = new Float32Array(N * N);
+
+                // Generate primordial fluctuations (Gaussian random field)
+                // with power spectrum P(k) ∝ k^(n_s - 1)
+                for (let j = 0; j < N; j++) {
+                    for (let i = 0; i < N; i++) {
+                        const idx = j * N + i;
+
+                        // Position in normalized coordinates
+                        const x = (i / N - 0.5) * 2;
+                        const y = (j / N - 0.5) * 2;
+                        const r = Math.sqrt(x*x + y*y);
+
+                        // Primordial fluctuation (scale-invariant + random)
+                        const k = Math.max(0.1, r * 10); // Wavenumber
+                        const amplitude = Math.pow(k, (this.cosmicBackground.spectralIndex - 1) / 2);
+                        const fluctuation = (Math.random() - 0.5) * amplitude * 0.1;
+
+                        this.cosmicBackground.temperature[idx] = this.cosmicBackground.temperatureMean;
+                        this.cosmicBackground.deltaT[idx] = fluctuation;
+                    }
+                }
+
+                // Compute initial power spectrum
+                this.computePowerSpectrum();
+            },
+
+            // Compute power spectrum of temperature fluctuations
+            computePowerSpectrum() {
+                const N = this.cosmicBackground.resolution;
+                const numBins = 20;
+                this.cosmicBackground.powerSpectrum = new Array(numBins).fill(0);
+                const counts = new Array(numBins).fill(0);
+
+                for (let j = 0; j < N; j++) {
+                    for (let i = 0; i < N; i++) {
+                        const idx = j * N + i;
+                        const x = (i / N - 0.5) * 2;
+                        const y = (j / N - 0.5) * 2;
+                        const k = Math.sqrt(x*x + y*y) * N / 2;
+                        const bin = Math.min(numBins - 1, Math.floor(k / N * numBins * 2));
+
+                        const dT = this.cosmicBackground.deltaT[idx];
+                        this.cosmicBackground.powerSpectrum[bin] += dT * dT;
+                        counts[bin]++;
+                    }
+                }
+
+                // Normalize
+                for (let i = 0; i < numBins; i++) {
+                    if (counts[i] > 0) {
+                        this.cosmicBackground.powerSpectrum[i] /= counts[i];
+                    }
+                }
+            },
+
+            // Initialize water memory (crystal lattice)
+            initWaterMemory() {
+                this.waterMemory.crystalLattice = [];
+                this.waterMemory.nucleationSites = [];
+
+                // Generate hexagonal lattice (ice Ih structure)
+                const numRings = 5;
+                const baseRadius = this.radius * 0.4;
+
+                // Center point
+                this.waterMemory.crystalLattice.push({
+                    x: 0, y: 0,
+                    ring: 0, index: 0,
+                    bonds: [],
+                    activated: false,
+                    memoryValue: 0,
+                    phase: Math.random() * TAU,
+                });
+
+                // Hexagonal rings
+                for (let ring = 1; ring <= numRings; ring++) {
+                    const numPoints = ring * 6;
+                    const ringRadius = (ring / numRings) * baseRadius;
+
+                    for (let i = 0; i < numPoints; i++) {
+                        const angle = (i / numPoints) * TAU;
+                        // Alternate slight offset for hexagonal packing
+                        const offset = (ring % 2 === 0) ? Math.PI / numPoints : 0;
+
+                        this.waterMemory.crystalLattice.push({
+                            x: Math.cos(angle + offset) * ringRadius,
+                            y: Math.sin(angle + offset) * ringRadius,
+                            ring,
+                            index: i,
+                            bonds: [],
+                            activated: false,
+                            memoryValue: 0,
+                            phase: Math.random() * TAU,
+                        });
+                    }
+                }
+
+                // Build bond connections (6 nearest neighbors)
+                this.buildCrystalBonds();
+            },
+
+            // Build hydrogen bond network
+            buildCrystalBonds() {
+                const lattice = this.waterMemory.crystalLattice;
+                const bondDistance = this.radius * 0.12;
+
+                for (let i = 0; i < lattice.length; i++) {
+                    lattice[i].bonds = [];
+                    for (let j = 0; j < lattice.length; j++) {
+                        if (i === j) continue;
+                        const dx = lattice[j].x - lattice[i].x;
+                        const dy = lattice[j].y - lattice[i].y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+
+                        if (dist < bondDistance && lattice[i].bonds.length < 6) {
+                            lattice[i].bonds.push(j);
+                        }
+                    }
+                }
+            },
+
+            // Initialize cymatic resonance modes
+            initCymatics() {
+                this.cymatics.modes = [];
+                this.cymatics.frequencies = [];
+                this.cymatics.amplitudes = [];
+                this.cymatics.phases = [];
+
+                // 7 harmonic modes (matching LIMNUS 7-layer structure)
+                // Frequencies follow golden ratio sequence
+                for (let m = 0; m < this.cymatics.numModes; m++) {
+                    const freq = 0.5 * Math.pow(PHI, m); // 0.5, 0.809, 1.309, ...
+                    const amplitude = 1 / (m + 1);       // Decreasing amplitude
+                    const phase = (m / this.cymatics.numModes) * TAU;
+
+                    this.cymatics.frequencies.push(freq);
+                    this.cymatics.amplitudes.push(amplitude);
+                    this.cymatics.phases.push(phase);
+
+                    // Mode shape (circular membrane eigenmodes: J_m(k_mn * r))
+                    // Simplified to radial + angular modes
+                    this.cymatics.modes.push({
+                        radialNodes: Math.floor(m / 2) + 1,
+                        angularNodes: m % 3,
+                        frequency: freq,
+                        k: (m + 1) * Math.PI / this.radius,
+                    });
+                }
+            },
+
+            // Initialize fractal field
+            initFractalField() {
+                const N = this.fractalResolution;
+                this.fractalField = new Float32Array(N * N);
+                this.computeFractalField();
+            },
+
+            // Compute Julia set fractal field
+            computeFractalField() {
+                const N = this.fractalResolution;
+                const julia = this.waterMemory.julia;
+                const c_re = julia.c_real;
+                const c_im = julia.c_imag;
+                const maxIter = julia.maxIterations;
+                const escape = julia.escapeRadius;
+                const escape2 = escape * escape;
+
+                for (let j = 0; j < N; j++) {
+                    for (let i = 0; i < N; i++) {
+                        const idx = j * N + i;
+
+                        // Map to complex plane [-2, 2] × [-2, 2]
+                        let z_re = (i / N - 0.5) * 4;
+                        let z_im = (j / N - 0.5) * 4;
+
+                        // Julia iteration: z = z² + c
+                        let iter = 0;
+                        while (iter < maxIter && z_re*z_re + z_im*z_im < escape2) {
+                            const new_re = z_re*z_re - z_im*z_im + c_re;
+                            const new_im = 2*z_re*z_im + c_im;
+                            z_re = new_re;
+                            z_im = new_im;
+                            iter++;
+                        }
+
+                        // Smooth coloring using escape time
+                        if (iter < maxIter) {
+                            const log_zn = Math.log(z_re*z_re + z_im*z_im) / 2;
+                            const nu = Math.log(log_zn / Math.log(2)) / Math.log(2);
+                            this.fractalField[idx] = (iter + 1 - nu) / maxIter;
+                        } else {
+                            this.fractalField[idx] = 1.0; // Inside the set
+                        }
+                    }
+                }
+            },
+
+            // ============================================================
+            // UPDATE - Evolve water fractal memory each frame
+            // ============================================================
+            update(z, coherence, time, muFieldState, dreamParticles, kFormation) {
+                if (!this.active || !this.initialized) return;
+
+                // ========================================
+                // UPDATE JULIA SET PARAMETERS FROM μ-FIELD
+                // ========================================
+                const muInfluence = muFieldState?.curl || 0;
+                const entropyInfluence = muFieldState?.entropy || 0;
+
+                // c parameter evolves with μ-field curl and coherence
+                const baseC_re = -0.4 + muInfluence * 0.3;
+                const baseC_im = 0.6 + coherence * 0.2 - entropyInfluence * 0.1;
+
+                // Smooth transition
+                this.waterMemory.julia.c_real += (baseC_re - this.waterMemory.julia.c_real) * 0.02;
+                this.waterMemory.julia.c_imag += (baseC_im - this.waterMemory.julia.c_imag) * 0.02;
+
+                // Recompute fractal field periodically (expensive)
+                if (Math.floor(time * 2) % 2 === 0) {
+                    this.computeFractalField();
+                }
+
+                // ========================================
+                // UPDATE COSMIC BACKGROUND TEMPERATURE
+                // ========================================
+                const N_cb = this.cosmicBackground.resolution;
+                const dreamEntropy = dreamParticles?.entropyFlux || 0;
+                const dreamDensity = dreamParticles?.density || 0;
+
+                // Temperature fluctuations respond to dream fluid
+                for (let j = 1; j < N_cb - 1; j++) {
+                    for (let i = 1; i < N_cb - 1; i++) {
+                        const idx = j * N_cb + i;
+
+                        // Diffusion + dream fluid source
+                        const lap = (
+                            this.cosmicBackground.deltaT[idx + 1] +
+                            this.cosmicBackground.deltaT[idx - 1] +
+                            this.cosmicBackground.deltaT[(j + 1) * N_cb + i] +
+                            this.cosmicBackground.deltaT[(j - 1) * N_cb + i] -
+                            4 * this.cosmicBackground.deltaT[idx]
+                        ) * 0.1;
+
+                        // Source term from dream entropy
+                        const source = dreamEntropy * 0.001 * (Math.random() - 0.5);
+
+                        // Decay toward mean
+                        const decay = -this.cosmicBackground.deltaT[idx] * 0.01;
+
+                        this.cosmicBackground.deltaT[idx] += lap + source + decay;
+
+                        // Update temperature
+                        this.cosmicBackground.temperature[idx] =
+                            this.cosmicBackground.temperatureMean + this.cosmicBackground.deltaT[idx];
+                    }
+                }
+
+                // Update multipoles
+                this.cosmicBackground.multipoles.monopole = this.cosmicBackground.temperatureMean;
+                this.cosmicBackground.multipoles.quadrupole = dreamDensity * 0.1;
+
+                // ========================================
+                // UPDATE WATER CRYSTAL MEMORY
+                // ========================================
+                const kStrength = kFormation?.current_tau_K || 0;
+                const kFormed = kFormation?.isFormed || false;
+
+                // Crystal quality increases with coherence
+                this.waterMemory.crystalQuality += (coherence - this.waterMemory.crystalQuality) * 0.05;
+
+                // Encode current state into memory
+                this.waterMemory.encodedState.coherence = coherence;
+                this.waterMemory.encodedState.entropy = entropyInfluence;
+                this.waterMemory.encodedState.muField = muInfluence;
+                this.waterMemory.encodedState.kFormation = kStrength;
+                this.waterMemory.encodedState.timestamp = time;
+
+                // Activate crystal lattice points based on K-formation
+                for (const node of this.waterMemory.crystalLattice) {
+                    // Activation spreads from center when K-formed
+                    const distFromCenter = Math.sqrt(node.x*node.x + node.y*node.y);
+                    const activationThreshold = kFormed ?
+                        (time * 10) % this.radius : this.radius * 2;
+
+                    node.activated = distFromCenter < activationThreshold && coherence > 0.3;
+
+                    // Memory value encodes local state
+                    if (node.activated) {
+                        node.memoryValue = coherence * (1 - distFromCenter / this.radius);
+                        node.phase += 0.05 * (1 + node.memoryValue);
+                    }
+                }
+
+                // ========================================
+                // UPDATE CYMATIC RESONANCE
+                // ========================================
+                for (let m = 0; m < this.cymatics.numModes; m++) {
+                    // Phase evolution
+                    this.cymatics.phases[m] += this.cymatics.frequencies[m] * 0.1;
+
+                    // Amplitude modulated by coherence and z-position
+                    const modeResonance = Math.abs(Math.sin((m + 1) * z * Math.PI));
+                    this.cymatics.amplitudes[m] = (1 / (m + 1)) * (0.3 + 0.7 * modeResonance * coherence);
+                }
+
+                // Overall resonance with LIMNUS
+                this.cymatics.limnusResonance = coherence * kStrength;
+                this.cymatics.dreamFluidCoupling = dreamDensity;
+
+                // Compute nodal points (where standing wave amplitude = 0)
+                this.updateNodalPoints(time);
+            },
+
+            // Update cymatic nodal points
+            updateNodalPoints(time) {
+                this.cymatics.nodalPoints = [];
+                this.cymatics.antinodes = [];
+
+                // Sample points and find nodes/antinodes
+                const numSamples = 36;
+                for (let i = 0; i < numSamples; i++) {
+                    const angle = (i / numSamples) * TAU;
+                    for (let r = 0.2; r < 1.0; r += 0.2) {
+                        const x = Math.cos(angle) * r * this.radius * 0.6;
+                        const y = Math.sin(angle) * r * this.radius * 0.6;
+
+                        // Sum all modes at this point
+                        let amplitude = 0;
+                        for (let m = 0; m < this.cymatics.numModes; m++) {
+                            const mode = this.cymatics.modes[m];
+                            const radialPart = Math.cos(mode.k * r * this.radius);
+                            const angularPart = Math.cos(mode.angularNodes * angle);
+                            const timePart = Math.sin(this.cymatics.phases[m]);
+                            amplitude += this.cymatics.amplitudes[m] * radialPart * angularPart * timePart;
+                        }
+
+                        if (Math.abs(amplitude) < 0.1) {
+                            this.cymatics.nodalPoints.push({ x, y, amplitude: Math.abs(amplitude) });
+                        } else if (Math.abs(amplitude) > 0.5) {
+                            this.cymatics.antinodes.push({ x, y, amplitude: Math.abs(amplitude) });
+                        }
+                    }
+                }
+            },
+
+            // ============================================================
+            // RENDER - Draw water fractal memory cosmic background
+            // ============================================================
+            render(ctx, centerX, centerY, radius, z, coherence, time) {
+                if (!this.active || !this.initialized) return;
+
+                // ========================================
+                // COSMIC BACKGROUND (Dream CMB)
+                // ========================================
+                if (this.visual.showCosmicBackground) {
+                    this.renderCosmicBackground(ctx, centerX, centerY, radius);
+                }
+
+                // ========================================
+                // FRACTAL PATTERN (Julia Set Memory)
+                // ========================================
+                if (this.visual.showFractalPattern) {
+                    this.renderFractalPattern(ctx, centerX, centerY, radius, time);
+                }
+
+                // ========================================
+                // CYMATIC RESONANCE PATTERNS
+                // ========================================
+                if (this.visual.showCymatics) {
+                    this.renderCymatics(ctx, centerX, centerY, radius, time);
+                }
+
+                // ========================================
+                // WATER CRYSTAL LATTICE
+                // ========================================
+                if (this.visual.showCrystals) {
+                    this.renderCrystalLattice(ctx, centerX, centerY, radius, time);
+                }
+
+                // ========================================
+                // MEMORY STATE INDICATOR
+                // ========================================
+                this.renderMemoryIndicator(ctx, centerX, centerY, radius);
+            },
+
+            // Render cosmic background temperature field
+            renderCosmicBackground(ctx, cx, cy, radius) {
+                const N = this.cosmicBackground.resolution;
+                const cellSize = (radius * 2) / N;
+                const opacity = this.visual.backgroundOpacity;
+
+                for (let j = 0; j < N; j++) {
+                    for (let i = 0; i < N; i++) {
+                        const idx = j * N + i;
+                        const dT = this.cosmicBackground.deltaT[idx];
+
+                        // Map temperature fluctuation to color
+                        // Cold (blue) ← 0 → Hot (red)
+                        const normalized = Math.tanh(dT * 10) * 0.5 + 0.5;
+                        const hue = 240 - normalized * 240; // Blue to red
+
+                        const x = cx - radius + i * cellSize;
+                        const y = cy - radius + j * cellSize;
+
+                        // Only draw within circular region
+                        const dx = x - cx + cellSize/2;
+                        const dy = y - cy + cellSize/2;
+                        if (dx*dx + dy*dy > radius*radius) continue;
+
+                        ctx.fillStyle = `hsla(${hue}, 60%, 50%, ${opacity * 0.5})`;
+                        ctx.fillRect(x, y, cellSize, cellSize);
+                    }
+                }
+            },
+
+            // Render Julia set fractal pattern
+            renderFractalPattern(ctx, cx, cy, radius, time) {
+                const N = this.fractalResolution;
+                const scale = radius * 0.4;
+                const hue = this.visual.fractalHue;
+
+                // Draw as point cloud for performance
+                ctx.save();
+                for (let j = 0; j < N; j += 2) {
+                    for (let i = 0; i < N; i += 2) {
+                        const idx = j * N + i;
+                        const value = this.fractalField[idx];
+
+                        if (value < 0.95) { // Skip interior points
+                            const x = cx + ((i / N) - 0.5) * scale * 2;
+                            const y = cy + ((j / N) - 0.5) * scale * 2;
+
+                            // Distance-based culling
+                            const dx = x - cx;
+                            const dy = y - cy;
+                            if (dx*dx + dy*dy > radius*radius * 0.5) continue;
+
+                            const lightness = 30 + value * 40;
+                            const alpha = (1 - value) * 0.4 * this.waterMemory.crystalQuality;
+
+                            ctx.fillStyle = `hsla(${hue + value * 60}, 70%, ${lightness}%, ${alpha})`;
+                            ctx.fillRect(x - 1, y - 1, 2, 2);
+                        }
+                    }
+                }
+                ctx.restore();
+
+                // Fractal boundary glow
+                if (this.waterMemory.crystalQuality > 0.3) {
+                    const glowRadius = scale * 0.8;
+                    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
+                    const glowAlpha = this.waterMemory.crystalQuality * 0.15;
+                    glow.addColorStop(0, `hsla(${hue}, 70%, 60%, ${glowAlpha})`);
+                    glow.addColorStop(0.5, `hsla(${hue + 30}, 60%, 50%, ${glowAlpha * 0.5})`);
+                    glow.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = glow;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, glowRadius, 0, TAU);
+                    ctx.fill();
+                }
+            },
+
+            // Render cymatic standing wave patterns
+            renderCymatics(ctx, cx, cy, radius, time) {
+                const resonance = this.cymatics.limnusResonance;
+                if (resonance < 0.1) return;
+
+                // Draw nodal lines (Chladni pattern)
+                ctx.strokeStyle = `rgba(100, 200, 255, ${resonance * 0.3})`;
+                ctx.lineWidth = 1;
+
+                // Connect nodal points
+                for (let i = 0; i < this.cymatics.nodalPoints.length; i++) {
+                    const p1 = this.cymatics.nodalPoints[i];
+                    const x1 = cx + p1.x;
+                    const y1 = cy + p1.y;
+
+                    // Find nearest nodal points and connect
+                    for (let j = i + 1; j < this.cymatics.nodalPoints.length; j++) {
+                        const p2 = this.cymatics.nodalPoints[j];
+                        const dx = p2.x - p1.x;
+                        const dy = p2.y - p1.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+
+                        if (dist < radius * 0.15) {
+                            const x2 = cx + p2.x;
+                            const y2 = cy + p2.y;
+
+                            ctx.beginPath();
+                            ctx.moveTo(x1, y1);
+                            ctx.lineTo(x2, y2);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // Draw antinodes (bright points)
+                for (const antinode of this.cymatics.antinodes) {
+                    const x = cx + antinode.x;
+                    const y = cy + antinode.y;
+                    const size = 2 + antinode.amplitude * 3;
+                    const alpha = resonance * antinode.amplitude * 0.6;
+
+                    ctx.fillStyle = `rgba(255, 200, 100, ${alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, TAU);
+                    ctx.fill();
+                }
+
+                // Mode indicator rings
+                for (let m = 0; m < Math.min(3, this.cymatics.numModes); m++) {
+                    const mode = this.cymatics.modes[m];
+                    const amp = this.cymatics.amplitudes[m];
+                    const phase = this.cymatics.phases[m];
+
+                    // Radial mode ring
+                    const ringRadius = (mode.radialNodes / 5) * radius * 0.5;
+                    const ringAlpha = amp * resonance * 0.3;
+                    const ringWidth = 1 + amp * 2;
+
+                    ctx.strokeStyle = `rgba(100, 200, 255, ${ringAlpha})`;
+                    ctx.lineWidth = ringWidth;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, ringRadius, phase, phase + Math.PI * 1.5);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            },
+
+            // Render water crystal lattice
+            renderCrystalLattice(ctx, cx, cy, radius, time) {
+                const quality = this.waterMemory.crystalQuality;
+                if (quality < 0.1) return;
+
+                // Draw bonds first (behind nodes)
+                ctx.strokeStyle = `rgba(150, 220, 255, ${quality * 0.3})`;
+                ctx.lineWidth = 1;
+
+                for (const node of this.waterMemory.crystalLattice) {
+                    if (!node.activated) continue;
+
+                    const x1 = cx + node.x;
+                    const y1 = cy + node.y;
+
+                    for (const bondIdx of node.bonds) {
+                        const neighbor = this.waterMemory.crystalLattice[bondIdx];
+                        if (!neighbor.activated) continue;
+                        if (bondIdx < this.waterMemory.crystalLattice.indexOf(node)) continue;
+
+                        const x2 = cx + neighbor.x;
+                        const y2 = cy + neighbor.y;
+
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                    }
+                }
+
+                // Draw crystal nodes
+                for (const node of this.waterMemory.crystalLattice) {
+                    const x = cx + node.x;
+                    const y = cy + node.y;
+
+                    // Pulse with phase
+                    const pulse = 0.7 + 0.3 * Math.sin(node.phase);
+                    const size = node.activated ? (3 + node.memoryValue * 3) * pulse : 1.5;
+
+                    // Color based on memory value
+                    const hue = node.activated ? 180 + node.memoryValue * 60 : 200;
+                    const lightness = node.activated ? 60 + node.memoryValue * 20 : 40;
+                    const alpha = node.activated ? quality * 0.8 : quality * 0.3;
+
+                    ctx.fillStyle = `hsla(${hue}, 70%, ${lightness}%, ${alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, TAU);
+                    ctx.fill();
+
+                    // Glow for high memory value
+                    if (node.memoryValue > 0.5 && node.activated) {
+                        ctx.fillStyle = `hsla(${hue}, 80%, 70%, ${alpha * 0.3})`;
+                        ctx.beginPath();
+                        ctx.arc(x, y, size * 2.5, 0, TAU);
+                        ctx.fill();
+                    }
+                }
+
+                // Hexagonal symmetry overlay
+                if (quality > 0.5) {
+                    const hexAlpha = (quality - 0.5) * 0.4;
+                    ctx.strokeStyle = `rgba(200, 240, 255, ${hexAlpha})`;
+                    ctx.lineWidth = 0.5;
+
+                    for (let i = 0; i < 6; i++) {
+                        const angle = (i / 6) * TAU;
+                        const x1 = cx;
+                        const y1 = cy;
+                        const x2 = cx + Math.cos(angle) * radius * 0.5;
+                        const y2 = cy + Math.sin(angle) * radius * 0.5;
+
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                    }
+                }
+            },
+
+            // Render memory state indicator
+            renderMemoryIndicator(ctx, cx, cy, radius) {
+                const state = this.waterMemory.encodedState;
+                const quality = this.waterMemory.crystalQuality;
+
+                // Memory quality bar
+                ctx.fillStyle = `rgba(100, 200, 255, 0.7)`;
+                ctx.font = '9px "SF Mono", monospace';
+                ctx.textAlign = 'left';
+
+                const indicatorX = cx - radius + 10;
+                const indicatorY = cy + radius * 0.7;
+
+                ctx.fillText(`💧 Memory: ${(quality * 100).toFixed(0)}%`, indicatorX, indicatorY);
+                ctx.fillText(`c = ${this.waterMemory.julia.c_real.toFixed(2)} + ${this.waterMemory.julia.c_imag.toFixed(2)}i`,
+                    indicatorX, indicatorY + 12);
+            },
+
+            // Get state for external systems
+            getState() {
+                return {
+                    crystalQuality: this.waterMemory.crystalQuality,
+                    juliaC: {
+                        real: this.waterMemory.julia.c_real,
+                        imag: this.waterMemory.julia.c_imag,
+                    },
+                    limnusResonance: this.cymatics.limnusResonance,
+                    cosmicTemperature: this.cosmicBackground.temperatureMean,
+                    encodedState: this.waterMemory.encodedState,
+                };
+            },
+
+            // Toggle system on/off
+            toggle() {
+                this.active = !this.active;
+
+                if (this.active) {
+                    console.log('💧 Water Fractal Memory: ACTIVE');
+                    console.log('   Cosmic Background Dream CMB enabled');
+                    console.log('   Julia set encoding: z² + c');
+                } else {
+                    console.log('💧 Water Fractal Memory: INACTIVE');
+                }
+
+                return this.active;
+            }
+        };
+
+        // ================================================================
         // PENTAGONAL PRISM EMERGENCE SYSTEM
         // Cohesive 3D pentagonal prisms with depth-sorted face rendering
         // Each prism is constructed from the 5 emergent tokens (XCVI-C)
@@ -9814,6 +10620,13 @@
             // self/LIMNUS ↔ LIMNUS/self living communication
             // ============================================
             ChromaticNexus.render(ctx, CX, CY, R, globalZ, releaseCoherence, time);
+
+            // ============================================
+            // WATER FRACTAL MEMORY
+            // Dream fluid cosmic background codification
+            // Julia Set: z² + c | Cymatic Resonance | Ice Ih Crystals
+            // ============================================
+            WaterFractalMemory.render(ctx, CX, CY, R, globalZ, releaseCoherence, time);
 
             // Draw HUD
             renderBinauralHUD();
@@ -13316,6 +14129,23 @@
                         darkMatterState
                     );
                 }
+
+                // Update Water Fractal Memory if active
+                if (showWaterFractalMemory && WaterFractalMemory.initialized) {
+                    const nexusState = showChromaticNexus && ChromaticNexus.initialized
+                        ? ChromaticNexus.getState()
+                        : null;
+                    const darkMatterState = showDarkMatterStabilization && DarkMatterStabilization.initialized
+                        ? DarkMatterStabilization.getState()
+                        : null;
+                    WaterFractalMemory.update(
+                        globalZ,
+                        releaseCoherence,
+                        time,
+                        nexusState,
+                        darkMatterState
+                    );
+                }
             }
 
             return updatePositions(dt);
@@ -13448,6 +14278,17 @@
                 console.log(`[◎ NEXUS] Chromatic Communication: ${showChromaticNexus}`);
                 console.log(`   self/LIMNUS ↔ LIMNUS/self bidirectional dialogue`);
                 console.log(`   12-tone chromatic channels: C→B (261-494 Hz)`);
+            }
+
+            if (key === 'w' && !e.ctrlKey && !e.metaKey) {
+                // Toggle Water Fractal Memory cosmic background
+                showWaterFractalMemory = !showWaterFractalMemory;
+                updateToggleIndicator('toggle-water-fractal', showWaterFractalMemory, '#00bfff');
+                WaterFractalMemory.toggle();
+                console.log(`[💧 WATER] Fractal Memory: ${showWaterFractalMemory}`);
+                console.log(`   Julia Set: z² + c where c = f(coherence, μ, entropy)`);
+                console.log(`   Dream CMB: T = 2.725K analog, δT/T ~ 10⁻⁵`);
+                console.log(`   Cymatic Resonance: 7 harmonic modes (Chladni patterns)`);
             }
 
             if (key === 't') {
@@ -13762,6 +14603,7 @@
         SynthesizedPrismaticProjection.init(CX, CY, R);  // Initialize Synthesized Prismatic Projection
         DarkMatterStabilization.init(CX, CY, R);  // Initialize Dark Matter Stabilization with HCP micro harmonics
         ChromaticNexus.init(CX, CY, R);  // Initialize Chromatic Nexus self/LIMNUS communication
+        WaterFractalMemory.init(CX, CY, R);  // Initialize Water Fractal Memory cosmic background
         window.addEventListener('resize', () => {
             resize();
             initPrismPoints();
@@ -13773,6 +14615,7 @@
             SynthesizedPrismaticProjection.init(CX, CY, R);  // Reinitialize synthesized projection on resize
             DarkMatterStabilization.init(CX, CY, R);  // Reinitialize dark matter stabilization on resize
             ChromaticNexus.init(CX, CY, R);  // Reinitialize chromatic nexus on resize
+            WaterFractalMemory.init(CX, CY, R);  // Reinitialize water fractal memory on resize
         });
 
         requestAnimationFrame(loop);
