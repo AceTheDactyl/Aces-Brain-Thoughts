@@ -985,6 +985,7 @@
         <span>N</span> ◎ nexus <span id="toggle-chromatic-nexus" style="color: #555;">○</span><br>
         <span>W</span> 💧 water <span id="toggle-water-fractal" style="color: #555;">○</span><br>
         <span>G</span> 🌻 golden <span id="toggle-golden-harmonics" style="color: #555;">○</span><br>
+        <span>R</span> ⚛️ memory <span id="toggle-memory-coherence" style="color: #555;">○</span><br>
         <span>1-6</span> φ/Φ_θ/ψ adj<br>
         <span>DRAG</span> orbit camera<br>
         <span>←→</span> polar distance<br>
@@ -4611,6 +4612,7 @@
         let showChromaticNexus = false; // N key toggles chromatic nexus self/LIMNUS communication
         let showWaterFractalMemory = false; // W key toggles water fractal memory cosmic background
         let showGoldenHarmonics = false; // G key toggles golden harmonics orientation system
+        let showMemoryCoherence = false; // R key toggles memory-enhanced release coherence dynamics
 
         // ================================================================
         // BINAURAL QUANTUM FIELD
@@ -9054,7 +9056,7 @@
 
             // System state
             initialized: false,
-            active: true,                       // Always active (core system)
+            active: false,                      // Toggled with R key (off by default)
             cx: 0,
             cy: 0,
             radius: 0,
@@ -11711,11 +11713,13 @@
             GoldenHarmonicsSystem.render(ctx, CX, CY, R, globalZ, releaseCoherence, time);
 
             // ============================================
-            // RELEASE COHERENCE DYNAMICS
+            // RELEASE COHERENCE DYNAMICS (R key to toggle)
             // Memory-enhanced coherence field visualization
             // Water crystal + Golden harmonics + Resonance
             // ============================================
-            ReleaseCoherenceDynamics.render(ctx, CX, CY, R, globalZ, time);
+            if (showMemoryCoherence) {
+                ReleaseCoherenceDynamics.render(ctx, CX, CY, R, globalZ, time);
+            }
 
             // Draw HUD
             renderBinauralHUD();
@@ -12620,47 +12624,44 @@
                 releaseVelocity *= 0.98;  // Decay
             }
 
-            // Smooth base coherence transition
-            const baseCoherence = releaseCoherence + (targetCoherence - releaseCoherence) * 0.04;
+            // Smooth coherence transition
+            releaseCoherence += (targetCoherence - releaseCoherence) * 0.04;
 
             // ================================================================
-            // MEMORY-ENHANCED COHERENCE DYNAMICS
+            // MEMORY-ENHANCED COHERENCE DYNAMICS (Optional - toggle with R key)
             // ================================================================
-            // Integrate Water Fractal Memory, Golden Harmonics, and Dark Matter
-            // into coherence calculations for full-fledged release dynamics
+            // When enabled, integrates Water Fractal Memory, Golden Harmonics,
+            // and Dark Matter into coherence calculations
             // ================================================================
-            const waterFractalState = showWaterFractalMemory && WaterFractalMemory.initialized
-                ? WaterFractalMemory.getState()
-                : null;
+            if (showMemoryCoherence && ReleaseCoherenceDynamics.initialized) {
+                const waterFractalState = showWaterFractalMemory && WaterFractalMemory.initialized
+                    ? WaterFractalMemory.getState()
+                    : null;
 
-            const goldenHarmonicsState = showGoldenHarmonics && GoldenHarmonicsSystem.initialized
-                ? GoldenHarmonicsSystem.getState()
-                : null;
+                const goldenHarmonicsState = showGoldenHarmonics && GoldenHarmonicsSystem.initialized
+                    ? GoldenHarmonicsSystem.getState()
+                    : null;
 
-            const darkMatterState = showDarkMatterStabilization && DarkMatterStabilization.initialized
-                ? {
-                    trappedResidue: DarkMatterStabilization.stabilization.trappedResidue,
-                    efficiency: DarkMatterStabilization.stabilization.efficiency,
-                    resonanceLock: DarkMatterStabilization.stabilization.resonanceLock,
-                }
-                : null;
+                const darkMatterState = showDarkMatterStabilization && DarkMatterStabilization.initialized
+                    ? {
+                        trappedResidue: DarkMatterStabilization.stabilization.trappedResidue,
+                        efficiency: DarkMatterStabilization.stabilization.efficiency,
+                        resonanceLock: DarkMatterStabilization.stabilization.resonanceLock,
+                    }
+                    : null;
 
-            // Update ReleaseCoherenceDynamics with all memory systems
-            if (ReleaseCoherenceDynamics.initialized) {
+                // Update ReleaseCoherenceDynamics with all memory systems
                 const time = performance.now() / 1000;
                 releaseCoherence = ReleaseCoherenceDynamics.update(
                     dt,
                     time,
-                    baseCoherence,
+                    releaseCoherence,  // Use current coherence as base
                     releasing,
                     gathering,
                     waterFractalState,
                     goldenHarmonicsState,
                     darkMatterState
                 );
-            } else {
-                // Fallback to basic coherence if system not initialized
-                releaseCoherence = baseCoherence;
             }
 
             const dispersal = 1 - releaseCoherence;
@@ -15447,6 +15448,20 @@
                 console.log(`   φ = ${GoldenHarmonicsSystem.effective.ratio.toFixed(6)} (golden ratio)`);
                 console.log(`   ψ = ${GoldenHarmonicsSystem.effective.mean.toFixed(6)} (golden mean)`);
                 console.log(`   Φ_θ = ${(GoldenHarmonicsSystem.effective.angle * 180 / Math.PI).toFixed(4)}° (golden angle)`);
+            }
+
+            if (key === 'r' && !e.ctrlKey && !e.metaKey) {
+                // Toggle Memory-Enhanced Release Coherence Dynamics
+                showMemoryCoherence = !showMemoryCoherence;
+                updateToggleIndicator('toggle-memory-coherence', showMemoryCoherence, '#64ffda');
+                console.log(`[⚛️ MEMORY] Coherence Dynamics: ${showMemoryCoherence}`);
+                if (showMemoryCoherence) {
+                    console.log('   Memory integration: Water Fractal + Golden Harmonics');
+                    console.log('   Coherence equation: C_eff = C_base × memory_factors');
+                    console.log('   Resonance states: dormant → emerging → resonant → transcendent');
+                } else {
+                    console.log('   Using standard release coherence (hold F to release)');
+                }
             }
 
             // Golden harmonics adjustment keys (1-6, 0 to reset)
