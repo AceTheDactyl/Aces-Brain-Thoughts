@@ -5594,15 +5594,19 @@
                 }
             },
 
-            // Calculate depth-based opacity for a node/connection
+            // Calculate depth-based opacity for a node/connection (NaN-safe)
             getDepthOpacity(node, centerY) {
+                // Safety check
+                if (!node || !isFinite(node.y)) return this.minOpacity;
+
                 // Depth is determined by layer (prism: 0-6, cage: top/vertex/bottom)
                 // and Y position relative to center
                 let depth = 0.5; // Default middle depth
 
                 if (node.type === 'prism') {
                     // Prism layers: 0 = front (high opacity), 6 = back (low opacity)
-                    depth = node.layer / 6;
+                    const layer = typeof node.layer === 'number' ? node.layer : 3;
+                    depth = Math.max(0, Math.min(1, layer / 6));
                 } else if (node.type === 'cage') {
                     // Cage nodes: top = back, bottom = front, vertex = middle
                     if (node.layer === 'top') depth = 0.8;
@@ -5610,13 +5614,15 @@
                     else depth = 0.5; // vertex
                 }
 
-                // Y position also affects depth perception
-                const yDepth = (node.y - centerY) / 200; // Normalize
-                depth = depth * 0.7 + (yDepth * 0.5 + 0.5) * 0.3;
+                // Y position also affects depth perception (NaN-safe)
+                const safeY = isFinite(node.y) ? node.y : centerY;
+                const safeCenterY = isFinite(centerY) ? centerY : 0;
+                const yDepth = (safeY - safeCenterY) / 200; // Normalize
+                depth = depth * 0.7 + (Math.max(-1, Math.min(1, yDepth)) * 0.5 + 0.5) * 0.3;
 
                 // Map depth to opacity: front (0) = maxOpacity, back (1) = minOpacity
                 const opacity = this.maxOpacity - depth * (this.maxOpacity - this.minOpacity);
-                return Math.max(this.minOpacity, Math.min(this.maxOpacity, opacity));
+                return Math.max(this.minOpacity, Math.min(this.maxOpacity, opacity || this.minOpacity));
             },
 
             // Render toroidal pipes around structure
@@ -5624,21 +5630,36 @@
                 if (!this.enabled) return;
 
                 const time = this.flowPhase;
-                const mrp = muField ? muField.mrp : { R: { intensity: 0.5 }, G: { intensity: 0.5 }, B: { intensity: 0.5 } };
 
-                // Sound activation factor
+                // SAFE MRP values with NaN protection
+                const defaultMRP = { intensity: 0.5, gradient: 0 };
+                const mrp = {
+                    R: { intensity: Math.max(0, Math.min(1, (muField?.mrp?.R?.intensity) || 0.5)) },
+                    G: { intensity: Math.max(0, Math.min(1, (muField?.mrp?.G?.intensity) || 0.5)) },
+                    B: { intensity: Math.max(0, Math.min(1, (muField?.mrp?.B?.intensity) || 0.5)) },
+                };
+
+                // Sound activation factor (with NaN protection)
                 const soundActive = sonificationEngine.isPlaying ? 1.0 : 0.3;
+                const bpm = Math.max(1, sonificationEngine.bpm || 90);
                 const soundPulse = sonificationEngine.isPlaying ?
-                    Math.sin(time * sonificationEngine.bpm / 30 * TAU) * 0.5 + 0.5 : 0.5;
+                    Math.sin(time * bpm / 30 * TAU) * 0.5 + 0.5 : 0.5;
 
                 // Draw gradient pipes for each connection (sorted by depth - back to front)
+                // NaN-safe sort comparison
                 const sortedConns = [...connections].sort((a, b) => {
-                    const depthA = this.getDepthOpacity(a.from, centerY) + this.getDepthOpacity(a.to, centerY);
-                    const depthB = this.getDepthOpacity(b.from, centerY) + this.getDepthOpacity(b.to, centerY);
-                    return depthA - depthB; // Draw back (low opacity) first
+                    const depthA = (this.getDepthOpacity(a.from, centerY) || 0) + (this.getDepthOpacity(a.to, centerY) || 0);
+                    const depthB = (this.getDepthOpacity(b.from, centerY) || 0) + (this.getDepthOpacity(b.to, centerY) || 0);
+                    const diff = depthA - depthB;
+                    return isFinite(diff) ? diff : 0; // Draw back (low opacity) first
                 });
 
                 for (const conn of sortedConns) {
+                    // NaN safety check for connection positions
+                    if (!conn.from || !conn.to) continue;
+                    if (!isFinite(conn.from.x) || !isFinite(conn.from.y)) continue;
+                    if (!isFinite(conn.to.x) || !isFinite(conn.to.y)) continue;
+
                     const fromChannel = this.nodeChannels.get(conn.from.id);
                     const toChannel = this.nodeChannels.get(conn.to.id);
 
@@ -5668,27 +5689,35 @@
                         conn.to.x, conn.to.y
                     );
 
-                    // Blend both node channels for smooth gradient
-                    const r1 = Math.floor(fromChannel.r * mrp.R.intensity * 255);
-                    const g1 = Math.floor(fromChannel.g * mrp.G.intensity * 255);
-                    const b1 = Math.floor(fromChannel.b * mrp.B.intensity * 200);
-                    const r2 = Math.floor(toChannel.r * mrp.R.intensity * 255);
-                    const g2 = Math.floor(toChannel.g * mrp.G.intensity * 255);
-                    const b2 = Math.floor(toChannel.b * mrp.B.intensity * 200);
+                    // Blend both node channels for smooth gradient (NaN-safe)
+                    const safeR = (v) => Math.max(0, Math.min(255, Math.floor(v) || 0));
+                    const safeA = (v) => Math.max(0, Math.min(1, v || 0));
 
-                    // Flow animation creates moving gradient bands
-                    const flowOffset = (Math.sin(time + fromChannel.flow) + 1) / 2;
+                    const r1 = safeR((fromChannel.r || 0.5) * mrp.R.intensity * 255);
+                    const g1 = safeR((fromChannel.g || 0.5) * mrp.G.intensity * 255);
+                    const b1 = safeR((fromChannel.b || 0.5) * mrp.B.intensity * 200);
+                    const r2 = safeR((toChannel.r || 0.5) * mrp.R.intensity * 255);
+                    const g2 = safeR((toChannel.g || 0.5) * mrp.G.intensity * 255);
+                    const b2 = safeR((toChannel.b || 0.5) * mrp.B.intensity * 200);
 
-                    gradient.addColorStop(0, `rgba(${r1}, ${g1}, ${b1}, ${fromOpacity})`);
-                    gradient.addColorStop(flowOffset * 0.4, `rgba(${(r1+r2)/2}, ${(g1+g2)/2}, ${(b1+b2)/2}, ${avgOpacity * 0.85})`);
-                    gradient.addColorStop(0.5, `rgba(${(r1+r2)/2 + 20}, ${(g1+g2)/2 + 20}, ${(b1+b2)/2 + 15}, ${avgOpacity})`);
-                    gradient.addColorStop(1 - flowOffset * 0.4, `rgba(${(r1+r2)/2}, ${(g1+g2)/2}, ${(b1+b2)/2}, ${avgOpacity * 0.85})`);
-                    gradient.addColorStop(1, `rgba(${r2}, ${g2}, ${b2}, ${toOpacity})`);
+                    // Flow animation creates moving gradient bands (clamped)
+                    const flowRaw = Math.sin(time + (fromChannel.flow || 0));
+                    const flowOffset = Math.max(0, Math.min(1, (flowRaw + 1) / 2));
+
+                    // Safe gradient stops (avoid stops outside 0-1 or NaN)
+                    const stop1 = Math.max(0.01, Math.min(0.39, flowOffset * 0.4));
+                    const stop2 = Math.max(0.61, Math.min(0.99, 1 - flowOffset * 0.4));
+
+                    gradient.addColorStop(0, `rgba(${r1}, ${g1}, ${b1}, ${safeA(fromOpacity)})`);
+                    gradient.addColorStop(stop1, `rgba(${safeR((r1+r2)/2)}, ${safeR((g1+g2)/2)}, ${safeR((b1+b2)/2)}, ${safeA(avgOpacity * 0.85)})`);
+                    gradient.addColorStop(0.5, `rgba(${safeR((r1+r2)/2 + 20)}, ${safeR((g1+g2)/2 + 20)}, ${safeR((b1+b2)/2 + 15)}, ${safeA(avgOpacity)})`);
+                    gradient.addColorStop(stop2, `rgba(${safeR((r1+r2)/2)}, ${safeR((g1+g2)/2)}, ${safeR((b1+b2)/2)}, ${safeA(avgOpacity * 0.85)})`);
+                    gradient.addColorStop(1, `rgba(${r2}, ${g2}, ${b2}, ${safeA(toOpacity)})`);
 
                     // Draw curved pipe with gradient - thinner lines for depth
-                    const depthLineWidth = this.pipeRadius * (0.5 + avgOpacity);
+                    const depthLineWidth = this.pipeRadius * (0.5 + (avgOpacity || 0));
                     ctx.strokeStyle = gradient;
-                    ctx.lineWidth = depthLineWidth + Math.sin(time * 2 + fromChannel.flow) * 0.5;
+                    ctx.lineWidth = Math.max(0.5, depthLineWidth + Math.sin(time * 2 + (fromChannel.flow || 0)) * 0.5);
                     ctx.lineCap = 'round';
                     ctx.lineJoin = 'round';
 
@@ -5743,6 +5772,9 @@
                     // O(1) lookup instead of O(n) find()
                     const node = this.nodeCache.get(nodeId);
                     if (!node || node.released) continue;
+
+                    // NaN safety check for node position
+                    if (!isFinite(node.x) || !isFinite(node.y)) continue;
 
                     // Get depth layer (0-6 for prism, special for cage)
                     let layerDepth = 3;  // Default middle
