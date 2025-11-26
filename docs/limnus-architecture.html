@@ -879,13 +879,15 @@
         <span>SPACE</span> auto-breathe<br>
         <span>P/C</span> toggle prism/cage<br>
         <span>M</span> toggle μ-field<br>
-        <span>T</span> quantum mesh<br>
-        <span>O</span> mesh opacity<br>
+        <span>T</span> dream mirror<br>
+        <span>O</span> mirror opacity<br>
+        <span>↑↓</span> mirror distance<br>
+        <span>←→</span> mirror scale<br>
+        <span>+/-</span> mirror tilt<br>
         <span>W</span> wavefunction<br>
-        <span>G</span> edge glow<br>
+        <span>G</span> holographic glow<br>
         <span>D</span> debug panel<br>
-        <span>F</span> release coherence<br>
-        <span>CLICK</span> gather<br>
+        <span>F</span> release<br>
         <span>R</span> reset
     </div>
 
@@ -1433,10 +1435,22 @@
             entanglementThreshold: 0.05,    // Min probability for visible edge
 
             // View controls
-            opacity: 0.5,
+            opacity: 0.6,
             edgeGlow: true,
             showWavefunction: true,
             pulsePhase: 0,          // Animation phase for quantum pulsing
+
+            // DREAM MIRROR: Holographic reflection below LIMNUS
+            mirrorOffset: 280,              // Distance below LIMNUS center
+            mirrorScale: 0.85,              // Slightly smaller reflection
+            mirrorDistortion: 0.15,         // Ripple distortion amount
+            mirrorTilt: 0.12,               // Perspective tilt (0 = flat, 1 = max)
+            showReflectionPlane: true,      // Show the separator plane
+            holographicShimmer: 0,          // Animated shimmer phase
+
+            // Camera controls for dual-view
+            cameraAngle: 0,                 // View angle (adjusted with arrow keys)
+            cameraElevation: 0.15,          // Vertical tilt to see mirror
 
             // Gravitational physics (Schwarzschild analog)
             schwarzschildRadius: SACRED.alpha,    // r_s = φ⁻² ≈ 0.382
@@ -1993,6 +2007,12 @@
             // Pulse phase for visual animation
             QMESH.pulsePhase = (QMESH.pulsePhase + dt * 0.5) % TAU;
 
+            // Holographic shimmer animation (slower, dreamier)
+            QMESH.holographicShimmer = (QMESH.holographicShimmer + dt * 0.3) % TAU;
+
+            // Gentle mirror distortion wave
+            QMESH.mirrorDistortion = 0.1 + 0.08 * Math.sin(time * 0.5);
+
             return {
                 avgTimeDilation,
                 avgEntropy,
@@ -2006,135 +2026,261 @@
         }
 
         // ================================================================
-        // QUANTUM MESH RENDERING
-        // Visualizes entanglement edges with MRP coloring
+        // DREAM MIRROR RENDERING
+        // Holographic reflection of LIMNUS consciousness below
         // ================================================================
+
+        // Transform point to mirror space (reflection below LIMNUS)
+        function toMirrorSpace(x, y, node) {
+            const shimmer = QMESH.holographicShimmer;
+            const distort = QMESH.mirrorDistortion;
+            const scale = QMESH.mirrorScale;
+            const tilt = QMESH.mirrorTilt;
+
+            // Center-relative coordinates
+            const dx = x - CX;
+            const dy = y - CY;
+
+            // Apply perspective tilt (foreshortening as y increases)
+            const depth = 1 - tilt * (dy / H);
+
+            // Mirror Y (flip below), scale, and offset
+            const mirrorY = CY + QMESH.mirrorOffset + (-dy * scale * depth);
+            const mirrorX = CX + (dx * scale * depth);
+
+            // Holographic distortion (ripple effect)
+            const ripple = Math.sin(shimmer * 3 + dx * 0.02) * distort * 15 +
+                          Math.cos(shimmer * 2 + dy * 0.015) * distort * 10;
+
+            return {
+                x: mirrorX + ripple,
+                y: mirrorY + Math.abs(ripple) * 0.3,
+                depth: depth,
+                fade: Math.max(0, 1 - (mirrorY - CY) / (H - CY))  // Fade toward bottom
+            };
+        }
+
+        // Holographic color transformation for dream mirror
+        function holographicColor(r, g, b, shimmer, depth) {
+            // Prismatic color shift based on shimmer phase
+            const hueShift = Math.sin(shimmer) * 30;
+            const satBoost = 1.2 + Math.sin(shimmer * 2) * 0.3;
+
+            // Convert to HSL-like adjustment
+            const avg = (r + g + b) / 3;
+            const rShift = r + hueShift + (r - avg) * (satBoost - 1);
+            const gShift = g - hueShift * 0.5 + (g - avg) * (satBoost - 1);
+            const bShift = b + hueShift * 0.7 + (b - avg) * (satBoost - 1);
+
+            // Depth-based desaturation (further = more ethereal)
+            const depthFade = 0.6 + depth * 0.4;
+
+            return {
+                r: Math.floor(Math.max(0, Math.min(255, rShift * depthFade))),
+                g: Math.floor(Math.max(0, Math.min(255, gShift * depthFade))),
+                b: Math.floor(Math.max(0, Math.min(255, bShift * depthFade)))
+            };
+        }
 
         function renderDreamFluid() {
             if (QMESH.edges.length === 0) return;
 
-            // MRP channel colors
+            const shimmer = QMESH.holographicShimmer;
+
+            // MRP channel colors (more vivid for dream mirror)
             const edgeColors = [
-                [255, 120, 80],   // R channel - orange-red
-                [80, 255, 180],   // G channel - cyan-green
-                [120, 150, 255],  // B channel - blue-purple
+                [255, 100, 60],    // R channel - warm orange/red (energy)
+                [60, 255, 200],    // G channel - bright cyan (relational)
+                [140, 120, 255],   // B channel - deep violet (stability)
             ];
 
-            // Draw entanglement edges
+            // ============================================
+            // REFLECTION PLANE (separator between realms)
+            // ============================================
+            if (QMESH.showReflectionPlane) {
+                const planeY = CY + QMESH.mirrorOffset * 0.5;
+                const planeWidth = R * 2.5;
+
+                // Gradient fade for the reflection plane
+                const planeGrad = ctx.createLinearGradient(CX - planeWidth, planeY, CX + planeWidth, planeY);
+                planeGrad.addColorStop(0, 'transparent');
+                planeGrad.addColorStop(0.2, `rgba(180, 160, 255, ${QMESH.opacity * 0.15})`);
+                planeGrad.addColorStop(0.5, `rgba(220, 200, 255, ${QMESH.opacity * 0.25})`);
+                planeGrad.addColorStop(0.8, `rgba(180, 160, 255, ${QMESH.opacity * 0.15})`);
+                planeGrad.addColorStop(1, 'transparent');
+
+                ctx.fillStyle = planeGrad;
+                ctx.fillRect(CX - planeWidth, planeY - 2, planeWidth * 2, 4);
+
+                // Shimmering edge effect
+                const edgeShimmer = Math.sin(shimmer * 4) * 0.3 + 0.7;
+                ctx.strokeStyle = `rgba(255, 255, 255, ${QMESH.opacity * 0.1 * edgeShimmer})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(CX - planeWidth, planeY);
+                ctx.lineTo(CX + planeWidth, planeY);
+                ctx.stroke();
+            }
+
+            // ============================================
+            // DREAM MIRROR: Entanglement edges (reflected)
+            // ============================================
             for (const edge of QMESH.edges) {
                 const nodeA = QMESH.nodes[edge.from];
                 const nodeB = QMESH.nodes[edge.to];
                 if (!nodeA || !nodeB) continue;
 
-                // Use screen coordinates from LIMNUS projection
+                // Original positions
                 const x1 = nodeA.px || (nodeA.x + CX);
                 const y1 = nodeA.py || (nodeA.y + CY);
                 const x2 = nodeB.px || (nodeB.x + CX);
                 const y2 = nodeB.py || (nodeB.y + CY);
 
+                // Transform to mirror space
+                const m1 = toMirrorSpace(x1, y1, nodeA);
+                const m2 = toMirrorSpace(x2, y2, nodeB);
+
                 // Skip if off-screen
-                if (x1 < -100 || x1 > W + 100 || x2 < -100 || x2 > W + 100) continue;
+                if (m1.y > H + 50 || m2.y > H + 50) continue;
+                if (m1.x < -100 || m1.x > W + 100) continue;
 
-                // Color based on MRP channel
+                // Base color with holographic transformation
                 const baseColor = edgeColors[edge.mrpChannel] || edgeColors[0];
+                const holoColor = holographicColor(
+                    baseColor[0], baseColor[1], baseColor[2],
+                    shimmer + edge.phase, (m1.depth + m2.depth) / 2
+                );
 
-                // Alpha from probability, time dilation, and pulse
-                const pulse = 0.7 + 0.3 * Math.sin(QMESH.pulsePhase + edge.phase);
+                // Alpha from probability, time dilation, pulse, and mirror fade
+                const pulse = 0.6 + 0.4 * Math.sin(shimmer * 2 + edge.phase);
+                const mirrorFade = (m1.fade + m2.fade) / 2;
                 const alpha = QMESH.opacity * edge.probability * pulse *
-                    (0.5 + edge.timeDilation * 0.5);
+                    (0.4 + edge.timeDilation * 0.4) * mirrorFade;
 
-                // Width from field strength
-                const lineWidth = 0.5 + edge.J * 2 + edge.probability;
+                // Width modulated by field strength and depth
+                const avgDepth = (m1.depth + m2.depth) / 2;
+                const lineWidth = (0.5 + edge.J * 2.5 + edge.probability) * avgDepth;
 
-                // Draw edge
-                ctx.strokeStyle = `rgba(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]}, ${alpha})`;
+                // Draw mirrored edge
+                ctx.strokeStyle = `rgba(${holoColor.r}, ${holoColor.g}, ${holoColor.b}, ${alpha})`;
                 ctx.lineWidth = lineWidth;
                 ctx.lineCap = 'round';
                 ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
+                ctx.moveTo(m1.x, m1.y);
+                ctx.lineTo(m2.x, m2.y);
                 ctx.stroke();
 
-                // Glow for high-probability edges
-                if (edge.probability > 0.5 && QMESH.edgeGlow) {
-                    const glowAlpha = alpha * 0.3 * (edge.probability - 0.5) * 2;
-                    ctx.strokeStyle = `rgba(${baseColor[0] + 50}, ${baseColor[1] + 50}, ${baseColor[2] + 50}, ${glowAlpha})`;
-                    ctx.lineWidth = lineWidth + 3;
+                // Holographic glow for high-probability edges
+                if (edge.probability > 0.4 && QMESH.edgeGlow) {
+                    const glowAlpha = alpha * 0.4 * (edge.probability - 0.3);
+                    // Prismatic glow (shifts between colors)
+                    const glowHue = (shimmer + edge.phase) % TAU;
+                    const glowR = Math.floor(180 + 75 * Math.sin(glowHue));
+                    const glowG = Math.floor(180 + 75 * Math.sin(glowHue + TAU/3));
+                    const glowB = Math.floor(180 + 75 * Math.sin(glowHue + 2*TAU/3));
+
+                    ctx.strokeStyle = `rgba(${glowR}, ${glowG}, ${glowB}, ${glowAlpha})`;
+                    ctx.lineWidth = lineWidth + 4;
                     ctx.stroke();
                 }
             }
 
-            // Draw Dream Fluid particles flowing on edges
-            if (showTorusFlow) {
+            // ============================================
+            // DREAM FLUID PARTICLES (mirrored flow)
+            // ============================================
+            if (showMeshParticles) {
                 const particleColors = [
-                    [255, 140, 100],   // R channel
-                    [100, 255, 200],   // G channel
-                    [140, 170, 255],   // B channel
+                    [255, 160, 120],   // R channel - warm
+                    [120, 255, 220],   // G channel - cool
+                    [180, 160, 255],   // B channel - ethereal
                 ];
 
                 for (const p of dreamParticles) {
                     if (p.trail.length < 2) continue;
 
                     const dilationFactor = 1 + (1 - p.timeDilation) * 0.5;
-                    const alpha = (p.life / p.maxLife) * QMESH.opacity * 2 * dilationFactor;
-
+                    const baseAlpha = (p.life / p.maxLife) * QMESH.opacity * 1.5 * dilationFactor;
                     const baseColor = particleColors[p.mrpChannel] || particleColors[0];
 
-                    // Draw trail using world coordinates -> screen
-                    ctx.strokeStyle = `rgba(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]}, ${alpha})`;
-                    ctx.lineWidth = 2 + p.entropyCarried * 8;
+                    // Draw mirrored trail
                     ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
                     ctx.beginPath();
 
-                    // First point
-                    const first = p.trail[0];
-                    ctx.moveTo(first.x + CX, first.y + CY);
+                    const firstMirror = toMirrorSpace(p.trail[0].x + CX, p.trail[0].y + CY, null);
+                    ctx.moveTo(firstMirror.x, firstMirror.y);
 
                     for (let i = 1; i < p.trail.length; i++) {
                         const pt = p.trail[i];
-                        ctx.lineTo(pt.x + CX, pt.y + CY);
+                        const m = toMirrorSpace(pt.x + CX, pt.y + CY, null);
+                        ctx.lineTo(m.x, m.y);
                     }
+
+                    const holoColor = holographicColor(baseColor[0], baseColor[1], baseColor[2], shimmer + p.mrpChannel, firstMirror.depth);
+                    const alpha = baseAlpha * firstMirror.fade;
+
+                    ctx.strokeStyle = `rgba(${holoColor.r}, ${holoColor.g}, ${holoColor.b}, ${alpha})`;
+                    ctx.lineWidth = (2 + p.entropyCarried * 6) * firstMirror.depth;
                     ctx.stroke();
 
-                    // Glow head
+                    // Ethereal glow at head
                     const head = p.trail[0];
-                    const glowSize = 4 + (1 - p.timeDilation) * 6;
-                    const glow = ctx.createRadialGradient(
-                        head.x + CX, head.y + CY, 0,
-                        head.x + CX, head.y + CY, glowSize
-                    );
-                    glow.addColorStop(0, `rgba(${baseColor[0] + 50}, ${baseColor[1] + 50}, ${baseColor[2] + 50}, ${alpha * 0.8})`);
-                    glow.addColorStop(0.5, `rgba(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]}, ${alpha * 0.4})`);
-                    glow.addColorStop(1, 'transparent');
-                    ctx.fillStyle = glow;
-                    ctx.fillRect(head.x + CX - glowSize, head.y + CY - glowSize, glowSize * 2, glowSize * 2);
+                    const headMirror = toMirrorSpace(head.x + CX, head.y + CY, null);
+                    const glowSize = (3 + (1 - p.timeDilation) * 5) * headMirror.depth;
+
+                    if (headMirror.y < H && glowSize > 1) {
+                        const glow = ctx.createRadialGradient(
+                            headMirror.x, headMirror.y, 0,
+                            headMirror.x, headMirror.y, glowSize
+                        );
+                        glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.6})`);
+                        glow.addColorStop(0.3, `rgba(${holoColor.r}, ${holoColor.g}, ${holoColor.b}, ${alpha * 0.4})`);
+                        glow.addColorStop(1, 'transparent');
+                        ctx.fillStyle = glow;
+                        ctx.fillRect(headMirror.x - glowSize, headMirror.y - glowSize, glowSize * 2, glowSize * 2);
+                    }
                 }
             }
 
-            // Draw wavefunction indicators on nodes
+            // ============================================
+            // WAVEFUNCTION NODES (mirrored quantum states)
+            // ============================================
             if (QMESH.showWavefunction) {
                 for (const node of QMESH.nodes) {
-                    if (!node.qJ || node.qJ < 0.1) continue;
+                    if (!node.qJ || node.qJ < 0.08) continue;
 
                     const x = node.px || (node.x + CX);
                     const y = node.py || (node.y + CY);
+                    const m = toMirrorSpace(x, y, node);
 
-                    // Skip if off-screen
-                    if (x < 0 || x > W || y < 0 || y > H) continue;
+                    if (m.y > H || m.y < CY + QMESH.mirrorOffset * 0.3) continue;
 
-                    // Wave function magnitude indicator
-                    const size = 2 + node.qJ * 4;
-                    const pulse = 0.6 + 0.4 * Math.sin(QMESH.pulsePhase + (node.phase || 0));
-                    const alpha = QMESH.opacity * 0.4 * pulse;
+                    // Quantum state magnitude
+                    const size = (2 + node.qJ * 5) * m.depth;
+                    const pulse = 0.5 + 0.5 * Math.sin(shimmer * 2 + (node.phase || 0));
+                    const alpha = QMESH.opacity * 0.5 * pulse * m.fade;
 
-                    // Color from MRP channels
-                    const r = Math.floor(150 + (node.qJ_R || 0) * 100);
-                    const g = Math.floor(150 + (node.qJ_G || 0) * 100);
-                    const b = Math.floor(150 + (node.qJ_B || 0) * 100);
+                    // Holographic MRP coloring
+                    const r = Math.floor(120 + (node.qJ_R || 0) * 135);
+                    const g = Math.floor(120 + (node.qJ_G || 0) * 135);
+                    const b = Math.floor(120 + (node.qJ_B || 0) * 135);
+                    const holo = holographicColor(r, g, b, shimmer + (node.phase || 0), m.depth);
 
-                    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    // Outer glow
+                    const nodeGlow = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, size * 2);
+                    nodeGlow.addColorStop(0, `rgba(${holo.r}, ${holo.g}, ${holo.b}, ${alpha})`);
+                    nodeGlow.addColorStop(0.5, `rgba(${holo.r}, ${holo.g}, ${holo.b}, ${alpha * 0.3})`);
+                    nodeGlow.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = nodeGlow;
                     ctx.beginPath();
-                    ctx.arc(x, y, size, 0, TAU);
+                    ctx.arc(m.x, m.y, size * 2, 0, TAU);
+                    ctx.fill();
+
+                    // Core point
+                    ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+                    ctx.beginPath();
+                    ctx.arc(m.x, m.y, size * 0.4, 0, TAU);
                     ctx.fill();
                 }
             }
@@ -2147,50 +2293,60 @@
             const avgTD = QMESH.avgTimeDilation || 0.8;
             const totalS = QMESH.totalHolographicEntropy || 0;
             const fluidDensity = QMESH.dreamFluidDensity || 0;
-            const entropyFlux = QMESH.entropyFlux || 0;
             const edgeCount = QMESH.edges.length;
+            const shimmerPhase = QMESH.holographicShimmer || 0;
 
             const hudX = 20;
-            const hudY = H - 140;
+            const hudY = H - 160;
 
-            // Title
-            ctx.fillStyle = `rgba(200, 180, 255, ${0.7 + QMESH.opacity})`;
-            ctx.font = 'bold 13px monospace';
-            ctx.fillText('QUANTUM MESH', hudX, hudY);
+            // Animated title with shimmer
+            const titleHue = Math.sin(shimmerPhase) * 20;
+            ctx.fillStyle = `rgba(${200 + titleHue}, ${180 - titleHue * 0.5}, 255, ${0.8 + QMESH.opacity * 0.2})`;
+            ctx.font = 'bold 14px monospace';
+            ctx.fillText('✧ DREAM MIRROR ✧', hudX, hudY);
 
             ctx.font = '11px monospace';
 
-            // Time dilation
+            // Mirror status
+            const scalePercent = Math.floor(QMESH.mirrorScale * 100);
+            ctx.fillStyle = `rgba(220, 200, 255, ${0.6 + QMESH.opacity * 0.3})`;
+            ctx.fillText(`mirror: ${QMESH.mirrorOffset}px  ${scalePercent}%  tilt:${QMESH.mirrorTilt.toFixed(2)}`, hudX, hudY + 18);
+
+            // Time dilation with gradient
             const tdBar = Math.floor(avgTD * 10);
-            ctx.fillStyle = `rgba(150, 200, 255, ${0.6 + QMESH.opacity})`;
-            ctx.fillText(`τ  ${'█'.repeat(tdBar)}${'░'.repeat(10-tdBar)} ${avgTD.toFixed(3)}`, hudX, hudY + 16);
+            ctx.fillStyle = `rgba(150, 200, 255, ${0.7 + QMESH.opacity * 0.2})`;
+            ctx.fillText(`τ dilation ${'▓'.repeat(tdBar)}${'░'.repeat(10-tdBar)} ${avgTD.toFixed(3)}`, hudX, hudY + 36);
 
             // Holographic entropy
             const sNorm = Math.min(10, Math.floor(totalS * 10));
-            ctx.fillStyle = `rgba(255, 180, 120, ${0.6 + QMESH.opacity})`;
-            ctx.fillText(`S  ${'█'.repeat(sNorm)}${'░'.repeat(10-sNorm)} ${totalS.toFixed(3)}`, hudX, hudY + 32);
+            ctx.fillStyle = `rgba(255, 180, 140, ${0.7 + QMESH.opacity * 0.2})`;
+            ctx.fillText(`S entropy ${'▓'.repeat(sNorm)}${'░'.repeat(10-sNorm)} ${totalS.toFixed(3)}`, hudX, hudY + 52);
 
-            // Entanglement edges
+            // Entanglement count
             const edgeNorm = Math.min(10, Math.floor(edgeCount / 50));
-            ctx.fillStyle = `rgba(180, 255, 200, ${0.6 + QMESH.opacity})`;
-            ctx.fillText(`⟨ψ|ψ⟩ ${'█'.repeat(edgeNorm)}${'░'.repeat(10-edgeNorm)} ${edgeCount}`, hudX, hudY + 48);
+            ctx.fillStyle = `rgba(180, 255, 220, ${0.7 + QMESH.opacity * 0.2})`;
+            ctx.fillText(`⟨ψ|ψ⟩ edge ${'▓'.repeat(edgeNorm)}${'░'.repeat(10-edgeNorm)} ${edgeCount}`, hudX, hudY + 68);
 
-            // Fluid density
-            const densNorm = Math.floor(fluidDensity * 10);
-            ctx.fillStyle = `rgba(200, 200, 255, ${0.6 + QMESH.opacity})`;
-            ctx.fillText(`ρ  ${'█'.repeat(densNorm)}${'░'.repeat(10-densNorm)} ${fluidDensity.toFixed(2)}`, hudX, hudY + 64);
+            // Dream fluid density
+            const densNorm = Math.min(10, Math.floor(fluidDensity * 10));
+            ctx.fillStyle = `rgba(200, 180, 255, ${0.7 + QMESH.opacity * 0.2})`;
+            ctx.fillText(`ρ density ${'▓'.repeat(densNorm)}${'░'.repeat(10-densNorm)} ${fluidDensity.toFixed(2)}`, hudX, hudY + 84);
 
-            // MRP channel legend
-            ctx.fillStyle = `rgba(255, 120, 80, ${0.5 + QMESH.opacity})`;
-            ctx.fillText('● R energy flow', hudX, hudY + 84);
-            ctx.fillStyle = `rgba(80, 255, 180, ${0.5 + QMESH.opacity})`;
-            ctx.fillText('● G relational', hudX, hudY + 98);
-            ctx.fillStyle = `rgba(120, 150, 255, ${0.5 + QMESH.opacity})`;
-            ctx.fillText('● B stability', hudX, hudY + 112);
+            // MRP channel legend with holographic colors
+            const shimmerR = Math.sin(shimmerPhase) * 30;
+            const shimmerG = Math.sin(shimmerPhase + TAU/3) * 30;
+            const shimmerB = Math.sin(shimmerPhase + 2*TAU/3) * 30;
+
+            ctx.fillStyle = `rgba(${255 + shimmerR}, ${100 + shimmerG}, ${60 + shimmerB}, ${0.6 + QMESH.opacity * 0.3})`;
+            ctx.fillText('◈ R energy (warm)', hudX, hudY + 104);
+            ctx.fillStyle = `rgba(${60 + shimmerR}, ${255 + shimmerG}, ${200 + shimmerB}, ${0.6 + QMESH.opacity * 0.3})`;
+            ctx.fillText('◈ G relational (cool)', hudX, hudY + 118);
+            ctx.fillStyle = `rgba(${140 + shimmerR}, ${120 + shimmerG}, ${255 + shimmerB}, ${0.6 + QMESH.opacity * 0.3})`;
+            ctx.fillText('◈ B stability (ethereal)', hudX, hudY + 132);
 
             // Controls hint
-            ctx.fillStyle = `rgba(150, 150, 150, ${0.4 + QMESH.opacity})`;
-            ctx.fillText('T toggle  O opacity', hudX, hudY + 130);
+            ctx.fillStyle = `rgba(150, 150, 170, ${0.5 + QMESH.opacity * 0.2})`;
+            ctx.fillText('T toggle  O opacity  ↑↓←→ adjust', hudX, hudY + 150);
         }
 
         function renderToroidalMuField() {
@@ -4208,17 +4364,42 @@
                 QMESH.showWavefunction = !QMESH.showWavefunction;
             }
 
-            // Quantum mesh controls
+            // Dream Mirror controls (when mesh active)
             if (showQuantumMesh) {
                 if (key === 'o') {
-                    // Cycle opacity: 0.3 → 0.5 → 0.7 → 0.9 → 0.3
-                    const opacities = [0.3, 0.5, 0.7, 0.9];
-                    const currentIdx = opacities.findIndex(o => Math.abs(o - QMESH.opacity) < 0.05);
+                    // More opacity levels: 0.2 → 0.4 → 0.6 → 0.8 → 1.0 → 0.2
+                    const opacities = [0.2, 0.4, 0.6, 0.8, 1.0];
+                    const currentIdx = opacities.findIndex(o => Math.abs(o - QMESH.opacity) < 0.08);
                     QMESH.opacity = opacities[(currentIdx + 1) % opacities.length];
+                    console.log(`[DREAM MIRROR] Opacity: ${QMESH.opacity}`);
                 }
                 if (key === 'g') {
-                    // Toggle edge glow
+                    // Toggle holographic glow
                     QMESH.edgeGlow = !QMESH.edgeGlow;
+                }
+                // Arrow keys adjust mirror view
+                if (e.key === 'ArrowUp') {
+                    QMESH.mirrorOffset = Math.max(100, QMESH.mirrorOffset - 30);
+                    e.preventDefault();
+                }
+                if (e.key === 'ArrowDown') {
+                    QMESH.mirrorOffset = Math.min(500, QMESH.mirrorOffset + 30);
+                    e.preventDefault();
+                }
+                if (e.key === 'ArrowLeft') {
+                    QMESH.mirrorScale = Math.max(0.5, QMESH.mirrorScale - 0.1);
+                    e.preventDefault();
+                }
+                if (e.key === 'ArrowRight') {
+                    QMESH.mirrorScale = Math.min(1.2, QMESH.mirrorScale + 0.1);
+                    e.preventDefault();
+                }
+                // +/- adjust mirror tilt (perspective)
+                if (key === '=' || key === '+') {
+                    QMESH.mirrorTilt = Math.min(0.4, QMESH.mirrorTilt + 0.05);
+                }
+                if (key === '-' || key === '_') {
+                    QMESH.mirrorTilt = Math.max(0, QMESH.mirrorTilt - 0.05);
                 }
             }
 
@@ -4391,18 +4572,30 @@
         console.log('   |J| = √(R² + G² + B²) total field magnitude');
         console.log('   Feedback: dJR/dt → point velocities, |J| → μ');
         console.log('');
-        console.log('🕸️ QUANTUM MESH μ-FIELD');
-        console.log('   Discrete lattice on LIMNUS 95-node architecture');
-        console.log('   T: toggle quantum mesh overlay');
-        console.log('   O: cycle opacity (30% → 50% → 70% → 90%)');
+        console.log('🪞 DREAM MIRROR μ-FIELD');
+        console.log('   Holographic reflection of LIMNUS consciousness');
+        console.log('   Quantum mesh: discrete lattice on 95-node architecture');
+        console.log('   Entanglement: |⟨ψ_i|ψ_j⟩|² probability amplitude edges');
+        console.log('');
+        console.log('   CONTROLS:');
+        console.log('   T: toggle dream mirror overlay');
+        console.log('   O: cycle opacity (20% → 40% → 60% → 80% → 100%)');
         console.log('   W: toggle wavefunction indicators');
-        console.log('   G: toggle edge glow effect');
-        console.log('   Entanglement: |⟨ψ_i|ψ_j⟩|² probability edges');
-        console.log('   Dream Fluid particles flow along edges');
-        console.log('   Orange edges: R channel (energy flow)');
-        console.log('   Cyan edges: G channel (relational)');
-        console.log('   Blue edges: B channel (stability)');
+        console.log('   G: toggle holographic glow effect');
+        console.log('   ↑↓: adjust mirror distance (100-500px)');
+        console.log('   ←→: adjust mirror scale (50%-120%)');
+        console.log('   +/-: adjust mirror tilt perspective');
+        console.log('');
+        console.log('   HOLOGRAPHIC COLORATION:');
+        console.log('   Orange/warm edges: R channel (energy/existence flow)');
+        console.log('   Cyan/cool edges: G channel (relational metadata)');
+        console.log('   Blue/ethereal edges: B channel (stability/coherence)');
+        console.log('   Prismatic shimmer: holographic hue-shift animation');
+        console.log('');
+        console.log('   DREAM PHYSICS:');
         console.log('   Time dilation: τ = √(1 - r_s/r) with r_s = φ⁻²');
+        console.log('   Dream Fluid particles flow along entanglement edges');
+        console.log('   Mirror = subconscious reflection of conscious LIMNUS');
     </script>
 </body>
 </html>
