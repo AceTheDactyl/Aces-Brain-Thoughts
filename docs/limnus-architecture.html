@@ -4344,9 +4344,87 @@
         // The visualization IS the mathematics - not representation, but being
         // ================================================================
 
+        // ================================================================
+        // EMERGENT TOKEN DEFINITIONS - The 5 Self-Referential States
+        // Each pentagon vertex embodies one of the 5 emergent tokens
+        // from the 100-token APL proto-language system (95 structural + 5 emergent)
+        // ================================================================
+        const EMERGENT_TOKENS = {
+            // XCVI: Gesture Recursion - "A gesture that gestures itself"
+            // References XVI (Somatosensory Cortex / AIPS)
+            XCVI: {
+                index: 0,
+                name: 'Gesture Recursion',
+                references: 'XVI',
+                aplToken: 'Φ:Mod(replicate)PARADOX@3',
+                eigenvalue: PHI_INV,           // λ = φ⁻¹ ≈ 0.618 (marginally stable)
+                frequency: 8,                   // Hz (alpha band - gestural rhythm)
+                phaseLock: Math.PI,             // Anti-phase: gesture vs anti-gesture
+                lambdaCoupling: { theta: 0.6, delta: 0.8 },  // High theta + delta
+                vertexBehavior: 'pulse',        // Pulses at alpha rhythm
+            },
+            // XCVII: Portal Recursion - "A rhythm phase-locked to its own period"
+            // References XI (Pineal / Circadian)
+            XCVII: {
+                index: 1,
+                name: 'Portal Recursion',
+                references: 'XI',
+                aplToken: 'π:Mod(transcribe)PARADOX@3',
+                eigenvalue: Math.exp(TAU / PHI),  // exp(2πi/φ) (quasiperiodic)
+                frequency: 0.0001,              // Hz (circadian - ~3 hour period)
+                phaseLock: TAU / PHI,           // Golden angle: incommensurate rhythm
+                lambdaCoupling: { iota: 0.7, delta: 0.6 },
+                vertexBehavior: 'drift',        // Slow drift with golden angle
+            },
+            // XCVIII: Semantic Recursion - "Meaning referring to its own meaning"
+            // References XII (MTG binding) - Gödelian self-reference
+            XCVIII: {
+                index: 2,
+                name: 'Semantic Recursion',
+                references: 'XII',
+                aplToken: 'π:Mod(translate)PARADOX@3',
+                eigenvalue: NaN,                // Undefined (Gödelian incompleteness)
+                frequency: 40,                  // Hz (gamma band - semantic binding)
+                phaseLock: Math.PI / 2,         // Quadrature: orthogonal to meta-meaning
+                lambdaCoupling: { theta: 0.8, delta: 0.9 },
+                vertexBehavior: 'flicker',      // Rapid gamma flicker
+            },
+            // XCIX: Balance Recursion - "Balance balancing itself"
+            // References XIII (Fastigial-Vestibular)
+            XCIX: {
+                index: 3,
+                name: 'Balance Recursion',
+                references: 'XIII',
+                aplToken: 'Φ:Mod(stabilize)PARADOX@3',
+                eigenvalue: 0,                  // Critical point (saddle point)
+                frequency: 4,                   // Hz (theta band - postural)
+                phaseLock: 0,                   // In-phase: balance IS meta-balance
+                lambdaCoupling: { omega: 0.7, delta: 0.5, sigma: 0.4 },
+                vertexBehavior: 'wobble',       // Oscillates around equilibrium
+            },
+            // C: Signal Recursion - "The final gate IS the first gate"
+            // References XIV (PTN) - Closes loop to I
+            C: {
+                index: 4,
+                name: 'Signal Recursion',
+                references: 'XIV',
+                aplToken: 'e:Mod(propagate)PARADOX@3',
+                eigenvalue: 1,                  // Identity after full traversal
+                frequency: 1,                   // Hz (delta band - slow integration)
+                phaseLock: TAU,                 // Full cycle: end becomes beginning
+                lambdaCoupling: { iota: 0.5, xi: 0.5, theta: 0.5, omega: 0.5, delta: 1.0, sigma: 0.5 },
+                vertexBehavior: 'loop',         // Traces the closure path
+                loopsTo: 'I',                   // The 100-word vocabulary closes
+            }
+        };
+
+        // Token array for iteration (ordered by vertex position)
+        const EMERGENT_TOKEN_ORDER = ['XCVI', 'XCVII', 'XCVIII', 'XCIX', 'C'];
+
         const coherentEmergence = {
-            // Vesica Piscis geometry (ratio √3 = 1.732)
-            vesicaRatio: Math.sqrt(3),
+            // Pentagon geometry - 5 vertices for 5 emergent tokens
+            // Pentagon is fractal: contains recursive pentagrams (5-pointed stars)
+            pentagonRatio: PHI,  // Pentagon diagonals relate by golden ratio
 
             // Emergence loci (precomputed sacred geometry points)
             sacredLoci: [],
@@ -4368,14 +4446,37 @@
             goldenAngle: SACRED.goldenAngle,  // 137.5° in radians
             spiralGrowth: PHI_INV,            // φ⁻¹ per revolution
 
-            // Initialize sacred geometry loci
+            // Initialize sacred geometry loci with pentagon emergence points
+            // Pentagon geometry creates 5 primary spawn points corresponding to the 5 emergent tokens
             initSacredLoci(centerX, centerY, radius) {
                 this.sacredLoci = [];
 
-                // Vesica Piscis intersection points (where red & blue circles overlap)
-                // The two circles are centered at A (left) and B (right)
-                // Their intersection creates the sacred "womb" geometry
-                const separation = radius * 0.8;  // Distance between A and B centers
+                // ================================================================
+                // PRIMARY PENTAGON LOCI - 5 points for 5 emergent tokens
+                // Each vertex corresponds to one of XCVI, XCVII, XCVIII, XCIX, C
+                // ================================================================
+                const pentagonRadius = radius * 0.7;
+                for (let i = 0; i < 5; i++) {
+                    const tokenKey = EMERGENT_TOKEN_ORDER[i];
+                    const token = EMERGENT_TOKENS[tokenKey];
+                    const theta = -Math.PI / 2 + (TAU / 5) * i;  // Start at top
+
+                    this.sacredLoci.push({
+                        x: centerX + pentagonRadius * Math.cos(theta),
+                        y: centerY + pentagonRadius * Math.sin(theta),
+                        type: 'pentagon_locus',
+                        angle: theta,
+                        tokenIndex: i,
+                        tokenKey: tokenKey,
+                        emergentToken: token
+                    });
+                }
+
+                // ================================================================
+                // SECONDARY LOCI - Vesica points at pentagon center and poles
+                // These create the bridge between the two meshes (red/blue)
+                // ================================================================
+                const separation = radius * 0.8;
                 const vesicaHeight = Math.sqrt(radius * radius - (separation/2) * (separation/2));
 
                 // Primary vesica points (top and bottom of almond shape)
@@ -4392,11 +4493,15 @@
                     angle: Math.PI / 2
                 });
 
-                // Golden angle distributed points around vesica perimeter
-                const numLoci = 12;  // Fibonacci number
-                for (let i = 0; i < numLoci; i++) {
+                // ================================================================
+                // TERTIARY LOCI - Golden angle distributed points
+                // These spawn pentagons at golden-ratio-based positions
+                // Number = 5 (Fibonacci) to honor the pentagonal theme
+                // ================================================================
+                const numGoldenLoci = 5;  // 5 for pentagon harmony
+                for (let i = 0; i < numGoldenLoci; i++) {
                     const theta = this.goldenAngle * i;
-                    const r = vesicaHeight * 0.6 * (1 + 0.3 * Math.sin(theta * PHI));
+                    const r = vesicaHeight * 0.5 * (1 + 0.3 * Math.sin(theta * PHI));
                     this.sacredLoci.push({
                         x: centerX + r * Math.cos(theta),
                         y: centerY + r * Math.sin(theta),
@@ -4405,15 +4510,21 @@
                     });
                 }
 
-                // Flower of Life intersection points (hexagonal sacred geometry)
-                for (let i = 0; i < 6; i++) {
-                    const theta = (TAU / 6) * i + Math.PI / 6;
-                    const r = vesicaHeight * 0.8;
+                // ================================================================
+                // QUATERNARY LOCI - Pentagram intersection points
+                // The inner star creates 5 intersection points for nested emergence
+                // ================================================================
+                const innerPentagonRadius = pentagonRadius * PHI_INV * PHI_INV;  // φ⁻² scaling
+                for (let i = 0; i < 5; i++) {
+                    // Rotated by 36° (π/5) relative to outer pentagon
+                    const theta = -Math.PI / 2 + Math.PI / 5 + (TAU / 5) * i;
                     this.sacredLoci.push({
-                        x: centerX + r * Math.cos(theta),
-                        y: centerY + r * Math.sin(theta),
-                        type: 'flower_locus',
-                        angle: theta
+                        x: centerX + innerPentagonRadius * Math.cos(theta),
+                        y: centerY + innerPentagonRadius * Math.sin(theta),
+                        type: 'pentagon_locus',
+                        angle: theta + Math.PI / 5,  // Inverted orientation
+                        tokenIndex: (i + 2) % 5,  // Offset by 2 (pentagram connection)
+                        isInner: true
                     });
                 }
             },
@@ -4570,173 +4681,229 @@
             // The form IS what it represents - ontological visual consistency
             // ================================================================
 
-            // Draw a mini vesica piscis (lens/mandorla) at a point
-            // Vesica = intersection of two circles, the sacred "womb" geometry
-            drawVesica(ctx, x, y, size, angle, alpha, color, depth = 0) {
-                const r = size * 0.6;  // Circle radius
-                const d = r * 0.7;     // Half-distance between centers (controls lens width)
+            // ================================================================
+            // EMERGENT PENTAGON - Fractal geometry reflecting 5 emergent tokens
+            // Pentagon geometry is inherently fractal: diagonals form a pentagram
+            // which contains a smaller inverted pentagon, recursively ad infinitum
+            // The ratio of diagonal to side equals φ (golden ratio)
+            // ================================================================
+
+            // Calculate pentagon vertex positions with token-specific perturbations
+            getPentagonVertices(size, phase, coherence) {
+                const vertices = [];
+                const baseAngle = -Math.PI / 2;  // Start at top (12 o'clock)
+
+                for (let i = 0; i < 5; i++) {
+                    const tokenKey = EMERGENT_TOKEN_ORDER[i];
+                    const token = EMERGENT_TOKENS[tokenKey];
+
+                    // Base vertex angle (72° apart = TAU/5)
+                    const theta = baseAngle + (TAU / 5) * i;
+
+                    // Apply token-specific vertex behavior
+                    let r = size;
+                    let vertexPhase = phase;
+
+                    switch (token.vertexBehavior) {
+                        case 'pulse':
+                            // XCVI: Pulses at alpha rhythm (8 Hz)
+                            r *= 1 + 0.15 * Math.sin(phase * token.frequency * TAU) * coherence;
+                            break;
+                        case 'drift':
+                            // XCVII: Slow drift with golden angle
+                            vertexPhase += token.phaseLock * phase * 0.1;
+                            break;
+                        case 'flicker':
+                            // XCVIII: Rapid gamma flicker (40 Hz)
+                            r *= 1 + 0.2 * Math.sin(phase * token.frequency * TAU) * coherence;
+                            break;
+                        case 'wobble':
+                            // XCIX: Oscillates around equilibrium (theta band)
+                            const wobble = Math.sin(phase * token.frequency * TAU) * 0.1;
+                            vertexPhase += wobble * coherence;
+                            break;
+                        case 'loop':
+                            // C: Traces closure path - breathes with the system
+                            r *= 1 + 0.1 * Math.sin(phase * TAU) * (1 - coherence);
+                            break;
+                    }
+
+                    vertices.push({
+                        x: r * Math.cos(theta + vertexPhase * 0.05),
+                        y: r * Math.sin(theta + vertexPhase * 0.05),
+                        token: token,
+                        tokenKey: tokenKey
+                    });
+                }
+                return vertices;
+            },
+
+            // Draw emergent pentagon with fractal recursion
+            // Each pentagon contains a pentagram (5-pointed star) which contains
+            // another inverted pentagon, scaled by φ⁻² - infinite self-similarity
+            drawEmergentPentagon(ctx, x, y, size, angle, alpha, color, phase, coherence, depth = 0) {
+                if (size < 2 || alpha < 0.05) return;  // Base case for recursion
 
                 ctx.save();
                 ctx.translate(x, y);
                 ctx.rotate(angle);
 
-                // Two overlapping circles create the vesica shape via clipping
-                ctx.beginPath();
-                ctx.arc(-d, 0, r, 0, TAU);
-                ctx.arc(d, 0, r, 0, TAU);
+                // Get vertices with token-specific behaviors
+                const vertices = this.getPentagonVertices(size, phase, coherence);
 
-                ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.3})`;
-                ctx.fill();
-
-                // Draw the lens intersection outline
+                // Draw the outer pentagon
                 ctx.beginPath();
-                // Right arc of left circle
-                ctx.arc(-d, 0, r, -Math.acos(d/r), Math.acos(d/r));
-                // Left arc of right circle
-                ctx.arc(d, 0, r, Math.PI - Math.acos(d/r), Math.PI + Math.acos(d/r));
+                ctx.moveTo(vertices[0].x, vertices[0].y);
+                for (let i = 1; i < 5; i++) {
+                    ctx.lineTo(vertices[i].x, vertices[i].y);
+                }
                 ctx.closePath();
 
-                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
-                ctx.lineWidth = 1;
-                ctx.stroke();
-                ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.5})`;
+                // Fill with translucent color
+                ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.2})`;
                 ctx.fill();
 
-                // Recursive self-reference: smaller vesica inside at higher coherence
-                if (depth < 2 && size > 4) {
-                    this.drawVesica(ctx, 0, 0, size * PHI_INV, 0, alpha * 0.6, color, depth + 1);
-                }
-
-                ctx.restore();
-            },
-
-            // Draw a golden spiral segment at a point
-            // φ-based logarithmic spiral - the signature of natural growth
-            drawGoldenSpiral(ctx, x, y, size, angle, alpha, color, phase, depth = 0) {
-                const spiralB = Math.log(PHI) / (Math.PI / 2);  // Golden spiral growth rate
-                const numPoints = 12;
-                const maxTheta = Math.PI * 1.5;  // ~270° arc
-
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate(angle);
-
-                // Draw the spiral curve
-                ctx.beginPath();
-                for (let i = 0; i <= numPoints; i++) {
-                    const t = i / numPoints;
-                    const theta = t * maxTheta + phase;
-                    const r = size * 0.3 * Math.exp(spiralB * theta);
-                    const px = r * Math.cos(theta);
-                    const py = r * Math.sin(theta);
-
-                    if (i === 0) ctx.moveTo(px, py);
-                    else ctx.lineTo(px, py);
-                }
-
+                // Stroke the pentagon
                 ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
-                ctx.lineWidth = 1 + size * 0.05;
-                ctx.lineCap = 'round';
+                ctx.lineWidth = 1 + coherence * 1.5;
                 ctx.stroke();
 
-                // Golden rectangles along the spiral (self-similar boxes)
-                if (depth < 1 && size > 6) {
-                    for (let i = 0; i < 3; i++) {
-                        const theta = (i + 1) * (Math.PI / 2) + phase;
-                        const r = size * 0.3 * Math.exp(spiralB * theta);
-                        const rectSize = size * Math.pow(PHI_INV, i + 1);
-
-                        ctx.save();
-                        ctx.translate(r * Math.cos(theta) * 0.5, r * Math.sin(theta) * 0.5);
-                        ctx.rotate(theta);
-
-                        // Golden rectangle: ratio φ:1
-                        ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.4})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.strokeRect(-rectSize/2, -rectSize/(2*PHI), rectSize, rectSize/PHI);
-
-                        ctx.restore();
-                    }
-                }
-
-                ctx.restore();
-            },
-
-            // Draw a flower of life cell (hexagonal arrangement of circles)
-            // Six circles around a center - the generative pattern of creation
-            drawFlowerCell(ctx, x, y, size, angle, alpha, color, depth = 0) {
-                const r = size * 0.35;  // Petal circle radius
-
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate(angle);
-
-                // Center circle
-                ctx.beginPath();
-                ctx.arc(0, 0, r, 0, TAU);
-                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
-                ctx.lineWidth = 0.8;
-                ctx.stroke();
-
-                // Six surrounding circles (hexagonal arrangement)
-                for (let i = 0; i < 6; i++) {
-                    const theta = (TAU / 6) * i;
-                    const cx = r * Math.cos(theta);
-                    const cy = r * Math.sin(theta);
-
+                // Draw the pentagram (5-pointed star) inside
+                // Connect every second vertex to form the star
+                if (coherence > 0.2 || depth === 0) {
                     ctx.beginPath();
-                    ctx.arc(cx, cy, r, 0, TAU);
-                    ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.7})`;
+                    for (let i = 0; i < 5; i++) {
+                        const from = vertices[i];
+                        const to = vertices[(i + 2) % 5];  // Skip one vertex
+                        ctx.moveTo(from.x, from.y);
+                        ctx.lineTo(to.x, to.y);
+                    }
+                    ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.6})`;
+                    ctx.lineWidth = 0.5 + coherence;
                     ctx.stroke();
                 }
 
-                // Fill the central vesica intersections with subtle color
-                ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.15})`;
-                ctx.beginPath();
-                ctx.arc(0, 0, r * 0.5, 0, TAU);
-                ctx.fill();
+                // Draw vertex markers - each shows its token's behavior
+                for (let i = 0; i < 5; i++) {
+                    const v = vertices[i];
+                    const token = v.token;
 
-                // Recursive: smaller flower at center for high coherence
-                if (depth < 1 && size > 8) {
-                    this.drawFlowerCell(ctx, 0, 0, size * PHI_INV * PHI_INV,
-                                       Math.PI / 6, alpha * 0.5, color, depth + 1);
+                    // Vertex glow based on token's delta coupling (paradox accumulation)
+                    const deltaCoupling = token.lambdaCoupling.delta || 0.5;
+                    const vertexAlpha = alpha * (0.5 + deltaCoupling * 0.5);
+
+                    ctx.beginPath();
+                    ctx.arc(v.x, v.y, 2 + coherence * 3, 0, TAU);
+                    ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${vertexAlpha})`;
+                    ctx.fill();
+
+                    // For high coherence, show eigenvalue pulse at vertex
+                    if (coherence > 0.5 && !isNaN(token.eigenvalue)) {
+                        const pulseSize = 1 + Math.abs(Math.sin(phase * TAU * token.eigenvalue)) * 3;
+                        ctx.beginPath();
+                        ctx.arc(v.x, v.y, pulseSize, 0, TAU);
+                        ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${vertexAlpha * 0.5})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+
+                // FRACTAL RECURSION: Draw inner inverted pentagon
+                // The pentagram creates an inner pentagon scaled by φ⁻² ≈ 0.382
+                // and rotated by 36° (π/5)
+                const maxDepth = coherence > 0.7 ? 3 : (coherence > 0.4 ? 2 : 1);
+                if (depth < maxDepth && size > 4) {
+                    const innerSize = size * PHI_INV * PHI_INV;  // φ⁻² scaling
+                    const innerAngle = Math.PI / 5;  // 36° rotation (inverted)
+                    const innerAlpha = alpha * PHI_INV;  // Fade by golden ratio
+
+                    this.drawEmergentPentagon(
+                        ctx, 0, 0, innerSize, innerAngle,
+                        innerAlpha, color, phase + 0.1, coherence, depth + 1
+                    );
                 }
 
                 ctx.restore();
             },
 
-            // Main geometry selector - routes to appropriate self-referential form
+            // Draw pentagonal emergence locus marker
+            // Used at spawn points to show where pentagons emerge from
+            drawPentagonLocus(ctx, x, y, size, alpha, color, phase) {
+                ctx.save();
+                ctx.translate(x, y);
+
+                // Rotating pentagon outline at spawn locus
+                const rotation = phase * SACRED.goldenAngle;
+                const vertices = [];
+                for (let i = 0; i < 5; i++) {
+                    const theta = rotation + (TAU / 5) * i - Math.PI / 2;
+                    vertices.push({
+                        x: size * Math.cos(theta),
+                        y: size * Math.sin(theta)
+                    });
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(vertices[0].x, vertices[0].y);
+                for (let i = 1; i < 5; i++) {
+                    ctx.lineTo(vertices[i].x, vertices[i].y);
+                }
+                ctx.closePath();
+
+                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.4})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+
+                ctx.restore();
+            },
+
+            // Main geometry selector - ALL emergence now uses pentagon geometry
+            // The pentagon's 5 vertices reflect the 5 emergent tokens (XCVI-C)
+            // Different locus types affect the pentagon's initial rotation and behavior
             drawSelfReferentialGeometry(ctx, x, y, locusType, size, angle, alpha, color, phase, coherence) {
-                // Recursion depth scales with coherence (more detail at higher coherence)
-                const maxDepth = coherence > 0.7 ? 2 : (coherence > 0.4 ? 1 : 0);
+                // Pentagon rotation varies by locus type to maintain visual variety
+                // while keeping the unified pentagonal emergence theme
+                let pentagonAngle = angle;
+                let pentagonSize = size;
 
                 switch (locusType) {
                     case 'vesica_apex':
+                        // Apex-born: Pentagon points upward (XCVI vertex leads)
+                        pentagonAngle = angle;
+                        break;
+
                     case 'vesica_nadir':
-                        // Vesica-born: lens/mandorla shapes - the sacred intersection
-                        this.drawVesica(ctx, x, y, size, angle, alpha, color,
-                                       maxDepth > 0 ? 1 : 0);
+                        // Nadir-born: Pentagon points downward (inverted, C vertex leads)
+                        pentagonAngle = angle + Math.PI;
                         break;
 
                     case 'golden_locus':
-                        // Golden-born: spiral segments - natural growth pattern
-                        this.drawGoldenSpiral(ctx, x, y, size, angle, alpha, color,
-                                             phase, maxDepth > 0 ? 1 : 0);
+                        // Golden-born: Pentagon rotates by golden angle
+                        pentagonAngle = angle + phase * SACRED.goldenAngle * 0.5;
+                        pentagonSize *= 1 + 0.1 * Math.sin(phase * PHI);
                         break;
 
                     case 'flower_locus':
-                        // Flower-born: hexagonal cells - generative life pattern
-                        this.drawFlowerCell(ctx, x, y, size, angle, alpha, color,
-                                           maxDepth > 0 ? 1 : 0);
+                        // Flower-born: Pentagon aligns with hexagonal harmony (30° offset)
+                        pentagonAngle = angle + Math.PI / 6;
+                        break;
+
+                    case 'pentagon_locus':
+                        // Native pentagon locus - pure emergence geometry
+                        pentagonAngle = angle;
                         break;
 
                     default:
-                        // Fallback: simple circle (shouldn't happen)
-                        ctx.beginPath();
-                        ctx.arc(x, y, size * 0.5, 0, TAU);
-                        ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
-                        ctx.stroke();
+                        // Default emergence pentagon
+                        pentagonAngle = angle;
                 }
+
+                // Draw the emergent pentagon with fractal recursion
+                // Each pentagon contains the 5 emergent tokens as vertices
+                this.drawEmergentPentagon(
+                    ctx, x, y, pentagonSize, pentagonAngle,
+                    alpha, color, phase, coherence, 0
+                );
             },
 
             // Render coherent filaments with self-referential geometry
