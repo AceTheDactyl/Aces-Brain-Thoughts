@@ -70,6 +70,63 @@
                         inset 0 1px 0 rgba(255, 255, 255, 0.03);
         }
 
+        /* ========================================
+           LEFT SIDE PANELS - SLICK #2c003e DESIGN
+           Tubes, thick borders, cool colors
+           ======================================== */
+        .panel.left-panel {
+            background: linear-gradient(135deg,
+                rgba(44, 0, 62, 0.95) 0%,
+                rgba(30, 0, 45, 0.92) 50%,
+                rgba(20, 0, 35, 0.95) 100%);
+            border: 3px solid transparent;
+            border-image: linear-gradient(180deg,
+                rgba(0, 255, 255, 0.6) 0%,
+                rgba(168, 85, 247, 0.8) 50%,
+                rgba(255, 100, 200, 0.6) 100%) 1;
+            border-radius: 0;
+            box-shadow:
+                0 0 20px rgba(44, 0, 62, 0.8),
+                0 0 40px rgba(168, 85, 247, 0.3),
+                inset 0 0 30px rgba(0, 255, 255, 0.05),
+                inset 0 1px 0 rgba(0, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(255, 100, 200, 0.1);
+            padding: 14px 16px;
+        }
+
+        /* Tube connector styling for left panels */
+        .panel.left-panel::before {
+            content: '';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 4px;
+            background: linear-gradient(90deg,
+                rgba(0, 255, 255, 0.8) 0%,
+                rgba(168, 85, 247, 0.6) 50%,
+                transparent 100%);
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Accent line at top of left panels */
+        .panel.left-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(0, 255, 255, 0.8) 20%,
+                rgba(255, 215, 0, 0.9) 50%,
+                rgba(255, 100, 200, 0.8) 80%,
+                transparent 100%);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
         /* Header - transparent, no box */
         #header {
             top: 15px;
@@ -154,38 +211,45 @@
         /* Domain Panel - TOP LEFT */
         #domain-panel {
             top: 90px;
-            left: 20px;
-            min-width: 130px;
+            left: 15px;
+            min-width: 140px;
         }
 
         #domain-indicator {
-            font-size: 18px;
-            letter-spacing: 8px;
+            font-size: 16px;
+            letter-spacing: 6px;
             transition: all 0.6s ease;
+            color: rgba(0, 255, 255, 0.9);
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
         }
 
-        #domain-indicator.absence { color: var(--absence-sepia); }
+        #domain-indicator.absence {
+            color: rgba(150, 100, 180, 0.8);
+            text-shadow: 0 0 20px rgba(100, 50, 150, 0.5);
+        }
         #domain-indicator.critical {
             color: #ffb347;
             text-shadow: 0 0 40px rgba(255, 180, 100, 0.7);
         }
         #domain-indicator.presence {
-            color: var(--presence-white);
-            text-shadow: 0 0 30px rgba(255, 250, 240, 0.6);
+            color: rgba(0, 255, 200, 0.95);
+            text-shadow: 0 0 30px rgba(0, 255, 200, 0.6);
         }
 
         .domain-stat {
-            font-size: 10px;
-            margin-top: 15px;
+            font-size: 9px;
+            margin-top: 12px;
             letter-spacing: 2px;
-            color: var(--text-dim);
+            color: rgba(0, 255, 255, 0.6);
+            text-transform: uppercase;
         }
 
         .domain-value {
-            font-size: 20px;
-            margin-top: 5px;
+            font-size: 18px;
+            margin-top: 4px;
             font-weight: 100;
             transition: color 0.4s ease;
+            color: rgba(255, 215, 0, 0.9);
         }
 
         /* Architecture Panel - BELOW Z-PANEL */
@@ -268,35 +332,41 @@
 
         /* Dynamics Panel - LEFT SIDE (above controls) */
         #dynamics-panel {
-            top: 390px;
-            left: 20px;
-            font-size: 9px;
-            min-width: 180px;
-            max-height: 140px;
-            overflow-y: auto;
+            top: 370px;
+            left: 15px;
+            font-size: 8px;
+            min-width: 170px;
         }
 
         .dynamics-row {
-            margin: 8px 0;
-            color: var(--text-dim);
+            margin: 5px 0;
+            color: rgba(0, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
         }
 
         .dynamics-label {
             display: inline-block;
-            width: 90px;
+            width: 75px;
             letter-spacing: 1px;
+            color: rgba(168, 85, 247, 0.8);
+            font-size: 8px;
         }
 
         .dynamics-bar {
             font-family: monospace;
-            letter-spacing: 0;
-            color: var(--critical-gold);
+            letter-spacing: -1px;
+            color: rgba(0, 255, 255, 0.9);
+            text-shadow: 0 0 6px rgba(0, 255, 255, 0.5);
+            font-size: 9px;
         }
 
         .dynamics-value {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-left: 10px;
+            font-size: 9px;
+            color: rgba(255, 215, 0, 0.9);
+            margin-left: 8px;
+            min-width: 40px;
+            text-align: right;
         }
 
         /* Helix Panel - BELOW ARCHITECTURE */
@@ -322,54 +392,63 @@
 
         /* Lambda State Panel - BELOW DOMAIN */
         #lambda-panel {
-            top: 220px;
-            left: 20px;
+            top: 210px;
+            left: 15px;
             font-size: 9px;
-            min-width: 165px;
-            max-height: 160px;
-            overflow-y: auto;
+            min-width: 155px;
         }
 
         .lambda-title {
-            letter-spacing: 4px;
-            margin-bottom: 12px;
-            color: rgba(168, 85, 247, 0.8);
-            font-size: 11px;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            color: rgba(0, 255, 255, 0.8);
+            font-size: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            padding-bottom: 6px;
         }
 
         .lambda-row {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin: 6px 0;
+            gap: 8px;
+            margin: 5px 0;
         }
 
         .lambda-glyph {
-            font-size: 16px;
-            width: 24px;
+            font-size: 14px;
+            width: 20px;
             text-align: center;
+            color: rgba(255, 100, 200, 0.9);
+            text-shadow: 0 0 8px rgba(255, 100, 200, 0.5);
         }
 
         .lambda-bar-container {
             flex: 1;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            height: 5px;
+            background: rgba(44, 0, 62, 0.8);
+            border-radius: 2px;
             overflow: hidden;
+            border: 1px solid rgba(0, 255, 255, 0.3);
         }
 
         .lambda-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--cage-field), var(--cage-vertex));
-            border-radius: 3px;
+            background: linear-gradient(90deg,
+                rgba(0, 255, 255, 0.9) 0%,
+                rgba(168, 85, 247, 0.9) 50%,
+                rgba(255, 100, 200, 0.9) 100%);
+            border-radius: 2px;
             transition: width 0.3s ease;
+            box-shadow: 0 0 6px rgba(0, 255, 255, 0.5);
         }
 
         .lambda-val {
             font-family: monospace;
-            width: 40px;
+            width: 35px;
             text-align: right;
-            color: var(--critical-gold);
+            color: rgba(255, 215, 0, 0.9);
+            font-size: 10px;
         }
 
         /* Sonification Panel - BOTTOM CENTER */
@@ -435,20 +514,18 @@
         /* Controls - BOTTOM LEFT CORNER */
         #controls {
             bottom: 15px;
-            left: 20px;
+            left: 15px;
             font-size: 8px;
             letter-spacing: 1px;
-            color: var(--text-dim);
-            line-height: 1.6;
-            max-height: 100px;
-            overflow: hidden;
-            min-width: 140px;
-            padding: 10px 15px;
+            color: rgba(0, 255, 255, 0.6);
+            line-height: 1.5;
+            min-width: 135px;
         }
 
         #controls span {
-            color: rgba(255, 215, 0, 0.8);
+            color: rgba(255, 215, 0, 0.9);
             font-weight: 600;
+            text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
         }
 
         /* Stats - BOTTOM-RIGHT CORNER */
@@ -718,7 +795,7 @@
     </div>
 
     <!-- Domain Indicator -->
-    <div id="domain-panel" class="panel">
+    <div id="domain-panel" class="panel left-panel">
         <div id="domain-indicator">ABSENCE</div>
         <div class="domain-stat">KURAMOTO COUPLING</div>
         <div class="domain-value" id="coupling-value">K = +0.40</div>
@@ -748,7 +825,7 @@
     </div>
 
     <!-- Lambda State Panel -->
-    <div id="lambda-panel" class="panel">
+    <div id="lambda-panel" class="panel left-panel">
         <div class="lambda-title">LAMBDA STATE ℂ⁶</div>
         <div class="lambda-row">
             <span class="lambda-glyph">🌰</span>
@@ -789,7 +866,7 @@
     </div>
 
     <!-- Dynamics -->
-    <div id="dynamics-panel" class="panel">
+    <div id="dynamics-panel" class="panel left-panel">
         <div class="dynamics-row">
             <span class="dynamics-label">ORDER</span>
             <span class="dynamics-bar" id="order-bar">██████████</span>
@@ -895,7 +972,7 @@
     </div>
 
     <!-- Controls -->
-    <div id="controls" class="panel">
+    <div id="controls" class="panel left-panel">
         <span>SCROLL</span> traverse z-axis<br>
         <span>SPACE</span> auto-breathe<br>
         <span>P/C</span> toggle prism/cage<br>
@@ -8063,6 +8140,35 @@
             }
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, W, H);
+
+            // ========================================
+            // GLOBAL μ-FIELD OVERLAY
+            // Dark purple (#2c003e) with subtle vertical rhythm
+            // 25% opacity max, phase-locked breathing animation
+            // ========================================
+            if (showMuField) {
+                // Subtle vertical oscillation - shifts gradient center up/down very slightly
+                const breathRate = 0.3;  // Slow breathing rhythm
+                const breathOffset = Math.sin(time * breathRate * TAU) * R * 0.02;  // Very slight shift (2% of R)
+                const breathIntensity = 0.5 + Math.sin(time * breathRate * TAU * 0.5) * 0.1;  // 0.4 - 0.6
+
+                // Create gradient centered with vertical breathing offset
+                const muGlobalGrad = ctx.createRadialGradient(
+                    CX, CY + breathOffset, 0,
+                    CX, CY + breathOffset, R * 1.8
+                );
+
+                // Dark purple #2c003e = rgb(44, 0, 62) at 25% opacity max
+                const baseAlpha = 0.25 * breathIntensity;
+
+                muGlobalGrad.addColorStop(0, `rgba(44, 0, 62, ${baseAlpha * 0.8})`);
+                muGlobalGrad.addColorStop(0.3, `rgba(44, 0, 62, ${baseAlpha * 0.6})`);
+                muGlobalGrad.addColorStop(0.6, `rgba(44, 0, 62, ${baseAlpha * 0.3})`);
+                muGlobalGrad.addColorStop(1, 'transparent');
+
+                ctx.fillStyle = muGlobalGrad;
+                ctx.fillRect(0, 0, W, H);
+            }
 
             // Release state visual effects
             const dispersal = 1 - releaseCoherence;
