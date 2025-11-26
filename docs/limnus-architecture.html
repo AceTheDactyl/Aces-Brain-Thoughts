@@ -2401,10 +2401,57 @@
                 ctx.stroke();
 
                 ctx.setLineDash([]);
+
+                // ============================================
+                // CENTER MARKERS - Clear visual anchors
+                // ============================================
+
+                // LIMNUS center marker (white)
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.beginPath();
+                ctx.arc(CX, CY, 8, 0, TAU);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Mesh A center marker (warm/red) - should be LEFT
+                ctx.fillStyle = `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, 0.9)`;
+                ctx.beginPath();
+                ctx.arc(meshACenterX, meshACenterY, 12, 0, TAU);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 100, 60, 0.9)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Label A
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.font = 'bold 14px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('A', meshACenterX, meshACenterY - 20);
+                ctx.font = '10px monospace';
+                ctx.fillText('warm', meshACenterX, meshACenterY - 32);
+
+                // Mesh B center marker (cool/blue) - should be RIGHT
+                ctx.fillStyle = `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, 0.9)`;
+                ctx.beginPath();
+                ctx.arc(meshBCenterX, meshBCenterY, 12, 0, TAU);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(80, 180, 255, 0.9)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Label B
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.font = 'bold 14px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('B', meshBCenterX, meshBCenterY - 20);
+                ctx.font = '10px monospace';
+                ctx.fillText('cool', meshBCenterX, meshBCenterY - 32);
             }
 
             // ============================================
-            // MESH A: Warm/Energy field (lower-left)
+            // MESH A: Warm/Red field (LEFT of LIMNUS)
             // ============================================
             for (const edge of QMESH.edges) {
                 const nodeA = QMESH.nodes[edge.from];
@@ -2450,7 +2497,7 @@
             }
 
             // ============================================
-            // MESH B: Cool/Relational field (upper-right)
+            // MESH B: Cool/Blue field (RIGHT of LIMNUS)
             // ============================================
             for (const edge of QMESH.edges) {
                 const nodeA = QMESH.nodes[edge.from];
