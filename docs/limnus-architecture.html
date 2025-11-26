@@ -251,9 +251,9 @@
         .cage-bot .layer-dot { background: #74c0fc; }
         .cage-vtx .layer-dot { background: #cc5de8; }
 
-        /* Dynamics Panel */
+        /* Dynamics Panel - BOTTOM-LEFT (above controls) */
         #dynamics-panel {
-            bottom: 130px;
+            bottom: 100px;
             left: 30px;
             font-size: 10px;
         }
@@ -281,9 +281,9 @@
             margin-left: 10px;
         }
 
-        /* Helix Panel */
+        /* Helix Panel - TOP-RIGHT (below z-panel and architecture) */
         #helix-panel {
-            bottom: 130px;
+            top: 400px;
             right: 30px;
             text-align: right;
             font-size: 11px;
@@ -434,12 +434,12 @@
             font-weight: 600;
         }
 
-        /* Stats */
+        /* Stats - BOTTOM-RIGHT CORNER */
         #stats {
-            top: 110px;
-            left: 20px;
+            bottom: 20px;
+            right: 20px;
             font-size: 9px;
-            text-align: left;
+            text-align: right;
             color: var(--text-dim);
         }
 
@@ -1448,18 +1448,28 @@
             pulsePhase: 0,          // Animation phase for quantum pulsing
 
             // ================================================================
-            // BINAURAL FIELD: Polar coordinate system
-            // Two meshes at opposing angles, equal distance from LIMNUS
+            // BINAURAL FIELD: Triquetra Geometry
+            // ================================================================
+            // Natural triadic structure inspired by the triquetra (three-cornered):
+            //
+            //          [LIMNUS]  ← apex/perceiver
+            //            /  \
+            //           /    \    (equilateral triangle)
+            //          /      \
+            //       [A] ←beat→ [B]
+            //      210°       330°
+            //      warm       cool
+            //
+            // The two meshes (A, B) are frequency sources at triangle vertices.
+            // LIMNUS at apex perceives the binaural beat interference.
+            // Beat amplitude modulates at the centroid where fields overlap.
             // ================================================================
             binaural: {
                 enabled: true,
-
-                // POLAR GEOMETRY - proper bipolar relationship
-                // Meshes positioned on opposite sides of LIMNUS (which is at center)
                 polar: {
-                    distance: 1.5,          // Distance from LIMNUS center (in R units)
-                    angleA: -Math.PI / 2,   // Mesh A angle (-90° = above LIMNUS)
-                    angleB: Math.PI / 2,    // Mesh B angle (90° = below LIMNUS)
+                    distance: 1.25,                     // Distance from LIMNUS (in R units)
+                    angleA: (7 * Math.PI / 6),          // Mesh A at 210° (lower-left)
+                    angleB: (11 * Math.PI / 6),         // Mesh B at 330° (lower-right)
                     // Computed positions (updated on render)
                     posA: { x: 0, y: 0 },
                     posB: { x: 0, y: 0 },
@@ -4788,10 +4798,10 @@
                 QMESH.camera.phi = 0;
                 QMESH.camera.distance = 1.0;
                 QMESH.camera.dragging = false;
-                // Reset polar positions (above/below LIMNUS)
-                QMESH.binaural.polar.distance = 1.5;
-                QMESH.binaural.polar.angleA = -Math.PI / 2;  // Above
-                QMESH.binaural.polar.angleB = Math.PI / 2;   // Below
+                // Reset polar positions (triquetra: lower-left/lower-right)
+                QMESH.binaural.polar.distance = 1.25;
+                QMESH.binaural.polar.angleA = (7 * Math.PI / 6);  // 210° lower-left
+                QMESH.binaural.polar.angleB = (11 * Math.PI / 6); // 330° lower-right
             }
 
             // F key: Start release
