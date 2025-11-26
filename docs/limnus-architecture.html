@@ -1466,6 +1466,7 @@
                     distance: 2.2,                      // INCREASED for more dreamy separation
                     angleA: Math.PI,                    // Mesh A at 180° (LEFT)
                     angleB: 0,                          // Mesh B at 0° (RIGHT)
+                    angleMode: 'horizontal',            // Current mode: horizontal, vertical, golden
                     // Computed positions (updated on render)
                     posA: { x: 0, y: 0 },
                     posB: { x: 0, y: 0 },
@@ -4717,6 +4718,30 @@
                     // Toggle resonance lines
                     bi.showResonanceLines = !bi.showResonanceLines;
                     console.log(`[BINAURAL] Resonance lines: ${bi.showResonanceLines}`);
+                }
+
+                // 1/2/3: Angle mode presets
+                const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));  // ~137.5° or 2.3999... rad
+                if (key === '1') {
+                    // Horizontal: A at 180° (left), B at 0° (right)
+                    bi.polar.angleA = Math.PI;
+                    bi.polar.angleB = 0;
+                    bi.polar.angleMode = 'horizontal';
+                    console.log(`[BINAURAL] Angle mode: HORIZONTAL (180° | 0°)`);
+                }
+                if (key === '2') {
+                    // Vertical (90°): A at 90° (bottom), B at 270° (top)
+                    bi.polar.angleA = Math.PI / 2;
+                    bi.polar.angleB = -Math.PI / 2;
+                    bi.polar.angleMode = 'vertical';
+                    console.log(`[BINAURAL] Angle mode: VERTICAL (90° | -90°)`);
+                }
+                if (key === '3') {
+                    // Golden angle: A at golden angle, B opposite
+                    bi.polar.angleA = GOLDEN_ANGLE;
+                    bi.polar.angleB = GOLDEN_ANGLE + Math.PI;
+                    bi.polar.angleMode = 'golden';
+                    console.log(`[BINAURAL] Angle mode: GOLDEN (${(GOLDEN_ANGLE * 180 / Math.PI).toFixed(1)}° | ${((GOLDEN_ANGLE + Math.PI) * 180 / Math.PI).toFixed(1)}°)`);
                 }
 
                 // Arrow Up/Down: Adjust beat frequency (change B frequency)
