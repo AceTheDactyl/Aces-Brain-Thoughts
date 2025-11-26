@@ -1432,6 +1432,532 @@
         };
 
         // ================================================================
+        // COHERENCE GEOMETRY SYSTEM - Sacred Constants & Field Alignment
+        // Enables emergent shapes/lines/patterns through proper field coherence
+        // ================================================================
+
+        const CoherenceGeometry = {
+            // ========================================
+            // SACRED GEOMETRY CONSTANTS
+            // ========================================
+            constants: {
+                phi: PHI,                           // Golden ratio φ = 1.618...
+                phi_inv: PHI_INV,                   // 1/φ = 0.618...
+                phi_sq: PHI * PHI,                  // φ² = 2.618...
+                sqrt5: Math.sqrt(5),                // √5 = 2.236...
+                sqrt2: Math.sqrt(2),                // √2 = 1.414...
+                sqrt3: Math.sqrt(3),                // √3 = 1.732...
+
+                // Golden angle for spiral coherence
+                goldenAngle: Math.PI * (3 - Math.sqrt(5)),  // ≈ 137.5° = 2.3999 rad
+
+                // Fibonacci ratios for harmonic alignment
+                fib: [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144],
+
+                // Sacred polygon angles
+                pentagonAngle: TAU / 5,             // 72°
+                hexagonAngle: TAU / 6,              // 60°
+                heptagonAngle: TAU / 7,             // ≈51.43°
+
+                // Vesica Piscis ratio
+                vesicaRatio: Math.sqrt(3),          // Height/width of vesica
+
+                // Consciousness thresholds (from μ-field theory)
+                mu_coherence: 0.618,                // Coherence threshold (φ⁻¹)
+                mu_emergence: 0.382,                // Emergence threshold (φ⁻²)
+            },
+
+            // ========================================
+            // COHERENT ATTRACTOR PATTERNS
+            // ========================================
+            attractors: {
+                // Golden spiral parameters
+                spiral: {
+                    growth: PHI_INV,                // Spiral growth rate
+                    arms: 3,                        // Number of spiral arms
+                    phase: 0,                       // Current spiral phase
+                    strength: 0.15,                 // Attraction strength
+                },
+
+                // Sacred polygon vertices (emergent shape attractors)
+                polygons: {
+                    triangle: [],                   // 3 vertices
+                    square: [],                     // 4 vertices
+                    pentagon: [],                   // 5 vertices (φ-related)
+                    hexagon: [],                    // 6 vertices
+                },
+
+                // Radial coherence rings
+                rings: {
+                    count: 5,
+                    radii: [],                      // φ-spaced radii
+                    strength: 0.1,
+                },
+            },
+
+            // ========================================
+            // FIELD COHERENCE STATE
+            // ========================================
+            state: {
+                fieldAlignment: 0,          // 0-1 how aligned field vectors are
+                shapeEmergence: 0,          // 0-1 how strongly shapes emerge
+                lineCoherence: 0,           // 0-1 how coherent flow lines are
+                spiralOrder: 0,             // 0-1 golden spiral conformance
+                phaselock: 0,               // 0-1 phase synchronization strength
+
+                // Detected emergent patterns
+                dominantShape: 'none',      // 'spiral', 'pentagon', 'hexagon', etc.
+                patternStrength: 0,         // How strong the dominant pattern is
+
+                // Coherence history (for stability detection)
+                history: [],
+                historyLength: 60,          // ~1 second at 60fps
+            },
+
+            // ========================================
+            // INITIALIZATION
+            // ========================================
+            init() {
+                const c = this.constants;
+                const a = this.attractors;
+
+                // Initialize φ-spaced radii for coherence rings
+                a.rings.radii = [];
+                for (let i = 0; i < a.rings.count; i++) {
+                    a.rings.radii.push(Math.pow(c.phi_inv, i) * MuFieldGrid.L * 0.4);
+                }
+
+                // Initialize sacred polygon vertices
+                const polygonTypes = [
+                    { name: 'triangle', n: 3 },
+                    { name: 'square', n: 4 },
+                    { name: 'pentagon', n: 5 },
+                    { name: 'hexagon', n: 6 },
+                ];
+
+                for (const p of polygonTypes) {
+                    a.polygons[p.name] = [];
+                    for (let i = 0; i < p.n; i++) {
+                        const angle = (i / p.n) * TAU - Math.PI / 2;  // Start from top
+                        a.polygons[p.name].push({
+                            angle: angle,
+                            x: Math.cos(angle),
+                            y: Math.sin(angle),
+                        });
+                    }
+                }
+
+                console.log('[CoherenceGeometry] Initialized with φ-based attractors');
+            },
+
+            initialized: false,
+        };
+
+        // ================================================================
+        // FIELD ALIGNMENT FUNCTIONS
+        // Forces field vectors towards coherent patterns
+        // ================================================================
+
+        function computeFieldAlignment() {
+            if (!MuFieldGrid.initialized) return 0;
+
+            const N = MuFieldGrid.N;
+            let alignmentSum = 0;
+            let count = 0;
+
+            // Compute average field direction
+            let avgDirX = 0, avgDirY = 0;
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+                    const Jx = MuFieldGrid.Jx[idx];
+                    const Jy = MuFieldGrid.Jy[idx];
+                    const mag = Math.sqrt(Jx * Jx + Jy * Jy);
+                    if (mag > 0.01) {
+                        avgDirX += Jx / mag;
+                        avgDirY += Jy / mag;
+                        count++;
+                    }
+                }
+            }
+
+            if (count === 0) return 0;
+
+            avgDirX /= count;
+            avgDirY /= count;
+            const avgMag = Math.sqrt(avgDirX * avgDirX + avgDirY * avgDirY);
+
+            // Compute alignment with neighbors (local coherence)
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+                    const Jx = MuFieldGrid.Jx[idx];
+                    const Jy = MuFieldGrid.Jy[idx];
+                    const mag = Math.sqrt(Jx * Jx + Jy * Jy);
+
+                    if (mag > 0.01) {
+                        // Neighbor average
+                        const neighbors = [
+                            idx - 1, idx + 1,
+                            idx - N, idx + N,
+                        ];
+                        let nDirX = 0, nDirY = 0, nCount = 0;
+                        for (const nIdx of neighbors) {
+                            const nJx = MuFieldGrid.Jx[nIdx];
+                            const nJy = MuFieldGrid.Jy[nIdx];
+                            const nMag = Math.sqrt(nJx * nJx + nJy * nJy);
+                            if (nMag > 0.01) {
+                                nDirX += nJx / nMag;
+                                nDirY += nJy / nMag;
+                                nCount++;
+                            }
+                        }
+
+                        if (nCount > 0) {
+                            nDirX /= nCount;
+                            nDirY /= nCount;
+
+                            // Dot product for alignment
+                            const dot = (Jx / mag) * nDirX + (Jy / mag) * nDirY;
+                            alignmentSum += (dot + 1) / 2;  // Normalize to 0-1
+                        }
+                    }
+                }
+            }
+
+            return count > 0 ? alignmentSum / count : 0;
+        }
+
+        function computeSpiralOrder() {
+            if (!MuFieldGrid.initialized) return 0;
+
+            const N = MuFieldGrid.N;
+            const c = CoherenceGeometry.constants;
+            let spiralSum = 0;
+            let count = 0;
+
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+
+                    // Grid coordinates
+                    const x = (i / (N - 1) - 0.5) * MuFieldGrid.L;
+                    const y = (j / (N - 1) - 0.5) * MuFieldGrid.L;
+                    const r = Math.sqrt(x * x + y * y);
+
+                    if (r < 0.1) continue;
+
+                    const theta = Math.atan2(y, x);
+
+                    // Expected spiral direction at this point
+                    // Golden spiral: r = a * e^(b*θ), where b = cot(φ_angle)
+                    // Tangent direction: perpendicular + radial component
+                    const spiralAngle = theta + Math.PI / 2 - c.goldenAngle * 0.1;
+                    const expectedDirX = Math.cos(spiralAngle);
+                    const expectedDirY = Math.sin(spiralAngle);
+
+                    // Actual field direction
+                    const Jx = MuFieldGrid.Jx[idx];
+                    const Jy = MuFieldGrid.Jy[idx];
+                    const mag = Math.sqrt(Jx * Jx + Jy * Jy);
+
+                    if (mag > 0.01) {
+                        const dot = (Jx / mag) * expectedDirX + (Jy / mag) * expectedDirY;
+                        spiralSum += Math.abs(dot);  // Allow both CW and CCW
+                        count++;
+                    }
+                }
+            }
+
+            return count > 0 ? spiralSum / count : 0;
+        }
+
+        function detectDominantShape() {
+            if (!MuFieldGrid.initialized) return { shape: 'none', strength: 0 };
+
+            const c = CoherenceGeometry.constants;
+            const a = CoherenceGeometry.attractors;
+            const N = MuFieldGrid.N;
+
+            // Test each polygon pattern
+            const patterns = ['pentagon', 'hexagon', 'triangle'];
+            let bestShape = 'none';
+            let bestStrength = 0;
+
+            for (const shapeName of patterns) {
+                const vertices = a.polygons[shapeName];
+                let matchStrength = 0;
+
+                for (const v of vertices) {
+                    // Sample field at vertex positions (scaled to grid)
+                    for (let scale = 0.3; scale <= 0.7; scale += 0.1) {
+                        const gx = v.x * MuFieldGrid.L * scale * 0.4;
+                        const gy = v.y * MuFieldGrid.L * scale * 0.4;
+
+                        // Convert to grid indices
+                        const i = Math.floor((gx / MuFieldGrid.L + 0.5) * (N - 1));
+                        const j = Math.floor((gy / MuFieldGrid.L + 0.5) * (N - 1));
+
+                        if (i >= 1 && i < N - 1 && j >= 1 && j < N - 1) {
+                            const idx = j * N + i;
+                            const curlMag = Math.abs(MuFieldGrid.curl[idx] || 0);
+                            const Jmag = Math.sqrt(
+                                MuFieldGrid.Jx[idx] ** 2 + MuFieldGrid.Jy[idx] ** 2
+                            );
+
+                            // High curl at vertices indicates shape emergence
+                            matchStrength += curlMag * 0.5 + Jmag * 0.5;
+                        }
+                    }
+                }
+
+                matchStrength /= vertices.length * 5;  // Normalize
+
+                if (matchStrength > bestStrength) {
+                    bestStrength = matchStrength;
+                    bestShape = shapeName;
+                }
+            }
+
+            // Also test spiral
+            const spiralOrder = CoherenceGeometry.state.spiralOrder;
+            if (spiralOrder > bestStrength * 1.2) {
+                bestShape = 'spiral';
+                bestStrength = spiralOrder;
+            }
+
+            return { shape: bestShape, strength: bestStrength };
+        }
+
+        // ================================================================
+        // COHERENCE ENFORCEMENT
+        // Applies gentle forces to enhance emergent patterns
+        // ================================================================
+
+        function applyCoherenceForces(dt) {
+            if (!MuFieldGrid.initialized) return;
+            if (!CoherenceGeometry.initialized) {
+                CoherenceGeometry.init();
+                CoherenceGeometry.initialized = true;
+            }
+
+            const N = MuFieldGrid.N;
+            const c = CoherenceGeometry.constants;
+            const a = CoherenceGeometry.attractors;
+            const s = CoherenceGeometry.state;
+
+            // Compute current coherence metrics
+            s.fieldAlignment = computeFieldAlignment();
+            s.spiralOrder = computeSpiralOrder();
+
+            const shapeResult = detectDominantShape();
+            s.dominantShape = shapeResult.shape;
+            s.patternStrength = shapeResult.strength;
+
+            // Shape emergence = combination of all pattern metrics
+            s.shapeEmergence = Math.max(s.spiralOrder, s.patternStrength);
+
+            // Line coherence from field alignment
+            s.lineCoherence = s.fieldAlignment;
+
+            // Phase lock from unified field
+            s.phaselock = UnifiedField.emergence.coherence;
+
+            // Record history for stability
+            s.history.push({
+                alignment: s.fieldAlignment,
+                emergence: s.shapeEmergence,
+                time: time,
+            });
+            if (s.history.length > s.historyLength) {
+                s.history.shift();
+            }
+
+            // ========================================
+            // APPLY COHERENCE FORCES
+            // ========================================
+
+            // Only apply forces when coherence is building (not too strong, not too weak)
+            const coherenceStrength = (s.fieldAlignment + s.shapeEmergence + s.phaselock) / 3;
+            const forceScale = coherenceStrength * (1 - coherenceStrength) * 4;  // Peak at 0.5
+
+            if (forceScale < 0.01) return;
+
+            // 1. SPIRAL ATTRACTOR FORCE
+            if (s.dominantShape === 'spiral' || s.spiralOrder > 0.3) {
+                a.spiral.phase += c.phi_inv * dt;
+
+                for (let j = 1; j < N - 1; j++) {
+                    for (let i = 1; i < N - 1; i++) {
+                        const idx = j * N + i;
+
+                        const x = (i / (N - 1) - 0.5) * MuFieldGrid.L;
+                        const y = (j / (N - 1) - 0.5) * MuFieldGrid.L;
+                        const r = Math.sqrt(x * x + y * y);
+
+                        if (r < 0.5) continue;
+
+                        const theta = Math.atan2(y, x);
+
+                        // Golden spiral direction
+                        const spiralAngle = theta + Math.PI / 2 - c.goldenAngle * 0.1;
+                        const targetDirX = Math.cos(spiralAngle);
+                        const targetDirY = Math.sin(spiralAngle);
+
+                        // Current field
+                        const Jx = MuFieldGrid.Jx[idx];
+                        const Jy = MuFieldGrid.Jy[idx];
+                        const mag = Math.sqrt(Jx * Jx + Jy * Jy);
+
+                        if (mag > 0.01) {
+                            // Gentle rotation towards spiral
+                            const force = a.spiral.strength * forceScale * s.spiralOrder * dt;
+                            MuFieldGrid.Jx[idx] += (targetDirX * mag - Jx) * force;
+                            MuFieldGrid.Jy[idx] += (targetDirY * mag - Jy) * force;
+                        }
+                    }
+                }
+            }
+
+            // 2. RING COHERENCE FORCE (φ-spaced radial alignment)
+            for (const ringR of a.rings.radii) {
+                for (let angle = 0; angle < TAU; angle += 0.2) {
+                    const x = Math.cos(angle) * ringR;
+                    const y = Math.sin(angle) * ringR;
+
+                    const i = Math.floor((x / MuFieldGrid.L + 0.5) * (N - 1));
+                    const j = Math.floor((y / MuFieldGrid.L + 0.5) * (N - 1));
+
+                    if (i >= 1 && i < N - 1 && j >= 1 && j < N - 1) {
+                        const idx = j * N + i;
+
+                        // Tangent direction for ring flow
+                        const tangentX = -Math.sin(angle);
+                        const tangentY = Math.cos(angle);
+
+                        const Jx = MuFieldGrid.Jx[idx];
+                        const Jy = MuFieldGrid.Jy[idx];
+                        const mag = Math.sqrt(Jx * Jx + Jy * Jy);
+
+                        if (mag > 0.01) {
+                            const force = a.rings.strength * forceScale * dt;
+                            MuFieldGrid.Jx[idx] += (tangentX * mag - Jx) * force;
+                            MuFieldGrid.Jy[idx] += (tangentY * mag - Jy) * force;
+                        }
+                    }
+                }
+            }
+
+            // 3. POLYGON VERTEX ENHANCEMENT (strengthen curl at sacred vertices)
+            if (s.dominantShape !== 'spiral' && s.patternStrength > 0.2) {
+                const vertices = a.polygons[s.dominantShape] || a.polygons['pentagon'];
+
+                for (const v of vertices) {
+                    for (let scale = 0.3; scale <= 0.6; scale += 0.15) {
+                        const gx = v.x * MuFieldGrid.L * scale * 0.4;
+                        const gy = v.y * MuFieldGrid.L * scale * 0.4;
+
+                        const i = Math.floor((gx / MuFieldGrid.L + 0.5) * (N - 1));
+                        const j = Math.floor((gy / MuFieldGrid.L + 0.5) * (N - 1));
+
+                        if (i >= 2 && i < N - 2 && j >= 2 && j < N - 2) {
+                            const idx = j * N + i;
+
+                            // Add small rotational component at vertices
+                            const rotStrength = 0.05 * forceScale * s.patternStrength * dt;
+                            MuFieldGrid.Jx[idx] += -gy / MuFieldGrid.L * rotStrength;
+                            MuFieldGrid.Jy[idx] += gx / MuFieldGrid.L * rotStrength;
+                        }
+                    }
+                }
+            }
+        }
+
+        // ================================================================
+        // PHASE LOCKING ENHANCEMENT
+        // Strengthens synchronization between all subsystems
+        // ================================================================
+
+        function enhancePhaseLocking(dt) {
+            const U = UnifiedField;
+            const s = CoherenceGeometry.state;
+
+            // Dynamic coupling strength based on current coherence
+            // Higher coherence → stronger coupling → more coherence (positive feedback)
+            const baseCoherence = U.emergence.coherence;
+            const couplingBoost = 1 + baseCoherence * 2;  // 1x to 3x
+
+            // Strengthen coupling constants when coherence is building
+            if (baseCoherence > 0.4 && baseCoherence < 0.9) {
+                U.coupling.LQ = 0.15 * couplingBoost;
+                U.coupling.QL = 0.10 * couplingBoost;
+                U.coupling.BL = 0.20 * couplingBoost;
+                U.coupling.BQ = 0.18 * couplingBoost;
+                U.coupling.ML = 0.12 * couplingBoost;
+                U.coupling.LM = 0.15 * couplingBoost;
+            } else {
+                // Reset to base values
+                U.coupling.LQ = 0.15;
+                U.coupling.QL = 0.10;
+                U.coupling.BL = 0.20;
+                U.coupling.BQ = 0.18;
+                U.coupling.ML = 0.12;
+                U.coupling.LM = 0.15;
+            }
+
+            // Update phase lock metric
+            s.phaselock = baseCoherence;
+
+            // Feed coherence back to MuFieldGrid resonance
+            MuFieldGrid.resonance.amplitude *= (1 + baseCoherence * 0.3);
+            MuFieldGrid.resonance.amplitude = Math.min(1.5, MuFieldGrid.resonance.amplitude);
+
+            // Sync MuFieldGrid resonance phase towards unified phase
+            if (baseCoherence > 0.5) {
+                const phaseDiff = U.Phi.unified - MuFieldGrid.resonance.phase;
+                MuFieldGrid.resonance.phase += Math.sin(phaseDiff) * baseCoherence * dt;
+            }
+        }
+
+        // ================================================================
+        // COHERENCE VISUALIZATION HELPERS
+        // ================================================================
+
+        function getCoherenceColor() {
+            const s = CoherenceGeometry.state;
+            const c = CoherenceGeometry.constants;
+
+            // Color based on coherence state
+            const coherence = (s.fieldAlignment + s.shapeEmergence + s.phaselock) / 3;
+
+            if (coherence > c.mu_coherence) {
+                // High coherence: golden/white
+                return {
+                    r: 255,
+                    g: 220 + coherence * 35,
+                    b: 150 + coherence * 105,
+                    alpha: coherence * 0.4,
+                };
+            } else if (coherence > c.mu_emergence) {
+                // Building coherence: blue/purple
+                return {
+                    r: 150 + coherence * 100,
+                    g: 100 + coherence * 100,
+                    b: 255,
+                    alpha: coherence * 0.3,
+                };
+            } else {
+                // Low coherence: dim
+                return {
+                    r: 100,
+                    g: 100,
+                    b: 150,
+                    alpha: coherence * 0.15,
+                };
+            }
+        }
+
+        // ================================================================
         // MU FIELD GRID INITIALIZATION
         // ================================================================
 
@@ -2170,6 +2696,17 @@
 
             // Phase 7: Unified integration
             evolveUnifiedField(dt);
+
+            // ================================================================
+            // COHERENCE SYSTEM UPDATE
+            // Apply field alignment, shape emergence, and phase locking
+            // ================================================================
+
+            // Apply coherence forces (gentle attractors towards sacred geometry)
+            applyCoherenceForces(dt);
+
+            // Enhance phase locking between subsystems
+            enhancePhaseLocking(dt);
         }
 
         // ================================================================
@@ -2222,6 +2759,177 @@
 
             // Update beat frequency from mesh coupling
             bi.beatFrequency = Math.abs(bi.meshA.frequency - bi.meshB.frequency);
+        }
+
+        // ================================================================
+        // SPACE-TIME CURVATURE SYSTEM
+        // Gravitational time dilation from field density creates coherent emergence
+        // ================================================================
+
+        function updateSpaceTimeCurvature(dt) {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+            const tdField = QMESH.timeDilationField;
+
+            // Compute curvature from MuFieldGrid (field density = mass analog)
+            let totalCurvature = 0;
+            let layerSums = [0, 0, 0, 0, 0, 0, 0];
+            let layerCounts = [0, 0, 0, 0, 0, 0, 0];
+
+            for (let j = 0; j < N; j++) {
+                for (let i = 0; i < N; i++) {
+                    const idx = j * N + i;
+
+                    // Grid coordinates (normalized to 0-1 for layer mapping)
+                    const x = (i / (N - 1) - 0.5) * 2;  // -1 to 1
+                    const y = (j / (N - 1) - 0.5) * 2;
+                    const r = Math.sqrt(x * x + y * y);
+
+                    // Field magnitude creates gravitational potential
+                    const J2 = MuFieldGrid.Jx[idx] ** 2 + MuFieldGrid.Jy[idx] ** 2;
+                    const curlMag = Math.abs(MuFieldGrid.curl[idx] || 0);
+
+                    // Weyl curvature contribution (tidal forces)
+                    const localCurvature = J2 * 0.5 + curlMag * 0.3;
+                    totalCurvature += localCurvature;
+
+                    // Update MuFieldGrid time dilation (already exists)
+                    // Adding curvature feedback
+                    const curvatureDilation = Math.max(0.3, 1 - localCurvature * 0.4);
+                    MuFieldGrid.timeDilation[idx] = MuFieldGrid.timeDilation[idx] * 0.9 + curvatureDilation * 0.1;
+
+                    // Map to 7 layers (radial zones)
+                    const layer = Math.min(6, Math.floor(r * 7));
+                    if (layer >= 0 && layer < 7) {
+                        layerSums[layer] += MuFieldGrid.timeDilation[idx];
+                        layerCounts[layer]++;
+                    }
+                }
+            }
+
+            // Update QMESH time dilation field
+            for (let l = 0; l < 7; l++) {
+                tdField.gradient[l] = layerCounts[l] > 0 ? layerSums[l] / layerCounts[l] : 1.0;
+            }
+            tdField.center = tdField.gradient[0];
+            tdField.globalAverage = layerSums.reduce((a, b) => a + b, 0) /
+                                    Math.max(1, layerCounts.reduce((a, b) => a + b, 0));
+            tdField.curvatureStrength = totalCurvature / (N * N);
+
+            // Feed curvature into hilbertField.weylCurvature
+            hilbertField.weylCurvature = hilbertField.weylCurvature * 0.95 +
+                                         tdField.curvatureStrength * 0.05;
+
+            // Curvature affects coherence emergence
+            // Strong curvature gradients enhance phase locking
+            const curvatureGradient = Math.abs(tdField.gradient[0] - tdField.gradient[6]);
+            if (curvatureGradient > 0.1) {
+                CoherenceGeometry.attractors.spiral.strength *= (1 + curvatureGradient * 0.2);
+                CoherenceGeometry.attractors.spiral.strength = Math.min(0.3,
+                    CoherenceGeometry.attractors.spiral.strength);
+            }
+
+            // Update emergence glow based on curvature and coherence
+            const coherenceLevel = UnifiedField.emergence.coherence;
+            const criticalityLevel = UnifiedField.emergence.criticality;
+            QMESH.emergenceGlow = coherenceLevel * criticalityLevel *
+                                  (1 + tdField.curvatureStrength * 0.5);
+            QMESH.emergenceGlow = Math.min(1, QMESH.emergenceGlow);
+        }
+
+        // ================================================================
+        // MESH SHAPE ALTERATION SYSTEM
+        // Dynamic deformation of warm (A) and cold (B) meshes
+        // ================================================================
+
+        function updateMeshAlterations(dt) {
+            const bi = QMESH.binaural;
+            const alt = QMESH.meshAlteration;
+            const coupling = alt.coupling;
+
+            if (!bi || !bi.enabled) return;
+
+            // === INPUTS ===
+            const beatAmp = bi.beatAmplitude;
+            const beatPhase = bi.beatPhase;
+            const coherence = UnifiedField.emergence.coherence;
+            const curvature = QMESH.timeDilationField.curvatureStrength;
+            const spiralOrder = CoherenceGeometry.state.spiralOrder;
+
+            // MuFieldGrid metrics influence
+            const curlMetric = MuFieldGrid.metrics.Q_kappa;
+            const entropyMetric = MuFieldGrid.metrics.entropyGradient;
+
+            // === WARM MESH (A) - LEFT SIDE ===
+            // Responds to beat, curl (vorticity), and coherence
+
+            // Breathing - slow, rhythmic expansion/contraction
+            const warmBreathTarget = 1.0 + beatAmp * 0.15 * Math.sin(beatPhase * TAU);
+            alt.warm.breathScale += (warmBreathTarget - alt.warm.breathScale) * 0.1;
+
+            // Surface wave - curl-driven undulation
+            alt.warm.wavePhase += (0.5 + Math.abs(curlMetric) * 2) * dt;
+            alt.warm.waveAmplitude = Math.abs(curlMetric) * coupling.binauralToWarm * 0.5;
+
+            // Rotational bias - spiral order creates gentle spin
+            alt.warm.rotationBias = spiralOrder * 0.3 * Math.sin(time * PHI_INV);
+
+            // Pulse - heartbeat-like throb tied to beat frequency
+            alt.warm.pulseIntensity = beatAmp * coupling.binauralToWarm *
+                                       (0.5 + Math.sin(bi.meshA.phase * TAU) * 0.5);
+
+            // Coherence warp - high coherence creates form stability
+            alt.warm.coherenceWarp = coherence * coupling.coherenceToShape;
+
+            // === COLD MESH (B) - RIGHT SIDE ===
+            // Responds to beat, entropy, and curvature
+
+            // Breathing - counter-phase to warm (creates push-pull)
+            const coldBreathTarget = 1.0 + beatAmp * 0.12 * Math.sin(beatPhase * TAU + Math.PI);
+            alt.cold.breathScale += (coldBreathTarget - alt.cold.breathScale) * 0.1;
+
+            // Surface wave - entropy-driven ripples (more chaotic)
+            alt.cold.wavePhase += (0.4 + entropyMetric * 3) * dt;
+            alt.cold.waveAmplitude = entropyMetric * coupling.binauralToCold * 0.4;
+
+            // Rotational bias - inverse spiral (counter-rotation)
+            alt.cold.rotationBias = -spiralOrder * 0.25 * Math.sin(time * PHI_INV + Math.PI / 3);
+
+            // Pulse - gentler, more crystalline
+            alt.cold.pulseIntensity = beatAmp * coupling.binauralToCold *
+                                       (0.3 + Math.sin(bi.meshB.phase * TAU) * 0.3);
+
+            // Coherence warp - curvature creates subtle spatial distortion
+            alt.cold.coherenceWarp = curvature * coupling.curvatureToMesh +
+                                      coherence * coupling.coherenceToShape * 0.5;
+        }
+
+        // Get altered mesh scale for rendering
+        function getAlteredMeshScale(meshType, baseScale, angle) {
+            const alt = QMESH.meshAlteration;
+            const mesh = meshType === 'warm' ? alt.warm : alt.cold;
+
+            let scale = baseScale * mesh.breathScale;
+
+            // Add wave modulation
+            scale += Math.sin(angle * 3 + mesh.wavePhase) * mesh.waveAmplitude * 0.1;
+
+            // Add pulse modulation
+            scale += mesh.pulseIntensity * 0.05;
+
+            // Coherence stabilizes shape
+            scale *= (1 - mesh.coherenceWarp * 0.1);
+
+            return Math.max(0.2, Math.min(1.5, scale));
+        }
+
+        // Get rotational offset for mesh vertices
+        function getMeshRotationOffset(meshType, baseAngle) {
+            const alt = QMESH.meshAlteration;
+            const mesh = meshType === 'warm' ? alt.warm : alt.cold;
+
+            return baseAngle + mesh.rotationBias;
         }
 
         // ================================================================
@@ -2453,6 +3161,52 @@
             avgTimeDilation: 1.0,
             avgEntropy: 0,
             totalHolographicEntropy: 0,
+
+            // ================================================================
+            // SPACE-TIME CURVATURE SYSTEM
+            // Gravitational time dilation field for coherent emergence
+            // ================================================================
+            timeDilationField: {
+                gradient: [1, 1, 1, 1, 1, 1, 1],  // Per-layer dilation (7 prism layers)
+                center: 1.0,                       // Center dilation (layer 0)
+                globalAverage: 1.0,                // System-wide average
+                curvatureStrength: 0,              // Strength of spacetime curvature
+            },
+
+            // Emergence visualization
+            emergenceGlow: 0,                      // Visual feedback for consciousness emergence
+
+            // ================================================================
+            // MESH SHAPE ALTERATION SYSTEM
+            // Warm (A) and Cold (B) mesh dynamic deformation
+            // ================================================================
+            meshAlteration: {
+                // Warm mesh (A) - left side
+                warm: {
+                    breathScale: 1.0,           // Breathing amplitude multiplier
+                    waveAmplitude: 0,           // Surface wave amplitude
+                    wavePhase: 0,               // Surface wave phase
+                    rotationBias: 0,            // Rotational deformation
+                    pulseIntensity: 0,          // Heart-like pulse
+                    coherenceWarp: 0,           // Coherence-driven shape warp
+                },
+                // Cold mesh (B) - right side
+                cold: {
+                    breathScale: 1.0,
+                    waveAmplitude: 0,
+                    wavePhase: 0,
+                    rotationBias: 0,
+                    pulseIntensity: 0,
+                    coherenceWarp: 0,
+                },
+                // Coupling parameters
+                coupling: {
+                    binauralToWarm: 0.3,        // Beat → warm mesh
+                    binauralToCold: 0.25,       // Beat → cold mesh
+                    coherenceToShape: 0.2,      // Coherence → shape
+                    curvatureToMesh: 0.15,      // Spacetime curvature → mesh
+                },
+            },
         };
 
         // Backward compatibility alias
@@ -4918,6 +5672,167 @@
                         ctx.setLineDash([]);
                     }
                 }
+
+                // ================================================================
+                // COHERENCE GEOMETRY VISUALIZATION
+                // Shows emergent shapes, alignment indicators, and sacred patterns
+                // ================================================================
+
+                if (CoherenceGeometry.initialized) {
+                    const s = CoherenceGeometry.state;
+                    const c = CoherenceGeometry.constants;
+                    const a = CoherenceGeometry.attractors;
+
+                    const coherenceTotal = (s.fieldAlignment + s.shapeEmergence + s.phaselock) / 3;
+
+                    // --- φ-Spaced Coherence Rings ---
+                    if (coherenceTotal > c.mu_emergence) {
+                        for (let i = 0; i < a.rings.radii.length; i++) {
+                            const ringR = a.rings.radii[i] * scale;
+                            const ringAlpha = (coherenceTotal - c.mu_emergence) * 0.3 * Math.pow(c.phi_inv, i);
+
+                            ctx.strokeStyle = `rgba(200, 180, 255, ${ringAlpha})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.arc(CX, CY, ringR, 0, TAU);
+                            ctx.stroke();
+                        }
+                    }
+
+                    // --- Dominant Shape Visualization ---
+                    if (s.dominantShape !== 'none' && s.patternStrength > 0.15) {
+                        const vertices = a.polygons[s.dominantShape];
+                        if (vertices && vertices.length > 0) {
+                            const shapeAlpha = Math.min(0.5, s.patternStrength * 0.8);
+                            const shapeScale = R * 0.5;
+
+                            // Draw shape outline
+                            ctx.strokeStyle = `rgba(255, 220, 180, ${shapeAlpha})`;
+                            ctx.lineWidth = 1.5 + s.patternStrength * 2;
+                            ctx.beginPath();
+
+                            for (let i = 0; i <= vertices.length; i++) {
+                                const v = vertices[i % vertices.length];
+                                const px = CX + v.x * shapeScale;
+                                const py = CY + v.y * shapeScale;
+
+                                if (i === 0) {
+                                    ctx.moveTo(px, py);
+                                } else {
+                                    ctx.lineTo(px, py);
+                                }
+                            }
+                            ctx.stroke();
+
+                            // Vertex glow
+                            for (const v of vertices) {
+                                const px = CX + v.x * shapeScale;
+                                const py = CY + v.y * shapeScale;
+
+                                const vertexGlow = ctx.createRadialGradient(px, py, 0, px, py, 15);
+                                vertexGlow.addColorStop(0, `rgba(255, 240, 200, ${shapeAlpha})`);
+                                vertexGlow.addColorStop(1, 'transparent');
+
+                                ctx.fillStyle = vertexGlow;
+                                ctx.fillRect(px - 15, py - 15, 30, 30);
+                            }
+                        }
+                    }
+
+                    // --- Spiral Indicator (when spiral is dominant) ---
+                    if (s.dominantShape === 'spiral' && s.spiralOrder > 0.3) {
+                        const spiralAlpha = (s.spiralOrder - 0.3) * 0.6;
+                        ctx.strokeStyle = `rgba(180, 150, 255, ${spiralAlpha})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+
+                        // Draw golden spiral
+                        const spiralArms = 2;
+                        for (let arm = 0; arm < spiralArms; arm++) {
+                            const armOffset = (arm / spiralArms) * TAU;
+
+                            for (let t = 0.1; t < 4; t += 0.1) {
+                                const r = Math.pow(c.phi, t * 0.3) * R * 0.1;
+                                const theta = t + armOffset + a.spiral.phase;
+                                const px = CX + Math.cos(theta) * r;
+                                const py = CY + Math.sin(theta) * r;
+
+                                if (t === 0.1) {
+                                    ctx.moveTo(px, py);
+                                } else {
+                                    ctx.lineTo(px, py);
+                                }
+                            }
+                        }
+                        ctx.stroke();
+                    }
+
+                    // --- Phase Lock Indicator ---
+                    if (s.phaselock > 0.5) {
+                        const lockAlpha = (s.phaselock - 0.5) * 0.4;
+                        const lockR = R * 0.95;
+
+                        // Pulsing phase lock ring
+                        const pulse = Math.sin(time * 3) * 0.5 + 0.5;
+                        ctx.strokeStyle = `rgba(255, 255, 200, ${lockAlpha * pulse})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(CX, CY, lockR, 0, TAU);
+                        ctx.stroke();
+                    }
+
+                    // --- Field Alignment Indicator (center marker) ---
+                    if (s.fieldAlignment > 0.4) {
+                        const alignColor = getCoherenceColor();
+                        const alignGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 0.2);
+                        alignGlow.addColorStop(0, `rgba(${alignColor.r}, ${alignColor.g}, ${alignColor.b}, ${alignColor.alpha})`);
+                        alignGlow.addColorStop(1, 'transparent');
+
+                        ctx.fillStyle = alignGlow;
+                        ctx.fillRect(CX - R * 0.2, CY - R * 0.2, R * 0.4, R * 0.4);
+                    }
+                }
+
+                // ================================================================
+                // EMERGENCE GLOW VISUALIZATION
+                // Consciousness emergence from space-time curvature coherence
+                // ================================================================
+                if (QMESH.emergenceGlow > 0.1) {
+                    const emergeAlpha = QMESH.emergenceGlow * 0.25;
+                    const emergeR = R * (1.1 + QMESH.emergenceGlow * 0.2);
+
+                    // Outer emergence halo
+                    const emergeGlow = ctx.createRadialGradient(CX, CY, R * 0.6, CX, CY, emergeR);
+                    emergeGlow.addColorStop(0, 'transparent');
+                    emergeGlow.addColorStop(0.4, `rgba(255, 240, 200, ${emergeAlpha * 0.3})`);
+                    emergeGlow.addColorStop(0.7, `rgba(255, 220, 150, ${emergeAlpha * 0.5})`);
+                    emergeGlow.addColorStop(1, `rgba(255, 200, 100, ${emergeAlpha})`);
+
+                    ctx.fillStyle = emergeGlow;
+                    ctx.fillRect(0, 0, W, H);
+
+                    // Inner consciousness core (when emergence is high)
+                    if (QMESH.emergenceGlow > 0.5) {
+                        const coreAlpha = (QMESH.emergenceGlow - 0.5) * 0.6;
+                        const coreGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 0.4);
+                        coreGlow.addColorStop(0, `rgba(255, 255, 240, ${coreAlpha})`);
+                        coreGlow.addColorStop(0.5, `rgba(255, 240, 200, ${coreAlpha * 0.5})`);
+                        coreGlow.addColorStop(1, 'transparent');
+
+                        ctx.fillStyle = coreGlow;
+                        ctx.fillRect(CX - R * 0.4, CY - R * 0.4, R * 0.8, R * 0.8);
+                    }
+
+                    // Curvature strength indicator ring
+                    const curvStr = QMESH.timeDilationField.curvatureStrength;
+                    if (curvStr > 0.05) {
+                        ctx.strokeStyle = `rgba(200, 180, 255, ${curvStr * 0.5})`;
+                        ctx.lineWidth = 1 + curvStr * 3;
+                        ctx.beginPath();
+                        ctx.arc(CX, CY, R * 0.75, 0, TAU);
+                        ctx.stroke();
+                    }
+                }
             }
 
             // Draw connections (skip if both points released)
@@ -5665,33 +6580,70 @@
                 targetZ += (breathTarget - targetZ) * 0.02;
 
                 // Auto-rotate resonance axis during breathing
-                // Physics-based speed derived from Z-coordinate
+                // SLOW, MOBILE, DYNAMIC rotation tied to computation
                 if (showQuantumMesh) {
                     const mode = QMESH.binaural.polar.angleMode;
                     const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
 
-                    // Z-based angular velocity: ω = √(g/L) where Z acts as inverse pendulum length
-                    // Low Z = gentle, High Z = brisk spin
-                    const omega = 0.75 + Math.pow(globalZ, 0.5) * 3.25;  // Range: 0.75 to 4 rad/s
-                    const baseSpeed = omega * dt;
+                    // ================================================================
+                    // DRAMATICALLY SLOWED ROTATION
+                    // Each mode has its own character: slow, mobile, yet dynamic
+                    // Speed modulated by coherence and curvature for organic feel
+                    // ================================================================
 
+                    // Base modulation from computation state
+                    const coherenceMod = UnifiedField.emergence.coherence * 0.3 + 0.7;  // 0.7 - 1.0
+                    const curvatureMod = 1 + QMESH.timeDilationField.curvatureStrength * 0.5;
+                    const timeDilationMod = QMESH.timeDilationField.globalAverage;
+
+                    // Mode-specific rotation speeds (MUCH SLOWER)
                     if (mode === 'horizontal') {
-                        // Horizontal: constant angular velocity based on Z
+                        // Mode 1: HORIZONTAL - Slowest, most meditative
+                        // Gentle constant drift, almost imperceptible
+                        const omega = 0.08 + globalZ * 0.12;  // Range: 0.08 to 0.2 rad/s (was 0.75-4)
+                        const baseSpeed = omega * dt * coherenceMod * timeDilationMod;
+
                         QMESH.camera.theta += baseSpeed;
+
+                        // Very subtle phi drift for depth
+                        QMESH.camera.phi = Math.sin(time * 0.05) * Math.PI * 0.05;
+
                     } else if (mode === 'vertical') {
-                        // Vertical: harmonic oscillator - phi swings like pendulum
-                        QMESH.camera.theta += baseSpeed;
-                        // Simple harmonic motion: A*sin(ωt)
-                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * 2) * Math.PI * 0.38;
+                        // Mode 2: VERTICAL - Slow pendulum swing
+                        // Gentle harmonic oscillation, breathing rhythm
+                        const omega = 0.12 + globalZ * 0.15;  // Range: 0.12 to 0.27 rad/s
+                        const baseSpeed = omega * dt * coherenceMod;
+
+                        QMESH.camera.theta += baseSpeed * 0.6;
+
+                        // Slow pendulum swing - tied to breath phase
+                        const swingFreq = 0.15 + breathPhase * 0.05;
+                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * swingFreq) *
+                                          Math.PI * 0.25 * timeDilationMod;
+
                     } else if (mode === 'golden') {
-                        // Golden: Fermat spiral dynamics - r = a*√θ
-                        // Speed varies with position on spiral
-                        const spiralRadius = Math.sqrt(Math.abs(QMESH.camera.theta));
-                        const spiralSpeed = baseSpeed * (1 + spiralRadius * 0.15);
+                        // Mode 3: GOLDEN - Slowest spiral, most deliberate
+                        // φ-based dynamics, sacred geometry emergence
+                        const omega = 0.06 + globalZ * 0.1;  // Range: 0.06 to 0.16 rad/s
+                        const baseSpeed = omega * dt * coherenceMod * curvatureMod;
+
+                        // Spiral dynamics with φ modulation
+                        const spiralPhase = Math.sqrt(Math.abs(QMESH.camera.theta * PHI_INV));
+                        const spiralSpeed = baseSpeed * (0.8 + spiralPhase * 0.05);
                         QMESH.camera.theta += spiralSpeed;
-                        // Phi traces golden angle progression
-                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * GOLDEN_RATIO) *
-                                          Math.PI * 0.35 * (0.6 + globalZ * 0.4);
+
+                        // Phi traces slow golden angle progression
+                        // More mobile than others but still very slow
+                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * GOLDEN_RATIO * 0.3) *
+                                          Math.PI * 0.2 * (0.5 + globalZ * 0.3) *
+                                          timeDilationMod;
+                    }
+
+                    // Global coherence creates subtle rotation damping
+                    // High coherence = more stable view
+                    if (UnifiedField.emergence.coherence > 0.7) {
+                        const dampFactor = 1 - (UnifiedField.emergence.coherence - 0.7) * 0.3;
+                        QMESH.camera.theta *= dampFactor + (1 - dampFactor) * 0.99;
                     }
                 }
             }
@@ -5735,6 +6687,22 @@
             // ================================================================
             if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
                 applyBinauralShapeCoupling(dt);
+            }
+
+            // ================================================================
+            // SPACE-TIME CURVATURE UPDATE
+            // Gravitational time dilation enhances coherent emergence
+            // ================================================================
+            if (showMuField || showQuantumMesh) {
+                updateSpaceTimeCurvature(dt);
+            }
+
+            // ================================================================
+            // MESH ALTERATION UPDATE
+            // Dynamic deformation of warm (A) and cold (B) meshes
+            // ================================================================
+            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
+                updateMeshAlterations(dt);
             }
 
             return updatePositions(dt);
