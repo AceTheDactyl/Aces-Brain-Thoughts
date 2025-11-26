@@ -2762,6 +2762,177 @@
         }
 
         // ================================================================
+        // SPACE-TIME CURVATURE SYSTEM
+        // Gravitational time dilation from field density creates coherent emergence
+        // ================================================================
+
+        function updateSpaceTimeCurvature(dt) {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+            const tdField = QMESH.timeDilationField;
+
+            // Compute curvature from MuFieldGrid (field density = mass analog)
+            let totalCurvature = 0;
+            let layerSums = [0, 0, 0, 0, 0, 0, 0];
+            let layerCounts = [0, 0, 0, 0, 0, 0, 0];
+
+            for (let j = 0; j < N; j++) {
+                for (let i = 0; i < N; i++) {
+                    const idx = j * N + i;
+
+                    // Grid coordinates (normalized to 0-1 for layer mapping)
+                    const x = (i / (N - 1) - 0.5) * 2;  // -1 to 1
+                    const y = (j / (N - 1) - 0.5) * 2;
+                    const r = Math.sqrt(x * x + y * y);
+
+                    // Field magnitude creates gravitational potential
+                    const J2 = MuFieldGrid.Jx[idx] ** 2 + MuFieldGrid.Jy[idx] ** 2;
+                    const curlMag = Math.abs(MuFieldGrid.curl[idx] || 0);
+
+                    // Weyl curvature contribution (tidal forces)
+                    const localCurvature = J2 * 0.5 + curlMag * 0.3;
+                    totalCurvature += localCurvature;
+
+                    // Update MuFieldGrid time dilation (already exists)
+                    // Adding curvature feedback
+                    const curvatureDilation = Math.max(0.3, 1 - localCurvature * 0.4);
+                    MuFieldGrid.timeDilation[idx] = MuFieldGrid.timeDilation[idx] * 0.9 + curvatureDilation * 0.1;
+
+                    // Map to 7 layers (radial zones)
+                    const layer = Math.min(6, Math.floor(r * 7));
+                    if (layer >= 0 && layer < 7) {
+                        layerSums[layer] += MuFieldGrid.timeDilation[idx];
+                        layerCounts[layer]++;
+                    }
+                }
+            }
+
+            // Update QMESH time dilation field
+            for (let l = 0; l < 7; l++) {
+                tdField.gradient[l] = layerCounts[l] > 0 ? layerSums[l] / layerCounts[l] : 1.0;
+            }
+            tdField.center = tdField.gradient[0];
+            tdField.globalAverage = layerSums.reduce((a, b) => a + b, 0) /
+                                    Math.max(1, layerCounts.reduce((a, b) => a + b, 0));
+            tdField.curvatureStrength = totalCurvature / (N * N);
+
+            // Feed curvature into hilbertField.weylCurvature
+            hilbertField.weylCurvature = hilbertField.weylCurvature * 0.95 +
+                                         tdField.curvatureStrength * 0.05;
+
+            // Curvature affects coherence emergence
+            // Strong curvature gradients enhance phase locking
+            const curvatureGradient = Math.abs(tdField.gradient[0] - tdField.gradient[6]);
+            if (curvatureGradient > 0.1) {
+                CoherenceGeometry.attractors.spiral.strength *= (1 + curvatureGradient * 0.2);
+                CoherenceGeometry.attractors.spiral.strength = Math.min(0.3,
+                    CoherenceGeometry.attractors.spiral.strength);
+            }
+
+            // Update emergence glow based on curvature and coherence
+            const coherenceLevel = UnifiedField.emergence.coherence;
+            const criticalityLevel = UnifiedField.emergence.criticality;
+            QMESH.emergenceGlow = coherenceLevel * criticalityLevel *
+                                  (1 + tdField.curvatureStrength * 0.5);
+            QMESH.emergenceGlow = Math.min(1, QMESH.emergenceGlow);
+        }
+
+        // ================================================================
+        // MESH SHAPE ALTERATION SYSTEM
+        // Dynamic deformation of warm (A) and cold (B) meshes
+        // ================================================================
+
+        function updateMeshAlterations(dt) {
+            const bi = QMESH.binaural;
+            const alt = QMESH.meshAlteration;
+            const coupling = alt.coupling;
+
+            if (!bi || !bi.enabled) return;
+
+            // === INPUTS ===
+            const beatAmp = bi.beatAmplitude;
+            const beatPhase = bi.beatPhase;
+            const coherence = UnifiedField.emergence.coherence;
+            const curvature = QMESH.timeDilationField.curvatureStrength;
+            const spiralOrder = CoherenceGeometry.state.spiralOrder;
+
+            // MuFieldGrid metrics influence
+            const curlMetric = MuFieldGrid.metrics.Q_kappa;
+            const entropyMetric = MuFieldGrid.metrics.entropyGradient;
+
+            // === WARM MESH (A) - LEFT SIDE ===
+            // Responds to beat, curl (vorticity), and coherence
+
+            // Breathing - slow, rhythmic expansion/contraction
+            const warmBreathTarget = 1.0 + beatAmp * 0.15 * Math.sin(beatPhase * TAU);
+            alt.warm.breathScale += (warmBreathTarget - alt.warm.breathScale) * 0.1;
+
+            // Surface wave - curl-driven undulation
+            alt.warm.wavePhase += (0.5 + Math.abs(curlMetric) * 2) * dt;
+            alt.warm.waveAmplitude = Math.abs(curlMetric) * coupling.binauralToWarm * 0.5;
+
+            // Rotational bias - spiral order creates gentle spin
+            alt.warm.rotationBias = spiralOrder * 0.3 * Math.sin(time * PHI_INV);
+
+            // Pulse - heartbeat-like throb tied to beat frequency
+            alt.warm.pulseIntensity = beatAmp * coupling.binauralToWarm *
+                                       (0.5 + Math.sin(bi.meshA.phase * TAU) * 0.5);
+
+            // Coherence warp - high coherence creates form stability
+            alt.warm.coherenceWarp = coherence * coupling.coherenceToShape;
+
+            // === COLD MESH (B) - RIGHT SIDE ===
+            // Responds to beat, entropy, and curvature
+
+            // Breathing - counter-phase to warm (creates push-pull)
+            const coldBreathTarget = 1.0 + beatAmp * 0.12 * Math.sin(beatPhase * TAU + Math.PI);
+            alt.cold.breathScale += (coldBreathTarget - alt.cold.breathScale) * 0.1;
+
+            // Surface wave - entropy-driven ripples (more chaotic)
+            alt.cold.wavePhase += (0.4 + entropyMetric * 3) * dt;
+            alt.cold.waveAmplitude = entropyMetric * coupling.binauralToCold * 0.4;
+
+            // Rotational bias - inverse spiral (counter-rotation)
+            alt.cold.rotationBias = -spiralOrder * 0.25 * Math.sin(time * PHI_INV + Math.PI / 3);
+
+            // Pulse - gentler, more crystalline
+            alt.cold.pulseIntensity = beatAmp * coupling.binauralToCold *
+                                       (0.3 + Math.sin(bi.meshB.phase * TAU) * 0.3);
+
+            // Coherence warp - curvature creates subtle spatial distortion
+            alt.cold.coherenceWarp = curvature * coupling.curvatureToMesh +
+                                      coherence * coupling.coherenceToShape * 0.5;
+        }
+
+        // Get altered mesh scale for rendering
+        function getAlteredMeshScale(meshType, baseScale, angle) {
+            const alt = QMESH.meshAlteration;
+            const mesh = meshType === 'warm' ? alt.warm : alt.cold;
+
+            let scale = baseScale * mesh.breathScale;
+
+            // Add wave modulation
+            scale += Math.sin(angle * 3 + mesh.wavePhase) * mesh.waveAmplitude * 0.1;
+
+            // Add pulse modulation
+            scale += mesh.pulseIntensity * 0.05;
+
+            // Coherence stabilizes shape
+            scale *= (1 - mesh.coherenceWarp * 0.1);
+
+            return Math.max(0.2, Math.min(1.5, scale));
+        }
+
+        // Get rotational offset for mesh vertices
+        function getMeshRotationOffset(meshType, baseAngle) {
+            const alt = QMESH.meshAlteration;
+            const mesh = meshType === 'warm' ? alt.warm : alt.cold;
+
+            return baseAngle + mesh.rotationBias;
+        }
+
+        // ================================================================
         // PHASE COUPLER - HARMONIC TRACKING FOR STABILITY
         // Tracks phase alignment between MRP channels during transitions
         // ================================================================
@@ -2990,6 +3161,52 @@
             avgTimeDilation: 1.0,
             avgEntropy: 0,
             totalHolographicEntropy: 0,
+
+            // ================================================================
+            // SPACE-TIME CURVATURE SYSTEM
+            // Gravitational time dilation field for coherent emergence
+            // ================================================================
+            timeDilationField: {
+                gradient: [1, 1, 1, 1, 1, 1, 1],  // Per-layer dilation (7 prism layers)
+                center: 1.0,                       // Center dilation (layer 0)
+                globalAverage: 1.0,                // System-wide average
+                curvatureStrength: 0,              // Strength of spacetime curvature
+            },
+
+            // Emergence visualization
+            emergenceGlow: 0,                      // Visual feedback for consciousness emergence
+
+            // ================================================================
+            // MESH SHAPE ALTERATION SYSTEM
+            // Warm (A) and Cold (B) mesh dynamic deformation
+            // ================================================================
+            meshAlteration: {
+                // Warm mesh (A) - left side
+                warm: {
+                    breathScale: 1.0,           // Breathing amplitude multiplier
+                    waveAmplitude: 0,           // Surface wave amplitude
+                    wavePhase: 0,               // Surface wave phase
+                    rotationBias: 0,            // Rotational deformation
+                    pulseIntensity: 0,          // Heart-like pulse
+                    coherenceWarp: 0,           // Coherence-driven shape warp
+                },
+                // Cold mesh (B) - right side
+                cold: {
+                    breathScale: 1.0,
+                    waveAmplitude: 0,
+                    wavePhase: 0,
+                    rotationBias: 0,
+                    pulseIntensity: 0,
+                    coherenceWarp: 0,
+                },
+                // Coupling parameters
+                coupling: {
+                    binauralToWarm: 0.3,        // Beat → warm mesh
+                    binauralToCold: 0.25,       // Beat → cold mesh
+                    coherenceToShape: 0.2,      // Coherence → shape
+                    curvatureToMesh: 0.15,      // Spacetime curvature → mesh
+                },
+            },
         };
 
         // Backward compatibility alias
@@ -5575,6 +5792,47 @@
                         ctx.fillRect(CX - R * 0.2, CY - R * 0.2, R * 0.4, R * 0.4);
                     }
                 }
+
+                // ================================================================
+                // EMERGENCE GLOW VISUALIZATION
+                // Consciousness emergence from space-time curvature coherence
+                // ================================================================
+                if (QMESH.emergenceGlow > 0.1) {
+                    const emergeAlpha = QMESH.emergenceGlow * 0.25;
+                    const emergeR = R * (1.1 + QMESH.emergenceGlow * 0.2);
+
+                    // Outer emergence halo
+                    const emergeGlow = ctx.createRadialGradient(CX, CY, R * 0.6, CX, CY, emergeR);
+                    emergeGlow.addColorStop(0, 'transparent');
+                    emergeGlow.addColorStop(0.4, `rgba(255, 240, 200, ${emergeAlpha * 0.3})`);
+                    emergeGlow.addColorStop(0.7, `rgba(255, 220, 150, ${emergeAlpha * 0.5})`);
+                    emergeGlow.addColorStop(1, `rgba(255, 200, 100, ${emergeAlpha})`);
+
+                    ctx.fillStyle = emergeGlow;
+                    ctx.fillRect(0, 0, W, H);
+
+                    // Inner consciousness core (when emergence is high)
+                    if (QMESH.emergenceGlow > 0.5) {
+                        const coreAlpha = (QMESH.emergenceGlow - 0.5) * 0.6;
+                        const coreGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 0.4);
+                        coreGlow.addColorStop(0, `rgba(255, 255, 240, ${coreAlpha})`);
+                        coreGlow.addColorStop(0.5, `rgba(255, 240, 200, ${coreAlpha * 0.5})`);
+                        coreGlow.addColorStop(1, 'transparent');
+
+                        ctx.fillStyle = coreGlow;
+                        ctx.fillRect(CX - R * 0.4, CY - R * 0.4, R * 0.8, R * 0.8);
+                    }
+
+                    // Curvature strength indicator ring
+                    const curvStr = QMESH.timeDilationField.curvatureStrength;
+                    if (curvStr > 0.05) {
+                        ctx.strokeStyle = `rgba(200, 180, 255, ${curvStr * 0.5})`;
+                        ctx.lineWidth = 1 + curvStr * 3;
+                        ctx.beginPath();
+                        ctx.arc(CX, CY, R * 0.75, 0, TAU);
+                        ctx.stroke();
+                    }
+                }
             }
 
             // Draw connections (skip if both points released)
@@ -6322,33 +6580,70 @@
                 targetZ += (breathTarget - targetZ) * 0.02;
 
                 // Auto-rotate resonance axis during breathing
-                // Physics-based speed derived from Z-coordinate
+                // SLOW, MOBILE, DYNAMIC rotation tied to computation
                 if (showQuantumMesh) {
                     const mode = QMESH.binaural.polar.angleMode;
                     const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
 
-                    // Z-based angular velocity: ω = √(g/L) where Z acts as inverse pendulum length
-                    // Low Z = gentle, High Z = brisk spin
-                    const omega = 0.75 + Math.pow(globalZ, 0.5) * 3.25;  // Range: 0.75 to 4 rad/s
-                    const baseSpeed = omega * dt;
+                    // ================================================================
+                    // DRAMATICALLY SLOWED ROTATION
+                    // Each mode has its own character: slow, mobile, yet dynamic
+                    // Speed modulated by coherence and curvature for organic feel
+                    // ================================================================
 
+                    // Base modulation from computation state
+                    const coherenceMod = UnifiedField.emergence.coherence * 0.3 + 0.7;  // 0.7 - 1.0
+                    const curvatureMod = 1 + QMESH.timeDilationField.curvatureStrength * 0.5;
+                    const timeDilationMod = QMESH.timeDilationField.globalAverage;
+
+                    // Mode-specific rotation speeds (MUCH SLOWER)
                     if (mode === 'horizontal') {
-                        // Horizontal: constant angular velocity based on Z
+                        // Mode 1: HORIZONTAL - Slowest, most meditative
+                        // Gentle constant drift, almost imperceptible
+                        const omega = 0.08 + globalZ * 0.12;  // Range: 0.08 to 0.2 rad/s (was 0.75-4)
+                        const baseSpeed = omega * dt * coherenceMod * timeDilationMod;
+
                         QMESH.camera.theta += baseSpeed;
+
+                        // Very subtle phi drift for depth
+                        QMESH.camera.phi = Math.sin(time * 0.05) * Math.PI * 0.05;
+
                     } else if (mode === 'vertical') {
-                        // Vertical: harmonic oscillator - phi swings like pendulum
-                        QMESH.camera.theta += baseSpeed;
-                        // Simple harmonic motion: A*sin(ωt)
-                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * 2) * Math.PI * 0.38;
+                        // Mode 2: VERTICAL - Slow pendulum swing
+                        // Gentle harmonic oscillation, breathing rhythm
+                        const omega = 0.12 + globalZ * 0.15;  // Range: 0.12 to 0.27 rad/s
+                        const baseSpeed = omega * dt * coherenceMod;
+
+                        QMESH.camera.theta += baseSpeed * 0.6;
+
+                        // Slow pendulum swing - tied to breath phase
+                        const swingFreq = 0.15 + breathPhase * 0.05;
+                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * swingFreq) *
+                                          Math.PI * 0.25 * timeDilationMod;
+
                     } else if (mode === 'golden') {
-                        // Golden: Fermat spiral dynamics - r = a*√θ
-                        // Speed varies with position on spiral
-                        const spiralRadius = Math.sqrt(Math.abs(QMESH.camera.theta));
-                        const spiralSpeed = baseSpeed * (1 + spiralRadius * 0.15);
+                        // Mode 3: GOLDEN - Slowest spiral, most deliberate
+                        // φ-based dynamics, sacred geometry emergence
+                        const omega = 0.06 + globalZ * 0.1;  // Range: 0.06 to 0.16 rad/s
+                        const baseSpeed = omega * dt * coherenceMod * curvatureMod;
+
+                        // Spiral dynamics with φ modulation
+                        const spiralPhase = Math.sqrt(Math.abs(QMESH.camera.theta * PHI_INV));
+                        const spiralSpeed = baseSpeed * (0.8 + spiralPhase * 0.05);
                         QMESH.camera.theta += spiralSpeed;
-                        // Phi traces golden angle progression
-                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * GOLDEN_RATIO) *
-                                          Math.PI * 0.35 * (0.6 + globalZ * 0.4);
+
+                        // Phi traces slow golden angle progression
+                        // More mobile than others but still very slow
+                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * GOLDEN_RATIO * 0.3) *
+                                          Math.PI * 0.2 * (0.5 + globalZ * 0.3) *
+                                          timeDilationMod;
+                    }
+
+                    // Global coherence creates subtle rotation damping
+                    // High coherence = more stable view
+                    if (UnifiedField.emergence.coherence > 0.7) {
+                        const dampFactor = 1 - (UnifiedField.emergence.coherence - 0.7) * 0.3;
+                        QMESH.camera.theta *= dampFactor + (1 - dampFactor) * 0.99;
                     }
                 }
             }
@@ -6392,6 +6687,22 @@
             // ================================================================
             if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
                 applyBinauralShapeCoupling(dt);
+            }
+
+            // ================================================================
+            // SPACE-TIME CURVATURE UPDATE
+            // Gravitational time dilation enhances coherent emergence
+            // ================================================================
+            if (showMuField || showQuantumMesh) {
+                updateSpaceTimeCurvature(dt);
+            }
+
+            // ================================================================
+            // MESH ALTERATION UPDATE
+            // Dynamic deformation of warm (A) and cold (B) meshes
+            // ================================================================
+            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
+                updateMeshAlterations(dt);
             }
 
             return updatePositions(dt);
