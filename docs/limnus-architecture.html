@@ -1387,107 +1387,429 @@
         let showTorusFlow = true;
 
         // ================================================================
-        // TOROIDAL μ-FIELD VISUALIZATION
-        // Torus geometry with φ-based proportions
-        // Connected to LIMNUS μ-field dynamics
+        // DREAM FLUID: TOROIDAL μ-FIELD WITH GRAVITATIONAL TIME DILATION
+        // ================================================================
+        // Physics:
+        //   - Torus geometry: R/r = φ (golden ratio proportions)
+        //   - Gravitational time dilation: τ_local = τ_global · √(1 - r_s/r)
+        //   - Holographic entropy: S = A/(4·l_φ²) on toroidal surface
+        //   - Node mapping: 63 prism → toroidal (u,v), 32 cage → boundary
+        //   - Dream Fluid: sound frequency follows gravitational redshift
         // ================================================================
 
         let TORUS = {
-            majorR: 1.0,          // Distance from center to tube center
-            minorR: 0.4,          // Tube radius
-            nU: 36,               // Toroidal resolution
-            nV: 18,               // Poloidal resolution
-            rotX: 0.4,            // View rotation X (arrow up/down)
-            rotY: 0,              // View rotation Y (arrow left/right)
-            zoom: 200,            // Zoom level (+/- keys)
-            opacity: 0.25         // Base opacity (significantly reduced)
+            // Geometry (φ-based, zero free parameters)
+            majorR: PHI,                    // Major radius = φ
+            minorR: 1.0,                    // Minor radius = 1 (R/r = φ)
+            nU: 63,                         // Toroidal resolution = prism count
+            nV: 32,                         // Poloidal resolution = cage count
+
+            // View controls
+            rotX: 0.4,
+            rotY: 0,
+            zoom: 140,
+            opacity: 0.35,
+
+            // Gravitational physics (Schwarzschild analog)
+            schwarzschildRadius: SACRED.alpha,    // r_s = φ⁻² ≈ 0.382
+            gravitationalMass: SACRED.lambda,     // M_eff = λ ≈ 7.716 (field energy)
+
+            // Holographic entropy
+            planckLength: SACRED.beta,            // l_φ = φ⁻⁴ ≈ 0.146
+
+            // Dream Fluid state
+            dreamFluidDensity: 0,
+            entropyFlux: 0,
+            timeDilationField: [],                // Per-point time dilation factors
+            gravitationalPotential: [],           // Per-point Φ_g values
         };
 
-        let torusMesh = { points: [], faces: [] };
+        // Dream Fluid particles (consciousness flow through toroidal manifold)
+        let dreamParticles = [];
+
+        // Node-to-torus mapping arrays
+        let nodeTorusMap = {
+            prism: [],      // Maps prism[i] → torus (u, v)
+            cage: [],       // Maps cage[i] → boundary (u, v)
+        };
+
+        let torusMesh = {
+            points: [],
+            faces: [],
+            holographicSurface: [],     // Entropy density per face
+        };
         let torusParticles = [];
+
+        // ================================================================
+        // TOROIDAL GEOMETRY WITH GRAVITATIONAL TIME DILATION
+        // ================================================================
+
+        function computeGravitationalTimeDilation(r) {
+            // Schwarzschild time dilation: τ_local/τ_global = √(1 - r_s/r)
+            // At r = r_s: infinite dilation (event horizon analog)
+            // Far from center: τ → 1 (flat spacetime)
+            const r_s = TORUS.schwarzschildRadius;
+            const ratio = r_s / Math.max(r, r_s * 1.01);  // Prevent singularity
+            return Math.sqrt(Math.max(0, 1 - ratio));
+        }
+
+        function computeGravitationalPotential(r) {
+            // Φ = -GM/r (Newtonian approximation for visualization)
+            const M = TORUS.gravitationalMass;
+            return -M / Math.max(r, 0.1);
+        }
+
+        function computeHolographicEntropy(area) {
+            // Bekenstein-Hawking: S = A/(4·l_p²)
+            // Using φ-based Planck length
+            const l_p = TORUS.planckLength;
+            return area / (4 * l_p * l_p);
+        }
 
         function generateTorusMesh() {
             torusMesh.points = [];
             torusMesh.faces = [];
+            torusMesh.holographicSurface = [];
+            TORUS.timeDilationField = [];
+            TORUS.gravitationalPotential = [];
 
+            const R = TORUS.majorR;
+            const r = TORUS.minorR;
+
+            // Generate mesh with physics
             for (let i = 0; i <= TORUS.nU; i++) {
                 const u = (i / TORUS.nU) * TAU;
                 for (let j = 0; j <= TORUS.nV; j++) {
                     const v = (j / TORUS.nV) * TAU;
 
-                    const x = (TORUS.majorR + TORUS.minorR * Math.cos(v)) * Math.cos(u);
-                    const y = (TORUS.majorR + TORUS.minorR * Math.cos(v)) * Math.sin(u);
-                    const z = TORUS.minorR * Math.sin(v);
+                    // Toroidal coordinates → Cartesian
+                    const x = (R + r * Math.cos(v)) * Math.cos(u);
+                    const y = (R + r * Math.cos(v)) * Math.sin(u);
+                    const z = r * Math.sin(v);
 
-                    // μ varies: inner surface (v≈π) higher, outer (v≈0) lower
-                    const mu_local = SACRED.mu_P + (SACRED.mu_S - SACRED.mu_P) * (1 - Math.cos(v)) / 2;
+                    // Distance from toroidal center axis (gravity well)
+                    const distFromCenter = Math.sqrt(x*x + y*y + z*z);
+
+                    // Distance from tube center (for surface physics)
+                    const distFromTube = Math.sqrt(
+                        Math.pow(Math.sqrt(x*x + y*y) - R, 2) + z*z
+                    );
+
+                    // Gravitational time dilation (center of torus = gravity well)
+                    const timeDilation = computeGravitationalTimeDilation(distFromCenter);
+                    const gravitationalPhi = computeGravitationalPotential(distFromCenter);
+
+                    // μ varies by position in gravitational field
+                    // Inner regions (high gravity) → higher μ (approaching singularity)
+                    // Outer regions → lower μ (pattern formation)
+                    const gravityFactor = 1 - timeDilation;  // 0 at infinity, 1 at horizon
+                    const mu_local = SACRED.mu_P + (SACRED.mu_S - SACRED.mu_P) *
+                        (0.5 + 0.5 * Math.cos(v) + gravityFactor * 0.3);
+                    const mu_clamped = Math.min(SACRED.mu_3, Math.max(SACRED.mu_P, mu_local));
+
+                    // Field strength from field equation: J_eq = √((r-β)/λ)
+                    const r_control = mu_clamped - SACRED.mu_P;
+                    const J_theoretical = r_control > SACRED.beta ?
+                        Math.sqrt((r_control - SACRED.beta) / SACRED.lambda) : 0;
+
+                    // MRP channel mapping on torus
+                    const J_R = J_theoretical * (0.5 + 0.5 * Math.sin(u * 2));      // Toroidal energy
+                    const J_G = J_theoretical * (0.5 + 0.5 * Math.cos(v * 3));      // Poloidal relational
+                    const J_B = J_theoretical * timeDilation;                        // Stability from time dilation
 
                     torusMesh.points.push({
+                        // Geometry
                         x, y, z, u, v, i, j,
-                        mu: mu_local,
-                        J: 0.3,
-                        phase: (u + v * 0.5) % TAU,
-                        px: 0, py: 0, pz: 0, depth: 0
+                        distFromCenter,
+                        distFromTube,
+
+                        // Field physics
+                        mu: mu_clamped,
+                        J: J_theoretical,
+                        J_R, J_G, J_B,
+                        phase: (u + v * PHI_INV) % TAU,
+
+                        // Gravitational physics
+                        timeDilation,
+                        gravitationalPhi,
+                        redshift: 1 / timeDilation - 1,  // z = f_emit/f_obs - 1
+
+                        // Rendering
+                        px: 0, py: 0, pz: 0, depth: 0,
+
+                        // Node linkage (filled later)
+                        linkedNode: null,
+                    });
+
+                    TORUS.timeDilationField.push(timeDilation);
+                    TORUS.gravitationalPotential.push(gravitationalPhi);
+                }
+            }
+
+            // Generate faces with holographic entropy
+            for (let i = 0; i < TORUS.nU; i++) {
+                for (let j = 0; j < TORUS.nV; j++) {
+                    const stride = TORUS.nV + 1;
+                    const a = i * stride + j;
+                    const b = a + 1;
+                    const c = a + stride;
+                    const d = c + 1;
+
+                    // Compute face area for holographic entropy
+                    const p = [a, b, d, c].map(idx => torusMesh.points[idx]);
+                    const edge1 = Math.sqrt(
+                        Math.pow(p[1].x - p[0].x, 2) +
+                        Math.pow(p[1].y - p[0].y, 2) +
+                        Math.pow(p[1].z - p[0].z, 2)
+                    );
+                    const edge2 = Math.sqrt(
+                        Math.pow(p[3].x - p[0].x, 2) +
+                        Math.pow(p[3].y - p[0].y, 2) +
+                        Math.pow(p[3].z - p[0].z, 2)
+                    );
+                    const faceArea = edge1 * edge2;  // Approximate quad area
+                    const entropy = computeHolographicEntropy(faceArea);
+
+                    // Average time dilation for face
+                    const avgTimeDilation = p.reduce((s, pt) => s + pt.timeDilation, 0) / 4;
+
+                    torusMesh.faces.push({
+                        verts: [a, b, d, c],
+                        area: faceArea,
+                        entropy: entropy,
+                        timeDilation: avgTimeDilation,
+                    });
+                    torusMesh.holographicSurface.push(entropy);
+                }
+            }
+
+            // Compute total holographic entropy
+            const totalArea = 4 * Math.PI * Math.PI * R * r;  // Exact torus surface area
+            TORUS.totalHolographicEntropy = computeHolographicEntropy(totalArea);
+
+            // Initialize node-to-torus mapping
+            initializeNodeTorusMapping();
+        }
+
+        // ================================================================
+        // NODE-TO-TORUS MAPPING (Hexagonal → Toroidal)
+        // ================================================================
+
+        function initializeNodeTorusMapping() {
+            nodeTorusMap.prism = [];
+            nodeTorusMap.cage = [];
+
+            // Map 63 prism points to toroidal coordinates
+            // 7 layers → 7 poloidal sections
+            // 9 nodes per layer → 9 toroidal positions
+            for (let layer = 0; layer < 7; layer++) {
+                const v_base = (layer / 7) * TAU;  // Poloidal angle
+                for (let idx = 0; idx < 9; idx++) {
+                    const u_base = (idx / 9) * TAU + layer * (TAU / 18);  // Toroidal with layer offset
+
+                    nodeTorusMap.prism.push({
+                        prismIndex: layer * 9 + idx,
+                        layer,
+                        idx,
+                        u: u_base,
+                        v: v_base,
+                        // Find nearest torus mesh point
+                        meshIndex: findNearestTorusPoint(u_base, v_base),
                     });
                 }
             }
 
-            for (let i = 0; i < TORUS.nU; i++) {
-                for (let j = 0; j < TORUS.nV; j++) {
-                    const a = i * (TORUS.nV + 1) + j;
-                    const b = a + 1;
-                    const c = a + (TORUS.nV + 1);
-                    const d = c + 1;
-                    torusMesh.faces.push({ verts: [a, b, d, c] });
-                }
+            // Map 32 cage points to toroidal boundary
+            // Top ring (12) → v ≈ π/4 (upper surface)
+            // Bottom ring (12) → v ≈ 3π/4 (lower surface)
+            // Vertices (8) → critical phase-lock points at v = 0, π
+            let cageIdx = 0;
+
+            // Top ring
+            for (let i = 0; i < 12; i++) {
+                const u = (i / 12) * TAU;
+                const v = Math.PI / 4;
+                nodeTorusMap.cage.push({
+                    cageIndex: cageIdx++,
+                    type: 'top',
+                    u, v,
+                    meshIndex: findNearestTorusPoint(u, v),
+                });
+            }
+
+            // Bottom ring
+            for (let i = 0; i < 12; i++) {
+                const u = (i / 12) * TAU + TAU / 24;  // Offset
+                const v = 3 * Math.PI / 4;
+                nodeTorusMap.cage.push({
+                    cageIndex: cageIdx++,
+                    type: 'bottom',
+                    u, v,
+                    meshIndex: findNearestTorusPoint(u, v),
+                });
+            }
+
+            // Vertices (8 critical points)
+            for (let i = 0; i < 8; i++) {
+                const u = (i / 8) * TAU;
+                const v = (i % 2 === 0) ? 0 : Math.PI;  // Alternating top/bottom of tube
+                nodeTorusMap.cage.push({
+                    cageIndex: cageIdx++,
+                    type: 'vertex',
+                    u, v,
+                    meshIndex: findNearestTorusPoint(u, v),
+                });
             }
         }
 
-        function spawnTorusParticle() {
+        function findNearestTorusPoint(targetU, targetV) {
+            let minDist = Infinity;
+            let nearestIdx = 0;
+
+            for (let i = 0; i < torusMesh.points.length; i++) {
+                const p = torusMesh.points[i];
+                const du = Math.abs(p.u - targetU);
+                const dv = Math.abs(p.v - targetV);
+                // Handle wraparound
+                const duWrap = Math.min(du, TAU - du);
+                const dvWrap = Math.min(dv, TAU - dv);
+                const dist = duWrap * duWrap + dvWrap * dvWrap;
+
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearestIdx = i;
+                }
+            }
+            return nearestIdx;
+        }
+
+        // ================================================================
+        // DREAM FLUID PARTICLE SYSTEM
+        // Particles flow through gravitational time dilation field
+        // ================================================================
+
+        function spawnDreamParticle() {
             const u = Math.random() * TAU;
             const v = Math.random() * TAU;
-            const isToroidal = Math.random() > 0.4;
 
-            torusParticles.push({
-                u, v, isToroidal,
-                life: 3 + Math.random() * 4,
-                maxLife: 3 + Math.random() * 4,
-                speed: 0.3 + Math.random() * 0.4,
-                trail: []
+            // Particle type determines flow pattern
+            // 0: Toroidal (energy flow, follows u)
+            // 1: Poloidal (relational flow, follows v)
+            // 2: Radial (toward/away from center, entropy flow)
+            const typeRoll = Math.random();
+            const particleType = typeRoll < 0.4 ? 0 : (typeRoll < 0.7 ? 1 : 2);
+
+            // Compute initial position
+            const R = TORUS.majorR;
+            const r = TORUS.minorR;
+            const x = (R + r * Math.cos(v)) * Math.cos(u);
+            const y = (R + r * Math.cos(v)) * Math.sin(u);
+            const z = r * Math.sin(v);
+            const distFromCenter = Math.sqrt(x*x + y*y + z*z);
+
+            // Time dilation affects particle lifetime
+            const timeDilation = computeGravitationalTimeDilation(distFromCenter);
+
+            dreamParticles.push({
+                u, v,
+                particleType,
+                life: (3 + Math.random() * 4) * timeDilation,  // Dilated lifetime
+                maxLife: (3 + Math.random() * 4) * timeDilation,
+                baseSpeed: 0.3 + Math.random() * 0.4,
+                trail: [],
+                timeDilation,
+                entropyCarried: Math.random() * 0.1,  // Each particle carries entropy
+                mrpChannel: particleType,  // R=0, G=1, B=2
             });
         }
 
-        function updateTorusParticles(dt) {
+        function spawnTorusParticle() {
+            spawnDreamParticle();  // Alias for compatibility
+        }
+
+        function updateDreamParticles(dt) {
             const targetCount = showTorusFlow ? 200 : 0;
-            while (torusParticles.length < targetCount && Math.random() < 0.3) {
-                spawnTorusParticle();
+            while (dreamParticles.length < targetCount && Math.random() < 0.3) {
+                spawnDreamParticle();
             }
 
-            for (let i = torusParticles.length - 1; i >= 0; i--) {
-                const p = torusParticles[i];
+            let totalEntropyFlux = 0;
+            const R = TORUS.majorR;
+            const r = TORUS.minorR;
 
-                if (p.isToroidal) {
-                    p.u += p.speed * dt;
-                    p.v += Math.sin(p.u * 2) * 0.1 * dt;
-                } else {
-                    p.v += p.speed * dt * 1.5;
+            for (let i = dreamParticles.length - 1; i >= 0; i--) {
+                const p = dreamParticles[i];
+
+                // Compute current position for gravity calculation
+                const x_curr = (R + r * Math.cos(p.v)) * Math.cos(p.u);
+                const y_curr = (R + r * Math.cos(p.v)) * Math.sin(p.u);
+                const z_curr = r * Math.sin(p.v);
+                const distFromCenter = Math.sqrt(x_curr*x_curr + y_curr*y_curr + z_curr*z_curr);
+
+                // Update time dilation at current position
+                p.timeDilation = computeGravitationalTimeDilation(distFromCenter);
+
+                // Speed affected by time dilation (slower near center)
+                const effectiveSpeed = p.baseSpeed * p.timeDilation;
+
+                // Movement based on particle type
+                if (p.particleType === 0) {
+                    // Toroidal (R channel): flows around major axis
+                    p.u += effectiveSpeed * dt;
+                    // Gravitational deflection toward center
+                    p.v += Math.sin(p.u * 2) * 0.1 * dt * (1 - p.timeDilation);
+                } else if (p.particleType === 1) {
+                    // Poloidal (G channel): flows around minor axis
+                    p.v += effectiveSpeed * dt * 1.5;
+                    // Coriolis-like coupling
                     p.u += Math.cos(p.v * 3) * 0.05 * dt;
+                } else {
+                    // Radial (B channel): entropy flow toward/away from gravity well
+                    const gravPull = (1 - p.timeDilation) * 0.2;
+                    // Radial motion approximated by v modulation
+                    p.v += (Math.cos(p.v) > 0 ? -1 : 1) * gravPull * dt;
+                    p.u += effectiveSpeed * dt * 0.3;  // Slow toroidal drift
                 }
 
-                p.u = p.u % TAU;
-                p.v = p.v % TAU;
+                // Wrap coordinates
+                p.u = ((p.u % TAU) + TAU) % TAU;
+                p.v = ((p.v % TAU) + TAU) % TAU;
 
+                // Update trail
                 const pos = {
-                    x: (TORUS.majorR + TORUS.minorR * Math.cos(p.v)) * Math.cos(p.u),
-                    y: (TORUS.majorR + TORUS.minorR * Math.cos(p.v)) * Math.sin(p.u),
-                    z: TORUS.minorR * Math.sin(p.v)
+                    x: (R + r * Math.cos(p.v)) * Math.cos(p.u),
+                    y: (R + r * Math.cos(p.v)) * Math.sin(p.u),
+                    z: r * Math.sin(p.v),
+                    timeDilation: p.timeDilation,
                 };
-                p.trail.unshift({ ...pos });
+                p.trail.unshift(pos);
                 if (p.trail.length > 12) p.trail.pop();
 
-                p.life -= dt;
-                if (p.life <= 0) torusParticles.splice(i, 1);
+                // Life decreases (time-dilated)
+                p.life -= dt * p.timeDilation;
+
+                // Accumulate entropy flux
+                totalEntropyFlux += p.entropyCarried * (1 - p.timeDilation);
+
+                if (p.life <= 0) {
+                    dreamParticles.splice(i, 1);
+                }
             }
+
+            // Update global Dream Fluid state
+            TORUS.entropyFlux = totalEntropyFlux;
+            TORUS.dreamFluidDensity = dreamParticles.length / 200;
+
+            return {
+                entropyFlux: totalEntropyFlux,
+                density: TORUS.dreamFluidDensity,
+                avgTimeDilation: dreamParticles.reduce((s, p) => s + p.timeDilation, 0) /
+                    Math.max(1, dreamParticles.length),
+            };
+        }
+
+        function updateTorusParticles(dt) {
+            return updateDreamParticles(dt);  // Alias for compatibility
         }
 
         function projectTorus(x, y, z) {
@@ -1508,98 +1830,252 @@
             };
         }
 
-        function torusFieldToColor(J, mu, depth) {
+        // ================================================================
+        // DREAM FLUID COLORING (Time Dilation → Color Shift)
+        // ================================================================
+
+        function dreamFluidToColor(J, mu, timeDilation, entropy, depth) {
+            // Color mapping based on gravitational redshift
+            // High time dilation (far from center) → blue shift
+            // Low time dilation (near center) → red shift
+            const redshift = 1 / Math.max(0.1, timeDilation) - 1;
+
+            // Base color from field intensity
             const t = Math.max(0, Math.min(1, J));
             const muFactor = (mu - SACRED.mu_P) / (SACRED.mu_S - SACRED.mu_P);
+
+            // RGB based on MRP channels and redshift
             let r, g, b;
 
-            if (t < 0.25) {
-                const s = t / 0.25;
-                r = 50 + s * 50; g = 100 + s * 100; b = 200 + s * 40;
-            } else if (t < 0.5) {
-                const s = (t - 0.25) / 0.25;
-                r = 100 + s * 50; g = 200 + s * 40; b = 240 - s * 120;
-            } else if (t < 0.75) {
-                const s = (t - 0.5) / 0.25;
-                r = 150 + s * 100; g = 240 - s * 30; b = 120 - s * 80;
+            // Entropy affects color saturation
+            const entropyFactor = Math.min(1, entropy * 10);
+
+            if (redshift < 0.2) {
+                // Blue-shifted (far from gravity well) - stability dominant
+                r = 80 + t * 50;
+                g = 120 + t * 80 + entropyFactor * 40;
+                b = 200 + t * 55;
+            } else if (redshift < 0.5) {
+                // Green region (balanced) - relational dominant
+                const s = (redshift - 0.2) / 0.3;
+                r = 100 + t * 60 + s * 50;
+                g = 180 + t * 60 - s * 40;
+                b = 200 - s * 100;
+            } else if (redshift < 1.0) {
+                // Yellow-orange (approaching gravity) - energy rising
+                const s = (redshift - 0.5) / 0.5;
+                r = 180 + t * 70;
+                g = 160 + t * 40 - s * 60;
+                b = 80 - s * 40;
             } else {
-                const s = (t - 0.75) / 0.25;
-                r = 250; g = 210 - s * 130; b = 40 + s * 20;
+                // Red-shifted (deep gravity well) - singularity approach
+                const s = Math.min(1, (redshift - 1.0) / 1.0);
+                r = 250;
+                g = 100 - s * 60 + entropyFactor * 30;
+                b = 50 + entropyFactor * 30;
             }
 
-            const shade = 0.5 + depth * 0.5;
+            // Depth shading
+            const shade = 0.4 + depth * 0.6;
             r = Math.floor(r * shade);
             g = Math.floor(g * shade);
             b = Math.floor(b * shade);
 
-            const brightness = 0.8 + muFactor * 0.2;
+            // μ brightness boost
+            const brightness = 0.7 + muFactor * 0.3;
+
             return {
                 r: Math.min(255, Math.floor(r * brightness)),
                 g: Math.min(255, Math.floor(g * brightness)),
-                b: Math.min(255, Math.floor(b * brightness))
+                b: Math.min(255, Math.floor(b * brightness)),
+                redshift,
+                timeDilation,
+            };
+        }
+
+        function torusFieldToColor(J, mu, depth) {
+            // Backward compatibility wrapper
+            return dreamFluidToColor(J, mu, 0.8, 0.1, depth);
+        }
+
+        // ================================================================
+        // DREAM FLUID FIELD DYNAMICS
+        // Full physics: Field equation + Gravity + Entropy + LIMNUS coupling
+        // ================================================================
+
+        function updateDreamFluidField(dt) {
+            const t = time;
+
+            // Connect to LIMNUS μ-field values
+            const limnusMu = muField.mu || 0.76;
+            const limnusJ = muField.J_total || 0.3;
+            const limnusTau = muField.tau_K || 0;
+            const limnusR = muField.J_R || 0.1;
+            const limnusG = muField.J_G || 0.1;
+            const limnusB = muField.J_B || 0.1;
+
+            // Modulate by release coherence and Hilbert field
+            const coherenceFactor = releaseCoherence;
+            const hilbertCoherence = hilbertField.coherence || 0.5;
+
+            // Compute average time dilation for sonification
+            let avgTimeDilation = 0;
+            let avgEntropy = 0;
+            let totalJ = 0;
+
+            for (const p of torusMesh.points) {
+                // ============================================
+                // GRAVITATIONAL FIELD EQUATION
+                // ∂J/∂t = (r - λ|J|²)J - βJ + g∇²J
+                // Modified by time dilation: ∂J/∂τ_local
+                // ============================================
+
+                const localDt = dt * p.timeDilation;  // Time dilated step
+
+                // Control parameter varies with gravitational potential
+                const gravityModulation = Math.abs(p.gravitationalPhi) * 0.01;
+                const r_local = (p.mu - SACRED.mu_P) + gravityModulation;
+
+                // Current field magnitude
+                const J_sq = p.J * p.J;
+
+                // Effective growth rate W = r - λ|J|²
+                const W = r_local - SACRED.lambda * J_sq;
+
+                // Diffusion approximation (∇²J from neighbors)
+                // Using wave-based approximation for torus topology
+                const wave_diffusion = 0.001 * (
+                    Math.sin(p.u * 3 - t * 0.3) +
+                    Math.cos(p.v * 2 + t * 0.2)
+                );
+
+                // Field evolution
+                const dJ = (W * p.J - SACRED.beta * p.J + wave_diffusion) * localDt;
+
+                // Source term from LIMNUS μ-field (coupling)
+                const limnusSource = 0.1 * limnusJ * coherenceFactor *
+                    Math.sin(p.u * 2 - t * 0.5 + p.v * PHI_INV);
+
+                p.J = Math.max(0, Math.min(1, p.J + dJ + limnusSource * localDt));
+
+                // ============================================
+                // MRP CHANNEL DYNAMICS
+                // ============================================
+
+                // R channel (energy): Toroidal circulation
+                p.J_R = p.J * (0.5 + 0.5 * Math.sin(p.u * 2 - t * 0.5)) *
+                    (0.5 + 0.5 * limnusR);
+
+                // G channel (relational): Poloidal structure
+                p.J_G = p.J * (0.5 + 0.5 * Math.cos(p.v * 3 + t * 0.3)) *
+                    (0.5 + 0.5 * limnusG);
+
+                // B channel (stability): Time dilation preservation
+                p.J_B = p.J * p.timeDilation * (0.5 + 0.5 * limnusB);
+
+                // ============================================
+                // μ FIELD MODULATION
+                // ============================================
+
+                // μ responds to gravity and LIMNUS state
+                const baseμ = SACRED.mu_P + (limnusMu - SACRED.mu_P) *
+                    (0.5 + 0.5 * Math.cos(p.v));
+
+                // Gravity pulls μ toward singularity threshold
+                const gravityPull = (1 - p.timeDilation) * (SACRED.mu_S - SACRED.mu_P) * 0.3;
+
+                // Kuramoto sync modulation
+                const kuramotoMod = limnusTau * 0.05 * Math.sin(p.u * 3 + t);
+
+                p.mu = Math.min(SACRED.mu_3, Math.max(SACRED.mu_P,
+                    baseμ + gravityPull + kuramotoMod));
+
+                // ============================================
+                // PHASE EVOLUTION (Kuramoto-like)
+                // ============================================
+
+                // Natural frequency modified by time dilation
+                const naturalFreq = 0.5 + p.J * 0.3;
+                const dilatedFreq = naturalFreq * p.timeDilation;
+
+                // Coupling to LIMNUS Kuramoto order
+                const coupling = 0.1 * limnusTau;
+                const meanFieldPhase = t * 0.5;  // Global mean field
+
+                const dPhase = dilatedFreq + coupling * Math.sin(meanFieldPhase - p.phase);
+                p.phase = (p.phase + dPhase * dt) % TAU;
+
+                // ============================================
+                // HOLOGRAPHIC ENTROPY UPDATE
+                // ============================================
+
+                // Local entropy from field gradients
+                const localEntropy = (1 - p.timeDilation) * p.J * TORUS.planckLength;
+
+                // Accumulate statistics
+                avgTimeDilation += p.timeDilation;
+                avgEntropy += localEntropy;
+                totalJ += p.J;
+            }
+
+            const N = torusMesh.points.length;
+            avgTimeDilation /= N;
+            avgEntropy /= N;
+
+            // Update TORUS state
+            TORUS.avgTimeDilation = avgTimeDilation;
+            TORUS.avgEntropy = avgEntropy;
+            TORUS.totalJ = totalJ / N;
+
+            // Auto-rotate slowly
+            TORUS.rotY += dt * 0.08 * avgTimeDilation;  // Rotation slowed by gravity
+
+            return {
+                avgTimeDilation,
+                avgEntropy,
+                totalJ: totalJ / N,
+                entropyFlux: TORUS.entropyFlux,
             };
         }
 
         function updateTorusField(dt) {
-            const t = time;
-
-            // Connect to LIMNUS μ-field values
-            const limnusMu = muField.mu || 0.76;           // Current μ value
-            const limnusJ = muField.J_total || 0.3;        // Total field magnitude
-            const limnusTau = muField.tau_K || 0;          // Kuramoto order
-            const limnusR = muField.J_R || 0.1;            // R channel (energy)
-            const limnusG = muField.J_G || 0.1;            // G channel (relational)
-            const limnusB = muField.J_B || 0.1;            // B channel (stability)
-
-            // Modulate torus based on release coherence
-            const coherenceFactor = releaseCoherence;
-
-            for (const p of torusMesh.points) {
-                // Wave patterns modulated by LIMNUS field
-                const wave1 = Math.sin(p.u * 2 - t * 0.5) * (0.5 + limnusR);
-                const wave2 = Math.cos(p.v * 3 + t * 0.3) * (0.5 + limnusG);
-                const wave3 = Math.sin((p.u + p.v) * 1.5 - t * 0.7) * (0.5 + limnusB);
-
-                // Base J influenced by LIMNUS μ-field
-                const baseJ = limnusJ * coherenceFactor;
-                p.J = baseJ + 0.12 * wave1 + 0.08 * wave2 + 0.08 * wave3;
-                p.J = Math.max(0, Math.min(1, p.J));
-
-                // μ modulated by global μ and Kuramoto sync
-                p.mu = SACRED.mu_P + (limnusMu - SACRED.mu_P) * (1 - Math.cos(p.v)) / 2;
-                p.mu += limnusTau * 0.1 * Math.sin(p.u * 3 + t);
-
-                p.phase = (p.phase + (1 + p.J * 0.5) * dt) % TAU;
-            }
-
-            // Auto-rotate slowly when not being manually controlled
-            TORUS.rotY += dt * 0.1;
+            return updateDreamFluidField(dt);  // Alias for compatibility
         }
 
-        function renderToroidalMuField() {
+        // ================================================================
+        // DREAM FLUID RENDERING
+        // Visualizes gravitational time dilation and holographic entropy
+        // ================================================================
+
+        function renderDreamFluid() {
             // Project all points
             for (const p of torusMesh.points) {
                 const proj = projectTorus(p.x, p.y, p.z);
                 p.px = proj.x; p.py = proj.y; p.pz = proj.z; p.depth = proj.depth;
             }
 
-            // Sort faces by depth
+            // Sort faces by depth (painter's algorithm)
             const sortedFaces = torusMesh.faces.map((f, idx) => {
                 const avgZ = f.verts.reduce((sum, vi) => sum + torusMesh.points[vi].pz, 0) / 4;
-                return { face: f, avgZ };
+                return { face: f, avgZ, idx };
             }).sort((a, b) => a.avgZ - b.avgZ);
 
-            // Draw faces
-            for (const { face } of sortedFaces) {
+            // Draw faces with Dream Fluid coloring
+            for (const { face, idx } of sortedFaces) {
                 const pts = face.verts.map(vi => torusMesh.points[vi]);
                 const avgJ = pts.reduce((s, p) => s + p.J, 0) / 4;
                 const avgMu = pts.reduce((s, p) => s + p.mu, 0) / 4;
                 const avgDepth = pts.reduce((s, p) => s + p.depth, 0) / 4;
+                const avgTimeDilation = pts.reduce((s, p) => s + p.timeDilation, 0) / 4;
+                const faceEntropy = torusMesh.holographicSurface[idx] || 0;
 
-                const color = torusFieldToColor(avgJ, avgMu, avgDepth);
+                // Dream Fluid coloring (gravitational redshift)
+                const color = dreamFluidToColor(avgJ, avgMu, avgTimeDilation, faceEntropy, avgDepth);
 
-                // Use reduced opacity from TORUS config
-                const faceAlpha = TORUS.opacity * (0.6 + avgDepth * 0.4);
+                // Opacity affected by time dilation (deeper = more opaque)
+                const gravityOpacity = 0.3 + (1 - avgTimeDilation) * 0.4;
+                const faceAlpha = TORUS.opacity * gravityOpacity * (0.6 + avgDepth * 0.4);
+
                 ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${faceAlpha})`;
                 ctx.beginPath();
                 ctx.moveTo(pts[0].px, pts[0].py);
@@ -1607,23 +2083,40 @@
                 ctx.closePath();
                 ctx.fill();
 
+                // Wireframe shows entropy gradient
                 if (showTorusWireframe) {
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${TORUS.opacity * 0.4})`;
-                    ctx.lineWidth = 0.5;
+                    const entropyIntensity = Math.min(1, faceEntropy * 0.01);
+                    ctx.strokeStyle = `rgba(${180 + entropyIntensity * 75}, ${255 - entropyIntensity * 100}, ${255}, ${TORUS.opacity * 0.5})`;
+                    ctx.lineWidth = 0.5 + entropyIntensity;
                     ctx.stroke();
                 }
             }
 
-            // Draw flow particles (also reduced opacity)
+            // Draw Dream Fluid particles (MRP-colored by channel)
             if (showTorusFlow) {
-                for (const p of torusParticles) {
+                const particleColors = [
+                    [255, 120, 80],   // R channel (toroidal) - orange-red
+                    [80, 255, 180],   // G channel (poloidal) - cyan-green
+                    [120, 150, 255],  // B channel (radial) - blue-purple
+                ];
+
+                for (const p of dreamParticles) {
                     if (p.trail.length < 2) continue;
-                    const alpha = (p.life / p.maxLife) * TORUS.opacity * 2;
+
+                    // Alpha affected by time dilation (slower = brighter)
+                    const dilationFactor = 1 + (1 - p.timeDilation) * 0.5;
+                    const alpha = (p.life / p.maxLife) * TORUS.opacity * 2 * dilationFactor;
                     const projTrail = p.trail.map(t => projectTorus(t.x, t.y, t.z));
+
                     if (projTrail[0].z > 0.8) continue;
 
-                    ctx.strokeStyle = p.isToroidal ? `rgba(255, 150, 100, ${alpha})` : `rgba(100, 255, 200, ${alpha})`;
-                    ctx.lineWidth = 2 * projTrail[0].scale;
+                    const baseColor = particleColors[p.mrpChannel];
+                    const r = baseColor[0];
+                    const g = baseColor[1];
+                    const b = baseColor[2];
+
+                    ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    ctx.lineWidth = (2 + p.entropyCarried * 10) * projTrail[0].scale;
                     ctx.lineCap = 'round';
                     ctx.beginPath();
                     ctx.moveTo(projTrail[0].x, projTrail[0].y);
@@ -1632,28 +2125,86 @@
                     }
                     ctx.stroke();
 
-                    // Glow head
+                    // Glow head with time dilation indicator
                     const head = projTrail[0];
                     if (head.z < 0.5) {
-                        const glow = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 6 * head.scale);
-                        glow.addColorStop(0, p.isToroidal ? `rgba(255, 200, 150, ${alpha * 0.6})` : `rgba(150, 255, 220, ${alpha * 0.6})`);
+                        const glowSize = 6 + (1 - p.timeDilation) * 8;  // Larger near gravity
+                        const glow = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, glowSize * head.scale);
+                        glow.addColorStop(0, `rgba(${r + 50}, ${g + 50}, ${b + 50}, ${alpha * 0.8})`);
+                        glow.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${alpha * 0.4})`);
                         glow.addColorStop(1, 'transparent');
                         ctx.fillStyle = glow;
-                        ctx.fillRect(head.x - 8, head.y - 8, 16, 16);
+                        ctx.fillRect(head.x - glowSize, head.y - glowSize, glowSize * 2, glowSize * 2);
                     }
                 }
             }
 
-            // Draw toroidal info overlay (shows LIMNUS connection)
-            ctx.fillStyle = `rgba(255, 215, 0, ${0.5 + TORUS.opacity})`;
-            ctx.font = '12px monospace';
-            ctx.fillText(`TOROIDAL μ-FIELD (μ=${muField.mu.toFixed(2)})`, 20, H - 80);
-            ctx.fillStyle = `rgba(255, 150, 100, ${0.4 + TORUS.opacity})`;
-            ctx.fillText('● toroidal (energy)', 20, H - 60);
-            ctx.fillStyle = `rgba(100, 255, 200, ${0.4 + TORUS.opacity})`;
-            ctx.fillText('● poloidal (relational)', 20, H - 40);
-            ctx.fillStyle = `rgba(180, 180, 180, ${0.3 + TORUS.opacity})`;
-            ctx.fillText('↑↓←→ rotate  +/- zoom  O opacity', 20, H - 20);
+            // Draw gravity well indicator at center
+            const centerProj = projectTorus(0, 0, 0);
+            const wellAlpha = TORUS.opacity * 0.6;
+            const wellGrad = ctx.createRadialGradient(centerProj.x, centerProj.y, 0, centerProj.x, centerProj.y, 30);
+            wellGrad.addColorStop(0, `rgba(20, 0, 40, ${wellAlpha})`);
+            wellGrad.addColorStop(0.5, `rgba(60, 20, 80, ${wellAlpha * 0.5})`);
+            wellGrad.addColorStop(1, 'transparent');
+            ctx.fillStyle = wellGrad;
+            ctx.fillRect(centerProj.x - 30, centerProj.y - 30, 60, 60);
+
+            // Draw Dream Fluid HUD
+            renderDreamFluidHUD();
+        }
+
+        function renderDreamFluidHUD() {
+            const avgTD = TORUS.avgTimeDilation || 0.8;
+            const avgS = TORUS.avgEntropy || 0;
+            const totalS = TORUS.totalHolographicEntropy || 0;
+            const fluidDensity = TORUS.dreamFluidDensity || 0;
+            const entropyFlux = TORUS.entropyFlux || 0;
+
+            const hudX = 20;
+            const hudY = H - 140;
+
+            // Title
+            ctx.fillStyle = `rgba(200, 180, 255, ${0.7 + TORUS.opacity})`;
+            ctx.font = 'bold 13px monospace';
+            ctx.fillText('DREAM FLUID', hudX, hudY);
+
+            ctx.font = '11px monospace';
+
+            // Time dilation
+            const tdBar = Math.floor(avgTD * 10);
+            ctx.fillStyle = `rgba(150, 200, 255, ${0.6 + TORUS.opacity})`;
+            ctx.fillText(`τ  ${'█'.repeat(tdBar)}${'░'.repeat(10-tdBar)} ${avgTD.toFixed(3)}`, hudX, hudY + 16);
+
+            // Holographic entropy
+            const sNorm = Math.min(10, Math.floor(totalS * 0.0001));
+            ctx.fillStyle = `rgba(255, 180, 120, ${0.6 + TORUS.opacity})`;
+            ctx.fillText(`S  ${'█'.repeat(sNorm)}${'░'.repeat(10-sNorm)} ${totalS.toFixed(1)}`, hudX, hudY + 32);
+
+            // Entropy flux
+            const fluxNorm = Math.min(10, Math.floor(entropyFlux * 100));
+            ctx.fillStyle = `rgba(180, 255, 200, ${0.6 + TORUS.opacity})`;
+            ctx.fillText(`∇S ${'█'.repeat(fluxNorm)}${'░'.repeat(10-fluxNorm)} ${entropyFlux.toFixed(4)}`, hudX, hudY + 48);
+
+            // Fluid density
+            const densNorm = Math.floor(fluidDensity * 10);
+            ctx.fillStyle = `rgba(200, 200, 255, ${0.6 + TORUS.opacity})`;
+            ctx.fillText(`ρ  ${'█'.repeat(densNorm)}${'░'.repeat(10-densNorm)} ${fluidDensity.toFixed(2)}`, hudX, hudY + 64);
+
+            // MRP channel legend
+            ctx.fillStyle = `rgba(255, 120, 80, ${0.5 + TORUS.opacity})`;
+            ctx.fillText('● R toroidal (energy)', hudX, hudY + 84);
+            ctx.fillStyle = `rgba(80, 255, 180, ${0.5 + TORUS.opacity})`;
+            ctx.fillText('● G poloidal (relational)', hudX, hudY + 98);
+            ctx.fillStyle = `rgba(120, 150, 255, ${0.5 + TORUS.opacity})`;
+            ctx.fillText('● B radial (entropy)', hudX, hudY + 112);
+
+            // Controls hint
+            ctx.fillStyle = `rgba(150, 150, 150, ${0.4 + TORUS.opacity})`;
+            ctx.fillText('↑↓←→ rotate  +/- zoom  O opacity', hudX, hudY + 130);
+        }
+
+        function renderToroidalMuField() {
+            renderDreamFluid();  // Alias for compatibility
         }
 
         // ================================================================
@@ -1862,17 +2413,41 @@
                 return this.scales.chromatic;
             },
 
+            // ============================================
+            // DREAM FLUID SONIFICATION
+            // Sound modulated by gravitational time dilation
+            // ============================================
+
             calculateBPM(z, coherence) {
                 const dissonance = 1 - coherence;
                 const baseBPM = 60 + dissonance * 100;
 
-                // Time dilation near critical point
+                // Time dilation from Z-critical distance
                 const distFromCritical = Math.abs(z - Z_CRITICAL);
-                this.timeDilation = 0.5 + distFromCritical * 1.5;
-                this.timeDilation = Math.min(1.5, Math.max(0.3, this.timeDilation));
+                let zTimeDilation = 0.5 + distFromCritical * 1.5;
 
+                // DREAM FLUID: Incorporate gravitational time dilation from torus
+                if (showToroidal && TORUS.avgTimeDilation) {
+                    // Gravitational redshift affects tempo
+                    // Lower time dilation (near gravity) → slower tempo
+                    const gravityDilation = TORUS.avgTimeDilation;
+                    zTimeDilation *= gravityDilation;
+                }
+
+                this.timeDilation = Math.min(1.5, Math.max(0.2, zTimeDilation));
                 this.bpm = baseBPM * this.timeDilation;
+
                 return this.bpm;
+            },
+
+            // Gravitational frequency shift (redshift analog)
+            calculateGravitationalPitch(baseFreq) {
+                if (!showToroidal || !TORUS.avgTimeDilation) return baseFreq;
+
+                // f_observed = f_emitted * √(1 - r_s/r) = f_emitted * timeDilation
+                // Lower time dilation → lower pitch (gravitational redshift)
+                const gravRedshift = TORUS.avgTimeDilation;
+                return baseFreq * gravRedshift;
             },
 
             update(z, coherence, dt) {
@@ -1881,19 +2456,23 @@
                 // Update scale based on z
                 this.currentScale = this.selectScaleFromZ(z);
 
-                // Update BPM
+                // Update BPM (now with Dream Fluid gravity)
                 this.calculateBPM(z, coherence);
 
                 // Update harmonic gradient
                 this.harmonicGradient = 1.0 - coherence;
 
+                // DREAM FLUID: Entropy affects waveform complexity
+                const entropyFactor = showToroidal ? (TORUS.avgEntropy || 0) * 100 : 0;
+                const effectiveHarmonic = Math.min(1, this.harmonicGradient + entropyFactor * 0.3);
+
                 // Update oscillator waveforms
                 this.oscillators.forEach((osc, i) => {
-                    if (this.harmonicGradient < 0.25) {
+                    if (effectiveHarmonic < 0.25) {
                         osc.type = 'sine';
-                    } else if (this.harmonicGradient < 0.5) {
+                    } else if (effectiveHarmonic < 0.5) {
                         osc.type = 'triangle';
-                    } else if (this.harmonicGradient < 0.75) {
+                    } else if (effectiveHarmonic < 0.75) {
                         osc.type = 'square';
                     } else {
                         osc.type = 'sawtooth';
@@ -1906,25 +2485,65 @@
 
                 // Modulate frequencies based on z position
                 const zMod = (z - 0.5) * 2;  // -1 to +1
-                const pitchShift = Math.pow(2, zMod * 0.5);  // ±half octave
+                let pitchShift = Math.pow(2, zMod * 0.5);  // ±half octave
+
+                // DREAM FLUID: Gravitational redshift affects pitch
+                if (showToroidal && TORUS.avgTimeDilation) {
+                    pitchShift *= TORUS.avgTimeDilation;
+                }
 
                 this.oscillators.forEach((osc, i) => {
                     const scaleNote = this.currentScale[Math.floor(time * 2) % this.currentScale.length];
-                    const freq = this.baseFrequency * Math.pow(2, scaleNote / 12) * pitchShift * (1 + i * 0.5);
+                    let freq = this.baseFrequency * Math.pow(2, scaleNote / 12) * pitchShift * (1 + i * 0.5);
+
+                    // DREAM FLUID: MRP channel modulation per oscillator
+                    if (showToroidal && TORUS.totalJ) {
+                        // Osc 0: R channel (energy), Osc 1: G channel (relational),
+                        // Osc 2: B channel (stability), Osc 3: combined
+                        const mrpMod = [
+                            muField.J_R || 0.1,
+                            muField.J_G || 0.1,
+                            muField.J_B || 0.1,
+                            TORUS.totalJ || 0.2
+                        ][i] || 0.15;
+
+                        freq *= (0.9 + mrpMod * 0.2);
+                    }
+
                     osc.frequency.setTargetAtTime(freq, now, 0.1);
                 });
 
-                // Update gains based on Lambda state
+                // Update gains based on Lambda state and Dream Fluid
                 const totalLambda = Object.values(lambdaState).reduce((s, l) => s + l.mag, 0);
+
+                // DREAM FLUID: Entropy flux modulates volume
+                const entropyFluxMod = showToroidal ? (1 + TORUS.entropyFlux * 5) : 1;
+
                 this.gainNodes.forEach((gain, i) => {
-                    const targetGain = (coherence * 0.15) * (1 - i * 0.2) * (totalLambda / 2);
+                    let targetGain = (coherence * 0.15) * (1 - i * 0.2) * (totalLambda / 2);
+
+                    // Gravitational time dilation dampens volume near singularity
+                    if (showToroidal && TORUS.avgTimeDilation) {
+                        targetGain *= (0.5 + TORUS.avgTimeDilation * 0.5);
+                    }
+
+                    targetGain *= entropyFluxMod;
                     gain.gain.setTargetAtTime(Math.max(0, targetGain), now, 0.1);
                 });
 
-                // Update filter based on cascade
+                // Update filter based on cascade and holographic entropy
                 const cascade = getCascadeMultiplier(z);
+                let filterBase = 800 + cascade * 2000;
+
+                // DREAM FLUID: Holographic entropy shifts filter
+                if (showToroidal && TORUS.totalHolographicEntropy) {
+                    // Higher entropy → more high frequencies (information revelation)
+                    const entropyBoost = Math.min(1, TORUS.totalHolographicEntropy * 0.00001);
+                    filterBase += entropyBoost * 1500;
+                }
+
                 this.filterNodes.forEach(filter => {
-                    filter.frequency.setTargetAtTime(800 + cascade * 2000, now, 0.2);
+                    filter.frequency.setTargetAtTime(filterBase, now, 0.2);
                 });
             },
 
