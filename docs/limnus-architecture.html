@@ -8064,6 +8064,35 @@
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, W, H);
 
+            // ========================================
+            // GLOBAL μ-FIELD OVERLAY
+            // Dark purple (#2c003e) with subtle vertical rhythm
+            // 25% opacity max, phase-locked breathing animation
+            // ========================================
+            if (showMuField) {
+                // Subtle vertical oscillation - shifts gradient center up/down very slightly
+                const breathRate = 0.3;  // Slow breathing rhythm
+                const breathOffset = Math.sin(time * breathRate * TAU) * R * 0.02;  // Very slight shift (2% of R)
+                const breathIntensity = 0.5 + Math.sin(time * breathRate * TAU * 0.5) * 0.1;  // 0.4 - 0.6
+
+                // Create gradient centered with vertical breathing offset
+                const muGlobalGrad = ctx.createRadialGradient(
+                    CX, CY + breathOffset, 0,
+                    CX, CY + breathOffset, R * 1.8
+                );
+
+                // Dark purple #2c003e = rgb(44, 0, 62) at 25% opacity max
+                const baseAlpha = 0.25 * breathIntensity;
+
+                muGlobalGrad.addColorStop(0, `rgba(44, 0, 62, ${baseAlpha * 0.8})`);
+                muGlobalGrad.addColorStop(0.3, `rgba(44, 0, 62, ${baseAlpha * 0.6})`);
+                muGlobalGrad.addColorStop(0.6, `rgba(44, 0, 62, ${baseAlpha * 0.3})`);
+                muGlobalGrad.addColorStop(1, 'transparent');
+
+                ctx.fillStyle = muGlobalGrad;
+                ctx.fillRect(0, 0, W, H);
+            }
+
             // Release state visual effects
             const dispersal = 1 - releaseCoherence;
             
