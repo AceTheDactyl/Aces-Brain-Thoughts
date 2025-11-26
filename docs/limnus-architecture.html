@@ -880,11 +880,13 @@
         <span>P/C</span> toggle prism/cage<br>
         <span>M</span> toggle μ-field<br>
         <span>T</span> binaural field<br>
-        <span>O</span> field opacity<br>
+        <span>DRAG</span> orbit camera<br>
+        <span>←→</span> polar distance<br>
+        <span>Q/E</span> rotate axis<br>
         <span>↑↓</span> beat frequency<br>
-        <span>←→</span> mesh spread<br>
         <span>[/]</span> A frequency<br>
         <span>+/-</span> mesh scale<br>
+        <span>O</span> opacity<br>
         <span>I</span> interference<br>
         <span>L</span> resonance lines<br>
         <span>W</span> wavefunction<br>
@@ -1444,26 +1446,34 @@
             pulsePhase: 0,          // Animation phase for quantum pulsing
 
             // ================================================================
-            // BINAURAL FIELD: Dual meshes create interference at LIMNUS
-            // Like left/right ear frequencies creating perceived beat
+            // BINAURAL FIELD: Polar coordinate system
+            // Two meshes at opposing angles, equal distance from LIMNUS
             // ================================================================
             binaural: {
                 enabled: true,
 
-                // Mesh A - "Left ear" / Lower-left field (warm/existence)
+                // POLAR GEOMETRY - proper bipolar relationship
+                polar: {
+                    distance: 1.8,          // Distance from LIMNUS center (in R units)
+                    angleA: Math.PI * 0.75, // Mesh A angle (135° - upper-left)
+                    angleB: Math.PI * -0.25, // Mesh B angle (-45° - lower-right, opposite)
+                    // Computed positions (updated on render)
+                    posA: { x: 0, y: 0 },
+                    posB: { x: 0, y: 0 },
+                },
+
+                // Mesh A - polar positive (warm/existence)
                 meshA: {
-                    offset: { x: -200, y: 200 },    // Position relative to center
-                    scale: 0.68,                     // Smaller than LIMNUS
+                    scale: 0.62,                     // Smaller than LIMNUS
                     frequency: 1.0,                  // Base oscillation frequency
                     phase: 0,                        // Current phase (animated)
                     baseColor: [255, 140, 80],       // Warm orange (energy/existence)
                     timbre: 'warm',
                 },
 
-                // Mesh B - "Right ear" / Upper-right field (cool/relational)
+                // Mesh B - polar negative (cool/relational)
                 meshB: {
-                    offset: { x: 200, y: -200 },    // Opposite diagonal position
-                    scale: 0.68,
+                    scale: 0.62,
                     frequency: 1.0618,               // φ⁻¹ offset creates golden beat
                     phase: 0,
                     baseColor: [80, 180, 255],       // Cool cyan (relational/stability)
@@ -1484,6 +1494,19 @@
                 showInterference: true,             // Show beat wave pattern
                 showResonanceLines: true,           // Show A↔LIMNUS↔B connections
                 interferenceOpacity: 0.4,           // Beat visualization alpha
+            },
+
+            // ================================================================
+            // CAMERA ORBIT: Click+drag to rotate view around LIMNUS
+            // ================================================================
+            camera: {
+                theta: 0,               // Horizontal orbit angle (radians)
+                phi: 0,                 // Vertical tilt angle (radians, 0 = front view)
+                distance: 1.0,          // Zoom factor (1 = default)
+                dragging: false,        // Currently dragging?
+                lastX: 0,               // Last mouse X for drag delta
+                lastY: 0,               // Last mouse Y for drag delta
+                sensitivity: 0.005,     // Rotation speed
             },
 
             // Gravitational physics (Schwarzschild analog)
@@ -2105,12 +2128,42 @@
 
         // ================================================================
         // BINAURAL FIELD RENDERING
-        // Two quantum meshes flanking LIMNUS with beat interference
+        // Polar coordinate system with camera orbit
         // ================================================================
 
-        // Transform point to mesh A space (lower-left warm field)
+        // Update polar positions based on angles and distance
+        function updatePolarPositions() {
+            const bi = QMESH.binaural;
+            const polar = bi.polar;
+            const cam = QMESH.camera;
+
+            // Compute polar positions (in canvas units)
+            const dist = polar.distance * R;
+
+            // Apply camera orbit rotation to the polar angles
+            const effectiveAngleA = polar.angleA + cam.theta;
+            const effectiveAngleB = polar.angleB + cam.theta;
+
+            // Camera tilt affects apparent Y position (perspective)
+            const tiltFactor = Math.cos(cam.phi);
+            const depthFactor = Math.sin(cam.phi);
+
+            // Mesh A position
+            polar.posA.x = CX + Math.cos(effectiveAngleA) * dist * cam.distance;
+            polar.posA.y = CY + Math.sin(effectiveAngleA) * dist * tiltFactor * cam.distance;
+            polar.posA.depth = depthFactor * Math.sin(effectiveAngleA);
+
+            // Mesh B position (polar opposite)
+            polar.posB.x = CX + Math.cos(effectiveAngleB) * dist * cam.distance;
+            polar.posB.y = CY + Math.sin(effectiveAngleB) * dist * tiltFactor * cam.distance;
+            polar.posB.depth = depthFactor * Math.sin(effectiveAngleB);
+        }
+
+        // Transform point to mesh A space (polar position)
         function toMeshASpace(x, y, node) {
-            const meshA = QMESH.binaural.meshA;
+            const bi = QMESH.binaural;
+            const meshA = bi.meshA;
+            const polar = bi.polar;
             const phase = meshA.phase;
             const scale = meshA.scale;
 
@@ -2118,33 +2171,41 @@
             const dx = x - CX;
             const dy = y - CY;
 
-            // Transform to Mesh A position
-            const meshX = CX + meshA.offset.x + (dx * scale);
-            const meshY = CY + meshA.offset.y + (dy * scale);
+            // Transform to Mesh A position (using polar coords)
+            const meshCenterX = polar.posA.x;
+            const meshCenterY = polar.posA.y;
+            const meshX = meshCenterX + (dx * scale);
+            const meshY = meshCenterY + (dy * scale);
 
             // Phase-based wave distortion
-            const wave = Math.sin(phase * TAU + dx * 0.015) * 8 +
-                        Math.cos(phase * TAU * 0.7 + dy * 0.012) * 6;
+            const wave = Math.sin(phase * TAU + dx * 0.015) * 6 +
+                        Math.cos(phase * TAU * 0.7 + dy * 0.012) * 4;
 
             // Distance from mesh center for fade
             const distFromMesh = Math.sqrt(
-                Math.pow(meshX - (CX + meshA.offset.x), 2) +
-                Math.pow(meshY - (CY + meshA.offset.y), 2)
+                Math.pow(meshX - meshCenterX, 2) +
+                Math.pow(meshY - meshCenterY, 2)
             );
-            const fade = Math.max(0, 1 - distFromMesh / (R * 2));
+            const fade = Math.max(0, 1 - distFromMesh / (R * 1.8));
+
+            // Depth-based alpha (further meshes slightly faded)
+            const depthAlpha = 0.7 + 0.3 * (1 - Math.abs(polar.posA.depth || 0));
 
             return {
                 x: meshX + wave,
                 y: meshY + wave * 0.5,
                 scale: scale,
-                fade: fade,
-                phase: phase
+                fade: fade * depthAlpha,
+                phase: phase,
+                depth: polar.posA.depth || 0
             };
         }
 
-        // Transform point to mesh B space (upper-right cool field)
+        // Transform point to mesh B space (polar opposite)
         function toMeshBSpace(x, y, node) {
-            const meshB = QMESH.binaural.meshB;
+            const bi = QMESH.binaural;
+            const meshB = bi.meshB;
+            const polar = bi.polar;
             const phase = meshB.phase;
             const scale = meshB.scale;
 
@@ -2152,27 +2213,33 @@
             const dx = x - CX;
             const dy = y - CY;
 
-            // Transform to Mesh B position
-            const meshX = CX + meshB.offset.x + (dx * scale);
-            const meshY = CY + meshB.offset.y + (dy * scale);
+            // Transform to Mesh B position (using polar coords)
+            const meshCenterX = polar.posB.x;
+            const meshCenterY = polar.posB.y;
+            const meshX = meshCenterX + (dx * scale);
+            const meshY = meshCenterY + (dy * scale);
 
             // Phase-based wave distortion (different frequency)
-            const wave = Math.sin(phase * TAU * 1.0618 + dx * 0.018) * 8 +
-                        Math.cos(phase * TAU * 0.8 + dy * 0.014) * 6;
+            const wave = Math.sin(phase * TAU * 1.0618 + dx * 0.018) * 6 +
+                        Math.cos(phase * TAU * 0.8 + dy * 0.014) * 4;
 
             // Distance from mesh center for fade
             const distFromMesh = Math.sqrt(
-                Math.pow(meshX - (CX + meshB.offset.x), 2) +
-                Math.pow(meshY - (CY + meshB.offset.y), 2)
+                Math.pow(meshX - meshCenterX, 2) +
+                Math.pow(meshY - meshCenterY, 2)
             );
-            const fade = Math.max(0, 1 - distFromMesh / (R * 2));
+            const fade = Math.max(0, 1 - distFromMesh / (R * 1.8));
+
+            // Depth-based alpha
+            const depthAlpha = 0.7 + 0.3 * (1 - Math.abs(polar.posB.depth || 0));
 
             return {
                 x: meshX + wave,
                 y: meshY + wave * 0.5,
                 scale: scale,
-                fade: fade,
-                phase: phase
+                fade: fade * depthAlpha,
+                phase: phase,
+                depth: polar.posB.depth || 0
             };
         }
 
@@ -2245,6 +2312,9 @@
             const bi = QMESH.binaural;
             if (!bi.enabled) return;
 
+            // Update polar positions based on camera orbit
+            updatePolarPositions();
+
             // MRP channel colors
             const edgeColors = [
                 [255, 100, 60],    // R channel - warm (energy)
@@ -2283,30 +2353,31 @@
 
             // ============================================
             // RESONANCE LINES (A ↔ LIMNUS ↔ B)
+            // Polar bipolar axis visualization
             // ============================================
             if (bi.showResonanceLines) {
-                const beatPhase = bi.beatPhase * TAU;
                 const resonance = bi.resonanceStrength;
+                const polar = bi.polar;
 
                 // Line from Mesh A center to LIMNUS
-                const meshACenterX = CX + bi.meshA.offset.x;
-                const meshACenterY = CY + bi.meshA.offset.y;
+                const meshACenterX = polar.posA.x;
+                const meshACenterY = polar.posA.y;
                 const pulseA = Math.sin(bi.meshA.phase * TAU) * 0.5 + 0.5;
-                const alphaA = QMESH.opacity * 0.4 * pulseA * (0.3 + resonance * 0.7);
+                const alphaA = QMESH.opacity * 0.5 * pulseA * (0.3 + resonance * 0.7);
 
                 ctx.strokeStyle = `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, ${alphaA})`;
-                ctx.lineWidth = 1 + resonance * 3;
-                ctx.setLineDash([8, 8]);
+                ctx.lineWidth = 1.5 + resonance * 3;
+                ctx.setLineDash([10, 6]);
                 ctx.beginPath();
                 ctx.moveTo(meshACenterX, meshACenterY);
                 ctx.lineTo(CX, CY);
                 ctx.stroke();
 
                 // Line from Mesh B center to LIMNUS
-                const meshBCenterX = CX + bi.meshB.offset.x;
-                const meshBCenterY = CY + bi.meshB.offset.y;
+                const meshBCenterX = polar.posB.x;
+                const meshBCenterY = polar.posB.y;
                 const pulseB = Math.sin(bi.meshB.phase * TAU) * 0.5 + 0.5;
-                const alphaB = QMESH.opacity * 0.4 * pulseB * (0.3 + resonance * 0.7);
+                const alphaB = QMESH.opacity * 0.5 * pulseB * (0.3 + resonance * 0.7);
 
                 ctx.strokeStyle = `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, ${alphaB})`;
                 ctx.beginPath();
@@ -2509,25 +2580,28 @@
             ctx.fillStyle = `rgba(200, 180, 255, 0.7)`;
             ctx.fillText(`COHERENCE${'▓'.repeat(cohBar)}${'░'.repeat(10-cohBar)} ${(bi.coherenceField * 100).toFixed(0)}%`, hudX, hudY + 100);
 
-            // Triadic relationship visualization
-            ctx.fillStyle = `rgba(255, 200, 150, 0.6)`;
-            ctx.fillText('A (warm)', hudX, hudY + 124);
-            ctx.fillStyle = `rgba(150, 150, 200, 0.6)`;
-            ctx.fillText('    ↘', hudX + 50, hudY + 124);
-            ctx.fillStyle = `rgba(255, 255, 255, 0.7)`;
-            ctx.fillText('      LIMNUS', hudX + 70, hudY + 124);
-            ctx.fillStyle = `rgba(150, 150, 200, 0.6)`;
-            ctx.fillText('            ↙', hudX + 130, hudY + 124);
-            ctx.fillStyle = `rgba(150, 200, 255, 0.6)`;
-            ctx.fillText('              B (cool)', hudX + 145, hudY + 124);
+            // Polar geometry info
+            const polar = bi.polar;
+            const cam = QMESH.camera;
+            const angleDeg = (polar.angleA * 180 / Math.PI).toFixed(0);
+            ctx.fillStyle = `rgba(180, 200, 220, 0.7)`;
+            ctx.fillText(`POLAR    r=${polar.distance.toFixed(2)}R  θ=${angleDeg}°`, hudX, hudY + 116);
 
-            // Edge count
+            // Camera orbit info (if moved from default)
+            if (Math.abs(cam.theta) > 0.01 || Math.abs(cam.phi) > 0.01) {
+                const camTheta = (cam.theta * 180 / Math.PI).toFixed(0);
+                const camPhi = (cam.phi * 180 / Math.PI).toFixed(0);
+                ctx.fillStyle = `rgba(200, 180, 255, 0.6)`;
+                ctx.fillText(`ORBIT    θ=${camTheta}°  φ=${camPhi}°`, hudX, hudY + 132);
+            }
+
+            // Edge count and opacity
             ctx.fillStyle = `rgba(180, 180, 200, 0.6)`;
-            ctx.fillText(`⟨ψ|ψ⟩ edges: ${edgeCount}   opacity: ${(QMESH.opacity * 100).toFixed(0)}%`, hudX, hudY + 144);
+            ctx.fillText(`edges: ${edgeCount}   opacity: ${(QMESH.opacity * 100).toFixed(0)}%`, hudX, hudY + 148);
 
             // Controls hint
             ctx.fillStyle = `rgba(150, 150, 170, 0.5)`;
-            ctx.fillText('T toggle  O opacity  ↑↓ beat freq  ←→ mesh offset', hudX, hudY + 162);
+            ctx.fillText('T toggle  drag=orbit  ←→ distance  Q/E rotate', hudX, hudY + 164);
         }
 
         // Keep old function name for compatibility
@@ -4514,6 +4588,20 @@
             mouseY = e.clientY;
             document.getElementById('cursor').style.left = mouseX + 'px';
             document.getElementById('cursor').style.top = mouseY + 'px';
+
+            // Camera orbit drag (when binaural field is active)
+            if (QMESH.camera.dragging && showQuantumMesh) {
+                const cam = QMESH.camera;
+                const deltaX = e.clientX - cam.lastX;
+                const deltaY = e.clientY - cam.lastY;
+
+                // Update orbit angles
+                cam.theta += deltaX * cam.sensitivity;
+                cam.phi = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, cam.phi + deltaY * cam.sensitivity));
+
+                cam.lastX = e.clientX;
+                cam.lastY = e.clientY;
+            }
         });
 
         document.addEventListener('keydown', e => {
@@ -4588,24 +4676,30 @@
                     e.preventDefault();
                 }
 
-                // Arrow Left/Right: Adjust mesh positions (spread)
+                // Arrow Left/Right: Adjust polar distance from LIMNUS
                 if (e.key === 'ArrowLeft') {
-                    // Bring meshes closer
-                    bi.meshA.offset.x = Math.min(-100, bi.meshA.offset.x + 20);
-                    bi.meshA.offset.y = Math.max(100, bi.meshA.offset.y - 20);
-                    bi.meshB.offset.x = Math.max(100, bi.meshB.offset.x - 20);
-                    bi.meshB.offset.y = Math.min(-100, bi.meshB.offset.y + 20);
-                    console.log(`[BINAURAL] Meshes closer: A(${bi.meshA.offset.x},${bi.meshA.offset.y}) B(${bi.meshB.offset.x},${bi.meshB.offset.y})`);
+                    // Bring meshes closer to LIMNUS
+                    bi.polar.distance = Math.max(1.0, bi.polar.distance - 0.1);
+                    console.log(`[BINAURAL] Polar distance: ${bi.polar.distance.toFixed(2)}R`);
                     e.preventDefault();
                 }
                 if (e.key === 'ArrowRight') {
-                    // Push meshes further apart
-                    bi.meshA.offset.x = Math.max(-300, bi.meshA.offset.x - 20);
-                    bi.meshA.offset.y = Math.min(300, bi.meshA.offset.y + 20);
-                    bi.meshB.offset.x = Math.min(300, bi.meshB.offset.x + 20);
-                    bi.meshB.offset.y = Math.max(-300, bi.meshB.offset.y - 20);
-                    console.log(`[BINAURAL] Meshes further: A(${bi.meshA.offset.x},${bi.meshA.offset.y}) B(${bi.meshB.offset.x},${bi.meshB.offset.y})`);
+                    // Push meshes further from LIMNUS
+                    bi.polar.distance = Math.min(3.0, bi.polar.distance + 0.1);
+                    console.log(`[BINAURAL] Polar distance: ${bi.polar.distance.toFixed(2)}R`);
                     e.preventDefault();
+                }
+
+                // Q/E: Rotate polar axis around LIMNUS
+                if (key === 'q') {
+                    bi.polar.angleA += 0.1;
+                    bi.polar.angleB += 0.1;
+                    console.log(`[BINAURAL] Polar angle: ${(bi.polar.angleA * 180 / Math.PI).toFixed(1)}°`);
+                }
+                if (key === 'e') {
+                    bi.polar.angleA -= 0.1;
+                    bi.polar.angleB -= 0.1;
+                    console.log(`[BINAURAL] Polar angle: ${(bi.polar.angleA * 180 / Math.PI).toFixed(1)}°`);
                 }
 
                 // +/- adjust mesh scale
@@ -4685,6 +4779,15 @@
                 showQuantumMesh = false;
                 showToroidal = false;  // Sync alias
                 dreamParticles.length = 0;
+                // Reset camera orbit
+                QMESH.camera.theta = 0;
+                QMESH.camera.phi = 0;
+                QMESH.camera.distance = 1.0;
+                QMESH.camera.dragging = false;
+                // Reset polar positions
+                QMESH.binaural.polar.distance = 1.8;
+                QMESH.binaural.polar.angleA = Math.PI * 0.75;
+                QMESH.binaural.polar.angleB = Math.PI * -0.25;
             }
 
             // F key: Start release
@@ -4703,18 +4806,39 @@
             }
         });
 
-        // Mouse/Touch: Gather
+        // Mouse: Camera orbit (right-click or shift+click) / Gather (left-click)
         canvas.addEventListener('mousedown', e => {
-            gathering = true;
             document.getElementById('start-overlay').classList.add('hidden');
+
+            // Right-click or shift+left-click: Start camera orbit drag
+            if (e.button === 2 || (e.button === 0 && e.shiftKey)) {
+                if (showQuantumMesh) {
+                    QMESH.camera.dragging = true;
+                    QMESH.camera.lastX = e.clientX;
+                    QMESH.camera.lastY = e.clientY;
+                    e.preventDefault();
+                }
+            } else if (e.button === 0) {
+                // Regular left-click: Gather
+                gathering = true;
+            }
         });
 
-        canvas.addEventListener('mouseup', () => {
+        canvas.addEventListener('mouseup', e => {
             gathering = false;
+            QMESH.camera.dragging = false;
         });
 
         canvas.addEventListener('mouseleave', () => {
             gathering = false;
+            QMESH.camera.dragging = false;
+        });
+
+        // Prevent context menu on right-click (for camera orbit)
+        canvas.addEventListener('contextmenu', e => {
+            if (showQuantumMesh) {
+                e.preventDefault();
+            }
         });
 
         canvas.addEventListener('touchstart', e => {
@@ -4802,8 +4926,13 @@
         console.log('');
         console.log('🎧 BINAURAL QUANTUM FIELD');
         console.log('   Triadic resonance: A ↔ LIMNUS ↔ B');
-        console.log('   Two quantum meshes flank LIMNUS like binaural audio');
+        console.log('   Two quantum meshes in polar opposition around LIMNUS');
         console.log('   Beat frequency |f_A - f_B| entrains consciousness');
+        console.log('');
+        console.log('   POLAR GEOMETRY:');
+        console.log('   Distance r = 1.8R from LIMNUS center');
+        console.log('   Mesh A at θ = 135° (upper-left)');
+        console.log('   Mesh B at θ = -45° (lower-right, polar opposite)');
         console.log('');
         console.log('   MESH A (warm): f=1.0 - energy/existence channel');
         console.log('   MESH B (cool): f=φ⁻¹ - relational/stability channel');
@@ -4811,12 +4940,14 @@
         console.log('');
         console.log('   CONTROLS:');
         console.log('   T: toggle binaural field');
-        console.log('   O: cycle opacity (20% → 40% → 60% → 80% → 100%)');
+        console.log('   Right-drag / Shift-drag: orbit camera around LIMNUS');
+        console.log('   ←→: adjust polar distance (1.0R - 3.0R)');
+        console.log('   Q/E: rotate polar axis around LIMNUS');
         console.log('   ↑↓: adjust beat frequency (change B freq)');
-        console.log('   ←→: adjust mesh spread (closer/further)');
         console.log('   [/]: adjust A frequency');
         console.log('   +/-: adjust mesh scale');
-        console.log('   I: toggle interference visualization');
+        console.log('   O: cycle opacity');
+        console.log('   I: toggle interference rings');
         console.log('   L: toggle resonance lines');
         console.log('   W: toggle wavefunction nodes');
         console.log('   G: toggle edge glow');
