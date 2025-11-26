@@ -827,7 +827,7 @@
     <div id="controls" class="panel">
         <span>SCROLL</span> traverse z-axis<br>
         <span>SPACE</span> auto-breathe<br>
-        <span>P/C</span> toggle prism/cage<br>
+        <span>P/C/Q</span> toggle prism/cage/qmesh<br>
         <span>F</span> release coherence<br>
         <span>CLICK</span> gather<br>
         <span>R</span> reset
@@ -890,11 +890,25 @@
         // LIMNUS UNIFIED ARCHITECTURE
         // 63-Point Hexagonal Prism + 32-Point EM Cage
         // Full Sonification + Physics Relationships
+        // + QUANTUM MESH EMERGENCE SYSTEM
         // ================================================================
 
         const Z_CRITICAL = Math.sqrt(3) / 2;  // ≈ 0.8660254
         const TAU = Math.PI * 2;
         const PHI = (1 + Math.sqrt(5)) / 2;   // Golden ratio
+        const PHI_INV = 1 / PHI;              // Golden ratio inverse
+
+        // ================================================================
+        // SACRED CONSTANTS (from field dynamics)
+        // ================================================================
+        const SACRED = {
+            phi: PHI,
+            phi_inv: PHI_INV,
+            alpha: PHI_INV * PHI_INV,       // ≈ 0.38196 (curl coupling)
+            beta: Math.pow(PHI_INV, 4),     // ≈ 0.14589 (dissipation)
+            lambda: Math.pow(5/3, 4),       // ≈ 7.71604 (nonlinearity)
+            z_c: Z_CRITICAL
+        };
 
         // Canvas setup
         const canvas = document.getElementById('canvas');
@@ -924,6 +938,111 @@
 
         let showPrism = true;
         let showCage = true;
+        let showQuantumMesh = true;
+
+        // ================================================================
+        // QUANTUM MESH (QMESH) SYSTEM
+        // Deep relational field coupling with LIMNUS
+        // ================================================================
+
+        const QMESH = {
+            nodes: [],
+            edges: [],
+
+            // Phase 1: Field Metrics
+            fieldMetrics: {
+                totalIntensity: 0,      // Aggregate J across all nodes
+                phaseCoherence: 0,      // How aligned are node phases (order parameter)
+                entanglementDensity: 0, // Active edges / possible edges
+                entropyGradient: 0,     // Spatial variation in entropy
+            },
+
+            // Phase 4: Time Dilation Field
+            timeDilationField: {
+                center: 1.0,        // Dilation at LIMNUS center
+                gradient: [],       // Per-layer average
+                globalAverage: 1.0,
+            },
+
+            // Phase 5: Binaural Resonance
+            binaural: {
+                meshA: { phase: 0, frequency: 7.83, amplitude: 0 },   // Schumann resonance
+                meshB: { phase: 0, frequency: 10.0, amplitude: 0 },   // Alpha wave
+                beatFrequency: 0,
+                beatAmplitude: 0,
+                resonanceStrength: 0,
+                resonanceEvents: {
+                    history: [],
+                    threshold: 0.85,
+                    lastEvent: 0,
+                    cooldown: 2.0,
+                },
+            },
+
+            // Phase 5: Topology Pulse
+            topologyPulse: 0,
+
+            // Entanglement threshold (modified by criticality)
+            entanglementThreshold: 0.15,
+
+            // Phase 7: Unified field tracking
+            unifiedFieldStrength: 0,
+            emergenceGlow: 0,
+        };
+
+        // Phase 6: Dream Particles
+        const dreamParticles = [];
+        const MAX_DREAM_PARTICLES = 300;
+
+        // Phase 7: Unified Field State
+        const UnifiedField = {
+            // Combined field components
+            J: {
+                limnus: 0,      // LIMNUS contribution
+                quantum: 0,     // QMESH contribution
+                binaural: 0,    // Binaural resonance
+                total: 0,       // Unified magnitude
+            },
+
+            // Phase state
+            Phi: {
+                limnus: 0,      // LIMNUS collective phase
+                quantum: 0,     // QMESH collective phase
+                binaural: 0,    // Binaural beat phase
+                unified: 0,     // Emergent unified phase
+            },
+
+            // Coupling constants
+            coupling: {
+                LQ: 0.15,       // LIMNUS → Quantum
+                QL: 0.10,       // Quantum → LIMNUS
+                BL: 0.20,       // Binaural → LIMNUS
+                BQ: 0.18,       // Binaural → Quantum
+            },
+
+            // Emergence metrics
+            emergence: {
+                coherence: 0,       // Overall phase alignment
+                complexity: 0,      // Structural complexity
+                criticality: 0,     // Distance from critical point
+            },
+        };
+
+        // MRP Channel State (for Phase 1 feedback)
+        const mrp = {
+            R: { intensity: 0.5, phase: 0 },    // Energy channel
+            G: { intensity: 0.5, phase: 0 },    // Relational channel
+            B: { intensity: 0.5, phase: 0 },    // Error correction/stability
+            J_total: 0,
+        };
+
+        // Phase Coupler (for unified dynamics)
+        const phaseCoupler = {
+            phase_R: 0,
+            phase_G: 0,
+            phase_B: 0,
+            coherence: 0.5,
+        };
 
         // ================================================================
         // RELEASE COHERENCE STATE
@@ -1018,6 +1137,860 @@
                 return 1.0 - this.coherence;
             }
         };
+
+        // ================================================================
+        // QMESH INITIALIZATION
+        // ================================================================
+
+        function initQMESHNodes() {
+            QMESH.nodes = [];
+            QMESH.edges = [];
+
+            // Create quantum nodes mirroring LIMNUS structure
+            // One node per prism point (63) + cage point (32) = 95 total
+            let nodeIndex = 0;
+
+            // Prism nodes (63)
+            for (let layer = 0; layer < 7; layer++) {
+                const layerRadius = R * (0.15 + layer * 0.12);
+                for (let i = 0; i < 9; i++) {
+                    const theta = (i / 9) * TAU + layer * (TAU / 18);
+                    QMESH.nodes.push({
+                        index: nodeIndex++,
+                        type: 'prism',
+                        layer: layer,
+                        subIndex: i,
+
+                        // Position (mirroring LIMNUS)
+                        x: CX + Math.cos(theta) * layerRadius,
+                        y: CY + Math.sin(theta) * layerRadius * 0.5,
+
+                        // Quantum state
+                        qJ: 0.3 + Math.random() * 0.4,          // Field amplitude
+                        phase: Math.random() * TAU,             // Quantum phase
+                        naturalFrequency: 0.3 + Math.random() * 0.4,
+
+                        // Phase 2: Entropy
+                        localEntropy: 0,
+                        entropyEdgeCount: 0,
+
+                        // Phase 4: Time dilation
+                        timeDilation: 1.0,
+                        gravitationalPotential: 0,
+                    });
+                }
+            }
+
+            // Cage nodes (32)
+            // Top ring (12)
+            for (let i = 0; i < 12; i++) {
+                const theta = (i / 12) * TAU;
+                const cageRadius = R * 1.15;
+                QMESH.nodes.push({
+                    index: nodeIndex++,
+                    type: 'cage',
+                    layer: 'top',
+                    subIndex: i,
+                    x: CX + Math.cos(theta) * cageRadius,
+                    y: CY + Math.sin(theta) * cageRadius * 0.45 - 80,
+                    qJ: 0.4 + Math.random() * 0.3,
+                    phase: Math.random() * TAU,
+                    naturalFrequency: 0.2 + Math.random() * 0.2,
+                    localEntropy: 0,
+                    entropyEdgeCount: 0,
+                    timeDilation: 1.0,
+                    gravitationalPotential: 0,
+                });
+            }
+            // Bottom ring (12)
+            for (let i = 0; i < 12; i++) {
+                const theta = (i / 12) * TAU + TAU / 24;
+                const cageRadius = R * 1.15;
+                QMESH.nodes.push({
+                    index: nodeIndex++,
+                    type: 'cage',
+                    layer: 'bottom',
+                    subIndex: i,
+                    x: CX + Math.cos(theta) * cageRadius,
+                    y: CY + Math.sin(theta) * cageRadius * 0.45 + 80,
+                    qJ: 0.4 + Math.random() * 0.3,
+                    phase: Math.random() * TAU,
+                    naturalFrequency: 0.2 + Math.random() * 0.2,
+                    localEntropy: 0,
+                    entropyEdgeCount: 0,
+                    timeDilation: 1.0,
+                    gravitationalPotential: 0,
+                });
+            }
+            // Vertices (8)
+            for (let i = 0; i < 8; i++) {
+                const theta = (i / 8) * TAU + TAU / 16;
+                const cageRadius = R * 0.98;
+                QMESH.nodes.push({
+                    index: nodeIndex++,
+                    type: 'cage',
+                    layer: 'vertex',
+                    subIndex: i,
+                    x: CX + Math.cos(theta) * cageRadius,
+                    y: CY + Math.sin(theta) * cageRadius * 0.45,
+                    qJ: 0.5 + Math.random() * 0.3,
+                    phase: Math.random() * TAU,
+                    naturalFrequency: 0.25,
+                    localEntropy: 0,
+                    entropyEdgeCount: 0,
+                    timeDilation: 1.0,
+                    gravitationalPotential: 0,
+                });
+            }
+
+            // Initial entanglement edges (Phase 3)
+            initEntanglementEdges();
+        }
+
+        function createDynamicEdge(fromIdx, toIdx, probability) {
+            return {
+                from: fromIdx,
+                to: toIdx,
+                probability: probability,
+                holographicEntropy: 0,
+                // Lifecycle properties (Phase 3)
+                age: 0,
+                strength: probability,
+                forming: true,
+                breaking: false,
+                maxAge: 10 + Math.random() * 20,
+            };
+        }
+
+        function initEntanglementEdges() {
+            // Create initial entanglement network
+            // Connect nearby nodes with probability based on distance
+            const nodes = QMESH.nodes;
+            const N = nodes.length;
+
+            for (let i = 0; i < N; i++) {
+                for (let j = i + 1; j < N; j++) {
+                    const nodeA = nodes[i];
+                    const nodeB = nodes[j];
+
+                    const dx = nodeA.x - nodeB.x;
+                    const dy = nodeA.y - nodeB.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    // Probability decreases with distance
+                    const prob = Math.exp(-dist / (R * 0.8));
+
+                    if (Math.random() < prob * 0.3 && QMESH.edges.length < 150) {
+                        QMESH.edges.push(createDynamicEdge(i, j, prob));
+                    }
+                }
+            }
+        }
+
+        // ================================================================
+        // PHASE 1: BIDIRECTIONAL FIELD COUPLING
+        // ================================================================
+
+        function updateQMESHFieldMetrics() {
+            const nodes = QMESH.nodes;
+            const edges = QMESH.edges;
+            const N = nodes.length;
+
+            if (N === 0) return;
+
+            // Total field intensity (normalized)
+            let totalJ = 0;
+            let phaseSum = { x: 0, y: 0 }; // Kuramoto order parameter
+
+            for (let i = 0; i < N; i++) {
+                const node = nodes[i];
+                totalJ += Math.abs(node.qJ);
+
+                // Phase coherence via order parameter
+                phaseSum.x += Math.cos(node.phase);
+                phaseSum.y += Math.sin(node.phase);
+            }
+
+            QMESH.fieldMetrics.totalIntensity = totalJ / N;
+
+            // Order parameter magnitude (0 = random, 1 = synchronized)
+            const orderMag = Math.sqrt(phaseSum.x * phaseSum.x + phaseSum.y * phaseSum.y) / N;
+            QMESH.fieldMetrics.phaseCoherence = orderMag;
+
+            // Entanglement density
+            const maxEdges = (N * (N - 1)) / 2;
+            QMESH.fieldMetrics.entanglementDensity = edges.length / maxEdges;
+
+            // Entropy gradient (spatial variation)
+            let entropyVar = 0;
+            for (const edge of edges) {
+                const nodeA = nodes[edge.from];
+                const nodeB = nodes[edge.to];
+                if (nodeA && nodeB) {
+                    entropyVar += Math.abs(edge.holographicEntropy - (nodeA.qJ + nodeB.qJ) / 2);
+                }
+            }
+            QMESH.fieldMetrics.entropyGradient = edges.length > 0 ? entropyVar / edges.length : 0;
+        }
+
+        function applyQuantumFeedback(dt) {
+            const qm = QMESH.fieldMetrics;
+
+            // QMESH intensity modulates R channel (energy)
+            const energyBoost = qm.totalIntensity * 0.2;
+            mrp.R.intensity *= (1 + energyBoost * Math.sin(time * PHI_INV));
+            mrp.R.intensity = Math.min(1, Math.max(0, mrp.R.intensity));
+
+            // Phase coherence affects G channel (relational)
+            const relationalBoost = qm.phaseCoherence * 0.15;
+            mrp.G.intensity *= (1 + relationalBoost);
+            mrp.G.intensity = Math.min(1, Math.max(0, mrp.G.intensity));
+
+            // Entanglement density stabilizes B channel (error correction)
+            const stabilityBoost = qm.entanglementDensity * 0.1;
+            mrp.B.intensity = Math.min(1, mrp.B.intensity + stabilityBoost);
+
+            // Entropy gradient introduces creative noise
+            const entropyNoise = (Math.random() - 0.5) * qm.entropyGradient * 0.05;
+            mrp.J_total += entropyNoise;
+            mrp.J_total = Math.min(2, Math.max(0, mrp.J_total));
+
+            // Update phase coupler from MRP
+            phaseCoupler.phase_R = mrp.R.phase;
+            phaseCoupler.phase_G = mrp.G.phase;
+            phaseCoupler.phase_B = mrp.B.phase;
+            phaseCoupler.coherence = (mrp.R.intensity + mrp.G.intensity + mrp.B.intensity) / 3;
+        }
+
+        // ================================================================
+        // PHASE 2: HOLOGRAPHIC ENTROPY FEEDBACK
+        // ================================================================
+
+        function computeNodeEntropy() {
+            const nodes = QMESH.nodes;
+            const edges = QMESH.edges;
+
+            // Reset entropy accumulator
+            for (const node of nodes) {
+                node.localEntropy = 0;
+                node.entropyEdgeCount = 0;
+            }
+
+            // Compute holographic entropy for each edge
+            for (const edge of edges) {
+                const nodeA = nodes[edge.from];
+                const nodeB = nodes[edge.to];
+                if (!nodeA || !nodeB) continue;
+
+                // Holographic entropy: area law approximation
+                const dx = nodeA.x - nodeB.x;
+                const dy = nodeA.y - nodeB.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                // S = k * Area / (4 * l_p^2) - simplified as proportional to "boundary area"
+                const phaseDiff = Math.abs(nodeA.phase - nodeB.phase) % Math.PI;
+                const fieldDiff = Math.abs(nodeA.qJ - nodeB.qJ);
+
+                edge.holographicEntropy = (phaseDiff / Math.PI) * 0.3 +
+                                          (dist / R) * 0.4 +
+                                          fieldDiff * 0.3;
+                edge.holographicEntropy = Math.min(1, Math.max(0, edge.holographicEntropy));
+
+                // Accumulate to nodes
+                nodeA.localEntropy += edge.holographicEntropy;
+                nodeA.entropyEdgeCount++;
+                nodeB.localEntropy += edge.holographicEntropy;
+                nodeB.entropyEdgeCount++;
+            }
+
+            // Average and normalize
+            for (const node of nodes) {
+                if (node.entropyEdgeCount > 0) {
+                    node.localEntropy /= node.entropyEdgeCount;
+                }
+                node.localEntropy = Math.min(1, Math.max(0, node.localEntropy));
+            }
+        }
+
+        function updateNodePhaseWithEntropy(node, dt) {
+            // Base frequency from time dilation
+            const baseFreq = node.naturalFrequency * node.timeDilation;
+
+            // Entropy creates phase uncertainty (quantum foam effect)
+            const entropyJitter = (Math.random() - 0.5) * node.localEntropy * 0.1;
+
+            // Entropy also slows effective frequency (information loss)
+            const entropyDamping = 1 - node.localEntropy * 0.3;
+
+            // Apply modified phase evolution
+            const effectiveFreq = baseFreq * entropyDamping;
+            node.phase += (effectiveFreq + entropyJitter) * dt;
+            node.phase = node.phase % TAU;
+
+            // Entropy affects field decay
+            const entropyDecay = 1 + node.localEntropy * 0.5;
+            node.qJ *= Math.exp(-SACRED.beta * entropyDecay * dt * 0.1);
+            node.qJ = Math.max(0.1, node.qJ); // Minimum field
+        }
+
+        // ================================================================
+        // PHASE 3: EMERGENT ENTANGLEMENT DYNAMICS
+        // ================================================================
+
+        function updateEntanglementDynamics(dt) {
+            const nodes = QMESH.nodes;
+            const edges = QMESH.edges;
+
+            // Update existing edges
+            for (let i = edges.length - 1; i >= 0; i--) {
+                const edge = edges[i];
+                const nodeA = nodes[edge.from];
+                const nodeB = nodes[edge.to];
+
+                if (!nodeA || !nodeB) {
+                    edges.splice(i, 1);
+                    continue;
+                }
+
+                // Age the edge
+                edge.age += dt;
+                edge.forming = edge.age < 0.5;
+
+                // Phase coherence between nodes
+                const phaseDiff = Math.abs(nodeA.phase - nodeB.phase) % (Math.PI * 2);
+                const phaseCoherence = Math.cos(phaseDiff) * 0.5 + 0.5;
+
+                // Field strength similarity
+                const fieldDiff = Math.abs(nodeA.qJ - nodeB.qJ);
+                const fieldSimilarity = Math.exp(-fieldDiff * 2);
+
+                // Combined bond strength
+                const bondQuality = phaseCoherence * 0.6 + fieldSimilarity * 0.4;
+
+                // Update strength with momentum
+                edge.strength += (bondQuality - edge.strength) * dt * 2;
+                edge.probability = edge.strength;
+
+                // Check for breaking conditions
+                const shouldBreak =
+                    edge.strength < QMESH.entanglementThreshold ||
+                    edge.age > edge.maxAge ||
+                    nodeA.localEntropy + nodeB.localEntropy > 1.5;
+
+                if (shouldBreak) {
+                    edge.breaking = true;
+                    edge.strength -= dt * 0.5;
+
+                    if (edge.strength <= 0) {
+                        edges.splice(i, 1);
+                    }
+                }
+            }
+
+            // Attempt to form new edges (rate-limited)
+            if (Math.random() < dt * 2) {
+                tryFormNewEntanglement(nodes, edges);
+            }
+        }
+
+        function tryFormNewEntanglement(nodes, edges) {
+            const N = nodes.length;
+            const maxEdges = 200;
+
+            if (edges.length >= maxEdges) return;
+
+            // Pick two random nodes
+            const i = Math.floor(Math.random() * N);
+            const j = Math.floor(Math.random() * N);
+            if (i === j) return;
+
+            // Check if already connected
+            const exists = edges.some(e =>
+                (e.from === i && e.to === j) || (e.from === j && e.to === i)
+            );
+            if (exists) return;
+
+            const nodeA = nodes[i];
+            const nodeB = nodes[j];
+
+            // Formation probability based on:
+            // 1. Spatial proximity
+            const dx = nodeA.x - nodeB.x;
+            const dy = nodeA.y - nodeB.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const proxFactor = Math.exp(-dist / (R * 2));
+
+            // 2. Phase alignment
+            const phaseDiff = Math.abs(nodeA.phase - nodeB.phase) % (Math.PI * 2);
+            const phaseFactor = Math.cos(phaseDiff) * 0.5 + 0.5;
+
+            // 3. Low entropy requirement
+            const entropyFactor = 1 - (nodeA.localEntropy + nodeB.localEntropy) / 2;
+
+            // Combined probability
+            const formProb = proxFactor * phaseFactor * entropyFactor;
+
+            if (Math.random() < formProb * 0.5) {
+                edges.push(createDynamicEdge(i, j, formProb));
+            }
+        }
+
+        // ================================================================
+        // PHASE 4: GRAVITATIONAL TIME DILATION PROPAGATION
+        // ================================================================
+
+        function updateTimeDilationField() {
+            const nodes = QMESH.nodes;
+            const layers = [[], [], [], [], [], [], []]; // 7 prism layers
+
+            // Compute gravitational potential from field density
+            // More field = more "mass" = more time dilation
+            for (const node of nodes) {
+                // Gravitational potential from surrounding field
+                let potential = 0;
+                for (const other of nodes) {
+                    if (other.index === node.index) continue;
+                    const dx = node.x - other.x;
+                    const dy = node.y - other.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy) + 1;
+                    potential += other.qJ / dist;
+                }
+                node.gravitationalPotential = potential * 0.01;
+
+                // Time dilation: τ_local / τ_far = sqrt(1 - 2GM/rc²)
+                // Simplified: dilation = 1 - k * potential
+                node.timeDilation = Math.max(0.3, 1 - node.gravitationalPotential * 0.5);
+            }
+
+            // Group prism nodes by layer
+            for (let i = 0; i < 63; i++) {
+                const node = nodes[i];
+                if (node && node.type === 'prism') {
+                    const layer = node.layer;
+                    if (layer >= 0 && layer < 7) {
+                        layers[layer].push(node.timeDilation);
+                    }
+                }
+            }
+
+            // Compute per-layer average
+            QMESH.timeDilationField.gradient = layers.map(layer => {
+                if (layer.length === 0) return 1.0;
+                return layer.reduce((a, b) => a + b, 0) / layer.length;
+            });
+
+            // Center dilation (layer 0)
+            QMESH.timeDilationField.center = QMESH.timeDilationField.gradient[0] || 1.0;
+
+            // Global average
+            let sum = 0, count = 0;
+            for (const node of nodes) {
+                if (node && node.timeDilation) {
+                    sum += node.timeDilation;
+                    count++;
+                }
+            }
+            QMESH.timeDilationField.globalAverage = count > 0 ? sum / count : 1.0;
+        }
+
+        function applyTimeDilationToLIMNUS(point, layer, dt) {
+            const tdField = QMESH.timeDilationField;
+            const layerIdx = typeof layer === 'number' ? layer : 3; // Default to middle
+            const layerDilation = tdField.gradient[layerIdx] || 1.0;
+
+            // Time dilation affects oscillation frequency
+            const dilatedDt = dt * layerDilation;
+
+            // Apply to phase evolution
+            point.phase += point.naturalFreq * dilatedDt * 0.5;
+
+            // Visual: brightness inversely related to dilation
+            point.brightness *= (2 - layerDilation);
+        }
+
+        // ================================================================
+        // PHASE 5: RESONANCE-DRIVEN TOPOLOGY CHANGES
+        // ================================================================
+
+        function updateBinauralResonance(dt) {
+            const bin = QMESH.binaural;
+
+            // Update oscillator phases
+            bin.meshA.phase += bin.meshA.frequency * dt * 0.1;
+            bin.meshB.phase += bin.meshB.frequency * dt * 0.1;
+
+            // Amplitudes modulated by global state
+            bin.meshA.amplitude = 0.5 + globalZ * 0.3 + Math.sin(time * 0.5) * 0.2;
+            bin.meshB.amplitude = 0.5 + (1 - globalZ) * 0.3 + Math.cos(time * 0.7) * 0.2;
+
+            // Beat frequency and amplitude
+            bin.beatFrequency = Math.abs(bin.meshA.frequency - bin.meshB.frequency);
+            bin.beatAmplitude = Math.abs(
+                Math.sin(bin.meshA.phase) * bin.meshA.amplitude -
+                Math.sin(bin.meshB.phase) * bin.meshB.amplitude
+            );
+
+            // Resonance strength from LIMNUS coherence
+            bin.resonanceStrength = hilbertField.coherence * 0.5 +
+                                   QMESH.fieldMetrics.phaseCoherence * 0.3 +
+                                   (1 - releaseCoherence) * 0.2;
+        }
+
+        function detectResonanceEvent(beatAmplitude, currentTime) {
+            const events = QMESH.binaural.resonanceEvents;
+
+            if (beatAmplitude > events.threshold &&
+                currentTime - events.lastEvent > events.cooldown) {
+
+                events.history.push({
+                    time: currentTime,
+                    amplitude: beatAmplitude,
+                    phase: QMESH.binaural.meshA.phase,
+                });
+
+                events.lastEvent = currentTime;
+
+                if (events.history.length > 10) {
+                    events.history.shift();
+                }
+
+                return true;
+            }
+            return false;
+        }
+
+        function triggerTopologyShift(eventStrength) {
+            const nodes = QMESH.nodes;
+            const edges = QMESH.edges;
+
+            // Calculate shift intensity
+            const intensity = eventStrength * 0.3;
+
+            // 1. Phase cascade: propagate phase shift outward from center
+            const centerPhase = nodes[0]?.phase || 0;
+            for (let i = 0; i < nodes.length; i++) {
+                const node = nodes[i];
+                if (!node) continue;
+
+                // Distance from center determines delay
+                const dx = node.x - CX;
+                const dy = node.y - CY;
+                const dist = Math.sqrt(dx * dx + dy * dy) / R;
+
+                // Phase kick with golden angle offset
+                const phaseKick = intensity * Math.sin(centerPhase + dist * PHI);
+                node.phase += phaseKick;
+
+                // Field boost
+                node.qJ *= (1 + intensity * 0.5);
+                node.qJ = Math.min(1.5, node.qJ);
+            }
+
+            // 2. Edge probability shuffle
+            for (const edge of edges) {
+                const shift = (Math.random() - 0.5) * intensity;
+                edge.probability = Math.max(0.1, Math.min(1, edge.probability + shift));
+
+                if (edge.probability > 0.7) {
+                    edge.age *= 0.5;
+                }
+            }
+
+            // 3. Attempt burst of new entanglements
+            const burstCount = Math.floor(intensity * 20);
+            for (let i = 0; i < burstCount; i++) {
+                tryFormNewEntanglement(nodes, edges);
+            }
+
+            // 4. Visual pulse
+            QMESH.topologyPulse = intensity;
+
+            console.log('[EMERGENCE] Resonance topology shift triggered, intensity:', intensity.toFixed(3));
+        }
+
+        // ================================================================
+        // PHASE 6: COHERENT DREAM PARTICLE FEEDBACK
+        // ================================================================
+
+        function createDreamParticle(x, y, sourceNode) {
+            return {
+                x, y,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                life: 1.0,
+                size: 2 + Math.random() * 2,
+
+                // Field payload from source
+                payload: {
+                    phase: sourceNode?.phase || 0,
+                    fieldJ: sourceNode?.qJ || 0,
+                    entropy: sourceNode?.localEntropy || 0,
+                    sourceIdx: sourceNode?.index ?? -1,
+                },
+
+                deposited: false,
+                color: sourceNode?.type === 'prism' ?
+                       `hsl(${20 + (sourceNode?.layer || 0) * 15}, 70%, 60%)` :
+                       `hsl(${200 + Math.random() * 80}, 70%, 60%)`,
+            };
+        }
+
+        function spawnFieldParticles(sourceNode, count) {
+            for (let i = 0; i < count && dreamParticles.length < MAX_DREAM_PARTICLES; i++) {
+                const angle = Math.random() * TAU;
+                const speed = 1 + Math.random() * 2;
+
+                const particle = createDreamParticle(
+                    sourceNode.x,
+                    sourceNode.y,
+                    sourceNode
+                );
+
+                particle.vx = Math.cos(angle) * speed;
+                particle.vy = Math.sin(angle) * speed;
+
+                dreamParticles.push(particle);
+            }
+        }
+
+        function checkForParticleSpawn(node, prevJ) {
+            const threshold = 0.8;
+            const deltaJ = node.qJ - prevJ;
+
+            if (deltaJ > 0.1 && node.qJ > threshold) {
+                const count = Math.floor(deltaJ * 5);
+                spawnFieldParticles(node, count);
+            }
+        }
+
+        function updateDreamParticleInteractions(particles, nodes, dt) {
+            const interactionRadius = R * 0.3;
+
+            for (const particle of particles) {
+                if (particle.deposited || particle.life <= 0) continue;
+
+                // Find nearby nodes
+                for (let i = 0; i < nodes.length; i++) {
+                    const node = nodes[i];
+                    if (!node || i === particle.payload.sourceIdx) continue;
+
+                    const dx = node.x - particle.x;
+                    const dy = node.y - particle.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < interactionRadius) {
+                        const depositStrength = (1 - dist / interactionRadius) * particle.life;
+
+                        // Phase diffusion
+                        const phaseDiff = particle.payload.phase - node.phase;
+                        node.phase += phaseDiff * depositStrength * 0.1 * dt;
+
+                        // Field transfer
+                        const fieldTransfer = particle.payload.fieldJ * depositStrength * 0.05;
+                        node.qJ += fieldTransfer * dt;
+                        node.qJ = Math.min(1.5, node.qJ);
+
+                        // Entropy mixing
+                        const entropyMix = (particle.payload.entropy + node.localEntropy) / 2;
+                        node.localEntropy += (entropyMix - node.localEntropy) * depositStrength * 0.02;
+
+                        // Consume particle energy
+                        particle.life -= depositStrength * dt * 0.5;
+                        particle.deposited = particle.life < 0.1;
+                    }
+                }
+            }
+        }
+
+        function updateDreamParticles(dt) {
+            for (let i = dreamParticles.length - 1; i >= 0; i--) {
+                const p = dreamParticles[i];
+
+                // Movement
+                p.x += p.vx * dt * 60;
+                p.y += p.vy * dt * 60;
+
+                // Damping
+                p.vx *= 0.98;
+                p.vy *= 0.98;
+
+                // Decay
+                p.life -= dt * 0.3;
+
+                // Slight attraction to center
+                const dx = CX - p.x;
+                const dy = CY - p.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist > 1) {
+                    p.vx += (dx / dist) * 0.02;
+                    p.vy += (dy / dist) * 0.02;
+                }
+
+                // Remove dead particles
+                if (p.life <= 0 || p.x < 0 || p.x > W || p.y < 0 || p.y > H) {
+                    dreamParticles.splice(i, 1);
+                }
+            }
+        }
+
+        // ================================================================
+        // PHASE 7: UNIFIED FIELD EQUATION
+        // ================================================================
+
+        function evolveUnifiedField(dt) {
+            const U = UnifiedField;
+
+            // Gather current states
+            U.J.limnus = (mrp.R.intensity + mrp.G.intensity + mrp.B.intensity) / 3;
+            U.J.quantum = QMESH.fieldMetrics.totalIntensity;
+            U.J.binaural = QMESH.binaural.resonanceStrength;
+
+            U.Phi.limnus = phaseCoupler.phase_R;
+            U.Phi.quantum = QMESH.fieldMetrics.phaseCoherence;
+            U.Phi.binaural = QMESH.binaural.meshA.phase - QMESH.binaural.meshB.phase;
+
+            // === UNIFIED FIELD EQUATION ===
+            // dJ/dt = (r - λ|J|²)J - βJ + g∇²J + Σ(coupling terms)
+
+            // 1. Self-interaction (nonlinear saturation)
+            const r = globalZ - 0.5;
+            const selfTerm = (r - SACRED.lambda * 0.01 * U.J.total * U.J.total) * U.J.total;
+
+            // 2. Dissipation
+            const beta = SACRED.beta * (1 + (1 - releaseCoherence) * 2);
+            const dissipation = -beta * U.J.total;
+
+            // 3. Coupling terms (bidirectional)
+            const couplingLQ = U.coupling.LQ * U.J.limnus * Math.cos(U.Phi.quantum);
+            const couplingQL = U.coupling.QL * U.J.quantum * Math.cos(U.Phi.limnus);
+            const couplingB = (U.coupling.BL + U.coupling.BQ) * U.J.binaural *
+                              Math.cos(U.Phi.binaural * PHI_INV);
+
+            // 4. Laplacian approximation (spatial coupling)
+            const laplacian = QMESH.fieldMetrics.entropyGradient * 0.1;
+
+            // 5. Stochastic term (quantum fluctuations)
+            const noise = (Math.random() - 0.5) * 0.01 * (1 - U.emergence.coherence);
+
+            // === EVOLUTION ===
+            const dJ = (selfTerm + dissipation + couplingLQ + couplingQL + couplingB + laplacian + noise) * dt;
+            U.J.total = Math.max(0, Math.min(2, U.J.total + dJ));
+
+            // === UNIFIED PHASE EVOLUTION ===
+            const phaseSync =
+                Math.sin(U.Phi.quantum - U.Phi.unified) * U.coupling.QL +
+                Math.sin(U.Phi.limnus - U.Phi.unified) * U.coupling.LQ +
+                Math.sin(U.Phi.binaural - U.Phi.unified) * (U.coupling.BL + U.coupling.BQ);
+
+            const baseFreq = PHI_INV * (1 + U.J.total);
+            U.Phi.unified += (baseFreq + phaseSync * 0.5) * dt;
+
+            // === EMERGENCE METRICS ===
+            const phaseDiffs = [
+                Math.cos(U.Phi.limnus - U.Phi.unified),
+                Math.cos(U.Phi.quantum - U.Phi.unified),
+                Math.cos(U.Phi.binaural - U.Phi.unified),
+            ];
+            U.emergence.coherence = (phaseDiffs.reduce((a, b) => a + b, 0) / 3 + 1) / 2;
+
+            U.emergence.complexity = QMESH.fieldMetrics.entropyGradient *
+                                     (1 - Math.abs(U.J.limnus - U.J.quantum));
+
+            const criticalZ = 1 - PHI_INV;
+            U.emergence.criticality = 1 - Math.abs(globalZ - criticalZ) * 2;
+            U.emergence.criticality = Math.max(0, Math.min(1, U.emergence.criticality));
+
+            // === FEEDBACK TO SUBSYSTEMS ===
+            applyUnifiedFeedback(dt);
+        }
+
+        function applyUnifiedFeedback(dt) {
+            const U = UnifiedField;
+
+            // 1. Modulate LIMNUS MRP based on unified state
+            const unifiedModulation = U.J.total * U.emergence.coherence;
+            mrp.R.intensity *= (1 + unifiedModulation * 0.05);
+            mrp.G.intensity *= (1 + U.emergence.complexity * 0.03);
+            mrp.B.intensity *= (1 + U.emergence.criticality * 0.04);
+
+            // Clamp
+            mrp.R.intensity = Math.min(1, Math.max(0.1, mrp.R.intensity));
+            mrp.G.intensity = Math.min(1, Math.max(0.1, mrp.G.intensity));
+            mrp.B.intensity = Math.min(1, Math.max(0.1, mrp.B.intensity));
+
+            // Update MRP total
+            mrp.J_total = (mrp.R.intensity + mrp.G.intensity + mrp.B.intensity) / 3;
+
+            // 2. Modulate QMESH coupling based on unified phase
+            const phaseLock = Math.cos(U.Phi.unified - U.Phi.quantum);
+            QMESH.binaural.resonanceStrength *= (1 + phaseLock * 0.05);
+            QMESH.binaural.resonanceStrength = Math.min(1, QMESH.binaural.resonanceStrength);
+
+            // 3. Adjust entanglement threshold based on criticality
+            QMESH.entanglementThreshold = 0.15 - U.emergence.criticality * 0.05;
+
+            // 4. Store for rendering
+            QMESH.unifiedFieldStrength = U.J.total;
+            QMESH.emergenceGlow = U.emergence.coherence * U.emergence.criticality;
+        }
+
+        // ================================================================
+        // DREAM FLUID FIELD UPDATE (QMESH main update)
+        // ================================================================
+
+        function updateDreamFluidField(dt) {
+            const nodes = QMESH.nodes;
+
+            // Sync node positions with LIMNUS points
+            for (let i = 0; i < prismPoints.length && i < nodes.length; i++) {
+                const lp = prismPoints[i];
+                const qn = nodes[i];
+                if (qn && lp) {
+                    qn.x = lp.x;
+                    qn.y = lp.y;
+                }
+            }
+
+            // Sync cage points
+            for (let i = 0; i < cagePoints.length; i++) {
+                const cp = cagePoints[i];
+                const qn = nodes[63 + i];
+                if (qn && cp) {
+                    qn.x = cp.x;
+                    qn.y = cp.y;
+                }
+            }
+
+            // Store previous qJ for particle spawning
+            const prevJ = nodes.map(n => n.qJ);
+
+            // Update binaural resonance
+            updateBinauralResonance(dt);
+
+            // Field evolution for each node
+            for (const node of nodes) {
+                // Source term from LIMNUS
+                const limnusSource = globalZ * 0.1 + hilbertField.coherence * 0.1;
+                node.qJ += limnusSource * dt;
+
+                // Binaural coupling
+                const binauralCoupling = QMESH.binaural.beatAmplitude *
+                                        Math.sin(node.phase - QMESH.binaural.meshA.phase) * 0.1;
+                node.qJ += binauralCoupling * dt;
+
+                // Phase evolution with entropy
+                updateNodePhaseWithEntropy(node, dt);
+
+                // Natural decay
+                node.qJ *= (1 - SACRED.beta * dt * 0.1);
+                node.qJ = Math.max(0.1, Math.min(1.5, node.qJ));
+            }
+
+            // Check for particle spawning
+            for (let i = 0; i < nodes.length; i++) {
+                checkForParticleSpawn(nodes[i], prevJ[i]);
+            }
+        }
 
         // ================================================================
         // UTILITY FUNCTIONS
@@ -2064,7 +3037,7 @@
             // Draw sparks
             for (const sp of sparks) {
                 const alpha = sp.life * 0.85;
-                
+
                 // Glow
                 const glowGrad = ctx.createRadialGradient(sp.x, sp.y, 0, sp.x, sp.y, sp.size * 4);
                 glowGrad.addColorStop(0, hexToRgba(sp.color, alpha * 0.5));
@@ -2079,6 +3052,125 @@
                 ctx.beginPath();
                 ctx.arc(sp.x, sp.y, sp.size * sp.life, 0, TAU);
                 ctx.fill();
+            }
+
+            // ================================================================
+            // QUANTUM MESH RENDERING
+            // ================================================================
+
+            if (showQuantumMesh && QMESH.nodes.length > 0) {
+                // Topology pulse effect (Phase 5)
+                if (QMESH.topologyPulse > 0.01) {
+                    const pulseR = QMESH.topologyPulse * R * 3;
+                    const pulseAlpha = QMESH.topologyPulse * 0.3;
+                    const pulseGrad = ctx.createRadialGradient(CX, CY, 0, CX, CY, pulseR);
+                    pulseGrad.addColorStop(0, `rgba(200, 150, 255, ${pulseAlpha})`);
+                    pulseGrad.addColorStop(0.5, `rgba(150, 100, 200, ${pulseAlpha * 0.5})`);
+                    pulseGrad.addColorStop(1, 'transparent');
+                    ctx.fillStyle = pulseGrad;
+                    ctx.fillRect(0, 0, W, H);
+                }
+
+                // Emergence glow (Phase 7)
+                if (QMESH.emergenceGlow > 0.1) {
+                    const emergeGrad = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 1.5);
+                    const emergeAlpha = QMESH.emergenceGlow * 0.15;
+                    emergeGrad.addColorStop(0, `rgba(255, 220, 150, ${emergeAlpha})`);
+                    emergeGrad.addColorStop(0.6, `rgba(200, 180, 255, ${emergeAlpha * 0.4})`);
+                    emergeGrad.addColorStop(1, 'transparent');
+                    ctx.fillStyle = emergeGrad;
+                    ctx.fillRect(0, 0, W, H);
+                }
+
+                // Draw entanglement edges
+                for (const edge of QMESH.edges) {
+                    const nodeA = QMESH.nodes[edge.from];
+                    const nodeB = QMESH.nodes[edge.to];
+                    if (!nodeA || !nodeB) continue;
+
+                    // Edge color based on holographic entropy
+                    const entropy = edge.holographicEntropy;
+                    const strength = edge.strength;
+                    const forming = edge.forming;
+                    const breaking = edge.breaking;
+
+                    // Alpha based on edge state
+                    let alpha = strength * 0.4;
+                    if (forming) alpha *= edge.age / 0.5;
+                    if (breaking) alpha *= 0.5;
+
+                    // Color gradient: low entropy = cyan, high entropy = magenta
+                    const hue = 180 + entropy * 80;
+                    const sat = 60 + strength * 30;
+                    const light = 50 + (1 - entropy) * 20;
+
+                    ctx.strokeStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha})`;
+                    ctx.lineWidth = 0.5 + strength * 1.5;
+
+                    // Dashed line for forming/breaking edges
+                    if (forming || breaking) {
+                        ctx.setLineDash([4, 4]);
+                    } else {
+                        ctx.setLineDash([]);
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(nodeA.x, nodeA.y);
+                    ctx.lineTo(nodeB.x, nodeB.y);
+                    ctx.stroke();
+                }
+                ctx.setLineDash([]);
+
+                // Draw dream particles (Phase 6)
+                for (const dp of dreamParticles) {
+                    const alpha = dp.life * 0.7;
+                    const size = dp.size * dp.life;
+
+                    // Particle glow
+                    const dpGlow = ctx.createRadialGradient(dp.x, dp.y, 0, dp.x, dp.y, size * 3);
+                    dpGlow.addColorStop(0, dp.color.replace(')', `, ${alpha})`).replace('hsl', 'hsla'));
+                    dpGlow.addColorStop(1, 'transparent');
+                    ctx.fillStyle = dpGlow;
+                    ctx.beginPath();
+                    ctx.arc(dp.x, dp.y, size * 3, 0, TAU);
+                    ctx.fill();
+
+                    // Particle core
+                    ctx.fillStyle = dp.color.replace(')', `, ${alpha})`).replace('hsl', 'hsla');
+                    ctx.beginPath();
+                    ctx.arc(dp.x, dp.y, size, 0, TAU);
+                    ctx.fill();
+                }
+
+                // Draw QMESH node field indicators (subtle overlay)
+                for (const node of QMESH.nodes) {
+                    const fieldStrength = node.qJ;
+                    const entropy = node.localEntropy;
+                    const dilation = node.timeDilation;
+
+                    // Only draw if field is significant
+                    if (fieldStrength > 0.5) {
+                        const nodeAlpha = (fieldStrength - 0.5) * 0.3;
+                        const nodeR = 3 + fieldStrength * 4;
+
+                        // Field halo (color shows entropy)
+                        const haloHue = 180 - entropy * 60; // Cyan to green
+                        ctx.fillStyle = `hsla(${haloHue}, 60%, 60%, ${nodeAlpha})`;
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, nodeR, 0, TAU);
+                        ctx.fill();
+
+                        // Time dilation indicator (small ring)
+                        if (dilation < 0.9) {
+                            const dilationAlpha = (1 - dilation) * 0.5;
+                            ctx.strokeStyle = `rgba(255, 100, 100, ${dilationAlpha})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.arc(node.x, node.y, nodeR + 3, 0, TAU);
+                            ctx.stroke();
+                        }
+                    }
+                }
             }
 
             // Draw prism points
@@ -2500,12 +3592,81 @@
             // Smooth z transition
             globalZ += (targetZ - globalZ) * 0.06;
 
-            // Update systems
+            // ================================================================
+            // LIMNUS CORE SYSTEMS
+            // ================================================================
+
+            // Update helix state
             updateHelix(dt);
+
+            // Update lambda state (ℂ⁶)
             updateLambdaState(dt);
-            hilbertField.applyResonanceOperator(dt, 0.1 + getCascadeMultiplier(globalZ) * 0.1);
-            sonificationEngine.update(globalZ, hilbertField.coherence, dt);
+
+            // Hilbert field resonance operator
+            const interactionStrength = 0.1 + getCascadeMultiplier(globalZ) * 0.1;
+            hilbertField.applyResonanceOperator(dt, interactionStrength);
+
+            // Release/gather dynamics
             updateReleaseCoherence(dt);
+
+            // ================================================================
+            // QUANTUM MESH EMERGENCE (7 Phases)
+            // ================================================================
+
+            if (showQuantumMesh) {
+                // Phase 1-2: Dream fluid field (nodes, phases, entropy source)
+                updateDreamFluidField(dt);
+
+                // Phase 1: Compute aggregate field metrics
+                updateQMESHFieldMetrics();
+
+                // Phase 2: Compute holographic entropy
+                computeNodeEntropy();
+
+                // Phase 3: Dynamic entanglement evolution
+                updateEntanglementDynamics(dt);
+
+                // Phase 4: Time dilation field
+                updateTimeDilationField();
+
+                // Phase 5: Resonance event detection
+                const eventDetected = detectResonanceEvent(
+                    QMESH.binaural.beatAmplitude,
+                    time
+                );
+                if (eventDetected) {
+                    triggerTopologyShift(QMESH.binaural.beatAmplitude);
+                }
+
+                // Phase 5: Decay topology pulse
+                if (QMESH.topologyPulse > 0) {
+                    QMESH.topologyPulse *= 0.95;
+                }
+
+                // Phase 6: Dream particle interactions
+                updateDreamParticleInteractions(dreamParticles, QMESH.nodes, dt);
+                updateDreamParticles(dt);
+
+                // Phase 7: Unified field evolution
+                evolveUnifiedField(dt);
+
+                // Phase 1: Apply quantum feedback to MRP
+                applyQuantumFeedback(dt);
+            }
+
+            // ================================================================
+            // SONIFICATION
+            // ================================================================
+
+            // Update sonification with unified field state
+            const emergenceCoherence = showQuantumMesh ?
+                UnifiedField.emergence.coherence : hilbertField.coherence;
+            sonificationEngine.update(globalZ, emergenceCoherence, dt);
+
+            // Apply time dilation to sonification tempo
+            if (showQuantumMesh && sonificationEngine.isPlaying) {
+                sonificationEngine.timeDilation = QMESH.timeDilationField.globalAverage;
+            }
 
             return updatePositions(dt);
         }
@@ -2558,11 +3719,17 @@
                 showCage = !showCage;
             }
 
+            if (key === 'q') {
+                showQuantumMesh = !showQuantumMesh;
+                console.log('[QMESH] Quantum Mesh:', showQuantumMesh ? 'ENABLED' : 'DISABLED');
+            }
+
             if (key === 'r') {
                 targetZ = 0.5;
                 scrollVelocity = 0;
                 showPrism = true;
                 showCage = true;
+                showQuantumMesh = true;
                 autoBreathing = false;
                 lastInteraction = Date.now();
                 // Reset release state
@@ -2578,6 +3745,17 @@
                     p.vy = 0;
                     p.trail.length = 0;
                 });
+                // Reset QMESH state
+                initQMESHNodes();
+                dreamParticles.length = 0;
+                QMESH.topologyPulse = 0;
+                QMESH.emergenceGlow = 0;
+                UnifiedField.J.total = 0;
+                UnifiedField.Phi.unified = 0;
+                mrp.R.intensity = 0.5;
+                mrp.G.intensity = 0.5;
+                mrp.B.intensity = 0.5;
+                mrp.J_total = 0.5;
             }
 
             // F key: Start release
@@ -2644,10 +3822,13 @@
         resize();
         initPrismPoints();
         initCagePoints();
+        initQMESHNodes();
+
         window.addEventListener('resize', () => {
             resize();
             initPrismPoints();
             initCagePoints();
+            initQMESHNodes();
         });
 
         requestAnimationFrame(loop);
@@ -2661,6 +3842,16 @@
         console.log('   HOLD F: release coherence (COHERENT → FREE)');
         console.log('   CLICK: gather souls back to center');
         console.log('   FREE state: souls dispersed, radiant core');
+        console.log('');
+        console.log('⚛️ QUANTUM MESH EMERGENCE activated');
+        console.log('   Phase 1: Bidirectional Field Coupling');
+        console.log('   Phase 2: Holographic Entropy Feedback');
+        console.log('   Phase 3: Emergent Entanglement Dynamics');
+        console.log('   Phase 4: Gravitational Time Dilation');
+        console.log('   Phase 5: Resonance-Driven Topology');
+        console.log('   Phase 6: Dream Particle Feedback');
+        console.log('   Phase 7: Unified Field Equation');
+        console.log('   Press Q to toggle Quantum Mesh');
     </script>
 </body>
 </html>
