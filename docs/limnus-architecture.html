@@ -2933,6 +2933,886 @@
         }
 
         // ================================================================
+        // CHARGE DYNAMICS SYSTEM
+        // Electromagnetic-like interactions between warm/cold meshes
+        // ================================================================
+
+        const ChargeDynamics = {
+            // Mesh charges (warm = positive, cold = negative)
+            warm: {
+                charge: 1.0,                    // Positive charge
+                potential: 0,                   // Electric potential
+                flux: 0,                        // Charge flux rate
+                capacitance: PHI_INV,           // Ability to store charge
+                accumulated: 0,                 // Accumulated charge
+            },
+            cold: {
+                charge: -1.0,                   // Negative charge
+                potential: 0,
+                flux: 0,
+                capacitance: PHI_INV * PHI_INV,
+                accumulated: 0,
+            },
+
+            // LIMNUS as dielectric medium
+            limnus: {
+                permittivity: PHI,              // ε - field permeability
+                conductivity: 0.1,              // σ - charge transfer rate
+                polarization: 0,                // Induced dipole moment
+            },
+
+            // Field properties
+            field: {
+                E_x: 0,                         // Electric field X component
+                E_y: 0,                         // Electric field Y component
+                potential: 0,                   // Scalar potential
+                energy: 0,                      // Field energy: ½ε|E|²
+            },
+
+            // Discharge events
+            discharge: {
+                threshold: 0.8,                 // Charge threshold for discharge
+                lastDischarge: 0,               // Time of last discharge
+                cooldown: 2.0,                  // Minimum time between discharges
+                intensity: 0,                   // Current discharge intensity
+            },
+
+            initialized: false,
+        };
+
+        function updateChargeDynamics(dt) {
+            const CD = ChargeDynamics;
+            const bi = QMESH.binaural;
+            if (!bi || !bi.enabled) return;
+
+            // === CHARGE ACCUMULATION ===
+            // Beat amplitude drives charge separation
+            const beatDrive = bi.beatAmplitude * bi.resonanceStrength;
+            const curvatureDrive = QMESH.timeDilationField.curvatureStrength;
+
+            // Warm mesh accumulates positive charge from curl activity
+            CD.warm.accumulated += MuFieldGrid.metrics.Q_kappa * beatDrive * dt * 0.5;
+            CD.warm.accumulated *= 0.995;  // Slow decay
+            CD.warm.accumulated = Math.max(-2, Math.min(2, CD.warm.accumulated));
+
+            // Cold mesh accumulates negative charge from entropy
+            CD.cold.accumulated -= MuFieldGrid.metrics.entropyGradient * beatDrive * dt * 0.4;
+            CD.cold.accumulated *= 0.995;
+            CD.cold.accumulated = Math.max(-2, Math.min(2, CD.cold.accumulated));
+
+            // === ELECTRIC FIELD COMPUTATION ===
+            // E = -∇V, approximated from charge positions
+            const separation = bi.polar.distance * 2;  // Distance between meshes
+            const totalCharge = (CD.warm.charge + CD.warm.accumulated) -
+                               (CD.cold.charge + CD.cold.accumulated);
+
+            // Coulomb-like field: E ∝ Q / (ε * r²)
+            const fieldStrength = totalCharge / (CD.limnus.permittivity * separation * separation);
+
+            // Field direction: warm → cold (positive to negative)
+            const fieldAngle = (bi.polar.angleA + bi.polar.angleB) / 2 + Math.PI / 2;
+            CD.field.E_x = fieldStrength * Math.cos(fieldAngle);
+            CD.field.E_y = fieldStrength * Math.sin(fieldAngle);
+
+            // Field energy: U = ½ε|E|²
+            CD.field.energy = 0.5 * CD.limnus.permittivity *
+                             (CD.field.E_x * CD.field.E_x + CD.field.E_y * CD.field.E_y);
+
+            // === LIMNUS POLARIZATION ===
+            // LIMNUS becomes polarized by the field (dielectric response)
+            CD.limnus.polarization = CD.field.energy * CD.limnus.permittivity * 0.3;
+
+            // Polarization affects MuFieldGrid (induced dipole moment)
+            if (MuFieldGrid.initialized && CD.limnus.polarization > 0.05) {
+                const N = MuFieldGrid.N;
+                const polarForce = CD.limnus.polarization * dt * 0.1;
+
+                for (let j = N / 4; j < 3 * N / 4; j++) {
+                    for (let i = N / 4; i < 3 * N / 4; i++) {
+                        const idx = j * N + i;
+                        MuFieldGrid.Jx[idx] += CD.field.E_x * polarForce;
+                        MuFieldGrid.Jy[idx] += CD.field.E_y * polarForce;
+                    }
+                }
+            }
+
+            // === DISCHARGE EVENTS ===
+            // High charge accumulation triggers discharge through LIMNUS
+            const chargeImbalance = Math.abs(CD.warm.accumulated - CD.cold.accumulated);
+            if (chargeImbalance > CD.discharge.threshold &&
+                time - CD.discharge.lastDischarge > CD.discharge.cooldown) {
+
+                CD.discharge.lastDischarge = time;
+                CD.discharge.intensity = chargeImbalance;
+
+                // Discharge transfers charge and creates field pulse
+                const transferAmount = chargeImbalance * 0.6;
+                CD.warm.accumulated -= Math.sign(CD.warm.accumulated) * transferAmount * 0.5;
+                CD.cold.accumulated -= Math.sign(CD.cold.accumulated) * transferAmount * 0.5;
+
+                // Discharge boosts coherence and emergence
+                UnifiedField.emergence.coherence += chargeImbalance * 0.1;
+                UnifiedField.emergence.coherence = Math.min(1, UnifiedField.emergence.coherence);
+
+                console.log('[ChargeDynamics] Discharge event, intensity:', chargeImbalance.toFixed(3));
+            } else {
+                CD.discharge.intensity *= 0.9;  // Decay
+            }
+
+            // === POTENTIAL COMPUTATION ===
+            CD.warm.potential = CD.warm.accumulated / CD.warm.capacitance;
+            CD.cold.potential = CD.cold.accumulated / CD.cold.capacitance;
+            CD.field.potential = CD.warm.potential - CD.cold.potential;
+
+            CD.initialized = true;
+        }
+
+        // ================================================================
+        // WEAK NUCLEAR INFORMATION FLOW
+        // Flavor oscillation and parity-violating information transfer
+        // ================================================================
+
+        const WeakNuclear = {
+            // Information "flavors" (analogous to neutrino flavors)
+            flavors: {
+                electron: { intensity: 0.5, phase: 0 },      // e-type: coherent info
+                muon: { intensity: 0.3, phase: TAU / 3 },    // μ-type: relational info
+                tau: { intensity: 0.2, phase: 2 * TAU / 3 }, // τ-type: emergent info
+            },
+
+            // Oscillation parameters (PMNS matrix analog)
+            mixing: {
+                theta12: Math.PI / 6,           // Solar mixing angle
+                theta23: Math.PI / 4,           // Atmospheric mixing angle
+                theta13: Math.PI / 20,          // Reactor mixing angle
+                deltaCP: PHI_INV * Math.PI,     // CP violation phase (golden ratio!)
+            },
+
+            // Mass-squared differences (oscillation frequencies)
+            deltaM: {
+                dm21: 0.0000753,                // Solar Δm²
+                dm32: 0.00244,                  // Atmospheric Δm²
+            },
+
+            // Information flow state
+            flow: {
+                warmToLimnus: 0,                // Info flowing warm → LIMNUS
+                limnusToWarm: 0,                // Info flowing LIMNUS → warm
+                coldToLimnus: 0,                // Info flowing cold → LIMNUS
+                limnusToCold: 0,                // Info flowing LIMNUS → cold
+                warmToCold: 0,                  // Direct tunneling warm ↔ cold
+                parityViolation: 0,             // Asymmetry measure
+            },
+
+            // W/Z boson analogs (information carriers)
+            bosons: {
+                W_plus: [],                     // W⁺ carriers (warm → cold)
+                W_minus: [],                    // W⁻ carriers (cold → warm)
+                Z: [],                          // Z⁰ carriers (neutral current)
+            },
+
+            // Decay products
+            decayRate: PHI_INV * 0.1,           // Base decay rate
+            halfLife: Math.log(2) / (PHI_INV * 0.1),
+        };
+
+        function updateWeakNuclearFlow(dt) {
+            const WN = WeakNuclear;
+            const bi = QMESH.binaural;
+            if (!bi || !bi.enabled) return;
+
+            // === FLAVOR OSCILLATION ===
+            // Information oscillates between types as it flows
+            const L = bi.polar.distance * 100;  // Baseline (arbitrary units)
+            const E = UnifiedField.J.total + 0.1;  // Energy analog
+
+            // Oscillation probabilities (simplified 2-flavor)
+            const oscArg21 = 1.27 * WN.deltaM.dm21 * L / E;
+            const oscArg32 = 1.27 * WN.deltaM.dm32 * L / E;
+
+            const sin2_12 = Math.sin(2 * WN.mixing.theta12);
+            const sin2_23 = Math.sin(2 * WN.mixing.theta23);
+
+            // P(e→μ) oscillation
+            const P_e_mu = sin2_12 * sin2_12 * Math.sin(oscArg21) * Math.sin(oscArg21);
+            // P(μ→τ) oscillation
+            const P_mu_tau = sin2_23 * sin2_23 * Math.sin(oscArg32) * Math.sin(oscArg32);
+
+            // Update flavor intensities (conservation: sum = 1)
+            const totalIntensity = WN.flavors.electron.intensity +
+                                  WN.flavors.muon.intensity +
+                                  WN.flavors.tau.intensity;
+
+            WN.flavors.electron.intensity += (-P_e_mu * WN.flavors.electron.intensity +
+                                              P_e_mu * WN.flavors.muon.intensity) * dt;
+            WN.flavors.muon.intensity += (P_e_mu * WN.flavors.electron.intensity -
+                                         P_e_mu * WN.flavors.muon.intensity -
+                                         P_mu_tau * WN.flavors.muon.intensity +
+                                         P_mu_tau * WN.flavors.tau.intensity) * dt;
+            WN.flavors.tau.intensity += (P_mu_tau * WN.flavors.muon.intensity -
+                                        P_mu_tau * WN.flavors.tau.intensity) * dt;
+
+            // Normalize
+            const newTotal = WN.flavors.electron.intensity +
+                            WN.flavors.muon.intensity +
+                            WN.flavors.tau.intensity;
+            if (newTotal > 0) {
+                WN.flavors.electron.intensity /= newTotal;
+                WN.flavors.muon.intensity /= newTotal;
+                WN.flavors.tau.intensity /= newTotal;
+            }
+
+            // Phase evolution
+            WN.flavors.electron.phase += PHI_INV * dt;
+            WN.flavors.muon.phase += PHI_INV * PHI_INV * dt;
+            WN.flavors.tau.phase += PHI_INV * PHI_INV * PHI_INV * dt;
+
+            // === INFORMATION FLOW ===
+            // Warm mesh → LIMNUS (electron flavor dominates)
+            WN.flow.warmToLimnus = WN.flavors.electron.intensity *
+                                   bi.meshA.frequency * bi.resonanceStrength;
+
+            // Cold mesh → LIMNUS (tau flavor dominates)
+            WN.flow.coldToLimnus = WN.flavors.tau.intensity *
+                                   bi.meshB.frequency * bi.resonanceStrength;
+
+            // LIMNUS → warm (muon flavor)
+            WN.flow.limnusToWarm = WN.flavors.muon.intensity *
+                                   MuFieldGrid.metrics.J_total * 0.3;
+
+            // LIMNUS → cold (mixed)
+            WN.flow.limnusToCold = (WN.flavors.electron.intensity * 0.3 +
+                                   WN.flavors.tau.intensity * 0.7) *
+                                   MuFieldGrid.metrics.order_r * 0.25;
+
+            // === PARITY VIOLATION ===
+            // Weak force violates parity - information flows asymmetrically
+            // CP violation phase creates left-right asymmetry
+            const cpPhase = WN.mixing.deltaCP + time * 0.1;
+            WN.flow.parityViolation = Math.sin(cpPhase) *
+                                      (WN.flow.warmToLimnus - WN.flow.coldToLimnus);
+
+            // Apply parity violation to mesh alterations
+            QMESH.meshAlteration.warm.waveAmplitude += WN.flow.parityViolation * 0.05 * dt;
+            QMESH.meshAlteration.cold.waveAmplitude -= WN.flow.parityViolation * 0.05 * dt;
+
+            // === W/Z BOSON SPAWNING ===
+            // High information flow spawns carrier particles
+            if (Math.random() < Math.abs(WN.flow.warmToLimnus) * dt * 2) {
+                WN.bosons.W_plus.push({
+                    x: 0, y: 0,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    life: 1.0,
+                    flavor: 'electron',
+                    payload: WN.flow.warmToLimnus * 0.1,
+                });
+            }
+            if (Math.random() < Math.abs(WN.flow.coldToLimnus) * dt * 2) {
+                WN.bosons.W_minus.push({
+                    x: 0, y: 0,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    life: 1.0,
+                    flavor: 'tau',
+                    payload: WN.flow.coldToLimnus * 0.1,
+                });
+            }
+
+            // Update and decay bosons
+            const maxBosons = 50;
+            for (const bosonType of [WN.bosons.W_plus, WN.bosons.W_minus, WN.bosons.Z]) {
+                for (let i = bosonType.length - 1; i >= 0; i--) {
+                    const b = bosonType[i];
+                    b.x += b.vx * dt;
+                    b.y += b.vy * dt;
+                    b.life -= WN.decayRate * dt;
+
+                    if (b.life <= 0 || bosonType.length > maxBosons) {
+                        bosonType.splice(i, 1);
+                    }
+                }
+            }
+        }
+
+        // ================================================================
+        // QUANTUM TUNNELING & SUPERPOSITION
+        // Mesh states exist in superposition, tunnel through LIMNUS barrier
+        // ================================================================
+
+        const QuantumTunneling = {
+            // Superposition state
+            superposition: {
+                // Warm mesh quantum state
+                warm: {
+                    amplitude: { real: 1, imag: 0 },    // Complex amplitude
+                    probability: 1,                      // |ψ|²
+                    collapsed: false,
+                    collapseTime: 0,
+                },
+                // Cold mesh quantum state
+                cold: {
+                    amplitude: { real: 0, imag: 0 },
+                    probability: 0,
+                    collapsed: false,
+                    collapseTime: 0,
+                },
+                // Entangled state (Bell state analog)
+                entanglement: 0,                         // 0 = separable, 1 = maximally entangled
+            },
+
+            // Tunneling parameters
+            barrier: {
+                height: PHI,                             // LIMNUS barrier height
+                width: PHI_INV,                          // Barrier width
+                position: 0,                             // Center of barrier (LIMNUS)
+            },
+
+            // Tunneling state
+            tunneling: {
+                probability: 0,                          // Current tunneling probability
+                rate: 0,                                 // Tunneling events per second
+                lastTunnel: 0,                           // Time of last tunnel event
+                direction: 0,                            // +1 warm→cold, -1 cold→warm
+                inProgress: false,
+                progress: 0,                             // 0-1 tunnel progress
+            },
+
+            // Collapse events
+            collapse: {
+                threshold: 0.7,                          // Coherence threshold for collapse
+                lastCollapse: 0,
+                cooldown: 3.0,
+                measurement: null,                       // Result of last measurement
+            },
+
+            // Quantum interference
+            interference: {
+                phase: 0,
+                visibility: 0,                           // Fringe visibility
+                pattern: [],                             // Interference pattern data
+            },
+        };
+
+        function updateQuantumTunneling(dt) {
+            const QT = QuantumTunneling;
+            const bi = QMESH.binaural;
+            if (!bi || !bi.enabled) return;
+
+            const sup = QT.superposition;
+            const tun = QT.tunneling;
+            const bar = QT.barrier;
+
+            // === SUPERPOSITION EVOLUTION ===
+            // Schrödinger-like evolution of amplitudes
+            const omega = PHI_INV * (1 + UnifiedField.J.total);  // Angular frequency
+
+            // Warm state evolution: ψ_w(t) = ψ_w(0) * e^(-iωt)
+            const cosOmega = Math.cos(omega * dt);
+            const sinOmega = Math.sin(omega * dt);
+
+            const warmReal = sup.warm.amplitude.real * cosOmega + sup.warm.amplitude.imag * sinOmega;
+            const warmImag = sup.warm.amplitude.imag * cosOmega - sup.warm.amplitude.real * sinOmega;
+            sup.warm.amplitude.real = warmReal;
+            sup.warm.amplitude.imag = warmImag;
+
+            // Cold state evolution (different frequency)
+            const omega2 = omega * PHI_INV;
+            const cosOmega2 = Math.cos(omega2 * dt);
+            const sinOmega2 = Math.sin(omega2 * dt);
+
+            const coldReal = sup.cold.amplitude.real * cosOmega2 + sup.cold.amplitude.imag * sinOmega2;
+            const coldImag = sup.cold.amplitude.imag * cosOmega2 - sup.cold.amplitude.real * sinOmega2;
+            sup.cold.amplitude.real = coldReal;
+            sup.cold.amplitude.imag = coldImag;
+
+            // Compute probabilities: |ψ|²
+            sup.warm.probability = sup.warm.amplitude.real ** 2 + sup.warm.amplitude.imag ** 2;
+            sup.cold.probability = sup.cold.amplitude.real ** 2 + sup.cold.amplitude.imag ** 2;
+
+            // Normalize (conservation)
+            const totalProb = sup.warm.probability + sup.cold.probability;
+            if (totalProb > 0) {
+                const normFactor = 1 / Math.sqrt(totalProb);
+                sup.warm.amplitude.real *= normFactor;
+                sup.warm.amplitude.imag *= normFactor;
+                sup.cold.amplitude.real *= normFactor;
+                sup.cold.amplitude.imag *= normFactor;
+                sup.warm.probability /= totalProb;
+                sup.cold.probability /= totalProb;
+            }
+
+            // === TUNNELING PROBABILITY ===
+            // WKB approximation: T ≈ exp(-2∫√(2m(V-E))dx/ħ)
+            // Simplified: T = exp(-2κa) where κ = √(V-E), a = barrier width
+
+            const energy = UnifiedField.J.total + MuFieldGrid.metrics.J_total * 0.5;
+            const barrierDiff = bar.height - energy;
+
+            if (barrierDiff > 0) {
+                const kappa = Math.sqrt(barrierDiff);
+                tun.probability = Math.exp(-2 * kappa * bar.width);
+            } else {
+                // Above barrier - classical transmission
+                tun.probability = 1 - Math.exp(-energy / bar.height);
+            }
+
+            // Curvature lowers effective barrier (gravitational assist)
+            const curvatureAssist = QMESH.timeDilationField.curvatureStrength * 0.5;
+            tun.probability *= (1 + curvatureAssist);
+            tun.probability = Math.min(0.9, tun.probability);
+
+            // === TUNNELING EVENTS ===
+            if (!tun.inProgress && Math.random() < tun.probability * dt * 0.5) {
+                // Start tunneling
+                tun.inProgress = true;
+                tun.progress = 0;
+                tun.direction = sup.warm.probability > sup.cold.probability ? 1 : -1;
+                tun.lastTunnel = time;
+
+                console.log('[QuantumTunneling] Tunnel initiated, direction:',
+                           tun.direction > 0 ? 'warm→cold' : 'cold→warm');
+            }
+
+            if (tun.inProgress) {
+                // Progress tunnel (takes ~0.5 seconds)
+                tun.progress += dt * 2;
+
+                if (tun.progress >= 1) {
+                    // Complete tunnel - transfer amplitude
+                    const transferAmount = 0.3;
+
+                    if (tun.direction > 0) {
+                        // Warm → Cold
+                        sup.cold.amplitude.real += sup.warm.amplitude.real * transferAmount;
+                        sup.cold.amplitude.imag += sup.warm.amplitude.imag * transferAmount;
+                        sup.warm.amplitude.real *= (1 - transferAmount);
+                        sup.warm.amplitude.imag *= (1 - transferAmount);
+                    } else {
+                        // Cold → Warm
+                        sup.warm.amplitude.real += sup.cold.amplitude.real * transferAmount;
+                        sup.warm.amplitude.imag += sup.cold.amplitude.imag * transferAmount;
+                        sup.cold.amplitude.real *= (1 - transferAmount);
+                        sup.cold.amplitude.imag *= (1 - transferAmount);
+                    }
+
+                    tun.inProgress = false;
+                    tun.rate = 1 / (time - tun.lastTunnel + 0.01);
+                }
+            }
+
+            // === ENTANGLEMENT ===
+            // Entanglement grows with coherence and tunneling
+            const coherenceFactor = UnifiedField.emergence.coherence;
+            const tunnelingFactor = tun.probability * (tun.inProgress ? 2 : 1);
+
+            sup.entanglement += (coherenceFactor * tunnelingFactor - sup.entanglement * 0.1) * dt;
+            sup.entanglement = Math.max(0, Math.min(1, sup.entanglement));
+
+            // === QUANTUM INTERFERENCE ===
+            // Interference between warm and cold amplitudes
+            QT.interference.phase = Math.atan2(
+                sup.warm.amplitude.imag - sup.cold.amplitude.imag,
+                sup.warm.amplitude.real - sup.cold.amplitude.real
+            );
+
+            // Fringe visibility: V = 2|ψ_w||ψ_c| / (|ψ_w|² + |ψ_c|²)
+            const ampWarm = Math.sqrt(sup.warm.probability);
+            const ampCold = Math.sqrt(sup.cold.probability);
+            QT.interference.visibility = 2 * ampWarm * ampCold /
+                                         (sup.warm.probability + sup.cold.probability + 0.001);
+
+            // === COLLAPSE EVENTS ===
+            // High coherence + measurement (visualization) can collapse superposition
+            if (coherenceFactor > QT.collapse.threshold &&
+                time - QT.collapse.lastCollapse > QT.collapse.cooldown) {
+
+                if (Math.random() < 0.1 * dt) {
+                    // Collapse!
+                    QT.collapse.lastCollapse = time;
+
+                    // Measurement collapses to warm or cold based on probability
+                    if (Math.random() < sup.warm.probability) {
+                        QT.collapse.measurement = 'warm';
+                        sup.warm.amplitude = { real: 1, imag: 0 };
+                        sup.cold.amplitude = { real: 0, imag: 0 };
+                    } else {
+                        QT.collapse.measurement = 'cold';
+                        sup.warm.amplitude = { real: 0, imag: 0 };
+                        sup.cold.amplitude = { real: 1, imag: 0 };
+                    }
+
+                    // Collapse temporarily reduces entanglement
+                    sup.entanglement *= 0.3;
+
+                    console.log('[QuantumTunneling] Wavefunction collapsed to:', QT.collapse.measurement);
+                }
+            }
+
+            // Collapsed state decoheres back to superposition
+            if (sup.warm.probability > 0.95 || sup.cold.probability > 0.95) {
+                // Decoherence: slowly re-establish superposition
+                const decoherenceRate = 0.1 * dt;
+                if (sup.warm.probability > sup.cold.probability) {
+                    sup.cold.amplitude.real += decoherenceRate;
+                } else {
+                    sup.warm.amplitude.real += decoherenceRate;
+                }
+            }
+        }
+
+        // ================================================================
+        // EMERGENT SACRED GEOMETRY
+        // Time + curvature drive formation of sacred geometric patterns
+        // ================================================================
+
+        const SacredGeometry = {
+            // Active geometric forms
+            forms: {
+                // Seed of Life (7 circles)
+                seedOfLife: {
+                    active: false,
+                    completion: 0,              // 0-1 formation progress
+                    circles: 7,
+                    phase: 0,
+                },
+                // Flower of Life (19 circles)
+                flowerOfLife: {
+                    active: false,
+                    completion: 0,
+                    circles: 19,
+                    phase: 0,
+                },
+                // Metatron's Cube (13 circles + lines)
+                metatronsCube: {
+                    active: false,
+                    completion: 0,
+                    vertices: 13,
+                    phase: 0,
+                },
+                // Sri Yantra (9 triangles)
+                sriYantra: {
+                    active: false,
+                    completion: 0,
+                    triangles: 9,
+                    phase: 0,
+                },
+                // Vesica Piscis (2 overlapping circles)
+                vesicaPiscis: {
+                    active: false,
+                    completion: 0,
+                    phase: 0,
+                },
+                // Golden Spiral
+                goldenSpiral: {
+                    active: false,
+                    completion: 0,
+                    turns: 0,
+                    phase: 0,
+                },
+            },
+
+            // Formation thresholds
+            thresholds: {
+                vesicaPiscis: 0.2,              // Easiest to form
+                seedOfLife: 0.35,
+                goldenSpiral: 0.45,
+                flowerOfLife: 0.55,
+                metatronsCube: 0.7,
+                sriYantra: 0.85,                // Most complex
+            },
+
+            // Current dominant form
+            dominant: 'none',
+            dominantStrength: 0,
+
+            // Time accumulation (geometry crystallizes over time)
+            accumulatedTime: 0,
+            curvatureIntegral: 0,               // ∫curvature dt
+
+            // Geometry state
+            state: {
+                symmetryOrder: 0,               // n-fold symmetry detected
+                goldenRatioPresence: 0,         // How much φ is present
+                circularHarmony: 0,             // Circle-based pattern strength
+                triangularHarmony: 0,           // Triangle-based pattern strength
+            },
+        };
+
+        function updateSacredGeometry(dt) {
+            const SG = SacredGeometry;
+
+            // === TIME AND CURVATURE ACCUMULATION ===
+            SG.accumulatedTime += dt;
+            SG.curvatureIntegral += QMESH.timeDilationField.curvatureStrength * dt;
+
+            // Formation factor: combines time, curvature, and coherence
+            const coherence = UnifiedField.emergence.coherence;
+            const curvature = QMESH.timeDilationField.curvatureStrength;
+            const entanglement = QuantumTunneling.superposition.entanglement;
+            const chargeField = ChargeDynamics.field.energy;
+
+            // Formation potential grows with accumulated factors
+            const formationPotential = (
+                coherence * 0.3 +
+                curvature * 0.2 +
+                entanglement * 0.2 +
+                Math.tanh(SG.curvatureIntegral * 0.1) * 0.15 +
+                Math.tanh(SG.accumulatedTime * 0.01) * 0.15
+            );
+
+            // === DETECT SYMMETRY ===
+            // Analyze MuFieldGrid for symmetry patterns
+            if (MuFieldGrid.initialized) {
+                const N = MuFieldGrid.N;
+                let sym2 = 0, sym3 = 0, sym5 = 0, sym6 = 0;
+
+                // Sample points at different angles
+                for (let r = 0.3; r < 0.7; r += 0.1) {
+                    for (let n of [2, 3, 5, 6]) {
+                        let symSum = 0;
+                        for (let k = 0; k < n; k++) {
+                            const angle = (k / n) * TAU;
+                            const x = Math.cos(angle) * r * MuFieldGrid.L / 2;
+                            const y = Math.sin(angle) * r * MuFieldGrid.L / 2;
+
+                            const i = Math.floor((x / MuFieldGrid.L + 0.5) * (N - 1));
+                            const j = Math.floor((y / MuFieldGrid.L + 0.5) * (N - 1));
+
+                            if (i >= 0 && i < N && j >= 0 && j < N) {
+                                const idx = j * N + i;
+                                symSum += Math.abs(MuFieldGrid.curl[idx] || 0);
+                            }
+                        }
+                        if (n === 2) sym2 += symSum / n;
+                        if (n === 3) sym3 += symSum / n;
+                        if (n === 5) sym5 += symSum / n;
+                        if (n === 6) sym6 += symSum / n;
+                    }
+                }
+
+                // Normalize and find dominant symmetry
+                const symTotal = sym2 + sym3 + sym5 + sym6 + 0.01;
+                const maxSym = Math.max(sym2, sym3, sym5, sym6);
+
+                if (maxSym === sym6) SG.state.symmetryOrder = 6;
+                else if (maxSym === sym5) SG.state.symmetryOrder = 5;
+                else if (maxSym === sym3) SG.state.symmetryOrder = 3;
+                else SG.state.symmetryOrder = 2;
+
+                SG.state.circularHarmony = (sym6 + sym3) / symTotal;
+                SG.state.triangularHarmony = sym3 / symTotal;
+            }
+
+            // Golden ratio presence from spiral order
+            SG.state.goldenRatioPresence = CoherenceGeometry.state.spiralOrder * 0.7 +
+                                          (formationPotential > 0.5 ? 0.3 : 0);
+
+            // === FORM ACTIVATION ===
+            // Check each form against threshold
+
+            // Vesica Piscis - first to form (two mesh overlap)
+            if (formationPotential > SG.thresholds.vesicaPiscis) {
+                SG.forms.vesicaPiscis.active = true;
+                SG.forms.vesicaPiscis.completion +=
+                    (formationPotential - SG.thresholds.vesicaPiscis) * dt * 0.3;
+                SG.forms.vesicaPiscis.completion = Math.min(1, SG.forms.vesicaPiscis.completion);
+                SG.forms.vesicaPiscis.phase += PHI_INV * dt;
+            }
+
+            // Seed of Life - 7 circles
+            if (formationPotential > SG.thresholds.seedOfLife && SG.state.circularHarmony > 0.3) {
+                SG.forms.seedOfLife.active = true;
+                SG.forms.seedOfLife.completion +=
+                    (formationPotential - SG.thresholds.seedOfLife) * dt * 0.25;
+                SG.forms.seedOfLife.completion = Math.min(1, SG.forms.seedOfLife.completion);
+                SG.forms.seedOfLife.phase += PHI_INV * 0.8 * dt;
+            }
+
+            // Golden Spiral
+            if (formationPotential > SG.thresholds.goldenSpiral && SG.state.goldenRatioPresence > 0.4) {
+                SG.forms.goldenSpiral.active = true;
+                SG.forms.goldenSpiral.completion +=
+                    (formationPotential - SG.thresholds.goldenSpiral) * dt * 0.2;
+                SG.forms.goldenSpiral.completion = Math.min(1, SG.forms.goldenSpiral.completion);
+                SG.forms.goldenSpiral.turns = SG.forms.goldenSpiral.completion * 5;
+                SG.forms.goldenSpiral.phase += PHI_INV * 0.5 * dt;
+            }
+
+            // Flower of Life
+            if (formationPotential > SG.thresholds.flowerOfLife &&
+                SG.forms.seedOfLife.completion > 0.7) {
+                SG.forms.flowerOfLife.active = true;
+                SG.forms.flowerOfLife.completion +=
+                    (formationPotential - SG.thresholds.flowerOfLife) * dt * 0.15;
+                SG.forms.flowerOfLife.completion = Math.min(1, SG.forms.flowerOfLife.completion);
+                SG.forms.flowerOfLife.phase += PHI_INV * 0.6 * dt;
+            }
+
+            // Metatron's Cube (requires high symmetry)
+            if (formationPotential > SG.thresholds.metatronsCube &&
+                SG.forms.flowerOfLife.completion > 0.6 &&
+                SG.state.symmetryOrder >= 6) {
+                SG.forms.metatronsCube.active = true;
+                SG.forms.metatronsCube.completion +=
+                    (formationPotential - SG.thresholds.metatronsCube) * dt * 0.1;
+                SG.forms.metatronsCube.completion = Math.min(1, SG.forms.metatronsCube.completion);
+                SG.forms.metatronsCube.phase += PHI_INV * 0.4 * dt;
+            }
+
+            // Sri Yantra (highest complexity)
+            if (formationPotential > SG.thresholds.sriYantra &&
+                SG.state.triangularHarmony > 0.4 &&
+                entanglement > 0.6) {
+                SG.forms.sriYantra.active = true;
+                SG.forms.sriYantra.completion +=
+                    (formationPotential - SG.thresholds.sriYantra) * dt * 0.08;
+                SG.forms.sriYantra.completion = Math.min(1, SG.forms.sriYantra.completion);
+                SG.forms.sriYantra.phase += PHI_INV * 0.3 * dt;
+            }
+
+            // === DETERMINE DOMINANT FORM ===
+            let maxCompletion = 0;
+            SG.dominant = 'none';
+
+            for (const [name, form] of Object.entries(SG.forms)) {
+                if (form.active && form.completion > maxCompletion) {
+                    maxCompletion = form.completion;
+                    SG.dominant = name;
+                }
+            }
+            SG.dominantStrength = maxCompletion;
+
+            // === DECAY INACTIVE FORMS ===
+            for (const form of Object.values(SG.forms)) {
+                if (!form.active && form.completion > 0) {
+                    form.completion *= 0.995;  // Slow decay
+                    if (form.completion < 0.01) form.completion = 0;
+                }
+                // Reset active flag for next frame
+                form.active = false;
+            }
+
+            // === FEED BACK TO COHERENCE ===
+            // Sacred geometry formation enhances overall coherence
+            if (SG.dominantStrength > 0.5) {
+                UnifiedField.emergence.coherence += SG.dominantStrength * 0.02 * dt;
+                UnifiedField.emergence.coherence = Math.min(1, UnifiedField.emergence.coherence);
+            }
+        }
+
+        // ================================================================
+        // SACRED GEOMETRY VERTEX GENERATORS
+        // ================================================================
+
+        function getSeedOfLifeCircles(centerX, centerY, radius, completion) {
+            const circles = [];
+            const r = radius * 0.5;
+
+            // Center circle
+            circles.push({ x: centerX, y: centerY, r: r, alpha: completion });
+
+            // 6 surrounding circles
+            for (let i = 0; i < 6; i++) {
+                const angle = (i / 6) * TAU;
+                const x = centerX + Math.cos(angle) * r;
+                const y = centerY + Math.sin(angle) * r;
+                const alpha = Math.min(1, completion * 7 - i) * completion;
+                if (alpha > 0) {
+                    circles.push({ x, y, r, alpha });
+                }
+            }
+
+            return circles;
+        }
+
+        function getFlowerOfLifeCircles(centerX, centerY, radius, completion) {
+            const circles = getSeedOfLifeCircles(centerX, centerY, radius, Math.min(1, completion * 2));
+            const r = radius * 0.5;
+
+            // Additional 12 outer circles
+            if (completion > 0.3) {
+                for (let i = 0; i < 12; i++) {
+                    const angle = (i / 12) * TAU + TAU / 24;
+                    const dist = r * Math.sqrt(3);
+                    const x = centerX + Math.cos(angle) * dist;
+                    const y = centerY + Math.sin(angle) * dist;
+                    const alpha = Math.min(1, (completion - 0.3) * 2) * completion;
+                    circles.push({ x, y, r, alpha });
+                }
+            }
+
+            return circles;
+        }
+
+        function getMetatronsCubeVertices(centerX, centerY, radius, completion) {
+            const vertices = [];
+            const r = radius * 0.6;
+
+            // Center
+            vertices.push({ x: centerX, y: centerY, alpha: completion });
+
+            // Inner hexagon (6 vertices)
+            for (let i = 0; i < 6; i++) {
+                const angle = (i / 6) * TAU;
+                vertices.push({
+                    x: centerX + Math.cos(angle) * r * 0.5,
+                    y: centerY + Math.sin(angle) * r * 0.5,
+                    alpha: completion * Math.min(1, completion * 7 - i),
+                });
+            }
+
+            // Outer hexagon (6 vertices)
+            for (let i = 0; i < 6; i++) {
+                const angle = (i / 6) * TAU + TAU / 12;
+                vertices.push({
+                    x: centerX + Math.cos(angle) * r,
+                    y: centerY + Math.sin(angle) * r,
+                    alpha: completion * Math.min(1, (completion - 0.5) * 2),
+                });
+            }
+
+            return vertices;
+        }
+
+        function getSriYantraTriangles(centerX, centerY, radius, completion) {
+            const triangles = [];
+            const r = radius * 0.5;
+
+            // 4 upward triangles (masculine)
+            for (let i = 0; i < 4; i++) {
+                const scale = 1 - i * 0.2;
+                const alpha = Math.min(1, completion * 9 - i) * completion;
+                if (alpha > 0) {
+                    triangles.push({
+                        type: 'up',
+                        cx: centerX,
+                        cy: centerY + r * i * 0.1,
+                        size: r * scale,
+                        alpha,
+                    });
+                }
+            }
+
+            // 5 downward triangles (feminine)
+            for (let i = 0; i < 5; i++) {
+                const scale = 0.9 - i * 0.15;
+                const alpha = Math.min(1, completion * 9 - 4 - i) * completion;
+                if (alpha > 0) {
+                    triangles.push({
+                        type: 'down',
+                        cx: centerX,
+                        cy: centerY - r * i * 0.08,
+                        size: r * scale,
+                        alpha,
+                    });
+                }
+            }
+
+            return triangles;
+        }
+
+        // ================================================================
         // PHASE COUPLER - HARMONIC TRACKING FOR STABILITY
         // Tracks phase alignment between MRP channels during transitions
         // ================================================================
@@ -5833,6 +6713,529 @@
                         ctx.stroke();
                     }
                 }
+
+                // ================================================================
+                // CHARGE DYNAMICS VISUALIZATION
+                // Electric field lines between warm (+) and cold (-) meshes
+                // ================================================================
+                if (ChargeDynamics) {
+                    const cd = ChargeDynamics;
+                    const fieldEnergy = cd.field.energy;
+
+                    // Electric field lines (dipole pattern)
+                    if (fieldEnergy > 0.01) {
+                        const warmX = CX - R * 0.6;  // Warm mesh position (left)
+                        const coldX = CX + R * 0.6;  // Cold mesh position (right)
+                        const fieldAlpha = Math.min(0.5, fieldEnergy * 0.3);
+
+                        // Draw field lines from + to -
+                        ctx.strokeStyle = `rgba(255, 200, 100, ${fieldAlpha})`;
+                        ctx.lineWidth = 1;
+
+                        for (let i = -3; i <= 3; i++) {
+                            const yOffset = i * R * 0.15;
+                            const curvature = Math.abs(i) * 0.3;
+
+                            ctx.beginPath();
+                            ctx.moveTo(warmX, CY + yOffset);
+
+                            // Curved field line with curvature based on distance from axis
+                            const cp1x = warmX + (coldX - warmX) * 0.33;
+                            const cp1y = CY + yOffset + (i * R * curvature);
+                            const cp2x = warmX + (coldX - warmX) * 0.67;
+                            const cp2y = CY + yOffset + (i * R * curvature);
+
+                            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, coldX, CY + yOffset);
+                            ctx.stroke();
+
+                            // Arrow head at midpoint
+                            const midX = (warmX + coldX) / 2;
+                            const midY = CY + yOffset + (i * R * curvature * 0.5);
+                            ctx.fillStyle = `rgba(255, 200, 100, ${fieldAlpha})`;
+                            ctx.beginPath();
+                            ctx.moveTo(midX + 5, midY);
+                            ctx.lineTo(midX - 3, midY - 3);
+                            ctx.lineTo(midX - 3, midY + 3);
+                            ctx.closePath();
+                            ctx.fill();
+                        }
+
+                        // Charge indicators
+                        // Warm (+) glow
+                        const warmGlow = ctx.createRadialGradient(warmX, CY, 0, warmX, CY, R * 0.15);
+                        warmGlow.addColorStop(0, `rgba(255, 150, 100, ${fieldAlpha * 0.8})`);
+                        warmGlow.addColorStop(1, 'transparent');
+                        ctx.fillStyle = warmGlow;
+                        ctx.fillRect(warmX - R * 0.15, CY - R * 0.15, R * 0.3, R * 0.3);
+
+                        // Cold (-) glow
+                        const coldGlow = ctx.createRadialGradient(coldX, CY, 0, coldX, CY, R * 0.15);
+                        coldGlow.addColorStop(0, `rgba(100, 150, 255, ${fieldAlpha * 0.8})`);
+                        coldGlow.addColorStop(1, 'transparent');
+                        ctx.fillStyle = coldGlow;
+                        ctx.fillRect(coldX - R * 0.15, CY - R * 0.15, R * 0.3, R * 0.3);
+                    }
+
+                    // Discharge event visualization
+                    if (cd.discharge.intensity > 0.1) {
+                        const dischAlpha = cd.discharge.intensity * 0.8;
+                        const warmX = CX - R * 0.6;
+                        const coldX = CX + R * 0.6;
+
+                        // Lightning bolt effect
+                        ctx.strokeStyle = `rgba(255, 255, 200, ${dischAlpha})`;
+                        ctx.lineWidth = 2 + cd.discharge.intensity * 3;
+                        ctx.shadowColor = 'rgba(255, 200, 100, 0.8)';
+                        ctx.shadowBlur = 10 + cd.discharge.intensity * 20;
+
+                        ctx.beginPath();
+                        ctx.moveTo(warmX, CY);
+
+                        // Jagged discharge path
+                        const segments = 6;
+                        for (let i = 1; i <= segments; i++) {
+                            const t = i / segments;
+                            const x = warmX + (coldX - warmX) * t;
+                            const y = CY + (Math.random() - 0.5) * R * 0.3 * (1 - Math.abs(t - 0.5) * 2);
+                            ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                        ctx.shadowBlur = 0;
+                    }
+                }
+
+                // ================================================================
+                // QUANTUM TUNNELING VISUALIZATION
+                // Superposition, interference, and tunneling between meshes
+                // ================================================================
+                if (QuantumTunneling) {
+                    const qt = QuantumTunneling;
+                    const warmX = CX - R * 0.6;
+                    const coldX = CX + R * 0.6;
+
+                    // Superposition visualization (probability clouds)
+                    const warmProb = qt.superposition.warm.probability;
+                    const coldProb = qt.superposition.cold.probability;
+
+                    // Warm probability cloud
+                    if (warmProb > 0.1) {
+                        const warmCloud = ctx.createRadialGradient(warmX, CY, 0, warmX, CY, R * 0.25 * warmProb);
+                        warmCloud.addColorStop(0, `rgba(255, 180, 100, ${warmProb * 0.4})`);
+                        warmCloud.addColorStop(0.5, `rgba(255, 150, 80, ${warmProb * 0.2})`);
+                        warmCloud.addColorStop(1, 'transparent');
+                        ctx.fillStyle = warmCloud;
+                        ctx.fillRect(warmX - R * 0.3, CY - R * 0.3, R * 0.6, R * 0.6);
+                    }
+
+                    // Cold probability cloud
+                    if (coldProb > 0.1) {
+                        const coldCloud = ctx.createRadialGradient(coldX, CY, 0, coldX, CY, R * 0.25 * coldProb);
+                        coldCloud.addColorStop(0, `rgba(100, 180, 255, ${coldProb * 0.4})`);
+                        coldCloud.addColorStop(0.5, `rgba(80, 150, 255, ${coldProb * 0.2})`);
+                        coldCloud.addColorStop(1, 'transparent');
+                        ctx.fillStyle = coldCloud;
+                        ctx.fillRect(coldX - R * 0.3, CY - R * 0.3, R * 0.6, R * 0.6);
+                    }
+
+                    // Entanglement visualization (connecting thread)
+                    if (qt.superposition.entanglement > 0.2) {
+                        const entAlpha = (qt.superposition.entanglement - 0.2) * 0.6;
+                        const entPhase = time * 2;
+
+                        ctx.strokeStyle = `rgba(200, 150, 255, ${entAlpha})`;
+                        ctx.lineWidth = 1 + qt.superposition.entanglement * 2;
+                        ctx.setLineDash([5, 5]);
+
+                        ctx.beginPath();
+                        ctx.moveTo(warmX, CY);
+
+                        // Wavy entanglement line
+                        for (let t = 0; t <= 1; t += 0.05) {
+                            const x = warmX + (coldX - warmX) * t;
+                            const wave = Math.sin(t * TAU * 3 + entPhase) * R * 0.05 * qt.superposition.entanglement;
+                            ctx.lineTo(x, CY + wave);
+                        }
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+
+                    // Tunneling in progress
+                    if (qt.tunneling.inProgress) {
+                        const progress = qt.tunneling.progress;
+                        const tunnelX = warmX + (coldX - warmX) * progress;
+                        const direction = qt.tunneling.direction;
+
+                        // Tunneling particle
+                        const particleGlow = ctx.createRadialGradient(tunnelX, CY, 0, tunnelX, CY, R * 0.1);
+                        particleGlow.addColorStop(0, `rgba(255, 255, 200, 0.8)`);
+                        particleGlow.addColorStop(0.5, `rgba(200, 180, 255, 0.4)`);
+                        particleGlow.addColorStop(1, 'transparent');
+                        ctx.fillStyle = particleGlow;
+                        ctx.fillRect(tunnelX - R * 0.1, CY - R * 0.1, R * 0.2, R * 0.2);
+
+                        // Barrier visualization
+                        const barrierX = CX;
+                        ctx.fillStyle = `rgba(100, 100, 150, ${(1 - progress) * 0.3})`;
+                        ctx.fillRect(barrierX - 10, CY - R * 0.3, 20, R * 0.6);
+                    }
+
+                    // Interference pattern
+                    if (qt.interference.visibility > 0.1) {
+                        const pattern = qt.interference.pattern;
+                        const visAlpha = qt.interference.visibility * 0.3;
+
+                        ctx.fillStyle = `rgba(180, 160, 255, ${visAlpha})`;
+
+                        for (let i = 0; i < pattern.length; i++) {
+                            const x = CX + (i - pattern.length / 2) * 8;
+                            const intensity = pattern[i];
+                            const barH = intensity * R * 0.15;
+
+                            ctx.fillRect(x - 2, CY + R * 0.4, 4, barH);
+                        }
+                    }
+                }
+
+                // ================================================================
+                // WEAK NUCLEAR BOSON VISUALIZATION
+                // W+, W-, and Z boson carriers of information flow
+                // ================================================================
+                if (WeakNuclear && WeakNuclear.bosons) {
+                    const bosons = WeakNuclear.bosons;
+
+                    // W+ bosons (warm to cold, orange)
+                    for (const b of bosons.W_plus) {
+                        const bx = CX + (b.x - 0.5) * R * 1.2;
+                        const by = CY + (b.y - 0.5) * R * 0.6;
+
+                        ctx.fillStyle = `rgba(255, 180, 80, ${b.life * 0.7})`;
+                        ctx.beginPath();
+                        ctx.arc(bx, by, 3 + b.energy * 4, 0, TAU);
+                        ctx.fill();
+                    }
+
+                    // W- bosons (cold to warm, blue)
+                    for (const b of bosons.W_minus) {
+                        const bx = CX + (b.x - 0.5) * R * 1.2;
+                        const by = CY + (b.y - 0.5) * R * 0.6;
+
+                        ctx.fillStyle = `rgba(80, 180, 255, ${b.life * 0.7})`;
+                        ctx.beginPath();
+                        ctx.arc(bx, by, 3 + b.energy * 4, 0, TAU);
+                        ctx.fill();
+                    }
+
+                    // Z bosons (neutral, purple)
+                    for (const b of bosons.Z) {
+                        const bx = CX + (b.x - 0.5) * R * 1.2;
+                        const by = CY + (b.y - 0.5) * R * 0.6;
+
+                        ctx.fillStyle = `rgba(180, 100, 255, ${b.life * 0.7})`;
+                        ctx.beginPath();
+                        ctx.arc(bx, by, 3 + b.energy * 4, 0, TAU);
+                        ctx.fill();
+                    }
+
+                    // Flavor oscillation visualization (center region)
+                    const flavors = WeakNuclear.flavors;
+                    const totalFlavor = flavors.electron.intensity + flavors.muon.intensity + flavors.tau.intensity;
+
+                    if (totalFlavor > 0.1) {
+                        // Electron flavor (green)
+                        const eGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 0.2);
+                        eGlow.addColorStop(0, `rgba(100, 255, 150, ${flavors.electron.intensity * 0.2})`);
+                        eGlow.addColorStop(1, 'transparent');
+                        ctx.fillStyle = eGlow;
+                        ctx.fillRect(CX - R * 0.2, CY - R * 0.2, R * 0.4, R * 0.4);
+
+                        // Muon flavor (magenta)
+                        const mGlow = ctx.createRadialGradient(CX, CY - R * 0.1, 0, CX, CY - R * 0.1, R * 0.15);
+                        mGlow.addColorStop(0, `rgba(255, 100, 200, ${flavors.muon.intensity * 0.2})`);
+                        mGlow.addColorStop(1, 'transparent');
+                        ctx.fillStyle = mGlow;
+                        ctx.fillRect(CX - R * 0.15, CY - R * 0.25, R * 0.3, R * 0.3);
+
+                        // Tau flavor (cyan)
+                        const tGlow = ctx.createRadialGradient(CX, CY + R * 0.1, 0, CX, CY + R * 0.1, R * 0.15);
+                        tGlow.addColorStop(0, `rgba(100, 255, 255, ${flavors.tau.intensity * 0.2})`);
+                        tGlow.addColorStop(1, 'transparent');
+                        ctx.fillStyle = tGlow;
+                        ctx.fillRect(CX - R * 0.15, CY - R * 0.05, R * 0.3, R * 0.3);
+                    }
+                }
+
+                // ================================================================
+                // SACRED GEOMETRY EMERGENCE VISUALIZATION
+                // Forms emerge as time accumulates and space-time curves
+                // ================================================================
+                if (SacredGeometry) {
+                    const sg = SacredGeometry;
+                    const forms = sg.forms;
+                    const scale = R * 0.4;
+
+                    // Vesica Piscis (earliest form)
+                    if (forms.vesicaPiscis.active && forms.vesicaPiscis.completion > 0.1) {
+                        const vp = forms.vesicaPiscis;
+                        const alpha = vp.completion * 0.4;
+                        const offset = scale * 0.5 * vp.completion;
+
+                        ctx.strokeStyle = `rgba(200, 180, 255, ${alpha})`;
+                        ctx.lineWidth = 1 + vp.completion * 1.5;
+
+                        // Two overlapping circles
+                        ctx.beginPath();
+                        ctx.arc(CX - offset, CY, scale, 0, TAU);
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.arc(CX + offset, CY, scale, 0, TAU);
+                        ctx.stroke();
+
+                        // Vesica intersection glow
+                        if (vp.completion > 0.5) {
+                            const vesicaGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, scale * 0.5);
+                            vesicaGlow.addColorStop(0, `rgba(255, 240, 200, ${(vp.completion - 0.5) * 0.4})`);
+                            vesicaGlow.addColorStop(1, 'transparent');
+                            ctx.fillStyle = vesicaGlow;
+                            ctx.fillRect(CX - scale * 0.5, CY - scale * 0.5, scale, scale);
+                        }
+                    }
+
+                    // Golden Spiral
+                    if (forms.goldenSpiral.active && forms.goldenSpiral.completion > 0.1) {
+                        const gs = forms.goldenSpiral;
+                        const alpha = gs.completion * 0.5;
+                        const maxT = 4 * gs.completion;
+
+                        ctx.strokeStyle = `rgba(255, 215, 100, ${alpha})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+
+                        for (let t = 0.1; t < maxT; t += 0.1) {
+                            const spiralR = Math.pow(PHI, t * 0.4) * R * 0.05;
+                            const theta = t + gs.phase;
+                            const px = CX + Math.cos(theta) * spiralR;
+                            const py = CY + Math.sin(theta) * spiralR;
+
+                            if (t === 0.1) {
+                                ctx.moveTo(px, py);
+                            } else {
+                                ctx.lineTo(px, py);
+                            }
+                        }
+                        ctx.stroke();
+                    }
+
+                    // Seed of Life (7 circles)
+                    if (forms.seedOfLife.active && forms.seedOfLife.completion > 0.1) {
+                        const sol = forms.seedOfLife;
+                        const alpha = sol.completion * 0.35;
+                        const circleR = scale * 0.4;
+                        const visibleCircles = Math.floor(sol.completion * 7);
+
+                        ctx.strokeStyle = `rgba(180, 220, 255, ${alpha})`;
+                        ctx.lineWidth = 1;
+
+                        // Center circle
+                        if (visibleCircles >= 1) {
+                            ctx.beginPath();
+                            ctx.arc(CX, CY, circleR, 0, TAU);
+                            ctx.stroke();
+                        }
+
+                        // 6 surrounding circles
+                        for (let i = 0; i < Math.min(6, visibleCircles - 1); i++) {
+                            const angle = (i / 6) * TAU + sol.phase;
+                            const cx = CX + Math.cos(angle) * circleR;
+                            const cy = CY + Math.sin(angle) * circleR;
+
+                            ctx.beginPath();
+                            ctx.arc(cx, cy, circleR, 0, TAU);
+                            ctx.stroke();
+                        }
+                    }
+
+                    // Flower of Life (19 circles)
+                    if (forms.flowerOfLife.active && forms.flowerOfLife.completion > 0.1) {
+                        const fol = forms.flowerOfLife;
+                        const alpha = fol.completion * 0.3;
+                        const circleR = scale * 0.25;
+                        const visibleCircles = Math.floor(fol.completion * 19);
+
+                        ctx.strokeStyle = `rgba(200, 180, 255, ${alpha})`;
+                        ctx.lineWidth = 0.8;
+
+                        // Generate flower of life pattern
+                        const circles = [];
+                        circles.push({ x: CX, y: CY });
+
+                        // First ring (6 circles)
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (i / 6) * TAU + fol.phase;
+                            circles.push({
+                                x: CX + Math.cos(angle) * circleR,
+                                y: CY + Math.sin(angle) * circleR
+                            });
+                        }
+
+                        // Second ring (12 circles)
+                        for (let i = 0; i < 6; i++) {
+                            const angle1 = (i / 6) * TAU + fol.phase;
+                            const angle2 = ((i + 0.5) / 6) * TAU + fol.phase;
+
+                            circles.push({
+                                x: CX + Math.cos(angle1) * circleR * 2,
+                                y: CY + Math.sin(angle1) * circleR * 2
+                            });
+                            circles.push({
+                                x: CX + Math.cos(angle2) * circleR * Math.sqrt(3),
+                                y: CY + Math.sin(angle2) * circleR * Math.sqrt(3)
+                            });
+                        }
+
+                        for (let i = 0; i < Math.min(visibleCircles, circles.length); i++) {
+                            const c = circles[i];
+                            ctx.beginPath();
+                            ctx.arc(c.x, c.y, circleR, 0, TAU);
+                            ctx.stroke();
+                        }
+                    }
+
+                    // Metatron's Cube (13 vertices connected)
+                    if (forms.metatronsCube.active && forms.metatronsCube.completion > 0.1) {
+                        const mc = forms.metatronsCube;
+                        const alpha = mc.completion * 0.4;
+                        const visibleVerts = Math.floor(mc.completion * 13);
+
+                        // Generate vertices (center + 2 hexagons)
+                        const vertices = [{ x: CX, y: CY }];
+                        const innerR = scale * 0.35;
+                        const outerR = scale * 0.7;
+
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (i / 6) * TAU + mc.phase;
+                            vertices.push({
+                                x: CX + Math.cos(angle) * innerR,
+                                y: CY + Math.sin(angle) * innerR
+                            });
+                        }
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (i / 6) * TAU + Math.PI / 6 + mc.phase;
+                            vertices.push({
+                                x: CX + Math.cos(angle) * outerR,
+                                y: CY + Math.sin(angle) * outerR
+                            });
+                        }
+
+                        // Draw connections
+                        ctx.strokeStyle = `rgba(255, 200, 150, ${alpha * 0.5})`;
+                        ctx.lineWidth = 0.5;
+
+                        for (let i = 0; i < Math.min(visibleVerts, vertices.length); i++) {
+                            for (let j = i + 1; j < Math.min(visibleVerts, vertices.length); j++) {
+                                ctx.beginPath();
+                                ctx.moveTo(vertices[i].x, vertices[i].y);
+                                ctx.lineTo(vertices[j].x, vertices[j].y);
+                                ctx.stroke();
+                            }
+                        }
+
+                        // Vertex circles
+                        ctx.strokeStyle = `rgba(255, 220, 180, ${alpha})`;
+                        ctx.lineWidth = 1;
+                        for (let i = 0; i < Math.min(visibleVerts, vertices.length); i++) {
+                            ctx.beginPath();
+                            ctx.arc(vertices[i].x, vertices[i].y, 8, 0, TAU);
+                            ctx.stroke();
+                        }
+                    }
+
+                    // Sri Yantra (9 interlocking triangles)
+                    if (forms.sriYantra.active && forms.sriYantra.completion > 0.1) {
+                        const sy = forms.sriYantra;
+                        const alpha = sy.completion * 0.45;
+                        const visibleTri = Math.floor(sy.completion * 9);
+
+                        // Outer boundary circle
+                        ctx.strokeStyle = `rgba(255, 200, 100, ${alpha * 0.7})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+                        ctx.arc(CX, CY, scale, 0, TAU);
+                        ctx.stroke();
+
+                        // Interlocking triangles
+                        const triangles = [];
+
+                        // 4 upward triangles (Shiva - male)
+                        for (let i = 0; i < 4; i++) {
+                            const size = scale * (0.9 - i * 0.15);
+                            const yOffset = scale * (i * 0.05);
+                            triangles.push({
+                                type: 'up',
+                                points: [
+                                    { x: CX, y: CY - size + yOffset },
+                                    { x: CX - size * 0.866, y: CY + size * 0.5 + yOffset },
+                                    { x: CX + size * 0.866, y: CY + size * 0.5 + yOffset }
+                                ]
+                            });
+                        }
+
+                        // 5 downward triangles (Shakti - female)
+                        for (let i = 0; i < 5; i++) {
+                            const size = scale * (0.85 - i * 0.12);
+                            const yOffset = scale * (-i * 0.04);
+                            triangles.push({
+                                type: 'down',
+                                points: [
+                                    { x: CX, y: CY + size + yOffset },
+                                    { x: CX - size * 0.866, y: CY - size * 0.5 + yOffset },
+                                    { x: CX + size * 0.866, y: CY - size * 0.5 + yOffset }
+                                ]
+                            });
+                        }
+
+                        for (let i = 0; i < Math.min(visibleTri, triangles.length); i++) {
+                            const tri = triangles[i];
+                            const triAlpha = alpha * (tri.type === 'up' ? 1 : 0.8);
+
+                            ctx.strokeStyle = tri.type === 'up'
+                                ? `rgba(255, 180, 100, ${triAlpha})`
+                                : `rgba(200, 150, 255, ${triAlpha})`;
+                            ctx.lineWidth = 1;
+
+                            ctx.beginPath();
+                            ctx.moveTo(tri.points[0].x, tri.points[0].y);
+                            ctx.lineTo(tri.points[1].x, tri.points[1].y);
+                            ctx.lineTo(tri.points[2].x, tri.points[2].y);
+                            ctx.closePath();
+                            ctx.stroke();
+                        }
+
+                        // Central bindu (dot)
+                        if (sy.completion > 0.8) {
+                            const binduGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, 15);
+                            binduGlow.addColorStop(0, `rgba(255, 255, 240, ${(sy.completion - 0.8) * 2})`);
+                            binduGlow.addColorStop(0.5, `rgba(255, 220, 150, ${(sy.completion - 0.8) * 1})`);
+                            binduGlow.addColorStop(1, 'transparent');
+                            ctx.fillStyle = binduGlow;
+                            ctx.fillRect(CX - 15, CY - 15, 30, 30);
+                        }
+                    }
+
+                    // Dominant form indicator
+                    if (sg.dominant !== 'none' && sg.dominantStrength > 0.3) {
+                        const domAlpha = (sg.dominantStrength - 0.3) * 0.3;
+
+                        // Outer ring showing dominant form
+                        ctx.strokeStyle = `rgba(255, 240, 200, ${domAlpha})`;
+                        ctx.lineWidth = 2;
+                        ctx.setLineDash([10, 5]);
+                        ctx.beginPath();
+                        ctx.arc(CX, CY, R * 1.05, 0, TAU);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+                }
             }
 
             // Draw connections (skip if both points released)
@@ -6703,6 +8106,38 @@
             // ================================================================
             if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
                 updateMeshAlterations(dt);
+            }
+
+            // ================================================================
+            // CHARGE DYNAMICS UPDATE
+            // Coulomb forces between warm (+) and cold (-) meshes
+            // ================================================================
+            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
+                updateChargeDynamics(dt);
+            }
+
+            // ================================================================
+            // WEAK NUCLEAR INFORMATION FLOW UPDATE
+            // Flavor oscillation and parity-violating information transfer
+            // ================================================================
+            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
+                updateWeakNuclearFlow(dt);
+            }
+
+            // ================================================================
+            // QUANTUM TUNNELING UPDATE
+            // Superposition and tunneling between mesh states
+            // ================================================================
+            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
+                updateQuantumTunneling(dt);
+            }
+
+            // ================================================================
+            // SACRED GEOMETRY EMERGENCE UPDATE
+            // Forms emerge as time accumulates and space curves
+            // ================================================================
+            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
+                updateSacredGeometry(dt);
             }
 
             return updatePositions(dt);
