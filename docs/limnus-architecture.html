@@ -4616,8 +4616,8 @@
                     const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
 
                     // Z-based angular velocity: ω = √(g/L) where Z acts as inverse pendulum length
-                    // Low Z = moderate, High Z = fast spin
-                    const omega = 1.5 + Math.pow(globalZ, 0.5) * 6.5;  // Range: 1.5 to 8 rad/s
+                    // Low Z = gentle, High Z = brisk spin
+                    const omega = 0.75 + Math.pow(globalZ, 0.5) * 3.25;  // Range: 0.75 to 4 rad/s
                     const baseSpeed = omega * dt;
 
                     if (mode === 'horizontal') {
