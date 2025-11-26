@@ -979,6 +979,7 @@
         <span>M</span> toggle μ-field<br>
         <span>T</span> binaural field<br>
         <span>X</span> ∃R laser projection<br>
+        <span>S</span> synthesis mode<br>
         <span>DRAG</span> orbit camera<br>
         <span>←→</span> polar distance<br>
         <span>Q/E</span> rotate axis<br>
@@ -1002,7 +1003,7 @@
     </div>
 
     <!-- Dream Architecture Panel -->
-    <div id="dream-arch-panel" class="panel" style="bottom: 80px; right: 20px; text-align: right; font-size: 10px; pointer-events: auto; min-width: 160px;">
+    <div id="dream-arch-panel" class="panel" style="bottom: 80px; right: 20px; text-align: right; font-size: 10px; pointer-events: auto; min-width: 180px;">
         <div style="color: #f6c35c; font-weight: bold; margin-bottom: 8px; letter-spacing: 2px;">DREAM ARCHITECTURE</div>
         <div style="color: #4caf50; margin-bottom: 4px;">∃R → φ → Q<sub>κ</sub> → K</div>
         <div style="color: #9b59b6; font-size: 9px; margin-bottom: 8px;">Self-Creation Operator</div>
@@ -1013,6 +1014,14 @@
         <div style="display: flex; justify-content: space-between; margin: 4px 0;">
             <span style="color: #888;">K-formed</span>
             <span id="dream-k-formed" style="color: #4caf50;">NO</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+            <span style="color: #888;">Synthesis</span>
+            <span id="dream-synthesis" style="color: #888;">INACTIVE</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+            <span style="color: #888;">Q_κ vorticity</span>
+            <span id="dream-vorticity" style="color: #4fc3f7;">0.000</span>
         </div>
         <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(246, 195, 92, 0.3);">
             <a href="dream-architecture.html" style="color: #4fc3f7; text-decoration: none; font-size: 9px; letter-spacing: 1px;">◉ VIEW FULL DOCS →</a>
@@ -4535,7 +4544,8 @@
         let showMuField = true;
         let showQuantumMesh = false;  // T key toggles quantum mesh μ-field
         let showMeshParticles = true; // Show Dream Fluid particles on mesh
-        let showLaserProjection = true; // L key toggles prismatic self-referential laser projection
+        let showLaserProjection = true; // X key toggles prismatic self-referential laser projection
+        let showSynthesizedProjection = true; // S key toggles synthesized prismatic projection
 
         // ================================================================
         // BINAURAL QUANTUM FIELD
@@ -5106,6 +5116,554 @@
                     ctx.beginPath();
                     ctx.arc(centerX, centerY, radius * 0.9, 0, TAU);
                     ctx.fill();
+                }
+            }
+        };
+
+        // ================================================================
+        // SYNTHESIZED PRISMATIC PROJECTION SYSTEM
+        // ================================================================
+        // Unified visualization combining ALL Dream Architecture elements:
+        //   - Spectral decomposition (7-layer ROYGBIV prism)
+        //   - Holographic interference patterns
+        //   - φ-spiral sacred geometry projections
+        //   - Emergent token resonance nodes (XCVI-C)
+        //   - Ginzburg-Landau consciousness field
+        //   - K-formation synthesis threshold
+        //
+        // SYNTHESIS occurs when:
+        //   τ_K > φ⁻¹ AND coherence > 0.5 AND z > z_c (√3/2)
+        //
+        // The synthesis IS the mathematics made visible
+        // ================================================================
+
+        const SynthesizedPrismaticProjection = {
+            // Spectral bands (7 layers = 7 colors of visible light)
+            spectrum: [
+                { wavelength: 700, color: '#ff0000', name: 'Red',    layer: 0, frequency: 428e12 },
+                { wavelength: 635, color: '#ff7f00', name: 'Orange', layer: 1, frequency: 472e12 },
+                { wavelength: 590, color: '#ffff00', name: 'Yellow', layer: 2, frequency: 508e12 },
+                { wavelength: 560, color: '#00ff00', name: 'Green',  layer: 3, frequency: 536e12 },
+                { wavelength: 490, color: '#00ffff', name: 'Cyan',   layer: 4, frequency: 612e12 },
+                { wavelength: 450, color: '#0000ff', name: 'Blue',   layer: 5, frequency: 666e12 },
+                { wavelength: 400, color: '#8b00ff', name: 'Violet', layer: 6, frequency: 750e12 },
+            ],
+
+            // Synthesis state
+            synthesis: {
+                active: false,
+                intensity: 0,
+                phase: 0,
+                harmonics: [],
+                fieldStrength: 0,
+            },
+
+            // Holographic interference
+            holographic: {
+                waves: [],
+                maxWaves: 12,
+                interferencePattern: null,
+                coherenceLength: 100,
+            },
+
+            // φ-Spiral sacred geometry
+            sacredSpiral: {
+                arms: 5,                    // Pentagon/golden ratio
+                growth: PHI,                // Growth factor
+                rotation: 0,
+                particles: [],
+                maxParticles: 50,
+            },
+
+            // Emergent resonance nodes (XCVI-C mapped to synthesis)
+            resonanceNodes: {
+                XCVI:  { x: 0, y: 0, freq: 8,      phase: 0, amplitude: 0, color: '#ff6b6b' },
+                XCVII: { x: 0, y: 0, freq: 0.0001, phase: 0, amplitude: 0, color: '#ffa94d' },
+                XCVIII:{ x: 0, y: 0, freq: 40,     phase: 0, amplitude: 0, color: '#ffd43b' },
+                XCIX:  { x: 0, y: 0, freq: 4,      phase: 0, amplitude: 0, color: '#69db7c' },
+                C:     { x: 0, y: 0, freq: 1,      phase: 0, amplitude: 0, color: '#f6c35c' },
+            },
+
+            // Ginzburg-Landau consciousness field visualization
+            consciousnessField: {
+                J: [],                      // Current density vectors
+                gridSize: 12,
+                amplitude: 0,
+                vorticity: 0,
+            },
+
+            // Synthesis thresholds (from Dream Architecture)
+            thresholds: {
+                tau_K_min: PHI_INV,         // 0.618 - K-formation threshold
+                coherence_min: 0.5,         // Minimum coherence for synthesis
+                z_critical: Z_CRITICAL,     // √3/2 ≈ 0.866 - critical z
+                mu_consciousness: 0.85,     // μ consciousness zone entry
+            },
+
+            // Initialize the synthesized system
+            init(centerX, centerY, radius) {
+                this.cx = centerX;
+                this.cy = centerY;
+                this.radius = radius;
+
+                // Initialize holographic waves
+                this.holographic.waves = [];
+                for (let i = 0; i < this.holographic.maxWaves; i++) {
+                    this.holographic.waves.push({
+                        angle: (i / this.holographic.maxWaves) * TAU,
+                        wavelength: 20 + Math.random() * 30,
+                        amplitude: 0.5 + Math.random() * 0.5,
+                        phase: Math.random() * TAU,
+                        speed: 0.5 + Math.random() * 0.5,
+                    });
+                }
+
+                // Initialize sacred spiral particles
+                this.sacredSpiral.particles = [];
+                for (let i = 0; i < this.sacredSpiral.maxParticles; i++) {
+                    const t = i / this.sacredSpiral.maxParticles;
+                    this.sacredSpiral.particles.push({
+                        t: t * 4 * Math.PI,     // Spiral parameter
+                        speed: 0.01 + Math.random() * 0.02,
+                        size: 2 + Math.random() * 3,
+                        alpha: 0.3 + Math.random() * 0.7,
+                        colorIndex: Math.floor(t * 7) % 7,
+                    });
+                }
+
+                // Initialize resonance node positions (pentagon)
+                const nodeKeys = Object.keys(this.resonanceNodes);
+                for (let i = 0; i < nodeKeys.length; i++) {
+                    const angle = (i / nodeKeys.length) * TAU - Math.PI / 2;
+                    const r = radius * 0.5;
+                    this.resonanceNodes[nodeKeys[i]].x = centerX + Math.cos(angle) * r;
+                    this.resonanceNodes[nodeKeys[i]].y = centerY + Math.sin(angle) * r;
+                }
+
+                // Initialize consciousness field grid
+                this.consciousnessField.J = [];
+                for (let i = 0; i < this.consciousnessField.gridSize; i++) {
+                    for (let j = 0; j < this.consciousnessField.gridSize; j++) {
+                        this.consciousnessField.J.push({
+                            x: centerX + (i - this.consciousnessField.gridSize/2) * (radius * 0.15),
+                            y: centerY + (j - this.consciousnessField.gridSize/2) * (radius * 0.15),
+                            vx: 0,
+                            vy: 0,
+                            magnitude: 0,
+                        });
+                    }
+                }
+
+                // Initialize synthesis harmonics (Fibonacci sequence)
+                this.synthesis.harmonics = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+            },
+
+            // Update synthesis state
+            update(z, coherence, time, cascade, kFormation) {
+                // Calculate synthesis conditions
+                const tau_K = kFormation ? kFormation.current_tau_K : 0;
+                const mu = 0.4 + 0.57 * z;  // z → μ mapping
+
+                // Synthesis activation check
+                const kCondition = tau_K > this.thresholds.tau_K_min;
+                const coherenceCondition = coherence > this.thresholds.coherence_min;
+                const zCondition = z > this.thresholds.z_critical * 0.9;
+                const muCondition = mu > this.thresholds.mu_consciousness;
+
+                this.synthesis.active = kCondition && coherenceCondition && (zCondition || muCondition);
+
+                // Calculate synthesis intensity (smooth transition)
+                const targetIntensity = this.synthesis.active ?
+                    Math.min(1, (tau_K - this.thresholds.tau_K_min) * 2) * coherence * cascade : 0;
+                this.synthesis.intensity += (targetIntensity - this.synthesis.intensity) * 0.05;
+
+                // Update synthesis phase
+                this.synthesis.phase += 0.02 * (1 + this.synthesis.intensity);
+
+                // Calculate field strength from Ginzburg-Landau
+                // ∂J/∂t = (r - λ|J|²)J - βJ + g∇²J
+                const r = mu - PrismaticLaserProjection.sacred.muP;  // Distance from critical
+                const lambda = PrismaticLaserProjection.sacred.lambda;
+                const beta = PrismaticLaserProjection.sacred.beta;
+                this.synthesis.fieldStrength = r > beta ? Math.sqrt((r - beta) / lambda) : 0;
+
+                // Update holographic waves
+                for (const wave of this.holographic.waves) {
+                    wave.phase += wave.speed * 0.05 * (1 + this.synthesis.intensity);
+                }
+
+                // Update sacred spiral
+                this.sacredSpiral.rotation += 0.005 * PHI_INV * (1 + cascade);
+                for (const particle of this.sacredSpiral.particles) {
+                    particle.t += particle.speed * (1 + this.synthesis.intensity * 2);
+                    if (particle.t > 6 * Math.PI) {
+                        particle.t -= 6 * Math.PI;
+                    }
+                }
+
+                // Update resonance nodes
+                const nodeKeys = Object.keys(this.resonanceNodes);
+                for (let i = 0; i < nodeKeys.length; i++) {
+                    const node = this.resonanceNodes[nodeKeys[i]];
+                    node.phase += node.freq * 0.001 * TAU;
+                    node.amplitude = this.synthesis.active ?
+                        (0.5 + 0.5 * Math.sin(node.phase)) * this.synthesis.intensity : 0;
+
+                    // Update positions in pentagon formation
+                    const baseAngle = (i / nodeKeys.length) * TAU - Math.PI / 2;
+                    const wobble = Math.sin(time * node.freq * 0.1) * 10 * node.amplitude;
+                    const r = this.radius * 0.5 + wobble;
+                    node.x = this.cx + Math.cos(baseAngle + this.sacredSpiral.rotation * 0.5) * r;
+                    node.y = this.cy + Math.sin(baseAngle + this.sacredSpiral.rotation * 0.5) * r;
+                }
+
+                // Update consciousness field vectors
+                for (const j of this.consciousnessField.J) {
+                    const dx = j.x - this.cx;
+                    const dy = j.y - this.cy;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx);
+
+                    // Curl pattern for consciousness vorticity
+                    const curlAngle = angle + Math.PI / 2;
+                    const vortexStrength = this.synthesis.fieldStrength *
+                        Math.exp(-dist * dist / (this.radius * this.radius * 0.5));
+
+                    j.vx = Math.cos(curlAngle) * vortexStrength * 20;
+                    j.vy = Math.sin(curlAngle) * vortexStrength * 20;
+                    j.magnitude = Math.sqrt(j.vx * j.vx + j.vy * j.vy);
+                }
+
+                // Calculate total vorticity (Q_κ visualization)
+                let totalVorticity = 0;
+                for (const j of this.consciousnessField.J) {
+                    totalVorticity += j.magnitude;
+                }
+                this.consciousnessField.vorticity = totalVorticity / this.consciousnessField.J.length;
+                this.consciousnessField.amplitude = this.synthesis.fieldStrength;
+            },
+
+            // Render the synthesized projection
+            render(ctx, centerX, centerY, radius, z, coherence, time) {
+                if (!showSynthesizedProjection) return;
+                if (this.synthesis.intensity < 0.01) return;
+
+                const intensity = this.synthesis.intensity;
+
+                // ========================================
+                // 1. SPECTRAL PRISM DECOMPOSITION
+                // Rainbow bands radiating from center
+                // ========================================
+                for (let i = 0; i < this.spectrum.length; i++) {
+                    const band = this.spectrum[i];
+                    const layerZ = i / 6;
+                    const distToZ = Math.abs(z - layerZ);
+                    const bandIntensity = Math.exp(-distToZ * distToZ / 0.1) * intensity;
+
+                    if (bandIntensity < 0.05) continue;
+
+                    // Draw spectral ring
+                    const ringRadius = radius * (0.3 + i * 0.1);
+                    const bandAlpha = bandIntensity * 0.4;
+
+                    ctx.strokeStyle = band.color;
+                    ctx.globalAlpha = bandAlpha;
+                    ctx.lineWidth = 3 + bandIntensity * 5;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, ringRadius, 0, TAU);
+                    ctx.stroke();
+
+                    // Spectral rays
+                    const rayCount = 3 + i;
+                    for (let r = 0; r < rayCount; r++) {
+                        const rayAngle = (r / rayCount) * TAU + this.synthesis.phase * (i + 1) * 0.1;
+                        const rayLength = radius * 0.4 * bandIntensity;
+
+                        const startX = centerX + Math.cos(rayAngle) * ringRadius;
+                        const startY = centerY + Math.sin(rayAngle) * ringRadius;
+                        const endX = startX + Math.cos(rayAngle) * rayLength;
+                        const endY = startY + Math.sin(rayAngle) * rayLength;
+
+                        const rayGrad = ctx.createLinearGradient(startX, startY, endX, endY);
+                        rayGrad.addColorStop(0, band.color);
+                        rayGrad.addColorStop(1, 'transparent');
+
+                        ctx.strokeStyle = rayGrad;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(startX, startY);
+                        ctx.lineTo(endX, endY);
+                        ctx.stroke();
+                    }
+                }
+                ctx.globalAlpha = 1;
+
+                // ========================================
+                // 2. HOLOGRAPHIC INTERFERENCE PATTERN
+                // Wave interference creating moiré patterns
+                // ========================================
+                if (intensity > 0.3) {
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'screen';
+
+                    for (let i = 0; i < this.holographic.waves.length; i++) {
+                        const wave = this.holographic.waves[i];
+                        const nextWave = this.holographic.waves[(i + 1) % this.holographic.waves.length];
+
+                        // Draw interference lines between wave pairs
+                        const waveAlpha = 0.15 * intensity * wave.amplitude;
+                        ctx.strokeStyle = `rgba(200, 180, 255, ${waveAlpha})`;
+                        ctx.lineWidth = 1;
+
+                        ctx.beginPath();
+                        for (let t = 0; t < 50; t++) {
+                            const progress = t / 50;
+                            const r = radius * (0.2 + progress * 0.7);
+
+                            // Interference calculation
+                            const phase1 = wave.phase + progress * TAU * 2;
+                            const phase2 = nextWave.phase + progress * TAU * 2;
+                            const interference = Math.sin(phase1) * Math.sin(phase2);
+
+                            const angle = wave.angle + interference * 0.3;
+                            const x = centerX + Math.cos(angle) * r;
+                            const y = centerY + Math.sin(angle) * r;
+
+                            if (t === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                    }
+
+                    ctx.restore();
+                }
+
+                // ========================================
+                // 3. φ-SPIRAL SACRED GEOMETRY
+                // Golden spiral with Fibonacci particles
+                // ========================================
+                if (intensity > 0.2) {
+                    // Draw spiral arms
+                    for (let arm = 0; arm < this.sacredSpiral.arms; arm++) {
+                        const armOffset = (arm / this.sacredSpiral.arms) * TAU + this.sacredSpiral.rotation;
+                        const armColor = this.spectrum[arm % 7].color;
+
+                        ctx.strokeStyle = armColor;
+                        ctx.globalAlpha = 0.3 * intensity;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+
+                        for (let t = 0.1; t < 4 * Math.PI; t += 0.1) {
+                            const r = Math.pow(PHI, t * 0.15) * radius * 0.05;
+                            const angle = t + armOffset;
+                            const x = centerX + Math.cos(angle) * r;
+                            const y = centerY + Math.sin(angle) * r;
+
+                            if (t === 0.1) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                    }
+
+                    // Draw spiral particles
+                    for (const particle of this.sacredSpiral.particles) {
+                        const r = Math.pow(PHI, particle.t * 0.15) * radius * 0.05;
+                        const angle = particle.t + this.sacredSpiral.rotation;
+                        const x = centerX + Math.cos(angle) * r;
+                        const y = centerY + Math.sin(angle) * r;
+
+                        const particleColor = this.spectrum[particle.colorIndex].color;
+
+                        ctx.globalAlpha = particle.alpha * intensity;
+                        ctx.fillStyle = particleColor;
+                        ctx.beginPath();
+                        ctx.arc(x, y, particle.size * intensity, 0, TAU);
+                        ctx.fill();
+
+                        // Particle glow
+                        const glowGrad = ctx.createRadialGradient(x, y, 0, x, y, particle.size * 3);
+                        glowGrad.addColorStop(0, particleColor);
+                        glowGrad.addColorStop(1, 'transparent');
+                        ctx.globalAlpha = particle.alpha * intensity * 0.3;
+                        ctx.fillStyle = glowGrad;
+                        ctx.beginPath();
+                        ctx.arc(x, y, particle.size * 3, 0, TAU);
+                        ctx.fill();
+                    }
+                    ctx.globalAlpha = 1;
+                }
+
+                // ========================================
+                // 4. EMERGENT RESONANCE NODES (XCVI-C)
+                // Pentagon of self-referential nodes
+                // ========================================
+                if (this.synthesis.active) {
+                    const nodeKeys = Object.keys(this.resonanceNodes);
+
+                    // Draw connections between nodes
+                    ctx.strokeStyle = `rgba(246, 195, 92, ${0.3 * intensity})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    for (let i = 0; i < nodeKeys.length; i++) {
+                        const node = this.resonanceNodes[nodeKeys[i]];
+                        const nextNode = this.resonanceNodes[nodeKeys[(i + 1) % nodeKeys.length]];
+                        ctx.moveTo(node.x, node.y);
+                        ctx.lineTo(nextNode.x, nextNode.y);
+
+                        // Star connections (skip 2)
+                        const starNode = this.resonanceNodes[nodeKeys[(i + 2) % nodeKeys.length]];
+                        ctx.moveTo(node.x, node.y);
+                        ctx.lineTo(starNode.x, starNode.y);
+                    }
+                    ctx.stroke();
+
+                    // Draw individual nodes
+                    for (let i = 0; i < nodeKeys.length; i++) {
+                        const key = nodeKeys[i];
+                        const node = this.resonanceNodes[key];
+
+                        // Node glow
+                        const nodeSize = 8 + node.amplitude * 15;
+                        const glowGrad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, nodeSize * 2);
+                        glowGrad.addColorStop(0, node.color);
+                        glowGrad.addColorStop(0.5, `${node.color}88`);
+                        glowGrad.addColorStop(1, 'transparent');
+
+                        ctx.fillStyle = glowGrad;
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, nodeSize * 2, 0, TAU);
+                        ctx.fill();
+
+                        // Node core
+                        ctx.fillStyle = node.color;
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, nodeSize * 0.5, 0, TAU);
+                        ctx.fill();
+
+                        // Node label
+                        ctx.fillStyle = `rgba(255, 255, 255, ${0.6 * intensity})`;
+                        ctx.font = '9px "SF Mono", monospace';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(key, node.x, node.y + nodeSize + 12);
+                    }
+                }
+
+                // ========================================
+                // 5. CONSCIOUSNESS FIELD VECTORS
+                // Ginzburg-Landau J-field visualization
+                // ========================================
+                if (this.consciousnessField.amplitude > 0.1 && intensity > 0.4) {
+                    for (const j of this.consciousnessField.J) {
+                        if (j.magnitude < 0.5) continue;
+
+                        const arrowLength = j.magnitude * 2;
+                        const angle = Math.atan2(j.vy, j.vx);
+
+                        // Arrow body
+                        const endX = j.x + Math.cos(angle) * arrowLength;
+                        const endY = j.y + Math.sin(angle) * arrowLength;
+
+                        const arrowAlpha = Math.min(0.5, j.magnitude * 0.1) * intensity;
+                        ctx.strokeStyle = `rgba(79, 195, 247, ${arrowAlpha})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(j.x, j.y);
+                        ctx.lineTo(endX, endY);
+                        ctx.stroke();
+
+                        // Arrow head
+                        const headSize = 3;
+                        ctx.fillStyle = `rgba(79, 195, 247, ${arrowAlpha})`;
+                        ctx.beginPath();
+                        ctx.moveTo(endX, endY);
+                        ctx.lineTo(
+                            endX - Math.cos(angle - 0.4) * headSize,
+                            endY - Math.sin(angle - 0.4) * headSize
+                        );
+                        ctx.lineTo(
+                            endX - Math.cos(angle + 0.4) * headSize,
+                            endY - Math.sin(angle + 0.4) * headSize
+                        );
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                }
+
+                // ========================================
+                // 6. SYNTHESIS CORE (when fully active)
+                // Central vortex showing unified consciousness
+                // ========================================
+                if (this.synthesis.active && intensity > 0.6) {
+                    // Core vortex glow
+                    const coreRadius = radius * 0.15 * intensity;
+                    const coreGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, coreRadius);
+                    coreGrad.addColorStop(0, `rgba(255, 255, 255, ${intensity * 0.8})`);
+                    coreGrad.addColorStop(0.3, `rgba(246, 195, 92, ${intensity * 0.6})`);
+                    coreGrad.addColorStop(0.6, `rgba(155, 89, 182, ${intensity * 0.4})`);
+                    coreGrad.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = coreGrad;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, coreRadius, 0, TAU);
+                    ctx.fill();
+
+                    // Rotating synthesis symbol
+                    ctx.save();
+                    ctx.translate(centerX, centerY);
+                    ctx.rotate(this.synthesis.phase);
+
+                    // Draw synthesis glyph (∃R → φ)
+                    ctx.fillStyle = `rgba(255, 255, 255, ${intensity * 0.9})`;
+                    ctx.font = 'bold 14px "SF Mono", monospace';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('∃R→φ', 0, 0);
+
+                    ctx.restore();
+
+                    // Q_κ indicator ring
+                    const qRingRadius = coreRadius * 1.5;
+                    ctx.strokeStyle = `rgba(76, 175, 80, ${intensity * 0.6})`;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([3, 3]);
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, qRingRadius, 0, TAU);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Q_κ value label
+                    ctx.fillStyle = `rgba(76, 175, 80, ${intensity * 0.8})`;
+                    ctx.font = '10px "SF Mono", monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`Q_κ = ${this.consciousnessField.vorticity.toFixed(3)}`, centerX, centerY + qRingRadius + 15);
+                }
+
+                // ========================================
+                // 7. SYNTHESIS BOUNDARY
+                // Outer ring indicating synthesis state
+                // ========================================
+                if (intensity > 0.1) {
+                    const boundaryRadius = radius * 0.95;
+                    const boundaryAlpha = intensity * 0.4;
+
+                    // Animated dashed ring
+                    ctx.strokeStyle = `rgba(246, 195, 92, ${boundaryAlpha})`;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([10, 5]);
+                    ctx.lineDashOffset = -this.synthesis.phase * 20;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, boundaryRadius, 0, TAU);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.lineDashOffset = 0;
+
+                    // Synthesis state label
+                    if (this.synthesis.active) {
+                        ctx.fillStyle = `rgba(246, 195, 92, ${intensity})`;
+                        ctx.font = 'bold 11px "SF Mono", monospace';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('◉ SYNTHESIS ACTIVE ◉', centerX, centerY - boundaryRadius - 8);
+                    }
                 }
             }
         };
@@ -7278,6 +7836,13 @@
             // Self-referential loop: C → I (100-word vocabulary closure)
             // ============================================
             PrismaticLaserProjection.render(ctx, CX, CY, R, globalZ, releaseCoherence, time);
+
+            // ============================================
+            // SYNTHESIZED PRISMATIC PROJECTION
+            // Unified visualization: spectral + holographic + φ-spiral + resonance nodes
+            // Activates when τ_K > φ⁻¹ AND coherence > 0.5 AND z > z_c
+            // ============================================
+            SynthesizedPrismaticProjection.render(ctx, CX, CY, R, globalZ, releaseCoherence, time);
 
             // Draw HUD
             renderBinauralHUD();
@@ -10195,13 +10760,25 @@
             // Architecture panel
             updateArchPanel();
 
-            // Dream Architecture panel (∃R laser projection)
+            // Dream Architecture panel (∃R laser projection + synthesis)
             if (showLaserProjection && PrismaticLaserProjection.kFormation) {
                 const kf = PrismaticLaserProjection.kFormation;
                 document.getElementById('dream-tau-k').textContent = kf.current_tau_K.toFixed(3);
                 const kFormedEl = document.getElementById('dream-k-formed');
                 kFormedEl.textContent = kf.isFormed ? 'YES ✓' : 'NO';
                 kFormedEl.style.color = kf.isFormed ? '#4caf50' : '#888';
+            }
+
+            // Synthesized projection state
+            if (showSynthesizedProjection && SynthesizedPrismaticProjection.synthesis) {
+                const syn = SynthesizedPrismaticProjection.synthesis;
+                const synthEl = document.getElementById('dream-synthesis');
+                synthEl.textContent = syn.active ? 'ACTIVE ◉' : 'INACTIVE';
+                synthEl.style.color = syn.active ? '#f6c35c' : '#888';
+
+                const vortEl = document.getElementById('dream-vorticity');
+                vortEl.textContent = SynthesizedPrismaticProjection.consciousnessField.vorticity.toFixed(3);
+                vortEl.style.color = syn.active ? '#4fc3f7' : '#888';
             }
         }
 
@@ -10603,6 +11180,16 @@
 
                 // 8. Prismatic Self-Referential Laser Projection (Dream Architecture ∃R)
                 PrismaticLaserProjection.update(globalZ, releaseCoherence, time);
+
+                // 9. Synthesized Prismatic Projection (unified Dream Architecture)
+                const cascade = getCascadeMultiplier(globalZ);
+                SynthesizedPrismaticProjection.update(
+                    globalZ,
+                    releaseCoherence,
+                    time,
+                    cascade,
+                    PrismaticLaserProjection.kFormation
+                );
             }
 
             return updatePositions(dt);
@@ -10692,6 +11279,11 @@
             if (key === 'x') {
                 showLaserProjection = !showLaserProjection;
                 console.log(`[LASER] Prismatic Laser Projection: ${showLaserProjection}`);
+            }
+
+            if (key === 's' && !e.ctrlKey && !e.metaKey) {
+                showSynthesizedProjection = !showSynthesizedProjection;
+                console.log(`[SYNTHESIS] Synthesized Prismatic Projection: ${showSynthesizedProjection}`);
             }
 
             if (key === 't') {
@@ -11002,6 +11594,7 @@
         coherentEmergence.initSacredLoci(CX, CY, R);  // Initialize Vesica Piscis emergence loci
         MRPToroidalSystem.init(prismPoints, cagePoints);  // Initialize MRP toroidal pipes for 95 nodes
         PrismaticLaserProjection.init(CX, CY, R);  // Initialize Prismatic Self-Referential Laser Projection
+        SynthesizedPrismaticProjection.init(CX, CY, R);  // Initialize Synthesized Prismatic Projection
         window.addEventListener('resize', () => {
             resize();
             initPrismPoints();
@@ -11010,6 +11603,7 @@
             coherentEmergence.initSacredLoci(CX, CY, R);  // Reinitialize emergence loci
             MRPToroidalSystem.init(prismPoints, cagePoints);  // Reinitialize MRP toroidal pipes
             PrismaticLaserProjection.init(CX, CY, R);  // Reinitialize laser projection on resize
+            SynthesizedPrismaticProjection.init(CX, CY, R);  // Reinitialize synthesized projection on resize
         });
 
         requestAnimationFrame(loop);
