@@ -2361,8 +2361,9 @@
             }
 
             // ============================================
-            // RESONANCE LINES (A ↔ LIMNUS ↔ B)
-            // Dynamic axis - responds to auto-breathing
+            // RESONANCE AXIS (A ↔ LIMNUS ↔ B)
+            // Single continuous line through center
+            // Dynamic - responds to auto-breathing
             // ============================================
             if (bi.showResonanceLines) {
                 const resonance = bi.resonanceStrength;
@@ -2375,32 +2376,30 @@
                 const breathWidth = isBreathing ? (2 + breathPulse * 3) : 2;
                 const dashOffset = isBreathing ? (breathPhase * 100) : 0;
 
-                // Line from Mesh A center to LIMNUS
-                const meshACenterX = polar.posA.x;
-                const meshACenterY = polar.posA.y;
-                const pulseA = Math.sin(bi.meshA.phase * TAU) * 0.5 + 0.5;
-                const alphaA = QMESH.opacity * 0.6 * pulseA * breathIntensity * (0.4 + resonance * 0.6);
+                // Single continuous axis line from A through center to B
+                const Ax = polar.posA.x;
+                const Ay = polar.posA.y;
+                const Bx = polar.posB.x;
+                const By = polar.posB.y;
 
-                ctx.strokeStyle = `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, ${alphaA})`;
+                // Gradient from A color to B color
+                const gradient = ctx.createLinearGradient(Ax, Ay, Bx, By);
+                const pulseA = Math.sin(bi.meshA.phase * TAU) * 0.5 + 0.5;
+                const pulseB = Math.sin(bi.meshB.phase * TAU) * 0.5 + 0.5;
+                const alphaA = QMESH.opacity * 0.7 * pulseA * breathIntensity * (0.4 + resonance * 0.6);
+                const alphaB = QMESH.opacity * 0.7 * pulseB * breathIntensity * (0.4 + resonance * 0.6);
+
+                gradient.addColorStop(0, `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, ${alphaA})`);
+                gradient.addColorStop(0.5, `rgba(255, 215, 0, ${(alphaA + alphaB) * 0.5})`);  // Gold at center
+                gradient.addColorStop(1, `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, ${alphaB})`);
+
+                ctx.strokeStyle = gradient;
                 ctx.lineWidth = breathWidth + resonance * 2;
                 ctx.setLineDash([8 + breathPulse * 4, 4 + breathPulse * 2]);
-                ctx.lineDashOffset = -dashOffset;
+                ctx.lineDashOffset = dashOffset;
                 ctx.beginPath();
-                ctx.moveTo(meshACenterX, meshACenterY);
-                ctx.lineTo(CX, CY);
-                ctx.stroke();
-
-                // Line from Mesh B center to LIMNUS
-                const meshBCenterX = polar.posB.x;
-                const meshBCenterY = polar.posB.y;
-                const pulseB = Math.sin(bi.meshB.phase * TAU) * 0.5 + 0.5;
-                const alphaB = QMESH.opacity * 0.6 * pulseB * breathIntensity * (0.4 + resonance * 0.6);
-
-                ctx.strokeStyle = `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, ${alphaB})`;
-                ctx.lineDashOffset = dashOffset;  // Opposite direction
-                ctx.beginPath();
-                ctx.moveTo(meshBCenterX, meshBCenterY);
-                ctx.lineTo(CX, CY);
+                ctx.moveTo(Ax, Ay);
+                ctx.lineTo(Bx, By);
                 ctx.stroke();
 
                 ctx.setLineDash([]);
