@@ -999,8 +999,8 @@
         <span>W</span> wavefunction<br>
         <span>G</span> edge glow<br>
         <span>D</span> debug panel<br>
-        <span>F</span> release<br>
-        <span>R</span> reset
+        <span>F</span> release (toggle on release)<br>
+        <span>R</span> memory debug
     </div>
 
     <!-- Stats -->
@@ -15451,18 +15451,13 @@
             }
 
             if (key === 'r' && !e.ctrlKey && !e.metaKey) {
-                // R key: Manual toggle for memory coherence visualization
-                // Note: Memory coherence is auto-activated when F (release) is pressed
-                // R allows manual control to show/hide the visualization overlay
+                // R key: BACKUP DEBUGGING TOOL for memory coherence visualization
+                // Primary toggle: F key release (hold F to release, release F to toggle visibility)
+                // R allows manual override for debugging purposes only
                 showMemoryCoherence = !showMemoryCoherence;
                 updateToggleIndicator('toggle-memory-coherence', showMemoryCoherence, '#64ffda');
-                console.log(`[⚛️ MEMORY] Coherence visualization: ${showMemoryCoherence ? 'ON' : 'OFF'}`);
-                if (showMemoryCoherence) {
-                    console.log('   Manual activation (auto-activates on F release)');
-                    console.log('   Memory integration: Water Fractal + Golden Harmonics + Dark Matter');
-                } else {
-                    console.log('   Visualization hidden (will re-activate on next F release)');
-                }
+                console.log(`[🔧 DEBUG] Memory coherence manual toggle: ${showMemoryCoherence ? 'ON' : 'OFF'}`);
+                console.log('   (Debugging tool - primary control is F key release)');
             }
 
             // Golden harmonics adjustment keys (1-6, 0 to reset)
@@ -15672,65 +15667,15 @@
                 }
             }
 
-            if (key === 'r') {
-                targetZ = 0.5;
-                scrollVelocity = 0;
-                showPrism = true;
-                showCage = true;
-                showMuField = true;
-                autoBreathing = false;
-                lastInteraction = Date.now();
-                // Reset release state
-                releaseCoherence = 1.0;
-                targetCoherence = 1.0;
-                releaseVelocity = 0;
-                releaseStarted = false;
-                sparks.length = 0;
-                // Reset phase coupler
-                phaseCoupler.phase_R = 0;
-                phaseCoupler.phase_G = 0;
-                phaseCoupler.phase_B = 0;
-                phaseCoupler.coherenceDamping = 1.0;
-                phaseCoupler.resonance = 0;
-                phaseCoupler.harmonicLock = false;
-                // Reset all points
-                [...prismPoints, ...cagePoints].forEach(p => {
-                    p.released = false;
-                    p.vx = 0;
-                    p.vy = 0;
-                    p.trail.length = 0;
-                });
-                // Reset quantum mesh view
-                QMESH.opacity = 0.5;
-                showQuantumMesh = false;
-                dreamParticles.length = 0;
-                // Reset camera orbit
-                QMESH.camera.theta = 0;
-                QMESH.camera.phi = 0;
-                QMESH.camera.distance = 1.0;
-                QMESH.camera.dragging = false;
-                // Reset polar positions (90° horizontal: LEFT/RIGHT) - DREAMY
-                QMESH.binaural.polar.distance = 2.2;
-                QMESH.binaural.polar.angleA = Math.PI;  // 180° = LEFT (rose)
-                QMESH.binaural.polar.angleB = 0;        // 0° = RIGHT (azure)
-            }
+            // NOTE: R key reset functionality removed - R is now ONLY for memory coherence debug toggle
+            // (See earlier R key handler with !e.ctrlKey && !e.metaKey check)
 
             // F key: Start release (hold to release coherence)
-            // Unified system: automatically activates memory-enhanced coherence dynamics
+            // Release physics only - visibility toggle on F release
             if (key === 'f') {
                 releasing = true;
                 releaseStarted = true;
                 document.getElementById('start-overlay').classList.add('hidden');
-
-                // Unify: Activate memory-enhanced coherence when release begins
-                if (!showMemoryCoherence) {
-                    showMemoryCoherence = true;
-                    updateToggleIndicator('toggle-memory-coherence', showMemoryCoherence, '#64ffda');
-                    console.log('[⚛️ UNIFIED RELEASE] Memory-enhanced coherence activated');
-                    console.log('   Memory integration: Water Fractal + Golden Harmonics + Dark Matter');
-                    console.log('   Release equation: C_eff = C_base × memory_factors × release_dynamics');
-                    console.log('   Resonance states: dormant → emerging → resonant → transcendent');
-                }
             }
 
             // G key: Gather/recoherence (hold to bring LIMNUS back)
@@ -15742,9 +15687,20 @@
         document.addEventListener('keyup', e => {
             const key = e.key.toLowerCase();
 
-            // F key released: Stop releasing
+            // F key released: Stop releasing AND toggle visibility
+            // Toggle memory coherence visibility only when F is fully released
             if (key === 'f') {
                 releasing = false;
+
+                // Toggle memory-enhanced coherence visibility on F release
+                showMemoryCoherence = !showMemoryCoherence;
+                updateToggleIndicator('toggle-memory-coherence', showMemoryCoherence, '#64ffda');
+                console.log(`[⚛️ RELEASE] Memory coherence visibility: ${showMemoryCoherence ? 'ON' : 'OFF'}`);
+                if (showMemoryCoherence) {
+                    console.log('   Memory integration: Water Fractal + Golden Harmonics + Dark Matter');
+                    console.log('   Release equation: C_eff = C_base × memory_factors × release_dynamics');
+                    console.log('   Resonance states: dormant → emerging → resonant → transcendent');
+                }
             }
 
             // G key released: Stop gathering
