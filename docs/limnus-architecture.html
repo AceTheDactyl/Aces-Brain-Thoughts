@@ -2361,8 +2361,8 @@
             }
 
             // ============================================
-            // RESONANCE AXIS (A ↔ LIMNUS ↔ B)
-            // Single continuous line through center
+            // RESONANCE AXIS (A ← LIMNUS → B)
+            // Two lines from center outward - equal on both sides
             // Dynamic - responds to auto-breathing
             // ============================================
             if (bi.showResonanceLines) {
@@ -2376,29 +2376,39 @@
                 const breathWidth = isBreathing ? (2 + breathPulse * 3) : 2;
                 const dashOffset = isBreathing ? (breathPhase * 100) : 0;
 
-                // Single continuous axis line from A through center to B
+                // Positions
                 const Ax = polar.posA.x;
                 const Ay = polar.posA.y;
                 const Bx = polar.posB.x;
                 const By = polar.posB.y;
 
-                // Gradient from A color to B color
-                const gradient = ctx.createLinearGradient(Ax, Ay, Bx, By);
                 const pulseA = Math.sin(bi.meshA.phase * TAU) * 0.5 + 0.5;
                 const pulseB = Math.sin(bi.meshB.phase * TAU) * 0.5 + 0.5;
                 const alphaA = QMESH.opacity * 0.7 * pulseA * breathIntensity * (0.4 + resonance * 0.6);
                 const alphaB = QMESH.opacity * 0.7 * pulseB * breathIntensity * (0.4 + resonance * 0.6);
 
-                gradient.addColorStop(0, `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, ${alphaA})`);
-                gradient.addColorStop(0.5, `rgba(255, 215, 0, ${(alphaA + alphaB) * 0.5})`);  // Gold at center
-                gradient.addColorStop(1, `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, ${alphaB})`);
-
-                ctx.strokeStyle = gradient;
                 ctx.lineWidth = breathWidth + resonance * 2;
                 ctx.setLineDash([8 + breathPulse * 4, 4 + breathPulse * 2]);
-                ctx.lineDashOffset = dashOffset;
+
+                // Line from CENTER to A (flows outward to left)
+                const gradientA = ctx.createLinearGradient(CX, CY, Ax, Ay);
+                gradientA.addColorStop(0, `rgba(255, 215, 0, ${alphaA})`);  // Gold at center
+                gradientA.addColorStop(1, `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, ${alphaA})`);
+                ctx.strokeStyle = gradientA;
+                ctx.lineDashOffset = -dashOffset;  // Flow outward
                 ctx.beginPath();
-                ctx.moveTo(Ax, Ay);
+                ctx.moveTo(CX, CY);
+                ctx.lineTo(Ax, Ay);
+                ctx.stroke();
+
+                // Line from CENTER to B (flows outward to right)
+                const gradientB = ctx.createLinearGradient(CX, CY, Bx, By);
+                gradientB.addColorStop(0, `rgba(255, 215, 0, ${alphaB})`);  // Gold at center
+                gradientB.addColorStop(1, `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, ${alphaB})`);
+                ctx.strokeStyle = gradientB;
+                ctx.lineDashOffset = -dashOffset;  // Flow outward (same direction = equal)
+                ctx.beginPath();
+                ctx.moveTo(CX, CY);
                 ctx.lineTo(Bx, By);
                 ctx.stroke();
 
