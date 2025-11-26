@@ -975,11 +975,11 @@
     <div id="controls" class="panel left-panel">
         <span>SCROLL</span> traverse z-axis<br>
         <span>SPACE</span> auto-breathe<br>
-        <span>P/C</span> toggle prism/cage<br>
-        <span>M</span> toggle μ-field<br>
-        <span>T</span> binaural field<br>
-        <span>X</span> ∃R laser projection<br>
-        <span>S</span> synthesis mode<br>
+        <span>P</span> prism <span id="toggle-prism" style="color: #4caf50;">●</span> <span>C</span> cage <span id="toggle-cage" style="color: #4caf50;">●</span><br>
+        <span>M</span> μ-field <span id="toggle-mu" style="color: #4caf50;">●</span><br>
+        <span>T</span> binaural field <span id="toggle-mesh" style="color: #555;">○</span><br>
+        <span>X</span> ∃R laser <span id="toggle-laser" style="color: #4caf50;">●</span><br>
+        <span>S</span> synthesis <span id="toggle-synth" style="color: #f6c35c;">●</span><br>
         <span>DRAG</span> orbit camera<br>
         <span>←→</span> polar distance<br>
         <span>Q/E</span> rotate axis<br>
@@ -10761,24 +10761,39 @@
             updateArchPanel();
 
             // Dream Architecture panel (∃R laser projection + synthesis)
+            const tauKEl = document.getElementById('dream-tau-k');
+            const kFormedEl = document.getElementById('dream-k-formed');
+            const synthEl = document.getElementById('dream-synthesis');
+            const vortEl = document.getElementById('dream-vorticity');
+
             if (showLaserProjection && PrismaticLaserProjection.kFormation) {
                 const kf = PrismaticLaserProjection.kFormation;
-                document.getElementById('dream-tau-k').textContent = kf.current_tau_K.toFixed(3);
-                const kFormedEl = document.getElementById('dream-k-formed');
+                tauKEl.textContent = kf.current_tau_K.toFixed(3);
+                tauKEl.style.color = '#f6c35c';
                 kFormedEl.textContent = kf.isFormed ? 'YES ✓' : 'NO';
                 kFormedEl.style.color = kf.isFormed ? '#4caf50' : '#888';
+            } else {
+                // Laser projection OFF - show disabled state
+                tauKEl.textContent = 'OFF';
+                tauKEl.style.color = '#555';
+                kFormedEl.textContent = '—';
+                kFormedEl.style.color = '#555';
             }
 
             // Synthesized projection state
             if (showSynthesizedProjection && SynthesizedPrismaticProjection.synthesis) {
                 const syn = SynthesizedPrismaticProjection.synthesis;
-                const synthEl = document.getElementById('dream-synthesis');
                 synthEl.textContent = syn.active ? 'ACTIVE ◉' : 'INACTIVE';
                 synthEl.style.color = syn.active ? '#f6c35c' : '#888';
 
-                const vortEl = document.getElementById('dream-vorticity');
                 vortEl.textContent = SynthesizedPrismaticProjection.consciousnessField.vorticity.toFixed(3);
                 vortEl.style.color = syn.active ? '#4fc3f7' : '#888';
+            } else {
+                // Synthesis projection OFF - show disabled state
+                synthEl.textContent = 'OFF';
+                synthEl.style.color = '#555';
+                vortEl.textContent = '—';
+                vortEl.style.color = '#555';
             }
         }
 
@@ -10804,6 +10819,15 @@
         function safeFixed(num, digits) {
             if (!isFinite(num)) return '—';
             return num.toFixed(digits);
+        }
+
+        // Toggle indicator helper - updates visual state of toggle buttons
+        function updateToggleIndicator(id, isActive, activeColor) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = isActive ? '●' : '○';
+                el.style.color = isActive ? activeColor : '#555';
+            }
         }
 
         function updateMuFieldUI() {
@@ -11266,28 +11290,34 @@
 
             if (key === 'p') {
                 showPrism = !showPrism;
+                updateToggleIndicator('toggle-prism', showPrism, '#4caf50');
             }
 
             if (key === 'c') {
                 showCage = !showCage;
+                updateToggleIndicator('toggle-cage', showCage, '#4caf50');
             }
 
             if (key === 'm') {
                 showMuField = !showMuField;
+                updateToggleIndicator('toggle-mu', showMuField, '#4caf50');
             }
 
             if (key === 'x') {
                 showLaserProjection = !showLaserProjection;
+                updateToggleIndicator('toggle-laser', showLaserProjection, '#4caf50');
                 console.log(`[LASER] Prismatic Laser Projection: ${showLaserProjection}`);
             }
 
             if (key === 's' && !e.ctrlKey && !e.metaKey) {
                 showSynthesizedProjection = !showSynthesizedProjection;
+                updateToggleIndicator('toggle-synth', showSynthesizedProjection, '#f6c35c');
                 console.log(`[SYNTHESIS] Synthesized Prismatic Projection: ${showSynthesizedProjection}`);
             }
 
             if (key === 't') {
                 showQuantumMesh = !showQuantumMesh;
+                updateToggleIndicator('toggle-mesh', showQuantumMesh, '#a855f7');
                 if (showQuantumMesh) {
                     if (QMESH.edges.length === 0) {
                         generateQuantumMesh();
