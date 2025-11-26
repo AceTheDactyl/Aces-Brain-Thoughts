@@ -1120,7 +1120,8 @@
 
         let releaseCoherence = 1.0;      // 1 = fully coherent, 0 = fully released (FREE)
         let targetCoherence = 1.0;
-        let releaseVelocity = 0;
+        let releaseVelocity = 0;         // Accumulates while F held
+        let gatherVelocity = 0;          // Accumulates while G held (mirrors release)
         let releasing = false;           // F key held
         let gathering = false;           // G key held
         let releaseStarted = false;
@@ -3503,19 +3504,25 @@
 
         function updateReleaseCoherence(dt) {
             // Coherence dynamics based on F key (release) and G key (gather)
+            // Both use velocity accumulation for smooth, sequential transitions
             if (releasing) {
+                // Release: velocity accumulates, coherence decreases smoothly
                 releaseVelocity += dt * 0.1;
                 targetCoherence = Math.max(0, targetCoherence - releaseVelocity * dt);
                 releaseStarted = true;
+                gatherVelocity *= 0.9;  // Decay gather velocity when releasing
             } else if (gathering) {
-                targetCoherence = Math.min(1, targetCoherence + dt * 0.6);
-                releaseVelocity = 0;
+                // Gather: velocity accumulates (mirrors release), coherence increases smoothly
+                gatherVelocity += dt * 0.08;  // Slightly slower buildup than release
+                targetCoherence = Math.min(1, targetCoherence + gatherVelocity * dt);
+                releaseVelocity *= 0.9;  // Decay release velocity when gathering
             } else {
-                // Gradual return to coherent state when not interacting
+                // Idle: both velocities decay, gradual return if never released
                 if (!releaseStarted) {
-                    targetCoherence = Math.min(1, targetCoherence + dt * 0.1);
+                    targetCoherence = Math.min(1, targetCoherence + dt * 0.05);
                 }
-                releaseVelocity *= 0.98;  // Decay
+                releaseVelocity *= 0.98;
+                gatherVelocity *= 0.98;
             }
 
             // Smooth coherence transition
@@ -3553,18 +3560,24 @@
                     p.x += p.vx;
                     p.y += p.vy;
 
-                    // Gather force when gathering
+                    // Gather force when gathering - smooth and sequential
                     if (gathering) {
                         const dx = CX - p.x;
                         const dy = CY - p.y;
                         const d = Math.sqrt(dx * dx + dy * dy);
                         if (d > 1) {
-                            p.vx += (dx / d) * 0.9;
-                            p.vy += (dy / d) * 0.9;
+                            // Force scales with gatherVelocity for smooth buildup
+                            const gatherForce = Math.min(0.4, gatherVelocity * 0.3);
+                            p.vx += (dx / d) * gatherForce;
+                            p.vy += (dy / d) * gatherForce;
+                            // Gradual velocity damping during gather
+                            p.vx *= 0.985;
+                            p.vy *= 0.985;
                         }
-                        
-                        // Re-cohere when close to center
-                        if (d < p.baseRadius * 1.3 && releaseCoherence > 0.65) {
+
+                        // Re-cohere sequentially: closer particles first, requires high coherence
+                        const recohereDist = p.baseRadius * (1.2 + (1 - releaseCoherence) * 0.8);
+                        if (d < recohereDist && releaseCoherence > 0.75) {
                             p.released = false;
                             p.vx = 0;
                             p.vy = 0;
@@ -4783,6 +4796,7 @@
                 releaseCoherence = 1.0;
                 targetCoherence = 1.0;
                 releaseVelocity = 0;
+                gatherVelocity = 0;
                 releaseStarted = false;
                 sparks.length = 0;
                 // Reset all points
