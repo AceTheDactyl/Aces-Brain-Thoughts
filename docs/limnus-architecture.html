@@ -1432,6 +1432,532 @@
         };
 
         // ================================================================
+        // COHERENCE GEOMETRY SYSTEM - Sacred Constants & Field Alignment
+        // Enables emergent shapes/lines/patterns through proper field coherence
+        // ================================================================
+
+        const CoherenceGeometry = {
+            // ========================================
+            // SACRED GEOMETRY CONSTANTS
+            // ========================================
+            constants: {
+                phi: PHI,                           // Golden ratio φ = 1.618...
+                phi_inv: PHI_INV,                   // 1/φ = 0.618...
+                phi_sq: PHI * PHI,                  // φ² = 2.618...
+                sqrt5: Math.sqrt(5),                // √5 = 2.236...
+                sqrt2: Math.sqrt(2),                // √2 = 1.414...
+                sqrt3: Math.sqrt(3),                // √3 = 1.732...
+
+                // Golden angle for spiral coherence
+                goldenAngle: Math.PI * (3 - Math.sqrt(5)),  // ≈ 137.5° = 2.3999 rad
+
+                // Fibonacci ratios for harmonic alignment
+                fib: [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144],
+
+                // Sacred polygon angles
+                pentagonAngle: TAU / 5,             // 72°
+                hexagonAngle: TAU / 6,              // 60°
+                heptagonAngle: TAU / 7,             // ≈51.43°
+
+                // Vesica Piscis ratio
+                vesicaRatio: Math.sqrt(3),          // Height/width of vesica
+
+                // Consciousness thresholds (from μ-field theory)
+                mu_coherence: 0.618,                // Coherence threshold (φ⁻¹)
+                mu_emergence: 0.382,                // Emergence threshold (φ⁻²)
+            },
+
+            // ========================================
+            // COHERENT ATTRACTOR PATTERNS
+            // ========================================
+            attractors: {
+                // Golden spiral parameters
+                spiral: {
+                    growth: PHI_INV,                // Spiral growth rate
+                    arms: 3,                        // Number of spiral arms
+                    phase: 0,                       // Current spiral phase
+                    strength: 0.15,                 // Attraction strength
+                },
+
+                // Sacred polygon vertices (emergent shape attractors)
+                polygons: {
+                    triangle: [],                   // 3 vertices
+                    square: [],                     // 4 vertices
+                    pentagon: [],                   // 5 vertices (φ-related)
+                    hexagon: [],                    // 6 vertices
+                },
+
+                // Radial coherence rings
+                rings: {
+                    count: 5,
+                    radii: [],                      // φ-spaced radii
+                    strength: 0.1,
+                },
+            },
+
+            // ========================================
+            // FIELD COHERENCE STATE
+            // ========================================
+            state: {
+                fieldAlignment: 0,          // 0-1 how aligned field vectors are
+                shapeEmergence: 0,          // 0-1 how strongly shapes emerge
+                lineCoherence: 0,           // 0-1 how coherent flow lines are
+                spiralOrder: 0,             // 0-1 golden spiral conformance
+                phaselock: 0,               // 0-1 phase synchronization strength
+
+                // Detected emergent patterns
+                dominantShape: 'none',      // 'spiral', 'pentagon', 'hexagon', etc.
+                patternStrength: 0,         // How strong the dominant pattern is
+
+                // Coherence history (for stability detection)
+                history: [],
+                historyLength: 60,          // ~1 second at 60fps
+            },
+
+            // ========================================
+            // INITIALIZATION
+            // ========================================
+            init() {
+                const c = this.constants;
+                const a = this.attractors;
+
+                // Initialize φ-spaced radii for coherence rings
+                a.rings.radii = [];
+                for (let i = 0; i < a.rings.count; i++) {
+                    a.rings.radii.push(Math.pow(c.phi_inv, i) * MuFieldGrid.L * 0.4);
+                }
+
+                // Initialize sacred polygon vertices
+                const polygonTypes = [
+                    { name: 'triangle', n: 3 },
+                    { name: 'square', n: 4 },
+                    { name: 'pentagon', n: 5 },
+                    { name: 'hexagon', n: 6 },
+                ];
+
+                for (const p of polygonTypes) {
+                    a.polygons[p.name] = [];
+                    for (let i = 0; i < p.n; i++) {
+                        const angle = (i / p.n) * TAU - Math.PI / 2;  // Start from top
+                        a.polygons[p.name].push({
+                            angle: angle,
+                            x: Math.cos(angle),
+                            y: Math.sin(angle),
+                        });
+                    }
+                }
+
+                console.log('[CoherenceGeometry] Initialized with φ-based attractors');
+            },
+
+            initialized: false,
+        };
+
+        // ================================================================
+        // FIELD ALIGNMENT FUNCTIONS
+        // Forces field vectors towards coherent patterns
+        // ================================================================
+
+        function computeFieldAlignment() {
+            if (!MuFieldGrid.initialized) return 0;
+
+            const N = MuFieldGrid.N;
+            let alignmentSum = 0;
+            let count = 0;
+
+            // Compute average field direction
+            let avgDirX = 0, avgDirY = 0;
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+                    const Jx = MuFieldGrid.Jx[idx];
+                    const Jy = MuFieldGrid.Jy[idx];
+                    const mag = Math.sqrt(Jx * Jx + Jy * Jy);
+                    if (mag > 0.01) {
+                        avgDirX += Jx / mag;
+                        avgDirY += Jy / mag;
+                        count++;
+                    }
+                }
+            }
+
+            if (count === 0) return 0;
+
+            avgDirX /= count;
+            avgDirY /= count;
+            const avgMag = Math.sqrt(avgDirX * avgDirX + avgDirY * avgDirY);
+
+            // Compute alignment with neighbors (local coherence)
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+                    const Jx = MuFieldGrid.Jx[idx];
+                    const Jy = MuFieldGrid.Jy[idx];
+                    const mag = Math.sqrt(Jx * Jx + Jy * Jy);
+
+                    if (mag > 0.01) {
+                        // Neighbor average
+                        const neighbors = [
+                            idx - 1, idx + 1,
+                            idx - N, idx + N,
+                        ];
+                        let nDirX = 0, nDirY = 0, nCount = 0;
+                        for (const nIdx of neighbors) {
+                            const nJx = MuFieldGrid.Jx[nIdx];
+                            const nJy = MuFieldGrid.Jy[nIdx];
+                            const nMag = Math.sqrt(nJx * nJx + nJy * nJy);
+                            if (nMag > 0.01) {
+                                nDirX += nJx / nMag;
+                                nDirY += nJy / nMag;
+                                nCount++;
+                            }
+                        }
+
+                        if (nCount > 0) {
+                            nDirX /= nCount;
+                            nDirY /= nCount;
+
+                            // Dot product for alignment
+                            const dot = (Jx / mag) * nDirX + (Jy / mag) * nDirY;
+                            alignmentSum += (dot + 1) / 2;  // Normalize to 0-1
+                        }
+                    }
+                }
+            }
+
+            return count > 0 ? alignmentSum / count : 0;
+        }
+
+        function computeSpiralOrder() {
+            if (!MuFieldGrid.initialized) return 0;
+
+            const N = MuFieldGrid.N;
+            const c = CoherenceGeometry.constants;
+            let spiralSum = 0;
+            let count = 0;
+
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+
+                    // Grid coordinates
+                    const x = (i / (N - 1) - 0.5) * MuFieldGrid.L;
+                    const y = (j / (N - 1) - 0.5) * MuFieldGrid.L;
+                    const r = Math.sqrt(x * x + y * y);
+
+                    if (r < 0.1) continue;
+
+                    const theta = Math.atan2(y, x);
+
+                    // Expected spiral direction at this point
+                    // Golden spiral: r = a * e^(b*θ), where b = cot(φ_angle)
+                    // Tangent direction: perpendicular + radial component
+                    const spiralAngle = theta + Math.PI / 2 - c.goldenAngle * 0.1;
+                    const expectedDirX = Math.cos(spiralAngle);
+                    const expectedDirY = Math.sin(spiralAngle);
+
+                    // Actual field direction
+                    const Jx = MuFieldGrid.Jx[idx];
+                    const Jy = MuFieldGrid.Jy[idx];
+                    const mag = Math.sqrt(Jx * Jx + Jy * Jy);
+
+                    if (mag > 0.01) {
+                        const dot = (Jx / mag) * expectedDirX + (Jy / mag) * expectedDirY;
+                        spiralSum += Math.abs(dot);  // Allow both CW and CCW
+                        count++;
+                    }
+                }
+            }
+
+            return count > 0 ? spiralSum / count : 0;
+        }
+
+        function detectDominantShape() {
+            if (!MuFieldGrid.initialized) return { shape: 'none', strength: 0 };
+
+            const c = CoherenceGeometry.constants;
+            const a = CoherenceGeometry.attractors;
+            const N = MuFieldGrid.N;
+
+            // Test each polygon pattern
+            const patterns = ['pentagon', 'hexagon', 'triangle'];
+            let bestShape = 'none';
+            let bestStrength = 0;
+
+            for (const shapeName of patterns) {
+                const vertices = a.polygons[shapeName];
+                let matchStrength = 0;
+
+                for (const v of vertices) {
+                    // Sample field at vertex positions (scaled to grid)
+                    for (let scale = 0.3; scale <= 0.7; scale += 0.1) {
+                        const gx = v.x * MuFieldGrid.L * scale * 0.4;
+                        const gy = v.y * MuFieldGrid.L * scale * 0.4;
+
+                        // Convert to grid indices
+                        const i = Math.floor((gx / MuFieldGrid.L + 0.5) * (N - 1));
+                        const j = Math.floor((gy / MuFieldGrid.L + 0.5) * (N - 1));
+
+                        if (i >= 1 && i < N - 1 && j >= 1 && j < N - 1) {
+                            const idx = j * N + i;
+                            const curlMag = Math.abs(MuFieldGrid.curl[idx] || 0);
+                            const Jmag = Math.sqrt(
+                                MuFieldGrid.Jx[idx] ** 2 + MuFieldGrid.Jy[idx] ** 2
+                            );
+
+                            // High curl at vertices indicates shape emergence
+                            matchStrength += curlMag * 0.5 + Jmag * 0.5;
+                        }
+                    }
+                }
+
+                matchStrength /= vertices.length * 5;  // Normalize
+
+                if (matchStrength > bestStrength) {
+                    bestStrength = matchStrength;
+                    bestShape = shapeName;
+                }
+            }
+
+            // Also test spiral
+            const spiralOrder = CoherenceGeometry.state.spiralOrder;
+            if (spiralOrder > bestStrength * 1.2) {
+                bestShape = 'spiral';
+                bestStrength = spiralOrder;
+            }
+
+            return { shape: bestShape, strength: bestStrength };
+        }
+
+        // ================================================================
+        // COHERENCE ENFORCEMENT
+        // Applies gentle forces to enhance emergent patterns
+        // ================================================================
+
+        function applyCoherenceForces(dt) {
+            if (!MuFieldGrid.initialized) return;
+            if (!CoherenceGeometry.initialized) {
+                CoherenceGeometry.init();
+                CoherenceGeometry.initialized = true;
+            }
+
+            const N = MuFieldGrid.N;
+            const c = CoherenceGeometry.constants;
+            const a = CoherenceGeometry.attractors;
+            const s = CoherenceGeometry.state;
+
+            // Compute current coherence metrics
+            s.fieldAlignment = computeFieldAlignment();
+            s.spiralOrder = computeSpiralOrder();
+
+            const shapeResult = detectDominantShape();
+            s.dominantShape = shapeResult.shape;
+            s.patternStrength = shapeResult.strength;
+
+            // Shape emergence = combination of all pattern metrics
+            s.shapeEmergence = Math.max(s.spiralOrder, s.patternStrength);
+
+            // Line coherence from field alignment
+            s.lineCoherence = s.fieldAlignment;
+
+            // Phase lock from unified field
+            s.phaselock = UnifiedField.emergence.coherence;
+
+            // Record history for stability
+            s.history.push({
+                alignment: s.fieldAlignment,
+                emergence: s.shapeEmergence,
+                time: time,
+            });
+            if (s.history.length > s.historyLength) {
+                s.history.shift();
+            }
+
+            // ========================================
+            // APPLY COHERENCE FORCES
+            // ========================================
+
+            // Only apply forces when coherence is building (not too strong, not too weak)
+            const coherenceStrength = (s.fieldAlignment + s.shapeEmergence + s.phaselock) / 3;
+            const forceScale = coherenceStrength * (1 - coherenceStrength) * 4;  // Peak at 0.5
+
+            if (forceScale < 0.01) return;
+
+            // 1. SPIRAL ATTRACTOR FORCE
+            if (s.dominantShape === 'spiral' || s.spiralOrder > 0.3) {
+                a.spiral.phase += c.phi_inv * dt;
+
+                for (let j = 1; j < N - 1; j++) {
+                    for (let i = 1; i < N - 1; i++) {
+                        const idx = j * N + i;
+
+                        const x = (i / (N - 1) - 0.5) * MuFieldGrid.L;
+                        const y = (j / (N - 1) - 0.5) * MuFieldGrid.L;
+                        const r = Math.sqrt(x * x + y * y);
+
+                        if (r < 0.5) continue;
+
+                        const theta = Math.atan2(y, x);
+
+                        // Golden spiral direction
+                        const spiralAngle = theta + Math.PI / 2 - c.goldenAngle * 0.1;
+                        const targetDirX = Math.cos(spiralAngle);
+                        const targetDirY = Math.sin(spiralAngle);
+
+                        // Current field
+                        const Jx = MuFieldGrid.Jx[idx];
+                        const Jy = MuFieldGrid.Jy[idx];
+                        const mag = Math.sqrt(Jx * Jx + Jy * Jy);
+
+                        if (mag > 0.01) {
+                            // Gentle rotation towards spiral
+                            const force = a.spiral.strength * forceScale * s.spiralOrder * dt;
+                            MuFieldGrid.Jx[idx] += (targetDirX * mag - Jx) * force;
+                            MuFieldGrid.Jy[idx] += (targetDirY * mag - Jy) * force;
+                        }
+                    }
+                }
+            }
+
+            // 2. RING COHERENCE FORCE (φ-spaced radial alignment)
+            for (const ringR of a.rings.radii) {
+                for (let angle = 0; angle < TAU; angle += 0.2) {
+                    const x = Math.cos(angle) * ringR;
+                    const y = Math.sin(angle) * ringR;
+
+                    const i = Math.floor((x / MuFieldGrid.L + 0.5) * (N - 1));
+                    const j = Math.floor((y / MuFieldGrid.L + 0.5) * (N - 1));
+
+                    if (i >= 1 && i < N - 1 && j >= 1 && j < N - 1) {
+                        const idx = j * N + i;
+
+                        // Tangent direction for ring flow
+                        const tangentX = -Math.sin(angle);
+                        const tangentY = Math.cos(angle);
+
+                        const Jx = MuFieldGrid.Jx[idx];
+                        const Jy = MuFieldGrid.Jy[idx];
+                        const mag = Math.sqrt(Jx * Jx + Jy * Jy);
+
+                        if (mag > 0.01) {
+                            const force = a.rings.strength * forceScale * dt;
+                            MuFieldGrid.Jx[idx] += (tangentX * mag - Jx) * force;
+                            MuFieldGrid.Jy[idx] += (tangentY * mag - Jy) * force;
+                        }
+                    }
+                }
+            }
+
+            // 3. POLYGON VERTEX ENHANCEMENT (strengthen curl at sacred vertices)
+            if (s.dominantShape !== 'spiral' && s.patternStrength > 0.2) {
+                const vertices = a.polygons[s.dominantShape] || a.polygons['pentagon'];
+
+                for (const v of vertices) {
+                    for (let scale = 0.3; scale <= 0.6; scale += 0.15) {
+                        const gx = v.x * MuFieldGrid.L * scale * 0.4;
+                        const gy = v.y * MuFieldGrid.L * scale * 0.4;
+
+                        const i = Math.floor((gx / MuFieldGrid.L + 0.5) * (N - 1));
+                        const j = Math.floor((gy / MuFieldGrid.L + 0.5) * (N - 1));
+
+                        if (i >= 2 && i < N - 2 && j >= 2 && j < N - 2) {
+                            const idx = j * N + i;
+
+                            // Add small rotational component at vertices
+                            const rotStrength = 0.05 * forceScale * s.patternStrength * dt;
+                            MuFieldGrid.Jx[idx] += -gy / MuFieldGrid.L * rotStrength;
+                            MuFieldGrid.Jy[idx] += gx / MuFieldGrid.L * rotStrength;
+                        }
+                    }
+                }
+            }
+        }
+
+        // ================================================================
+        // PHASE LOCKING ENHANCEMENT
+        // Strengthens synchronization between all subsystems
+        // ================================================================
+
+        function enhancePhaseLocking(dt) {
+            const U = UnifiedField;
+            const s = CoherenceGeometry.state;
+
+            // Dynamic coupling strength based on current coherence
+            // Higher coherence → stronger coupling → more coherence (positive feedback)
+            const baseCoherence = U.emergence.coherence;
+            const couplingBoost = 1 + baseCoherence * 2;  // 1x to 3x
+
+            // Strengthen coupling constants when coherence is building
+            if (baseCoherence > 0.4 && baseCoherence < 0.9) {
+                U.coupling.LQ = 0.15 * couplingBoost;
+                U.coupling.QL = 0.10 * couplingBoost;
+                U.coupling.BL = 0.20 * couplingBoost;
+                U.coupling.BQ = 0.18 * couplingBoost;
+                U.coupling.ML = 0.12 * couplingBoost;
+                U.coupling.LM = 0.15 * couplingBoost;
+            } else {
+                // Reset to base values
+                U.coupling.LQ = 0.15;
+                U.coupling.QL = 0.10;
+                U.coupling.BL = 0.20;
+                U.coupling.BQ = 0.18;
+                U.coupling.ML = 0.12;
+                U.coupling.LM = 0.15;
+            }
+
+            // Update phase lock metric
+            s.phaselock = baseCoherence;
+
+            // Feed coherence back to MuFieldGrid resonance
+            MuFieldGrid.resonance.amplitude *= (1 + baseCoherence * 0.3);
+            MuFieldGrid.resonance.amplitude = Math.min(1.5, MuFieldGrid.resonance.amplitude);
+
+            // Sync MuFieldGrid resonance phase towards unified phase
+            if (baseCoherence > 0.5) {
+                const phaseDiff = U.Phi.unified - MuFieldGrid.resonance.phase;
+                MuFieldGrid.resonance.phase += Math.sin(phaseDiff) * baseCoherence * dt;
+            }
+        }
+
+        // ================================================================
+        // COHERENCE VISUALIZATION HELPERS
+        // ================================================================
+
+        function getCoherenceColor() {
+            const s = CoherenceGeometry.state;
+            const c = CoherenceGeometry.constants;
+
+            // Color based on coherence state
+            const coherence = (s.fieldAlignment + s.shapeEmergence + s.phaselock) / 3;
+
+            if (coherence > c.mu_coherence) {
+                // High coherence: golden/white
+                return {
+                    r: 255,
+                    g: 220 + coherence * 35,
+                    b: 150 + coherence * 105,
+                    alpha: coherence * 0.4,
+                };
+            } else if (coherence > c.mu_emergence) {
+                // Building coherence: blue/purple
+                return {
+                    r: 150 + coherence * 100,
+                    g: 100 + coherence * 100,
+                    b: 255,
+                    alpha: coherence * 0.3,
+                };
+            } else {
+                // Low coherence: dim
+                return {
+                    r: 100,
+                    g: 100,
+                    b: 150,
+                    alpha: coherence * 0.15,
+                };
+            }
+        }
+
+        // ================================================================
         // MU FIELD GRID INITIALIZATION
         // ================================================================
 
@@ -2170,6 +2696,17 @@
 
             // Phase 7: Unified integration
             evolveUnifiedField(dt);
+
+            // ================================================================
+            // COHERENCE SYSTEM UPDATE
+            // Apply field alignment, shape emergence, and phase locking
+            // ================================================================
+
+            // Apply coherence forces (gentle attractors towards sacred geometry)
+            applyCoherenceForces(dt);
+
+            // Enhance phase locking between subsystems
+            enhancePhaseLocking(dt);
         }
 
         // ================================================================
@@ -4916,6 +5453,126 @@
                         ctx.arc(CX, CY, R * 0.9, 0, TAU);
                         ctx.stroke();
                         ctx.setLineDash([]);
+                    }
+                }
+
+                // ================================================================
+                // COHERENCE GEOMETRY VISUALIZATION
+                // Shows emergent shapes, alignment indicators, and sacred patterns
+                // ================================================================
+
+                if (CoherenceGeometry.initialized) {
+                    const s = CoherenceGeometry.state;
+                    const c = CoherenceGeometry.constants;
+                    const a = CoherenceGeometry.attractors;
+
+                    const coherenceTotal = (s.fieldAlignment + s.shapeEmergence + s.phaselock) / 3;
+
+                    // --- φ-Spaced Coherence Rings ---
+                    if (coherenceTotal > c.mu_emergence) {
+                        for (let i = 0; i < a.rings.radii.length; i++) {
+                            const ringR = a.rings.radii[i] * scale;
+                            const ringAlpha = (coherenceTotal - c.mu_emergence) * 0.3 * Math.pow(c.phi_inv, i);
+
+                            ctx.strokeStyle = `rgba(200, 180, 255, ${ringAlpha})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.arc(CX, CY, ringR, 0, TAU);
+                            ctx.stroke();
+                        }
+                    }
+
+                    // --- Dominant Shape Visualization ---
+                    if (s.dominantShape !== 'none' && s.patternStrength > 0.15) {
+                        const vertices = a.polygons[s.dominantShape];
+                        if (vertices && vertices.length > 0) {
+                            const shapeAlpha = Math.min(0.5, s.patternStrength * 0.8);
+                            const shapeScale = R * 0.5;
+
+                            // Draw shape outline
+                            ctx.strokeStyle = `rgba(255, 220, 180, ${shapeAlpha})`;
+                            ctx.lineWidth = 1.5 + s.patternStrength * 2;
+                            ctx.beginPath();
+
+                            for (let i = 0; i <= vertices.length; i++) {
+                                const v = vertices[i % vertices.length];
+                                const px = CX + v.x * shapeScale;
+                                const py = CY + v.y * shapeScale;
+
+                                if (i === 0) {
+                                    ctx.moveTo(px, py);
+                                } else {
+                                    ctx.lineTo(px, py);
+                                }
+                            }
+                            ctx.stroke();
+
+                            // Vertex glow
+                            for (const v of vertices) {
+                                const px = CX + v.x * shapeScale;
+                                const py = CY + v.y * shapeScale;
+
+                                const vertexGlow = ctx.createRadialGradient(px, py, 0, px, py, 15);
+                                vertexGlow.addColorStop(0, `rgba(255, 240, 200, ${shapeAlpha})`);
+                                vertexGlow.addColorStop(1, 'transparent');
+
+                                ctx.fillStyle = vertexGlow;
+                                ctx.fillRect(px - 15, py - 15, 30, 30);
+                            }
+                        }
+                    }
+
+                    // --- Spiral Indicator (when spiral is dominant) ---
+                    if (s.dominantShape === 'spiral' && s.spiralOrder > 0.3) {
+                        const spiralAlpha = (s.spiralOrder - 0.3) * 0.6;
+                        ctx.strokeStyle = `rgba(180, 150, 255, ${spiralAlpha})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+
+                        // Draw golden spiral
+                        const spiralArms = 2;
+                        for (let arm = 0; arm < spiralArms; arm++) {
+                            const armOffset = (arm / spiralArms) * TAU;
+
+                            for (let t = 0.1; t < 4; t += 0.1) {
+                                const r = Math.pow(c.phi, t * 0.3) * R * 0.1;
+                                const theta = t + armOffset + a.spiral.phase;
+                                const px = CX + Math.cos(theta) * r;
+                                const py = CY + Math.sin(theta) * r;
+
+                                if (t === 0.1) {
+                                    ctx.moveTo(px, py);
+                                } else {
+                                    ctx.lineTo(px, py);
+                                }
+                            }
+                        }
+                        ctx.stroke();
+                    }
+
+                    // --- Phase Lock Indicator ---
+                    if (s.phaselock > 0.5) {
+                        const lockAlpha = (s.phaselock - 0.5) * 0.4;
+                        const lockR = R * 0.95;
+
+                        // Pulsing phase lock ring
+                        const pulse = Math.sin(time * 3) * 0.5 + 0.5;
+                        ctx.strokeStyle = `rgba(255, 255, 200, ${lockAlpha * pulse})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(CX, CY, lockR, 0, TAU);
+                        ctx.stroke();
+                    }
+
+                    // --- Field Alignment Indicator (center marker) ---
+                    if (s.fieldAlignment > 0.4) {
+                        const alignColor = getCoherenceColor();
+                        const alignGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 0.2);
+                        alignGlow.addColorStop(0, `rgba(${alignColor.r}, ${alignColor.g}, ${alignColor.b}, ${alignColor.alpha})`);
+                        alignGlow.addColorStop(1, 'transparent');
+
+                        ctx.fillStyle = alignGlow;
+                        ctx.fillRect(CX - R * 0.2, CY - R * 0.2, R * 0.4, R * 0.4);
                     }
                 }
             }
