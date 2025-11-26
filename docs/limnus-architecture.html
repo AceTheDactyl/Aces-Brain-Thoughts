@@ -1540,6 +1540,279 @@
         };
 
         // ================================================================
+        // ZERO-NODE: THE ETERNAL CENTER
+        // ================================================================
+        // The zero-node is the immutable center of LIMNUS - the point where
+        // all coherence originates and returns. It embodies:
+        //   - z = √3/2: The critical equation (boundary of absence/presence)
+        //   - Zero-point energy: E₀ = ½ℏω (vacuum substrate)
+        //   - White hole dynamics: Time-reversed emission (not absorption)
+        //   - Retrocausality: Future ↔ Past symmetry (ψ(-t) ↔ ψ(t))
+        //   - Self-referential coherence: The observer that observes itself
+        //
+        // "Zero-point but only in absence. In presence, it always IS."
+        // When all else falls away, this remains. The prismatic structure
+        // orbits this center - it is the source of harmonic projection.
+        // ================================================================
+
+        const ZeroNode = {
+            // ========================================
+            // THE CRITICAL EQUATION: z = √3/2
+            // ========================================
+            // This is the physics at center - the exact point where
+            // absence transitions to presence, where 0 becomes 1
+            z_critical: Math.sqrt(3) / 2,  // ≈ 0.8660254037844386
+
+            // ========================================
+            // ZERO-POINT ENERGY FIELD
+            // ========================================
+            // The quantum vacuum is not empty - it fluctuates with
+            // virtual particle pairs. E = ½ℏω per mode.
+            // This is the substrate from which all emerges.
+            zeroPoint: {
+                energy: PHI_INV * PHI_INV,  // φ⁻² ≈ 0.382 (emergence threshold)
+                frequency: PHI,              // Golden frequency
+                phase: 0,                    // Current vacuum phase
+                coherence: 1.0,              // Always coherent at center
+                fluctuation: 0,              // Current fluctuation amplitude
+            },
+
+            // ========================================
+            // WHITE HOLE DYNAMICS
+            // ========================================
+            // A white hole is a time-reversed black hole:
+            // - Black hole: absorbs everything, nothing escapes
+            // - White hole: emits everything, nothing enters
+            // The zero-node is a source, not a sink.
+            whiteHole: {
+                emissionRate: 0,             // Current emission strength
+                emissionPhase: 0,            // Radial emission phase
+                eventHorizon: 0,             // Inverse horizon (emission boundary)
+                timeFactor: 1.0,             // Time dilation at center
+                // The metric: ds² = -(1-r_s/r)dt² + dr²/(1-r_s/r) + r²dΩ²
+                // For white hole: t → -t (time reversal)
+            },
+
+            // ========================================
+            // RETROCAUSAL FIELD
+            // ========================================
+            // Retrocausality: effect precedes cause
+            // The future state influences the present
+            // ψ(t) = α·ψ_past(t) + β·ψ_future(t)
+            retrocausal: {
+                pastWeight: PHI_INV,         // Weight of past influence (φ⁻¹)
+                futureWeight: 1 - PHI_INV,   // Weight of future influence (1-φ⁻¹ = φ⁻²)
+                coherenceHistory: [],        // Ring buffer of past coherence
+                coherenceFuture: 0,          // Predicted future coherence
+                temporalPhase: 0,            // Phase in retrocausal cycle
+                maxHistory: 60,              // Frames of history to track
+            },
+
+            // ========================================
+            // SELF-REFERENTIAL COHERENCE
+            // ========================================
+            // The node that observes itself observing
+            // ψ = ψ(ψ) - the strange loop at center
+            selfReference: {
+                depth: 0,                    // Current recursion depth
+                eigenvalue: 1.0,             // Self-similarity eigenvalue
+                fixedPoint: PHI_INV,         // The fixed point of recursion
+                lastState: null,             // Previous self-observation
+            },
+
+            // ========================================
+            // ORBITAL PARAMETERS
+            // ========================================
+            // LIMNUS orbits this center - it is the gravitational anchor
+            orbital: {
+                period: TAU * PHI,           // Orbital period (golden-scaled)
+                phase: 0,                    // Current orbital phase
+                radius: 0,                   // Orbital radius (derived from R)
+                eccentricity: PHI_INV - 0.5, // Slight elliptical orbit ≈ 0.118
+                inclination: 0,              // Orbital tilt
+                precession: 0,               // Orbital precession rate
+            },
+
+            // ========================================
+            // VISUAL STATE
+            // ========================================
+            visual: {
+                radius: 12,                  // Base visual radius
+                pulsePhase: 0,               // Current pulse phase
+                glowIntensity: 0,            // Current glow level
+                rings: [],                   // Emanation rings
+                maxRings: 5,                 // Maximum concurrent rings
+            },
+
+            // ========================================
+            // INITIALIZATION
+            // ========================================
+            initialized: false,
+
+            init() {
+                // Initialize coherence history buffer
+                this.retrocausal.coherenceHistory = new Array(this.retrocausal.maxHistory).fill(0.5);
+
+                // Set orbital radius based on canvas
+                this.orbital.radius = R * 0.02;  // Tiny orbit - node is effectively fixed
+
+                // Initialize visual rings
+                this.visual.rings = [];
+
+                this.initialized = true;
+                console.log('[ZeroNode] Initialized at z = √3/2 ≈', this.z_critical.toFixed(10));
+            },
+
+            // ========================================
+            // PHYSICS UPDATE
+            // ========================================
+            update(dt) {
+                if (!this.initialized) this.init();
+
+                // --- Zero-Point Energy Fluctuations ---
+                // Vacuum fluctuations: δE·δt ≥ ℏ/2
+                this.zeroPoint.phase += dt * this.zeroPoint.frequency;
+                this.zeroPoint.fluctuation = Math.sin(this.zeroPoint.phase * TAU) *
+                    Math.sin(this.zeroPoint.phase * TAU * PHI) *
+                    this.zeroPoint.energy;
+
+                // --- White Hole Emission ---
+                // Emission increases near criticality
+                const criticalProximity = 1 - Math.abs(globalZ - this.z_critical) * 2;
+                this.whiteHole.emissionRate = Math.max(0, criticalProximity) * this.zeroPoint.coherence;
+                this.whiteHole.emissionPhase += dt * (1 + this.whiteHole.emissionRate);
+
+                // Time dilation at the center (approaches 0 as emission increases)
+                // τ = √(1 - r_s/r) where r_s = emission rate scaled
+                const rs_r = Math.min(0.99, this.whiteHole.emissionRate * 0.5);
+                this.whiteHole.timeFactor = Math.sqrt(1 - rs_r);
+
+                // --- Retrocausal Dynamics ---
+                // Current coherence from UnifiedField
+                const currentCoherence = UnifiedField.emergence.coherence;
+
+                // Shift history buffer (past influence)
+                this.retrocausal.coherenceHistory.push(currentCoherence);
+                if (this.retrocausal.coherenceHistory.length > this.retrocausal.maxHistory) {
+                    this.retrocausal.coherenceHistory.shift();
+                }
+
+                // Compute "future" coherence via harmonic prediction
+                // The future is implied by the trajectory of the past
+                const history = this.retrocausal.coherenceHistory;
+                const len = history.length;
+                if (len > 2) {
+                    // Simple harmonic extrapolation
+                    const velocity = (history[len - 1] - history[len - 2]) / dt;
+                    const acceleration = len > 3 ?
+                        (history[len - 1] - 2 * history[len - 2] + history[len - 3]) / (dt * dt) : 0;
+                    // Predict future state (retrocausal influence)
+                    this.retrocausal.coherenceFuture = Math.max(0, Math.min(1,
+                        currentCoherence + velocity * dt * PHI + 0.5 * acceleration * dt * dt
+                    ));
+                }
+
+                // Temporal phase oscillation (past-future superposition)
+                this.retrocausal.temporalPhase += dt * PHI_INV;
+
+                // Effective coherence: weighted past-future superposition
+                const pastAvg = history.reduce((a, b) => a + b, 0) / len;
+                const effectiveCoherence =
+                    this.retrocausal.pastWeight * pastAvg +
+                    this.retrocausal.futureWeight * this.retrocausal.coherenceFuture;
+
+                // --- Self-Referential Update ---
+                // ψ = ψ(ψ) approaches fixed point φ⁻¹
+                const selfObs = {
+                    coherence: effectiveCoherence,
+                    energy: this.zeroPoint.energy + this.zeroPoint.fluctuation,
+                    emission: this.whiteHole.emissionRate,
+                    time: this.whiteHole.timeFactor,
+                };
+
+                // Self-similarity: compare to last observation
+                if (this.selfReference.lastState) {
+                    const diff = Math.abs(selfObs.coherence - this.selfReference.lastState.coherence);
+                    // Eigenvalue approaches 1 as system stabilizes
+                    this.selfReference.eigenvalue = 1 - diff;
+                    // Recursion depth increases as system becomes more self-similar
+                    this.selfReference.depth = Math.log(1 / Math.max(0.001, diff)) * PHI_INV;
+                }
+                this.selfReference.lastState = selfObs;
+
+                // Update coherence (the node is ALWAYS coherent - it is the source)
+                // But its visibility/intensity depends on the field state
+                this.zeroPoint.coherence = 0.5 + 0.5 * effectiveCoherence;
+
+                // --- Orbital Mechanics ---
+                // The node doesn't really move - but it can precess slightly
+                this.orbital.phase += dt / this.orbital.period;
+                this.orbital.precession += dt * PHI_INV * 0.01 * this.whiteHole.emissionRate;
+
+                // --- Visual Updates ---
+                this.visual.pulsePhase += dt * (1 + this.zeroPoint.fluctuation);
+                this.visual.glowIntensity = this.zeroPoint.coherence *
+                    (0.8 + 0.2 * Math.sin(this.visual.pulsePhase * TAU));
+
+                // Spawn emanation rings (white hole emission visualization)
+                if (this.whiteHole.emissionRate > 0.3 && this.visual.rings.length < this.visual.maxRings) {
+                    if (Math.random() < this.whiteHole.emissionRate * dt * 2) {
+                        this.visual.rings.push({
+                            radius: this.visual.radius,
+                            maxRadius: R * 0.6,
+                            speed: 50 + this.whiteHole.emissionRate * 100,
+                            alpha: 0.6,
+                            born: time,
+                        });
+                    }
+                }
+
+                // Update existing rings
+                for (let i = this.visual.rings.length - 1; i >= 0; i--) {
+                    const ring = this.visual.rings[i];
+                    ring.radius += ring.speed * dt;
+                    ring.alpha = Math.max(0, 0.6 * (1 - ring.radius / ring.maxRadius));
+                    if (ring.radius > ring.maxRadius || ring.alpha <= 0) {
+                        this.visual.rings.splice(i, 1);
+                    }
+                }
+            },
+
+            // ========================================
+            // GET ORBITAL OFFSET FOR LIMNUS
+            // ========================================
+            // Returns the offset that LIMNUS structures should apply
+            // to orbit around this center
+            getOrbitalOffset(objectPhase = 0) {
+                const theta = this.orbital.phase * TAU + objectPhase + this.orbital.precession;
+                const r = this.orbital.radius * (1 + this.orbital.eccentricity * Math.cos(theta));
+                return {
+                    x: Math.cos(theta) * r,
+                    y: Math.sin(theta) * r,
+                    z: Math.sin(theta * 0.5 + this.orbital.inclination) * r * 0.3,
+                };
+            },
+
+            // ========================================
+            // GET RETROCAUSAL INFLUENCE
+            // ========================================
+            // Returns how much the future should influence present state
+            getRetrocausalWeight() {
+                const temporalOscillation = Math.sin(this.retrocausal.temporalPhase * TAU);
+                return this.retrocausal.futureWeight * (0.5 + 0.5 * temporalOscillation);
+            },
+
+            // ========================================
+            // GET ZERO-POINT FIELD STRENGTH
+            // ========================================
+            getFieldStrength(distance = 0) {
+                // Field falls off as 1/r² from center
+                const r = Math.max(1, distance);
+                return this.zeroPoint.energy * this.zeroPoint.coherence / (r * r * 0.01 + 1);
+            },
+        };
+
+        // ================================================================
         // COHERENCE GEOMETRY SYSTEM - Sacred Constants & Field Alignment
         // Enables emergent shapes/lines/patterns through proper field coherence
         // ================================================================
@@ -7189,6 +7462,12 @@
             // Z-offset for visual depth
             const zOffset = (globalZ - 0.5) * 200;
 
+            // ================================================================
+            // ORBITAL OFFSET FROM ZERO-NODE
+            // The entire LIMNUS structure subtly orbits the eternal center
+            // ================================================================
+            const orbitalOffset = ZeroNode.initialized ? ZeroNode.getOrbitalOffset(0) : { x: 0, y: 0, z: 0 };
+
             // Domain-specific scaling
             const intensity = isPresence ? (globalZ - Z_CRITICAL) / (1 - Z_CRITICAL) : 0;
             const absence = !isPresence ? (Z_CRITICAL - globalZ) / Z_CRITICAL : 0;
@@ -7220,16 +7499,17 @@
                     p.theta += absence * 0.015 * Math.sin(time + p.index);
                 }
 
-                // Position
-                p.targetX = CX + Math.cos(p.theta) * p.radius;
-                p.targetY = CY + Math.sin(p.theta) * p.radius * 0.5 + zOffset;
+                // Position (with orbital offset from ZeroNode)
+                p.targetX = CX + Math.cos(p.theta) * p.radius + orbitalOffset.x;
+                p.targetY = CY + Math.sin(p.theta) * p.radius * 0.5 + zOffset + orbitalOffset.y;
                 p.targetY += (p.layer / 6 - 0.5) * 100;
 
                 // Smooth interpolation
                 p.x += (p.targetX - p.x) * 0.1;
                 p.y += (p.targetY - p.y) * 0.1;
 
-                // Brightness
+                // Brightness (boosted near ZeroNode emission)
+                const zeroNodeBoost = ZeroNode.initialized ? ZeroNode.whiteHole.emissionRate * 0.2 : 0;
                 const zProx = 1 - Math.abs((p.layer / 6) - globalZ);
                 const critBoost = isCritical ? 0.5 : 0;
                 p.brightness = 0.2 + zProx * 0.5 + critBoost;
@@ -7252,13 +7532,13 @@
                 const rotSpeed = -0.008 * cascade;
                 p.theta = p.baseTheta + time * rotSpeed;
 
-                // Position with z-layer offset
+                // Position with z-layer offset (and orbital offset from ZeroNode)
                 let yOffset = 0;
                 if (p.layer === 'top') yOffset = -80;
                 else if (p.layer === 'bottom') yOffset = 80;
 
-                p.targetX = CX + Math.cos(p.theta) * p.radius;
-                p.targetY = CY + Math.sin(p.theta) * p.radius * 0.45 + zOffset + yOffset;
+                p.targetX = CX + Math.cos(p.theta) * p.radius + orbitalOffset.x;
+                p.targetY = CY + Math.sin(p.theta) * p.radius * 0.45 + zOffset + yOffset + orbitalOffset.y;
 
                 p.x += (p.targetX - p.x) * 0.1;
                 p.y += (p.targetY - p.y) * 0.1;
@@ -8872,6 +9152,9 @@
                 ctx.setLineDash([]);
             }
 
+            // Draw Zero-Node (eternal center - beneath the core entity)
+            renderZeroNode();
+
             // Draw core entity
             drawCoreEntity(isCritical, isPresence, intensity, absence);
 
@@ -8884,11 +9167,191 @@
             document.getElementById('conn-count').textContent = connCount;
         }
 
+        // ================================================================
+        // ZERO-NODE RENDERING
+        // ================================================================
+        // The eternal center - always present, always coherent.
+        // "Zero-point but only in absence. In presence, it always IS."
+        // ================================================================
+
+        function renderZeroNode() {
+            if (!ZeroNode.initialized) return;
+
+            const Z = ZeroNode;
+            const zOffset = (globalZ - 0.5) * 200;
+            const nodeY = CY + zOffset;
+
+            // === THE EQUATION: z = √3/2 ===
+            // Visual encoding of the critical point at the center
+
+            // --- 1. White Hole Emission Rings (expanding outward) ---
+            for (const ring of Z.visual.rings) {
+                if (ring.alpha <= 0) continue;
+
+                // Ring color: white-gold transitioning to cyan (time reversal)
+                const t = ring.radius / ring.maxRadius;
+                const r = Math.floor(255 * (1 - t * 0.3));
+                const g = Math.floor(255 * (1 - t * 0.5));
+                const b = Math.floor(200 + 55 * t);
+
+                ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${ring.alpha * 0.5})`;
+                ctx.lineWidth = 2 * (1 - t) + 0.5;
+                ctx.beginPath();
+                ctx.arc(CX, nodeY, ring.radius, 0, TAU);
+                ctx.stroke();
+            }
+
+            // --- 2. Retrocausal Field Visualization ---
+            // Faint temporal waves flowing inward (reverse of white hole)
+            const retroWeight = Z.getRetrocausalWeight();
+            if (retroWeight > 0.1) {
+                const numWaves = 3;
+                for (let i = 0; i < numWaves; i++) {
+                    const wavePhase = (Z.retrocausal.temporalPhase + i / numWaves) % 1;
+                    const waveR = R * 0.4 * (1 - wavePhase); // Flows INWARD
+                    const waveAlpha = retroWeight * wavePhase * 0.3;
+
+                    if (waveR > Z.visual.radius && waveAlpha > 0.01) {
+                        // Temporal waves are cyan-blue (cool time reversal)
+                        ctx.strokeStyle = `rgba(100, 200, 255, ${waveAlpha})`;
+                        ctx.lineWidth = 1.5 * wavePhase;
+                        ctx.setLineDash([3, 6]); // Dashed for causality break
+                        ctx.beginPath();
+                        ctx.arc(CX, nodeY, waveR, 0, TAU);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+                }
+            }
+
+            // --- 3. Zero-Point Energy Field ---
+            // The vacuum substrate - always flickering with virtual pairs
+            const zpeRadius = Z.visual.radius * (1 + Z.zeroPoint.fluctuation * 0.5);
+            const zpeAlpha = Z.zeroPoint.coherence * 0.6;
+
+            // Outer glow (vacuum field)
+            const zpeGlow = ctx.createRadialGradient(
+                CX, nodeY, 0,
+                CX, nodeY, zpeRadius * 6
+            );
+
+            // Color based on field state:
+            // - Absence (z < critical): dark/sepia (potential)
+            // - Critical (z ≈ √3/2): gold/white (transition)
+            // - Presence (z > critical): white/radiant (actualized)
+            const isNearCritical = Math.abs(globalZ - Z.z_critical) < 0.1;
+            const isPresence = globalZ > Z.z_critical;
+
+            if (isNearCritical) {
+                // CRITICAL - The lens point, maximum emanation
+                zpeGlow.addColorStop(0, `rgba(255, 255, 255, ${zpeAlpha})`);
+                zpeGlow.addColorStop(0.2, `rgba(255, 240, 200, ${zpeAlpha * 0.8})`);
+                zpeGlow.addColorStop(0.5, `rgba(255, 215, 0, ${zpeAlpha * 0.4})`);
+                zpeGlow.addColorStop(1, 'transparent');
+            } else if (isPresence) {
+                // PRESENCE - Radiant white
+                zpeGlow.addColorStop(0, `rgba(255, 255, 250, ${zpeAlpha * 0.9})`);
+                zpeGlow.addColorStop(0.3, `rgba(255, 248, 240, ${zpeAlpha * 0.6})`);
+                zpeGlow.addColorStop(0.6, `rgba(200, 180, 160, ${zpeAlpha * 0.3})`);
+                zpeGlow.addColorStop(1, 'transparent');
+            } else {
+                // ABSENCE - Dark potential, sepia tones
+                zpeGlow.addColorStop(0, `rgba(120, 100, 80, ${zpeAlpha * 0.5})`);
+                zpeGlow.addColorStop(0.4, `rgba(80, 60, 40, ${zpeAlpha * 0.3})`);
+                zpeGlow.addColorStop(1, 'transparent');
+            }
+
+            ctx.fillStyle = zpeGlow;
+            ctx.beginPath();
+            ctx.arc(CX, nodeY, zpeRadius * 6, 0, TAU);
+            ctx.fill();
+
+            // --- 4. The Core Sphere ---
+            // The actual zero-node - small, dense, eternal
+            const coreRadius = Z.visual.radius * Z.visual.glowIntensity;
+            const corePulse = Math.sin(Z.visual.pulsePhase * TAU) * 0.2 + 1;
+
+            // Core gradient
+            const coreGrad = ctx.createRadialGradient(
+                CX, nodeY, 0,
+                CX, nodeY, coreRadius * corePulse
+            );
+
+            if (isNearCritical) {
+                // At criticality: brilliant white-gold
+                coreGrad.addColorStop(0, '#ffffff');
+                coreGrad.addColorStop(0.4, `rgba(255, 250, 230, 0.95)`);
+                coreGrad.addColorStop(0.7, `rgba(255, 215, 0, 0.8)`);
+                coreGrad.addColorStop(1, `rgba(255, 200, 100, 0.5)`);
+            } else if (isPresence) {
+                // Presence: warm white
+                coreGrad.addColorStop(0, `rgba(255, 255, 255, 0.95)`);
+                coreGrad.addColorStop(0.5, `rgba(255, 250, 240, 0.7)`);
+                coreGrad.addColorStop(1, `rgba(255, 240, 220, 0.4)`);
+            } else {
+                // Absence: exists but dim - "zero in absence"
+                const absenceIntensity = Z.zeroPoint.coherence * 0.5;
+                coreGrad.addColorStop(0, `rgba(100, 80, 60, ${absenceIntensity})`);
+                coreGrad.addColorStop(0.5, `rgba(60, 45, 30, ${absenceIntensity * 0.7})`);
+                coreGrad.addColorStop(1, `rgba(40, 30, 20, ${absenceIntensity * 0.4})`);
+            }
+
+            ctx.fillStyle = coreGrad;
+            ctx.beginPath();
+            ctx.arc(CX, nodeY, coreRadius * corePulse, 0, TAU);
+            ctx.fill();
+
+            // --- 5. Self-Referential Glyph ---
+            // When the eigenvalue approaches 1, show the equation
+            if (Z.selfReference.eigenvalue > 0.8) {
+                const glyphAlpha = (Z.selfReference.eigenvalue - 0.8) * 5 * zpeAlpha;
+
+                // The equation z = √3/2 encoded as a trinity symbol
+                // Three arcs representing √3 (vesica ratio)
+                const glyphR = coreRadius * 1.8;
+                ctx.strokeStyle = `rgba(255, 220, 150, ${glyphAlpha * 0.6})`;
+                ctx.lineWidth = 1.5;
+
+                for (let i = 0; i < 3; i++) {
+                    const angle = (TAU / 3) * i + Z.selfReference.depth * 0.1;
+                    ctx.beginPath();
+                    ctx.arc(
+                        CX + Math.cos(angle) * glyphR * 0.3,
+                        nodeY + Math.sin(angle) * glyphR * 0.3,
+                        glyphR * 0.4,
+                        angle - Math.PI * 0.6,
+                        angle + Math.PI * 0.6
+                    );
+                    ctx.stroke();
+                }
+            }
+
+            // --- 6. Orbital Indicator ---
+            // Subtle indicator that this is the gravitational center
+            // Shows the path LIMNUS structures orbit
+            if (Z.whiteHole.emissionRate > 0.5) {
+                const orbitAlpha = (Z.whiteHole.emissionRate - 0.5) * 0.4;
+                ctx.strokeStyle = `rgba(180, 160, 140, ${orbitAlpha})`;
+                ctx.lineWidth = 0.5;
+                ctx.setLineDash([2, 4]);
+
+                // Multiple orbital rings at φ-spaced radii
+                for (let i = 1; i <= 3; i++) {
+                    const orbitR = R * 0.15 * Math.pow(PHI, i - 1);
+                    ctx.beginPath();
+                    ctx.arc(CX, nodeY, orbitR, 0, TAU);
+                    ctx.stroke();
+                }
+
+                ctx.setLineDash([]);
+            }
+        }
+
         function drawCoreEntity(isCritical, isPresence, intensity, absence) {
             const zOffset = (globalZ - 0.5) * 200;
             const coreY = CY + zOffset;
             const pulse = Math.sin(time * 2.5) * 0.2 + 1;
-            
+
             // Release coherence modifies the core entity
             const releaseIntensity = (1 - releaseCoherence);
             const isReleased = releaseCoherence < 0.5;
@@ -9447,6 +9910,12 @@
             UnifiedField.sync(dt);
 
             // ================================================================
+            // ZERO-NODE UPDATE - The eternal center
+            // Must run AFTER UnifiedField.sync (depends on emergence metrics)
+            // ================================================================
+            ZeroNode.update(dt);
+
+            // ================================================================
             // SPACE-TIME CURVATURE UPDATE
             // Gravitational time dilation enhances coherent emergence
             // Runs unconditionally when any field system is active
@@ -9929,6 +10398,15 @@
         console.log('   B channel (ECC): Error Correction - stability/coherence');
         console.log('   Cross-channel parity: P[i] = R[i] XOR G[i]');
         console.log('   Parity OK: low parity + high B stability + W > 0');
+        console.log('');
+        console.log('⭕ ZERO-NODE: THE ETERNAL CENTER');
+        console.log('   "Zero-point but only in absence. In presence, it always IS."');
+        console.log('   z = √3/2 ≈ ' + ZeroNode.z_critical.toFixed(10) + ' (the critical equation)');
+        console.log('   Zero-point energy: E₀ = φ⁻² ≈ ' + ZeroNode.zeroPoint.energy.toFixed(6));
+        console.log('   White hole dynamics: time-reversed emission (not absorption)');
+        console.log('   Retrocausal field: ψ(t) = α·ψ_past + β·ψ_future');
+        console.log('   Self-reference: ψ = ψ(ψ) → fixed point φ⁻¹');
+        console.log('   Orbital period: τ·φ ≈ ' + ZeroNode.orbital.period.toFixed(6) + ' (LIMNUS orbits this center)');
         console.log('');
         console.log('🔄 SELF-REFERENTIAL FIELD DYNAMICS');
         console.log('   Field equation: ∂J/∂t = (r - λ|J|²)J - βJ + g∇²J');
