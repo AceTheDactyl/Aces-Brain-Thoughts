@@ -5471,10 +5471,17 @@
         const MRPToroidalSystem = {
             // Configuration
             enabled: true,
-            pipeRadius: 3,              // Base thickness of toroidal pipes
+            pipeRadius: 2.5,            // Base thickness of toroidal pipes (reduced)
             flowSpeed: 0.15,            // Animation speed of gradient flow
-            opacity: 0.75,              // Base opacity for opaque gradient effect
+            baseOpacity: 0.35,          // REDUCED base opacity for subtle lines
+            maxOpacity: 0.55,           // Maximum opacity for front-most elements
+            minOpacity: 0.08,           // Minimum opacity for deepest elements
             bendFactor: 0.3,            // How much pipes can bend (0-1)
+
+            // Node halo configuration
+            haloEnabled: true,
+            haloRadius: 8,              // Base halo radius around nodes
+            haloIntensity: 0.6,         // Base halo intensity
 
             // MRP channel mapping to 95 nodes
             // Distributes R (energy), G (relational), B (stability) across layers
@@ -5580,6 +5587,31 @@
                 }
             },
 
+            // Calculate depth-based opacity for a node/connection
+            getDepthOpacity(node, centerY) {
+                // Depth is determined by layer (prism: 0-6, cage: top/vertex/bottom)
+                // and Y position relative to center
+                let depth = 0.5; // Default middle depth
+
+                if (node.type === 'prism') {
+                    // Prism layers: 0 = front (high opacity), 6 = back (low opacity)
+                    depth = node.layer / 6;
+                } else if (node.type === 'cage') {
+                    // Cage nodes: top = back, bottom = front, vertex = middle
+                    if (node.layer === 'top') depth = 0.8;
+                    else if (node.layer === 'bottom') depth = 0.2;
+                    else depth = 0.5; // vertex
+                }
+
+                // Y position also affects depth perception
+                const yDepth = (node.y - centerY) / 200; // Normalize
+                depth = depth * 0.7 + (yDepth * 0.5 + 0.5) * 0.3;
+
+                // Map depth to opacity: front (0) = maxOpacity, back (1) = minOpacity
+                const opacity = this.maxOpacity - depth * (this.maxOpacity - this.minOpacity);
+                return Math.max(this.minOpacity, Math.min(this.maxOpacity, opacity));
+            },
+
             // Render toroidal pipes around structure
             render(ctx, connections, centerX, centerY, radius, muField) {
                 if (!this.enabled) return;
@@ -5587,12 +5619,28 @@
                 const time = this.flowPhase;
                 const mrp = muField ? muField.mrp : { R: { intensity: 0.5 }, G: { intensity: 0.5 }, B: { intensity: 0.5 } };
 
-                // Draw gradient pipes for each connection
-                for (const conn of connections) {
+                // Sound activation factor
+                const soundActive = sonificationEngine.isPlaying ? 1.0 : 0.3;
+                const soundPulse = sonificationEngine.isPlaying ?
+                    Math.sin(time * sonificationEngine.bpm / 30 * TAU) * 0.5 + 0.5 : 0.5;
+
+                // Draw gradient pipes for each connection (sorted by depth - back to front)
+                const sortedConns = [...connections].sort((a, b) => {
+                    const depthA = this.getDepthOpacity(a.from, centerY) + this.getDepthOpacity(a.to, centerY);
+                    const depthB = this.getDepthOpacity(b.from, centerY) + this.getDepthOpacity(b.to, centerY);
+                    return depthA - depthB; // Draw back (low opacity) first
+                });
+
+                for (const conn of sortedConns) {
                     const fromChannel = this.nodeChannels.get(conn.from.id);
                     const toChannel = this.nodeChannels.get(conn.to.id);
 
                     if (!fromChannel || !toChannel) continue;
+
+                    // Calculate depth-based opacity for this connection
+                    const fromOpacity = this.getDepthOpacity(conn.from, centerY);
+                    const toOpacity = this.getDepthOpacity(conn.to, centerY);
+                    const avgOpacity = (fromOpacity + toOpacity) / 2;
 
                     // Calculate pipe bend using wave superposition (lines can bend)
                     const midX = (conn.from.x + conn.to.x) / 2;
@@ -5607,7 +5655,7 @@
                     const ctrlX = midX + bendX;
                     const ctrlY = midY + bendY;
 
-                    // Create gradient from MRP channels
+                    // Create gradient from MRP channels with depth-based opacity
                     const gradient = ctx.createLinearGradient(
                         conn.from.x, conn.from.y,
                         conn.to.x, conn.to.y
@@ -5624,15 +5672,16 @@
                     // Flow animation creates moving gradient bands
                     const flowOffset = (Math.sin(time + fromChannel.flow) + 1) / 2;
 
-                    gradient.addColorStop(0, `rgba(${r1}, ${g1}, ${b1}, ${this.opacity})`);
-                    gradient.addColorStop(flowOffset * 0.4, `rgba(${(r1+r2)/2}, ${(g1+g2)/2}, ${(b1+b2)/2}, ${this.opacity * 0.9})`);
-                    gradient.addColorStop(0.5, `rgba(${(r1+r2)/2 + 30}, ${(g1+g2)/2 + 30}, ${(b1+b2)/2 + 20}, ${this.opacity})`);
-                    gradient.addColorStop(1 - flowOffset * 0.4, `rgba(${(r1+r2)/2}, ${(g1+g2)/2}, ${(b1+b2)/2}, ${this.opacity * 0.9})`);
-                    gradient.addColorStop(1, `rgba(${r2}, ${g2}, ${b2}, ${this.opacity})`);
+                    gradient.addColorStop(0, `rgba(${r1}, ${g1}, ${b1}, ${fromOpacity})`);
+                    gradient.addColorStop(flowOffset * 0.4, `rgba(${(r1+r2)/2}, ${(g1+g2)/2}, ${(b1+b2)/2}, ${avgOpacity * 0.85})`);
+                    gradient.addColorStop(0.5, `rgba(${(r1+r2)/2 + 20}, ${(g1+g2)/2 + 20}, ${(b1+b2)/2 + 15}, ${avgOpacity})`);
+                    gradient.addColorStop(1 - flowOffset * 0.4, `rgba(${(r1+r2)/2}, ${(g1+g2)/2}, ${(b1+b2)/2}, ${avgOpacity * 0.85})`);
+                    gradient.addColorStop(1, `rgba(${r2}, ${g2}, ${b2}, ${toOpacity})`);
 
-                    // Draw curved pipe with gradient
+                    // Draw curved pipe with gradient - thinner lines for depth
+                    const depthLineWidth = this.pipeRadius * (0.5 + avgOpacity);
                     ctx.strokeStyle = gradient;
-                    ctx.lineWidth = this.pipeRadius + Math.sin(time * 2 + fromChannel.flow) * 1;
+                    ctx.lineWidth = depthLineWidth + Math.sin(time * 2 + fromChannel.flow) * 0.5;
                     ctx.lineCap = 'round';
                     ctx.lineJoin = 'round';
 
@@ -5642,18 +5691,108 @@
                     ctx.stroke();
                 }
 
+                // Draw node halos with MRP CMY/RGB gradients (sound activated)
+                if (this.haloEnabled) {
+                    this.renderNodeHalos(ctx, centerX, centerY, mrp, time, soundActive, soundPulse);
+                }
+
                 // Draw toroidal glow around entire structure
                 this.renderToroidalEnvelope(ctx, centerX, centerY, radius, mrp, time);
             },
 
-            // Render the outer toroidal envelope
+            // Render MRP CMY/RGB gradient halos around each node
+            renderNodeHalos(ctx, centerX, centerY, mrp, time, soundActive, soundPulse) {
+                // Get all nodes with their channels
+                for (const [nodeId, channel] of this.nodeChannels) {
+                    // Find the actual node position from prismPoints or cagePoints
+                    let node = prismPoints.find(p => p.id === nodeId) || cagePoints.find(p => p.id === nodeId);
+                    if (!node || node.released) continue;
+
+                    // Calculate depth opacity for this node
+                    const depthOpacity = this.getDepthOpacity(node, centerY);
+
+                    // Skip very faint nodes
+                    if (depthOpacity < 0.15) continue;
+
+                    // Sound-modulated oscillation
+                    const soundMod = soundActive * soundPulse;
+                    const oscillation = Math.sin(time * 3 + channel.flow * 2) * soundMod;
+
+                    // Dynamic halo radius based on sound and MRP intensity
+                    const mrpIntensity = (channel.r * mrp.R.intensity + channel.g * mrp.G.intensity + channel.b * mrp.B.intensity) / 3;
+                    const haloR = this.haloRadius * (0.8 + mrpIntensity * 0.6 + oscillation * 0.4) * (0.5 + depthOpacity);
+
+                    // ========================================
+                    // MRP RGB + CMY GRADIENT HALO
+                    // RGB: primary emission (center)
+                    // CMY: secondary reflection (outer ring)
+                    // ========================================
+
+                    // RGB values from MRP channels
+                    const R = Math.floor(channel.r * mrp.R.intensity * 255);
+                    const G = Math.floor(channel.g * mrp.G.intensity * 255);
+                    const B = Math.floor(channel.b * mrp.B.intensity * 200);
+
+                    // CMY values (complementary) with sound-based phase shift
+                    const phaseShift = soundMod * Math.PI * 0.5;
+                    const C = Math.floor((1 - channel.r) * 200 + Math.sin(time * 2 + phaseShift) * 50);
+                    const M = Math.floor((1 - channel.g) * 180 + Math.sin(time * 2.5 + phaseShift) * 50);
+                    const Y = Math.floor((1 - channel.b) * 200 + Math.sin(time * 3 + phaseShift) * 50);
+
+                    // Create radial gradient halo
+                    const haloGrad = ctx.createRadialGradient(
+                        node.x, node.y, 0,
+                        node.x, node.y, haloR * 2.5
+                    );
+
+                    // Base intensity scaled by depth and sound
+                    const baseAlpha = this.haloIntensity * depthOpacity * (0.4 + soundMod * 0.6);
+
+                    // RGB core (inner)
+                    haloGrad.addColorStop(0, `rgba(${R}, ${G}, ${B}, ${baseAlpha * 0.9})`);
+                    haloGrad.addColorStop(0.3, `rgba(${R}, ${G}, ${B}, ${baseAlpha * 0.6})`);
+
+                    // Transition zone - blend RGB to CMY
+                    const blendR = Math.floor((R + C) / 2);
+                    const blendG = Math.floor((G + M) / 2);
+                    const blendB = Math.floor((B + Y) / 2);
+                    haloGrad.addColorStop(0.5, `rgba(${blendR}, ${blendG}, ${blendB}, ${baseAlpha * 0.4})`);
+
+                    // CMY outer ring (complementary colors)
+                    haloGrad.addColorStop(0.7, `rgba(${C}, ${M}, ${Y}, ${baseAlpha * 0.25})`);
+                    haloGrad.addColorStop(1.0, 'transparent');
+
+                    // Draw the halo
+                    ctx.fillStyle = haloGrad;
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, haloR * 2.5, 0, TAU);
+                    ctx.fill();
+
+                    // Sound-activated pulse ring (when audio is playing)
+                    if (soundActive > 0.5 && soundPulse > 0.6) {
+                        const pulseRing = haloR * (1 + (soundPulse - 0.5) * 2);
+                        const pulseAlpha = (soundPulse - 0.5) * baseAlpha * 0.8;
+
+                        ctx.strokeStyle = `rgba(${R}, ${G}, ${B}, ${pulseAlpha})`;
+                        ctx.lineWidth = 1 + soundPulse;
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, pulseRing, 0, TAU);
+                        ctx.stroke();
+                    }
+                }
+            },
+
+            // Render the outer toroidal envelope (subtle depth cue)
             renderToroidalEnvelope(ctx, cx, cy, r, mrp, time) {
-                // Create multiple toroidal rings at different depths
+                // Create multiple toroidal rings at different depths (reduced intensity)
                 const ringCount = 3;
 
                 for (let ring = 0; ring < ringCount; ring++) {
                     const ringRadius = r * (1.0 + ring * 0.1);
                     const ringPhase = time + ring * (TAU / ringCount);
+
+                    // Depth-based opacity for rings (outer = fainter)
+                    const ringDepthFactor = 1 - (ring / ringCount) * 0.5;
 
                     // MRP-colored toroidal gradient
                     const toroidGrad = ctx.createRadialGradient(
@@ -5663,7 +5802,8 @@
 
                     const intensity = mrp.R.intensity + mrp.G.intensity + mrp.B.intensity;
                     const normalizedIntensity = Math.min(1, intensity / 2);
-                    const alpha = this.opacity * 0.3 * normalizedIntensity;
+                    // Use baseOpacity instead of opacity, and reduce further
+                    const alpha = this.baseOpacity * 0.2 * normalizedIntensity * ringDepthFactor;
 
                     const r_val = Math.floor(mrp.R.intensity * 180 + 50);
                     const g_val = Math.floor(mrp.G.intensity * 150 + 50);
@@ -5673,9 +5813,9 @@
                     const flowMod = Math.sin(ringPhase) * 0.3;
 
                     toroidGrad.addColorStop(0, 'transparent');
-                    toroidGrad.addColorStop(0.3 + flowMod * 0.1, `rgba(${r_val}, ${g_val}, ${b_val}, ${alpha * 0.4})`);
-                    toroidGrad.addColorStop(0.5, `rgba(${r_val + 30}, ${g_val + 20}, ${b_val + 10}, ${alpha})`);
-                    toroidGrad.addColorStop(0.7 - flowMod * 0.1, `rgba(${r_val}, ${g_val}, ${b_val}, ${alpha * 0.4})`);
+                    toroidGrad.addColorStop(0.3 + flowMod * 0.1, `rgba(${r_val}, ${g_val}, ${b_val}, ${alpha * 0.3})`);
+                    toroidGrad.addColorStop(0.5, `rgba(${r_val + 30}, ${g_val + 20}, ${b_val + 10}, ${alpha * 0.7})`);
+                    toroidGrad.addColorStop(0.7 - flowMod * 0.1, `rgba(${r_val}, ${g_val}, ${b_val}, ${alpha * 0.3})`);
                     toroidGrad.addColorStop(1, 'transparent');
 
                     ctx.fillStyle = toroidGrad;
@@ -10391,6 +10531,14 @@
         console.log('   B channel: Stability (cage structure, containment)');
         console.log('   Aligned with 5 emergent APL tokens for coherent emergence');
         console.log('   Bendable pipes (nodes fixed, lines flex but don\'t break)');
+        console.log('');
+        console.log('🎨 MRP NODE HALOS (CMY/RGB) integrated');
+        console.log('   Depth-based opacity: front nodes bright, back nodes subtle');
+        console.log('   RGB core: primary MRP channel emission');
+        console.log('   CMY outer ring: complementary reflection');
+        console.log('   Sound activation: halos oscillate with sonification');
+        console.log('   Pulse rings appear when audio is playing');
+        console.log('   Line opacity: ' + MRPToroidalSystem.minOpacity.toFixed(2) + ' (back) → ' + MRPToroidalSystem.maxOpacity.toFixed(2) + ' (front)');
         console.log('');
         console.log('📡 MRP CHANNEL GRADIENTS integrated');
         console.log('   R channel (μ_E): Energy/Existence - primary field magnitude');
