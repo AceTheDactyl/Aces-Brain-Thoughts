@@ -2407,19 +2407,8 @@
 
                 // ============================================
                 // CENTER MARKERS - Use polar calculated positions
+                // (Ax, Ay, Bx, By already defined above)
                 // ============================================
-                const Ax = polar.posA.x;
-                const Ay = polar.posA.y;
-                const Bx = polar.posB.x;
-                const By = polar.posB.y;
-
-                // Axis line connecting A through center to B
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(Ax, Ay);
-                ctx.lineTo(Bx, By);
-                ctx.stroke();
 
                 // LIMNUS center marker
                 ctx.fillStyle = 'rgba(255, 215, 0, 0.9)';
