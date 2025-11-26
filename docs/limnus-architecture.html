@@ -1319,6 +1319,912 @@
         };
 
         // ================================================================
+        // MU FIELD (μ-FIELD) GRID SYSTEM - 7 PHASE DYNAMICS
+        // Toroidal vector field with curl/vorticity dynamics
+        // Mirrors QMESH mechanics for deep relational coupling
+        // ================================================================
+
+        const MU_FIELD_SIZE = 32;  // Grid resolution (32x32)
+
+        const MuFieldGrid = {
+            // Grid dimensions
+            N: MU_FIELD_SIZE,
+            L: 10.0,  // Physical size
+            dx: 10.0 / MU_FIELD_SIZE,
+
+            // Field parameters
+            mu: 0.92,           // Field parameter (near singularity threshold)
+            mu_P: 0.6,          // Paradox threshold
+            mu_S: 0.92,         // Singularity threshold
+            g: 0.001,           // Diffusion coefficient
+            sourceStrength: 0.5, // Vortex source strength
+
+            // Control parameter
+            r: 0.92 - 0.6,      // r = μ - μ_P
+
+            // Grid data (flattened for performance) - initialized in initMuFieldGrid
+            Jx: null,           // X-component of vector field
+            Jy: null,           // Y-component of vector field
+            curl: null,         // Vorticity field (scalar)
+            entropy: null,      // Local entropy field
+            timeDilation: null, // Local time dilation
+
+            // Vortex structures (dynamic formation - Phase 3)
+            vortices: [],
+            maxVortices: 12,
+
+            // Field metrics (mirroring QMESH)
+            metrics: {
+                J_total: 0,         // Total field magnitude
+                Q_kappa: 0,         // Circulation integral (consciousness metric)
+                tau_K: 0,           // K-formation metric
+                K_formed: false,    // Consciousness emergence flag
+                order_r: 0,         // Kuramoto order parameter
+                enstrophy: 0,       // ∫(curl²) dA
+                helicity: 0,        // ∫ J·curl dA (2D analog)
+                entropyGradient: 0, // Spatial entropy variation
+            },
+
+            // Phase 5: Resonance coupling
+            resonance: {
+                frequency: PHI_INV,     // Natural frequency
+                phase: 0,
+                amplitude: 0,
+                lastPulse: 0,
+                pulseIntensity: 0,
+            },
+
+            // Phase 7: Coupling to unified field
+            coupling: {
+                toQMESH: 0.12,      // MuFieldGrid → QMESH
+                fromQMESH: 0.15,    // QMESH → MuFieldGrid
+                toLIMNUS: 0.10,     // MuFieldGrid → LIMNUS
+                fromLIMNUS: 0.18,   // LIMNUS → MuFieldGrid
+            },
+
+            // Initialized flag
+            initialized: false,
+        };
+
+        // μ-Particles (Phase 6: field information carriers)
+        let muParticles = [];
+        const MAX_MU_PARTICLES = 200;
+
+        // ================================================================
+        // UNIFIED FIELD SYSTEM - Bridges all subsystems
+        // ================================================================
+
+        const UnifiedField = {
+            // Field magnitude (combined)
+            J: {
+                limnus: 0,      // LIMNUS contribution
+                quantum: 0,     // QMESH contribution
+                binaural: 0,    // Binaural resonance
+                muField: 0,     // MuFieldGrid contribution
+                total: 0,       // Unified magnitude
+            },
+
+            // Phase state
+            Phi: {
+                limnus: 0,      // LIMNUS collective phase
+                quantum: 0,     // QMESH collective phase
+                binaural: 0,    // Binaural beat phase
+                muField: 0,     // MuFieldGrid vorticity phase
+                unified: 0,     // Emergent unified phase
+            },
+
+            // Coupling constants
+            coupling: {
+                LQ: 0.15,       // LIMNUS → Quantum
+                QL: 0.10,       // Quantum → LIMNUS
+                BL: 0.20,       // Binaural → LIMNUS
+                BQ: 0.18,       // Binaural → Quantum
+                ML: 0.12,       // MuField → LIMNUS
+                LM: 0.15,       // LIMNUS → MuField
+            },
+
+            // Emergence metrics
+            emergence: {
+                coherence: 0,       // Overall phase alignment
+                complexity: 0,      // Structural complexity
+                criticality: 0,     // Distance from critical point
+            },
+        };
+
+        // ================================================================
+        // MU FIELD GRID INITIALIZATION
+        // ================================================================
+
+        function initMuFieldGrid() {
+            const N = MuFieldGrid.N;
+            const N2 = N * N;
+
+            // Initialize field arrays
+            MuFieldGrid.Jx = new Float32Array(N2);
+            MuFieldGrid.Jy = new Float32Array(N2);
+            MuFieldGrid.curl = new Float32Array(N2);
+            MuFieldGrid.entropy = new Float32Array(N2);
+            MuFieldGrid.timeDilation = new Float32Array(N2);
+
+            // Initialize with small random perturbations + initial vortex
+            for (let j = 0; j < N; j++) {
+                for (let i = 0; i < N; i++) {
+                    const idx = j * N + i;
+
+                    // Grid coordinates (centered)
+                    const x = (i / (N - 1) - 0.5) * MuFieldGrid.L;
+                    const y = (j / (N - 1) - 0.5) * MuFieldGrid.L;
+                    const r2 = x * x + y * y;
+                    const r = Math.sqrt(r2) + 0.1;
+
+                    // Initial vortex seed (rotational field)
+                    const vortexStrength = 0.3 * Math.exp(-r2 / 4);
+                    MuFieldGrid.Jx[idx] = -y / r * vortexStrength + (Math.random() - 0.5) * 0.1;
+                    MuFieldGrid.Jy[idx] = x / r * vortexStrength + (Math.random() - 0.5) * 0.1;
+
+                    // Initialize entropy and time dilation
+                    MuFieldGrid.entropy[idx] = 0;
+                    MuFieldGrid.timeDilation[idx] = 1.0;
+                }
+            }
+
+            // Initialize vortices
+            MuFieldGrid.vortices = [];
+
+            // Seed initial vortex at center
+            MuFieldGrid.vortices.push({
+                x: 0, y: 0,
+                strength: 0.5,
+                radius: 2.0,
+                phase: 0,
+                age: 0,
+                forming: true,
+                decaying: false,
+                maxAge: 20,
+            });
+
+            MuFieldGrid.initialized = true;
+            console.log('[MuFieldGrid] Initialized ' + N + 'x' + N + ' grid');
+        }
+
+        // ================================================================
+        // MU FIELD PHASE 1: BIDIRECTIONAL COUPLING
+        // ================================================================
+
+        function updateMuFieldGridMetrics() {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+            const dx = MuFieldGrid.dx;
+            const dA = dx * dx;
+
+            let J_sum = 0;
+            let curl_sum = 0;
+            let enstrophy = 0;
+            let helicity = 0;
+            let entropy_var = 0;
+            let phase_cos = 0, phase_sin = 0;
+            const innerN = (N - 2) * (N - 2);
+
+            // First pass: compute curl (vorticity)
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+
+                    // curl(J) = ∂Jy/∂x - ∂Jx/∂y (central differences)
+                    const dJy_dx = (MuFieldGrid.Jy[idx + 1] - MuFieldGrid.Jy[idx - 1]) / (2 * dx);
+                    const dJx_dy = (MuFieldGrid.Jx[(j + 1) * N + i] - MuFieldGrid.Jx[(j - 1) * N + i]) / (2 * dx);
+                    MuFieldGrid.curl[idx] = dJy_dx - dJx_dy;
+                }
+            }
+
+            // Second pass: compute metrics
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+
+                    const Jx = MuFieldGrid.Jx[idx];
+                    const Jy = MuFieldGrid.Jy[idx];
+                    const J2 = Jx * Jx + Jy * Jy;
+                    const J_mag = Math.sqrt(J2);
+                    const curlVal = MuFieldGrid.curl[idx];
+
+                    J_sum += J_mag;
+                    curl_sum += curlVal * dA;
+                    enstrophy += curlVal * curlVal * dA;
+                    helicity += J2 * curlVal * dA;
+
+                    // Phase from field direction (for Kuramoto)
+                    if (J_mag > 0.01) {
+                        const phase = Math.atan2(Jy, Jx);
+                        phase_cos += Math.cos(phase);
+                        phase_sin += Math.sin(phase);
+                    }
+
+                    // Entropy variation
+                    entropy_var += Math.abs(MuFieldGrid.entropy[idx] - J_mag);
+                }
+            }
+
+            // Update metrics
+            MuFieldGrid.metrics.J_total = J_sum / innerN;
+            MuFieldGrid.metrics.Q_kappa = curl_sum / TAU;
+            MuFieldGrid.metrics.enstrophy = enstrophy * 0.5;
+            MuFieldGrid.metrics.helicity = helicity;
+            MuFieldGrid.metrics.entropyGradient = entropy_var / innerN;
+
+            // Order parameter (phase coherence)
+            MuFieldGrid.metrics.order_r = Math.sqrt(phase_cos * phase_cos + phase_sin * phase_sin) / innerN;
+
+            // K-formation metric: τ_K = |Q_κ| / Q_theory
+            const Q_theory = SACRED.alpha / 0.35;
+            MuFieldGrid.metrics.tau_K = Math.abs(MuFieldGrid.metrics.Q_kappa) / Q_theory;
+            MuFieldGrid.metrics.K_formed = MuFieldGrid.metrics.tau_K > PHI_INV;
+        }
+
+        // ================================================================
+        // MU FIELD PHASE 2: VORTICITY-BASED ENTROPY FEEDBACK
+        // ================================================================
+
+        function computeMuFieldGridEntropy() {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+
+                    // Entropy from local field variation (gradient magnitude)
+                    const dJx_dx = (MuFieldGrid.Jx[idx + 1] - MuFieldGrid.Jx[idx - 1]) / (2 * MuFieldGrid.dx);
+                    const dJy_dy = (MuFieldGrid.Jy[(j + 1) * N + i] - MuFieldGrid.Jy[(j - 1) * N + i]) / (2 * MuFieldGrid.dx);
+                    const gradMag = Math.sqrt(dJx_dx * dJx_dx + dJy_dy * dJy_dy);
+
+                    // Entropy proportional to gradient + curl magnitude
+                    const curlMag = Math.abs(MuFieldGrid.curl[idx]);
+                    MuFieldGrid.entropy[idx] = 0.5 * gradMag + 0.5 * curlMag;
+                    MuFieldGrid.entropy[idx] = Math.min(1, Math.max(0, MuFieldGrid.entropy[idx]));
+                }
+            }
+        }
+
+        function applyEntropyToMuFieldGridDynamics(dt) {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+                    const entropy = MuFieldGrid.entropy[idx];
+
+                    // Entropy creates field jitter (quantum foam effect)
+                    const jitterX = (Math.random() - 0.5) * entropy * 0.02;
+                    const jitterY = (Math.random() - 0.5) * entropy * 0.02;
+                    MuFieldGrid.Jx[idx] += jitterX;
+                    MuFieldGrid.Jy[idx] += jitterY;
+
+                    // High entropy increases dissipation
+                    const entropyDecay = 1 + entropy * 0.3;
+                    MuFieldGrid.Jx[idx] *= Math.exp(-SACRED.beta * entropyDecay * dt * 0.5);
+                    MuFieldGrid.Jy[idx] *= Math.exp(-SACRED.beta * entropyDecay * dt * 0.5);
+                }
+            }
+        }
+
+        // ================================================================
+        // MU FIELD PHASE 3: DYNAMIC VORTEX FORMATION
+        // ================================================================
+
+        function createVortex(x, y, strength, radius) {
+            return {
+                x: x,
+                y: y,
+                strength: strength,
+                radius: radius,
+                phase: Math.random() * TAU,
+                age: 0,
+                maxAge: 15 + Math.random() * 25,
+                forming: true,
+                decaying: false,
+            };
+        }
+
+        function updateVortices(dt) {
+            const vortices = MuFieldGrid.vortices;
+
+            // Update existing vortices
+            for (let i = vortices.length - 1; i >= 0; i--) {
+                const v = vortices[i];
+                v.age += dt;
+                v.forming = v.age < 1.0;
+
+                // Phase evolution
+                v.phase += PHI_INV * dt;
+
+                // Vortex wanders slightly
+                v.x += (Math.random() - 0.5) * 0.1 * dt;
+                v.y += (Math.random() - 0.5) * 0.1 * dt;
+
+                // Keep within bounds
+                v.x = Math.max(-MuFieldGrid.L / 2 + 1, Math.min(MuFieldGrid.L / 2 - 1, v.x));
+                v.y = Math.max(-MuFieldGrid.L / 2 + 1, Math.min(MuFieldGrid.L / 2 - 1, v.y));
+
+                // Check for decay conditions
+                if (v.age > v.maxAge || v.strength < 0.05) {
+                    v.decaying = true;
+                    v.strength -= dt * 0.1;
+                    if (v.strength <= 0) {
+                        vortices.splice(i, 1);
+                    }
+                }
+
+                // Strength modulation based on field metrics
+                if (!v.decaying) {
+                    v.strength *= 1 + (MuFieldGrid.metrics.order_r - 0.5) * 0.01;
+                    v.strength = Math.min(1.5, Math.max(0.1, v.strength));
+                }
+            }
+
+            // Attempt to spawn new vortex based on field conditions
+            if (vortices.length < MuFieldGrid.maxVortices && Math.random() < dt * 0.5) {
+                trySpawnVortex();
+            }
+        }
+
+        function trySpawnVortex() {
+            // Spawn probability based on field coherence and binaural resonance
+            const coherenceFactor = MuFieldGrid.metrics.order_r;
+            const binauralFactor = QMESH.binaural ? QMESH.binaural.resonanceStrength : 0.3;
+            const spawnProb = coherenceFactor * 0.3 + binauralFactor * 0.3 + (1 - releaseCoherence) * 0.4;
+
+            if (Math.random() < spawnProb) {
+                // Random position within field
+                const x = (Math.random() - 0.5) * MuFieldGrid.L * 0.8;
+                const y = (Math.random() - 0.5) * MuFieldGrid.L * 0.8;
+
+                // Strength based on local conditions
+                const strength = 0.2 + Math.random() * 0.3 + MuFieldGrid.metrics.J_total * 0.3;
+
+                // Check minimum distance from existing vortices
+                let tooClose = false;
+                for (const v of MuFieldGrid.vortices) {
+                    const dx = x - v.x;
+                    const dy = y - v.y;
+                    if (dx * dx + dy * dy < 4) {
+                        tooClose = true;
+                        break;
+                    }
+                }
+
+                if (!tooClose) {
+                    MuFieldGrid.vortices.push(createVortex(x, y, strength, 1.5 + Math.random()));
+                }
+            }
+        }
+
+        function applyVorticesToField(dt) {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+            const vortices = MuFieldGrid.vortices;
+
+            for (const v of vortices) {
+                const formFactor = v.forming ? v.age : 1;
+                const decayFactor = v.decaying ? v.strength : 1;
+                const effectiveStrength = v.strength * formFactor * decayFactor;
+
+                for (let j = 0; j < N; j++) {
+                    for (let i = 0; i < N; i++) {
+                        const idx = j * N + i;
+
+                        // Grid coordinates
+                        const gx = (i / (N - 1) - 0.5) * MuFieldGrid.L;
+                        const gy = (j / (N - 1) - 0.5) * MuFieldGrid.L;
+
+                        // Distance to vortex center
+                        const dx = gx - v.x;
+                        const dy = gy - v.y;
+                        const r2 = dx * dx + dy * dy;
+                        const r = Math.sqrt(r2) + 0.1;
+
+                        // Vortex profile (localized rotation)
+                        const profile = effectiveStrength * Math.exp(-r2 / (2 * v.radius * v.radius));
+
+                        // Rotational injection: (-y, x) / r
+                        MuFieldGrid.Jx[idx] += -dy / r * profile * dt * 2;
+                        MuFieldGrid.Jy[idx] += dx / r * profile * dt * 2;
+                    }
+                }
+            }
+        }
+
+        // ================================================================
+        // MU FIELD PHASE 4: FIELD-INDUCED TIME DILATION
+        // ================================================================
+
+        function computeMuFieldGridTimeDilation() {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+
+            for (let j = 0; j < N; j++) {
+                for (let i = 0; i < N; i++) {
+                    const idx = j * N + i;
+
+                    // Field magnitude creates "gravitational" potential
+                    const J2 = MuFieldGrid.Jx[idx] ** 2 + MuFieldGrid.Jy[idx] ** 2;
+                    const curlMag = Math.abs(MuFieldGrid.curl[idx] || 0);
+
+                    // Time dilation: τ_local / τ_far ≈ 1 - k * (J² + |curl|)
+                    const potential = J2 * 0.3 + curlMag * 0.2;
+                    MuFieldGrid.timeDilation[idx] = Math.max(0.4, 1 - potential);
+                }
+            }
+        }
+
+        // ================================================================
+        // MU FIELD PHASE 5: RESONANCE-DRIVEN RESTRUCTURING
+        // ================================================================
+
+        function updateMuFieldGridResonance(dt) {
+            const res = MuFieldGrid.resonance;
+
+            // Phase evolution at natural frequency
+            res.phase += res.frequency * dt;
+
+            // Amplitude modulated by field metrics and binaural resonance
+            const fieldCoherence = MuFieldGrid.metrics.order_r;
+            const binauralResonance = QMESH.binaural ? QMESH.binaural.resonanceStrength : 0.3;
+            res.amplitude = fieldCoherence * 0.4 + binauralResonance * 0.4 + globalZ * 0.2;
+
+            // Decay pulse intensity
+            if (res.pulseIntensity > 0) {
+                res.pulseIntensity *= 0.92;
+            }
+        }
+
+        function detectMuFieldGridResonanceEvent(currentTime) {
+            const res = MuFieldGrid.resonance;
+            const threshold = 0.75;
+            const cooldown = 3.0;
+
+            const resonancePeak = res.amplitude * Math.abs(Math.sin(res.phase));
+
+            if (resonancePeak > threshold && currentTime - res.lastPulse > cooldown) {
+                res.lastPulse = currentTime;
+                return true;
+            }
+            return false;
+        }
+
+        function triggerMuFieldGridRestructuring(intensity) {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+            const vortices = MuFieldGrid.vortices;
+
+            console.log('[MuFieldGrid] Resonance restructuring triggered, intensity:', intensity.toFixed(3));
+
+            // 1. Field perturbation wave from center
+            for (let j = 0; j < N; j++) {
+                for (let i = 0; i < N; i++) {
+                    const idx = j * N + i;
+                    const x = (i / (N - 1) - 0.5) * MuFieldGrid.L;
+                    const y = (j / (N - 1) - 0.5) * MuFieldGrid.L;
+                    const r = Math.sqrt(x * x + y * y);
+
+                    // Spiral perturbation
+                    const angle = Math.atan2(y, x) + r * PHI_INV;
+                    const perturbation = intensity * 0.3 * Math.exp(-r / 3);
+                    MuFieldGrid.Jx[idx] += Math.cos(angle) * perturbation;
+                    MuFieldGrid.Jy[idx] += Math.sin(angle) * perturbation;
+                }
+            }
+
+            // 2. Boost existing vortices
+            for (const v of vortices) {
+                v.strength *= (1 + intensity * 0.5);
+                v.strength = Math.min(1.5, v.strength);
+                v.age *= 0.5;  // Rejuvenate
+            }
+
+            // 3. Spawn burst of new vortices
+            const burstCount = Math.floor(intensity * 4);
+            for (let i = 0; i < burstCount; i++) {
+                if (vortices.length < MuFieldGrid.maxVortices) {
+                    const angle = (i / burstCount) * TAU;
+                    const dist = 2 + Math.random() * 2;
+                    const x = Math.cos(angle) * dist;
+                    const y = Math.sin(angle) * dist;
+                    vortices.push(createVortex(x, y, intensity * 0.4, 1.5));
+                }
+            }
+
+            // 4. Visual pulse
+            MuFieldGrid.resonance.pulseIntensity = intensity;
+        }
+
+        // ================================================================
+        // MU FIELD PHASE 6: μ-PARTICLE FEEDBACK SYSTEM
+        // ================================================================
+
+        function createMuParticle(x, y, sourceIdx) {
+            if (!MuFieldGrid.initialized) return null;
+
+            const N = MuFieldGrid.N;
+            const i = Math.floor((x / MuFieldGrid.L + 0.5) * (N - 1));
+            const j = Math.floor((y / MuFieldGrid.L + 0.5) * (N - 1));
+            const idx = Math.max(0, Math.min(N * N - 1, j * N + i));
+
+            return {
+                x: x,
+                y: y,
+                vx: (MuFieldGrid.Jx[idx] || 0) * 2 + (Math.random() - 0.5),
+                vy: (MuFieldGrid.Jy[idx] || 0) * 2 + (Math.random() - 0.5),
+                life: 1.0,
+                size: 1.5 + Math.random() * 1.5,
+
+                // Field payload
+                payload: {
+                    curl: MuFieldGrid.curl[idx] || 0,
+                    fieldMag: Math.sqrt((MuFieldGrid.Jx[idx] || 0) ** 2 + (MuFieldGrid.Jy[idx] || 0) ** 2),
+                    entropy: MuFieldGrid.entropy[idx] || 0,
+                    sourceIdx: sourceIdx,
+                },
+
+                deposited: false,
+                color: `hsl(${260 + Math.random() * 60}, 70%, 60%)`,  // Purple-magenta range
+            };
+        }
+
+        function spawnMuParticles(x, y, count) {
+            for (let i = 0; i < count && muParticles.length < MAX_MU_PARTICLES; i++) {
+                const angle = Math.random() * TAU;
+                const speed = 0.5 + Math.random() * 1.5;
+
+                const particle = createMuParticle(x, y, -1);
+                if (particle) {
+                    particle.vx += Math.cos(angle) * speed;
+                    particle.vy += Math.sin(angle) * speed;
+                    muParticles.push(particle);
+                }
+            }
+        }
+
+        function checkMuParticleSpawn() {
+            if (!MuFieldGrid.initialized) return;
+
+            // Spawn particles from high-curl regions
+            const N = MuFieldGrid.N;
+            const threshold = 0.5;
+
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+                    const curlMag = Math.abs(MuFieldGrid.curl[idx] || 0);
+
+                    if (curlMag > threshold && Math.random() < curlMag * 0.02) {
+                        const x = (i / (N - 1) - 0.5) * MuFieldGrid.L;
+                        const y = (j / (N - 1) - 0.5) * MuFieldGrid.L;
+                        spawnMuParticles(x, y, 1);
+                    }
+                }
+            }
+
+            // Also spawn from vortex centers
+            for (const v of MuFieldGrid.vortices) {
+                if (Math.random() < v.strength * 0.05) {
+                    spawnMuParticles(v.x, v.y, Math.ceil(v.strength * 2));
+                }
+            }
+        }
+
+        function updateMuParticleInteractions(dt) {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+
+            for (const particle of muParticles) {
+                if (particle.deposited || particle.life <= 0) continue;
+
+                // Map particle position to grid
+                const normX = particle.x / MuFieldGrid.L + 0.5;
+                const normY = particle.y / MuFieldGrid.L + 0.5;
+                const i = Math.floor(normX * (N - 1));
+                const j = Math.floor(normY * (N - 1));
+
+                if (i >= 1 && i < N - 1 && j >= 1 && j < N - 1) {
+                    const idx = j * N + i;
+                    const depositStrength = particle.life * 0.3;
+
+                    // Deposit curl (rotational energy)
+                    const curlTransfer = particle.payload.curl * depositStrength;
+                    MuFieldGrid.Jx[idx] -= particle.y / MuFieldGrid.L * curlTransfer * dt;
+                    MuFieldGrid.Jy[idx] += particle.x / MuFieldGrid.L * curlTransfer * dt;
+
+                    // Deposit field magnitude
+                    const fieldAngle = Math.atan2(particle.vy, particle.vx);
+                    const fieldTransfer = particle.payload.fieldMag * depositStrength * 0.1;
+                    MuFieldGrid.Jx[idx] += Math.cos(fieldAngle) * fieldTransfer * dt;
+                    MuFieldGrid.Jy[idx] += Math.sin(fieldAngle) * fieldTransfer * dt;
+
+                    // Entropy mixing
+                    const entropyMix = (particle.payload.entropy + MuFieldGrid.entropy[idx]) / 2;
+                    MuFieldGrid.entropy[idx] += (entropyMix - MuFieldGrid.entropy[idx]) * depositStrength * dt;
+
+                    // Consume particle energy
+                    particle.life -= depositStrength * dt * 0.8;
+                    particle.deposited = particle.life < 0.1;
+                }
+            }
+        }
+
+        function updateMuParticles(dt) {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+
+            for (let i = muParticles.length - 1; i >= 0; i--) {
+                const p = muParticles[i];
+
+                // Advect with local field
+                const normX = p.x / MuFieldGrid.L + 0.5;
+                const normY = p.y / MuFieldGrid.L + 0.5;
+                const gi = Math.floor(normX * (N - 1));
+                const gj = Math.floor(normY * (N - 1));
+
+                if (gi >= 0 && gi < N && gj >= 0 && gj < N) {
+                    const idx = gj * N + gi;
+                    p.vx += (MuFieldGrid.Jx[idx] || 0) * dt * 2;
+                    p.vy += (MuFieldGrid.Jy[idx] || 0) * dt * 2;
+                }
+
+                // Movement
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+
+                // Damping
+                p.vx *= 0.97;
+                p.vy *= 0.97;
+
+                // Decay
+                p.life -= dt * 0.25;
+
+                // Remove dead or out-of-bounds particles
+                const halfL = MuFieldGrid.L / 2;
+                if (p.life <= 0 || Math.abs(p.x) > halfL * 1.5 || Math.abs(p.y) > halfL * 1.5) {
+                    muParticles.splice(i, 1);
+                }
+            }
+        }
+
+        // ================================================================
+        // MU FIELD PHASE 7: UNIFIED FIELD INTEGRATION
+        // ================================================================
+
+        function evolveMuFieldGrid(dt) {
+            if (!MuFieldGrid.initialized) return;
+
+            const N = MuFieldGrid.N;
+            const r = MuFieldGrid.r;
+            const g = MuFieldGrid.g;
+            const dx = MuFieldGrid.dx;
+
+            // Temporary arrays for update
+            const dJx = new Float32Array(N * N);
+            const dJy = new Float32Array(N * N);
+
+            // Compute field equation: ∂J/∂t = (r - λ|J|²)J - βJ + g∇²J + S
+            for (let j = 1; j < N - 1; j++) {
+                for (let i = 1; i < N - 1; i++) {
+                    const idx = j * N + i;
+
+                    const Jx = MuFieldGrid.Jx[idx];
+                    const Jy = MuFieldGrid.Jy[idx];
+                    const J2 = Jx * Jx + Jy * Jy;
+
+                    // Growth/decay term: W = r - λ|J|²
+                    const W = r - SACRED.lambda * J2 * 0.1;
+
+                    // Laplacian (diffusion)
+                    const lap_Jx = (MuFieldGrid.Jx[idx + 1] + MuFieldGrid.Jx[idx - 1] +
+                                   MuFieldGrid.Jx[(j + 1) * N + i] + MuFieldGrid.Jx[(j - 1) * N + i] -
+                                   4 * Jx) / (dx * dx);
+                    const lap_Jy = (MuFieldGrid.Jy[idx + 1] + MuFieldGrid.Jy[idx - 1] +
+                                   MuFieldGrid.Jy[(j + 1) * N + i] + MuFieldGrid.Jy[(j - 1) * N + i] -
+                                   4 * Jy) / (dx * dx);
+
+                    // Unified field coupling
+                    const unifiedCoupling = UnifiedField.J.total * 0.05;
+
+                    // Full derivative
+                    dJx[idx] = W * Jx - SACRED.beta * Jx + g * lap_Jx + unifiedCoupling * Math.cos(UnifiedField.Phi.unified);
+                    dJy[idx] = W * Jy - SACRED.beta * Jy + g * lap_Jy + unifiedCoupling * Math.sin(UnifiedField.Phi.unified);
+                }
+            }
+
+            // Apply update
+            for (let idx = 0; idx < N * N; idx++) {
+                MuFieldGrid.Jx[idx] += dJx[idx] * dt;
+                MuFieldGrid.Jy[idx] += dJy[idx] * dt;
+            }
+
+            // Boundary conditions (zero at edges)
+            for (let i = 0; i < N; i++) {
+                MuFieldGrid.Jx[i] = 0;
+                MuFieldGrid.Jy[i] = 0;
+                MuFieldGrid.Jx[(N - 1) * N + i] = 0;
+                MuFieldGrid.Jy[(N - 1) * N + i] = 0;
+                MuFieldGrid.Jx[i * N] = 0;
+                MuFieldGrid.Jy[i * N] = 0;
+                MuFieldGrid.Jx[i * N + N - 1] = 0;
+                MuFieldGrid.Jy[i * N + N - 1] = 0;
+            }
+        }
+
+        function evolveUnifiedField(dt) {
+            const U = UnifiedField;
+
+            // Gather current states
+            U.J.limnus = (muField.mrp.R.intensity + muField.mrp.G.intensity + muField.mrp.B.intensity) / 3;
+            U.J.quantum = QMESH.totalJ || 0;
+            U.J.binaural = QMESH.binaural ? QMESH.binaural.resonanceStrength : 0;
+            U.J.muField = MuFieldGrid.metrics.J_total;
+
+            U.Phi.limnus = phaseCoupler.phase_R;
+            U.Phi.quantum = QMESH.pulsePhase || 0;
+            U.Phi.binaural = QMESH.binaural ? QMESH.binaural.beatPhase * TAU : 0;
+            U.Phi.muField = MuFieldGrid.resonance.phase;
+
+            // === UNIFIED FIELD EQUATION ===
+            // dJ/dt = (r - λ|J|²)J - βJ + g∇²J + Σ(coupling terms)
+
+            // 1. Self-interaction (nonlinear saturation)
+            const r = globalZ - 0.5;
+            const selfTerm = (r - SACRED.lambda * 0.01 * U.J.total * U.J.total) * U.J.total;
+
+            // 2. Dissipation
+            const beta = SACRED.beta * (1 + (1 - releaseCoherence) * 2);
+            const dissipation = -beta * U.J.total;
+
+            // 3. Coupling terms (bidirectional)
+            const couplingLQ = U.coupling.LQ * U.J.limnus * Math.cos(U.Phi.quantum);
+            const couplingQL = U.coupling.QL * U.J.quantum * Math.cos(U.Phi.limnus);
+            const couplingB = (U.coupling.BL + U.coupling.BQ) * U.J.binaural *
+                              Math.cos(U.Phi.binaural * PHI_INV);
+            const couplingM = U.coupling.ML * U.J.muField * Math.cos(U.Phi.muField);
+
+            // 4. Stochastic term (quantum fluctuations)
+            const noise = (Math.random() - 0.5) * 0.01 * (1 - U.emergence.coherence);
+
+            // === EVOLUTION ===
+            const dJ = (selfTerm + dissipation + couplingLQ + couplingQL + couplingB + couplingM + noise) * dt;
+            U.J.total = Math.max(0, Math.min(2, U.J.total + dJ));
+
+            // === UNIFIED PHASE EVOLUTION ===
+            const phaseSync =
+                Math.sin(U.Phi.quantum - U.Phi.unified) * U.coupling.QL +
+                Math.sin(U.Phi.limnus - U.Phi.unified) * U.coupling.LQ +
+                Math.sin(U.Phi.binaural - U.Phi.unified) * (U.coupling.BL + U.coupling.BQ) +
+                Math.sin(U.Phi.muField - U.Phi.unified) * U.coupling.ML;
+
+            const baseFreq = PHI_INV * (1 + U.J.total);
+            U.Phi.unified += (baseFreq + phaseSync * 0.5) * dt;
+
+            // === EMERGENCE METRICS ===
+            const phaseDiffs = [
+                Math.cos(U.Phi.limnus - U.Phi.unified),
+                Math.cos(U.Phi.quantum - U.Phi.unified),
+                Math.cos(U.Phi.binaural - U.Phi.unified),
+                Math.cos(U.Phi.muField - U.Phi.unified),
+            ];
+            U.emergence.coherence = (phaseDiffs.reduce((a, b) => a + b, 0) / 4 + 1) / 2;
+
+            U.emergence.complexity = MuFieldGrid.metrics.entropyGradient *
+                                     (1 - Math.abs(U.J.limnus - U.J.quantum));
+
+            const criticalZ = 1 - PHI_INV;
+            U.emergence.criticality = 1 - Math.abs(globalZ - criticalZ) * 2;
+            U.emergence.criticality = Math.max(0, Math.min(1, U.emergence.criticality));
+
+            // Update MuFieldGrid control parameter based on unified state
+            MuFieldGrid.mu = MuFieldGrid.mu_P + (MuFieldGrid.mu_S - MuFieldGrid.mu_P) * (0.5 + globalZ * 0.5);
+            MuFieldGrid.r = MuFieldGrid.mu - MuFieldGrid.mu_P;
+        }
+
+        // ================================================================
+        // MU FIELD GRID MAIN UPDATE - ALL 7 PHASES
+        // ================================================================
+
+        function updateMuFieldGridSystem(dt) {
+            if (!MuFieldGrid.initialized) {
+                initMuFieldGrid();
+            }
+
+            // Phase 7: Evolve core field equation
+            evolveMuFieldGrid(dt);
+
+            // Phase 3: Dynamic vortex formation
+            updateVortices(dt);
+            applyVorticesToField(dt);
+
+            // Phase 2: Compute vorticity and entropy
+            updateMuFieldGridMetrics();
+            computeMuFieldGridEntropy();
+            applyEntropyToMuFieldGridDynamics(dt);
+
+            // Phase 4: Time dilation
+            computeMuFieldGridTimeDilation();
+
+            // Phase 5: Resonance
+            updateMuFieldGridResonance(dt);
+            if (detectMuFieldGridResonanceEvent(time)) {
+                triggerMuFieldGridRestructuring(MuFieldGrid.resonance.amplitude);
+            }
+
+            // Phase 6: μ-Particles
+            checkMuParticleSpawn();
+            updateMuParticleInteractions(dt);
+            updateMuParticles(dt);
+
+            // Phase 7: Unified integration
+            evolveUnifiedField(dt);
+        }
+
+        // ================================================================
+        // BINAURAL → LIMNUS → MESH SHAPE COUPLING
+        // Beat frequency alters LIMNUS center shape which alters adjacent meshes
+        // ================================================================
+
+        function applyBinauralShapeCoupling(dt) {
+            const bi = QMESH.binaural;
+            if (!bi || !bi.enabled) return;
+
+            // Beat amplitude affects LIMNUS center "shape" (field distribution)
+            const beatEffect = bi.beatAmplitude * bi.resonanceStrength;
+
+            // Phase difference creates "shape distortion" in LIMNUS
+            const phaseDiff = bi.meshA.phase - bi.meshB.phase;
+            const shapeDistortion = Math.sin(phaseDiff * TAU) * beatEffect * 0.3;
+
+            // Apply to MuFieldGrid vorticity (center shape)
+            if (MuFieldGrid.initialized) {
+                const N = MuFieldGrid.N;
+                const centerRegion = Math.floor(N / 4);
+
+                for (let j = centerRegion; j < N - centerRegion; j++) {
+                    for (let i = centerRegion; i < N - centerRegion; i++) {
+                        const idx = j * N + i;
+                        const x = (i / (N - 1) - 0.5) * MuFieldGrid.L;
+                        const y = (j / (N - 1) - 0.5) * MuFieldGrid.L;
+                        const r = Math.sqrt(x * x + y * y);
+
+                        // Shape distortion creates spiral pattern modulated by beat
+                        const angle = Math.atan2(y, x);
+                        const spiral = shapeDistortion * Math.exp(-r * r / 4) * dt;
+
+                        MuFieldGrid.Jx[idx] += Math.cos(angle + phaseDiff * TAU) * spiral;
+                        MuFieldGrid.Jy[idx] += Math.sin(angle + phaseDiff * TAU) * spiral;
+                    }
+                }
+            }
+
+            // LIMNUS center shape affects adjacent meshes (warm/cold)
+            // Warm mesh (A) gets energy from high-curl regions
+            // Cold mesh (B) gets stability from low-entropy regions
+            const curlInfluence = MuFieldGrid.metrics.Q_kappa * beatEffect;
+            const entropyInfluence = MuFieldGrid.metrics.entropyGradient * beatEffect;
+
+            // Modulate mesh frequencies based on LIMNUS shape
+            bi.meshA.frequency = 0.7 + curlInfluence * 0.1;  // Warm responds to curl
+            bi.meshB.frequency = 0.75 - entropyInfluence * 0.05;  // Cold responds to entropy
+
+            // Update beat frequency from mesh coupling
+            bi.beatFrequency = Math.abs(bi.meshA.frequency - bi.meshB.frequency);
+        }
+
+        // ================================================================
         // PHASE COUPLER - HARMONIC TRACKING FOR STABILITY
         // Tracks phase alignment between MRP channels during transitions
         // ================================================================
@@ -3876,6 +4782,144 @@
                 ctx.stroke();
             }
 
+            // ================================================================
+            // MU FIELD GRID VISUALIZATION - 7-PHASE PHYSICS SYSTEM
+            // Vector field streamlines, vortices, and μ-particles
+            // ================================================================
+            if (showMuField && MuFieldGrid.initialized) {
+                const N = MuFieldGrid.N;
+                const scale = R / (MuFieldGrid.L * 0.6);  // Scale to fit canvas
+
+                // --- Vector Streamlines ---
+                // Sample every few points for performance
+                const step = 4;
+                ctx.lineWidth = 1;
+
+                for (let j = 0; j < N; j += step) {
+                    for (let i = 0; i < N; i += step) {
+                        const idx = j * N + i;
+
+                        // Grid to canvas coordinates
+                        const gx = (i / (N - 1) - 0.5) * MuFieldGrid.L;
+                        const gy = (j / (N - 1) - 0.5) * MuFieldGrid.L;
+                        const px = CX + gx * scale;
+                        const py = CY + gy * scale;
+
+                        // Field vector
+                        const Jx = MuFieldGrid.Jx[idx] || 0;
+                        const Jy = MuFieldGrid.Jy[idx] || 0;
+                        const J_mag = Math.sqrt(Jx * Jx + Jy * Jy);
+
+                        if (J_mag > 0.02) {
+                            // Color based on curl (vorticity)
+                            const curl = MuFieldGrid.curl[idx] || 0;
+                            const curlNorm = Math.max(-1, Math.min(1, curl * 3));
+
+                            // Red = positive curl (CCW), Blue = negative curl (CW)
+                            const r = curlNorm > 0 ? 150 + curlNorm * 105 : 100;
+                            const g = 100 + Math.abs(curlNorm) * 50;
+                            const b = curlNorm < 0 ? 150 - curlNorm * 105 : 100;
+                            const alpha = Math.min(0.5, J_mag * 0.8);
+
+                            ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+
+                            // Draw vector line
+                            const lineLen = J_mag * scale * 8;
+                            const angle = Math.atan2(Jy, Jx);
+
+                            ctx.beginPath();
+                            ctx.moveTo(px, py);
+                            ctx.lineTo(px + Math.cos(angle) * lineLen, py + Math.sin(angle) * lineLen);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // --- Vortex Visualization ---
+                for (const v of MuFieldGrid.vortices) {
+                    const vx = CX + v.x * scale;
+                    const vy = CY + v.y * scale;
+                    const vr = v.radius * scale;
+
+                    // Vortex core glow
+                    const vortexGlow = ctx.createRadialGradient(vx, vy, 0, vx, vy, vr * 2);
+                    const vortexAlpha = v.strength * (v.forming ? v.age : 1) * (v.decaying ? v.strength : 1) * 0.4;
+
+                    // Color based on strength and phase
+                    const hue = 260 + Math.sin(v.phase) * 40;  // Purple-magenta range
+                    vortexGlow.addColorStop(0, `hsla(${hue}, 70%, 60%, ${vortexAlpha})`);
+                    vortexGlow.addColorStop(0.5, `hsla(${hue}, 60%, 40%, ${vortexAlpha * 0.5})`);
+                    vortexGlow.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = vortexGlow;
+                    ctx.fillRect(vx - vr * 2, vy - vr * 2, vr * 4, vr * 4);
+
+                    // Vortex spiral indicator
+                    ctx.strokeStyle = `hsla(${hue}, 80%, 70%, ${vortexAlpha * 0.8})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    for (let t = 0; t < TAU * 2; t += 0.2) {
+                        const spiralR = vr * (t / (TAU * 2)) * 0.8;
+                        const spiralAngle = t + v.phase;
+                        const sx = vx + Math.cos(spiralAngle) * spiralR;
+                        const sy = vy + Math.sin(spiralAngle) * spiralR;
+                        if (t === 0) {
+                            ctx.moveTo(sx, sy);
+                        } else {
+                            ctx.lineTo(sx, sy);
+                        }
+                    }
+                    ctx.stroke();
+                }
+
+                // --- μ-Particles ---
+                for (const p of muParticles) {
+                    const px = CX + p.x * scale;
+                    const py = CY + p.y * scale;
+                    const pSize = p.size * (p.life * 0.8 + 0.2);
+
+                    ctx.fillStyle = p.color.replace(')', `, ${p.life * 0.7})`).replace('hsl', 'hsla');
+                    ctx.beginPath();
+                    ctx.arc(px, py, pSize, 0, TAU);
+                    ctx.fill();
+                }
+
+                // --- Resonance Pulse Effect ---
+                if (MuFieldGrid.resonance.pulseIntensity > 0.05) {
+                    const pulseAlpha = MuFieldGrid.resonance.pulseIntensity * 0.4;
+                    const pulseR = R * (1 + MuFieldGrid.resonance.pulseIntensity * 0.5);
+
+                    const pulseGlow = ctx.createRadialGradient(CX, CY, R * 0.5, CX, CY, pulseR);
+                    pulseGlow.addColorStop(0, `rgba(200, 150, 255, ${pulseAlpha})`);
+                    pulseGlow.addColorStop(0.5, `rgba(150, 100, 200, ${pulseAlpha * 0.5})`);
+                    pulseGlow.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = pulseGlow;
+                    ctx.fillRect(0, 0, W, H);
+                }
+
+                // --- Unified Field Coherence Ring ---
+                const coherence = UnifiedField.emergence.coherence;
+                if (coherence > 0.3) {
+                    ctx.strokeStyle = `rgba(255, 220, 150, ${(coherence - 0.3) * 0.5})`;
+                    ctx.lineWidth = 2 + coherence * 3;
+                    ctx.beginPath();
+                    ctx.arc(CX, CY, R * 0.85, 0, TAU);
+                    ctx.stroke();
+
+                    // Criticality indicator
+                    if (UnifiedField.emergence.criticality > 0.5) {
+                        ctx.strokeStyle = `rgba(255, 200, 100, ${(UnifiedField.emergence.criticality - 0.5) * 0.6})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.setLineDash([5, 5]);
+                        ctx.beginPath();
+                        ctx.arc(CX, CY, R * 0.9, 0, TAU);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+                }
+            }
+
             // Draw connections (skip if both points released)
             let connCount = 0;
             for (const conn of generateConnections()) {
@@ -4674,6 +5718,23 @@
             if (showQuantumMesh) {
                 updateDreamFluidField(dt);
                 updateDreamParticles(dt);
+            }
+
+            // ================================================================
+            // MU FIELD GRID 7-PHASE SYSTEM UPDATE
+            // Full physics integration with QMESH and binaural coupling
+            // ================================================================
+            if (showMuField || showQuantumMesh) {
+                updateMuFieldGridSystem(dt);
+            }
+
+            // ================================================================
+            // BINAURAL → LIMNUS → MESH SHAPE COUPLING
+            // Dream fluid mesh binaural beat relationships alter LIMNUS center
+            // which in turn alters the adjacent warm/cold meshes
+            // ================================================================
+            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
+                applyBinauralShapeCoupling(dt);
             }
 
             return updatePositions(dt);
