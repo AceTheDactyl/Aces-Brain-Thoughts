@@ -985,7 +985,7 @@
         <span>N</span> ◎ nexus <span id="toggle-chromatic-nexus" style="color: #555;">○</span><br>
         <span>W</span> 💧 water <span id="toggle-water-fractal" style="color: #555;">○</span><br>
         <span>G</span> 🌻 golden <span id="toggle-golden-harmonics" style="color: #555;">○</span><br>
-        <span>R</span> ⚛️ memory <span id="toggle-memory-coherence" style="color: #555;">○</span><br>
+        <span>F→R</span> ⚛️ memory <span id="toggle-memory-coherence" style="color: #555;">○</span><br>
         <span>1-6</span> φ/Φ_θ/ψ adj<br>
         <span>DRAG</span> orbit camera<br>
         <span>←→</span> polar distance<br>
@@ -4612,7 +4612,7 @@
         let showChromaticNexus = false; // N key toggles chromatic nexus self/LIMNUS communication
         let showWaterFractalMemory = false; // W key toggles water fractal memory cosmic background
         let showGoldenHarmonics = false; // G key toggles golden harmonics orientation system
-        let showMemoryCoherence = false; // R key toggles memory-enhanced release coherence dynamics
+        let showMemoryCoherence = false; // Auto-activates on F (release), R toggles visibility
 
         // ================================================================
         // BINAURAL QUANTUM FIELD
@@ -15451,16 +15451,17 @@
             }
 
             if (key === 'r' && !e.ctrlKey && !e.metaKey) {
-                // Toggle Memory-Enhanced Release Coherence Dynamics
+                // R key: Manual toggle for memory coherence visualization
+                // Note: Memory coherence is auto-activated when F (release) is pressed
+                // R allows manual control to show/hide the visualization overlay
                 showMemoryCoherence = !showMemoryCoherence;
                 updateToggleIndicator('toggle-memory-coherence', showMemoryCoherence, '#64ffda');
-                console.log(`[⚛️ MEMORY] Coherence Dynamics: ${showMemoryCoherence}`);
+                console.log(`[⚛️ MEMORY] Coherence visualization: ${showMemoryCoherence ? 'ON' : 'OFF'}`);
                 if (showMemoryCoherence) {
-                    console.log('   Memory integration: Water Fractal + Golden Harmonics');
-                    console.log('   Coherence equation: C_eff = C_base × memory_factors');
-                    console.log('   Resonance states: dormant → emerging → resonant → transcendent');
+                    console.log('   Manual activation (auto-activates on F release)');
+                    console.log('   Memory integration: Water Fractal + Golden Harmonics + Dark Matter');
                 } else {
-                    console.log('   Using standard release coherence (hold F to release)');
+                    console.log('   Visualization hidden (will re-activate on next F release)');
                 }
             }
 
@@ -15715,10 +15716,21 @@
             }
 
             // F key: Start release (hold to release coherence)
+            // Unified system: automatically activates memory-enhanced coherence dynamics
             if (key === 'f') {
                 releasing = true;
                 releaseStarted = true;
                 document.getElementById('start-overlay').classList.add('hidden');
+
+                // Unify: Activate memory-enhanced coherence when release begins
+                if (!showMemoryCoherence) {
+                    showMemoryCoherence = true;
+                    updateToggleIndicator('toggle-memory-coherence', showMemoryCoherence, '#64ffda');
+                    console.log('[⚛️ UNIFIED RELEASE] Memory-enhanced coherence activated');
+                    console.log('   Memory integration: Water Fractal + Golden Harmonics + Dark Matter');
+                    console.log('   Release equation: C_eff = C_base × memory_factors × release_dynamics');
+                    console.log('   Resonance states: dormant → emerging → resonant → transcendent');
+                }
             }
 
             // G key: Gather/recoherence (hold to bring LIMNUS back)
