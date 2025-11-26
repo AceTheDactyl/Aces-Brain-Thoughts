@@ -1701,22 +1701,24 @@
                 // The future is implied by the trajectory of the past
                 const history = this.retrocausal.coherenceHistory;
                 const len = history.length;
-                if (len > 2) {
-                    // Simple harmonic extrapolation
-                    const velocity = (history[len - 1] - history[len - 2]) / dt;
-                    const acceleration = len > 3 ?
+                if (len > 2 && dt > 0.001) {  // Safety: avoid division by tiny dt
+                    // Simple harmonic extrapolation (clamped to prevent NaN/Infinity)
+                    const rawVelocity = (history[len - 1] - history[len - 2]) / dt;
+                    const velocity = Math.max(-10, Math.min(10, rawVelocity || 0));
+                    const rawAccel = len > 3 ?
                         (history[len - 1] - 2 * history[len - 2] + history[len - 3]) / (dt * dt) : 0;
+                    const acceleration = Math.max(-100, Math.min(100, rawAccel || 0));
                     // Predict future state (retrocausal influence)
-                    this.retrocausal.coherenceFuture = Math.max(0, Math.min(1,
-                        currentCoherence + velocity * dt * PHI + 0.5 * acceleration * dt * dt
-                    ));
+                    const prediction = currentCoherence + velocity * dt * PHI + 0.5 * acceleration * dt * dt;
+                    this.retrocausal.coherenceFuture = isFinite(prediction) ?
+                        Math.max(0, Math.min(1, prediction)) : currentCoherence;
                 }
 
                 // Temporal phase oscillation (past-future superposition)
                 this.retrocausal.temporalPhase += dt * PHI_INV;
 
                 // Effective coherence: weighted past-future superposition
-                const pastAvg = history.reduce((a, b) => a + b, 0) / len;
+                const pastAvg = len > 0 ? history.reduce((a, b) => a + b, 0) / len : 0.5;
                 const effectiveCoherence =
                     this.retrocausal.pastWeight * pastAvg +
                     this.retrocausal.futureWeight * this.retrocausal.coherenceFuture;
@@ -5487,6 +5489,7 @@
             // MRP channel mapping to 95 nodes
             // Distributes R (energy), G (relational), B (stability) across layers
             nodeChannels: new Map(),    // Map of node id -> {r, g, b, flow}
+            nodeCache: new Map(),       // Cached node references for O(1) lookup
 
             // Toroidal flow state
             flowPhase: 0,
@@ -5504,10 +5507,13 @@
             // Initialize MRP channels for all 95 nodes
             init(prismNodes, cageNodes) {
                 this.nodeChannels.clear();
+                this.nodeCache.clear();  // Clear cached node references
                 const allNodes = [...prismNodes, ...cageNodes];
 
                 for (let i = 0; i < allNodes.length; i++) {
                     const node = allNodes[i];
+                    // Cache node reference for O(1) lookup in render
+                    this.nodeCache.set(node.id, node);
 
                     // Assign MRP channels based on node position in 95-token structure
                     // Token indices 1-63 (prism) and 64-95 (cage)
@@ -5732,9 +5738,10 @@
                 // Phase-lock: all μ-fields pulse together
                 const phaseLock = Math.sin(time * TAU * 0.5) * 0.5 + 0.5;  // Slow, unified pulse
 
-                // Render each node's individual μ-field
+                // Render each node's individual μ-field (using cached references)
                 for (const [nodeId, channel] of this.nodeChannels) {
-                    let node = prismPoints.find(p => p.id === nodeId) || cagePoints.find(p => p.id === nodeId);
+                    // O(1) lookup instead of O(n) find()
+                    const node = this.nodeCache.get(nodeId);
                     if (!node || node.released) continue;
 
                     // Get depth layer (0-6 for prism, special for cage)
@@ -7710,6 +7717,10 @@
             } else if (gathering) {
                 targetCoherence = Math.min(1, targetCoherence + dt * 0.6);
                 releaseVelocity = 0;
+                // Reset releaseStarted when coherence is fully restored
+                if (releaseCoherence > 0.95) {
+                    releaseStarted = false;
+                }
             } else {
                 // Gradual return to coherent state when not interacting
                 if (!releaseStarted) {
