@@ -420,11 +420,13 @@
         /* Controls */
         #controls {
             bottom: 20px;
-            left: 30px;
+            left: 20px;
             font-size: 9px;
             letter-spacing: 1px;
             color: var(--text-dim);
-            line-height: 2;
+            line-height: 1.6;
+            max-height: 320px;
+            overflow: hidden;
         }
 
         #controls span {
@@ -434,10 +436,10 @@
 
         /* Stats */
         #stats {
-            bottom: 20px;
-            right: 30px;
+            top: 110px;
+            left: 20px;
             font-size: 9px;
-            text-align: right;
+            text-align: left;
             color: var(--text-dim);
         }
 
@@ -1453,10 +1455,11 @@
                 enabled: true,
 
                 // POLAR GEOMETRY - proper bipolar relationship
+                // Meshes positioned on opposite sides of LIMNUS (which is at center)
                 polar: {
-                    distance: 1.8,          // Distance from LIMNUS center (in R units)
-                    angleA: Math.PI * 0.75, // Mesh A angle (135° - upper-left)
-                    angleB: Math.PI * -0.25, // Mesh B angle (-45° - lower-right, opposite)
+                    distance: 1.5,          // Distance from LIMNUS center (in R units)
+                    angleA: -Math.PI / 2,   // Mesh A angle (-90° = above LIMNUS)
+                    angleB: Math.PI / 2,    // Mesh B angle (90° = below LIMNUS)
                     // Computed positions (updated on render)
                     posA: { x: 0, y: 0 },
                     posB: { x: 0, y: 0 },
@@ -2534,7 +2537,8 @@
             const bi = QMESH.binaural;
             const edgeCount = QMESH.edges.length;
 
-            const hudX = 20;
+            // Position HUD on right side to avoid overlapping controls panel
+            const hudX = W - 280;
             const hudY = H - 180;
 
             // Animated title - pulses with beat
@@ -4589,9 +4593,9 @@
             document.getElementById('cursor').style.left = mouseX + 'px';
             document.getElementById('cursor').style.top = mouseY + 'px';
 
-            // Camera orbit drag (when binaural field is active)
-            if (QMESH.camera.dragging && showQuantumMesh) {
-                const cam = QMESH.camera;
+            // Camera orbit drag (when binaural field is active and dragging)
+            const cam = QMESH.camera;
+            if (cam.dragging) {
                 const deltaX = e.clientX - cam.lastX;
                 const deltaY = e.clientY - cam.lastY;
 
@@ -4784,10 +4788,10 @@
                 QMESH.camera.phi = 0;
                 QMESH.camera.distance = 1.0;
                 QMESH.camera.dragging = false;
-                // Reset polar positions
-                QMESH.binaural.polar.distance = 1.8;
-                QMESH.binaural.polar.angleA = Math.PI * 0.75;
-                QMESH.binaural.polar.angleB = Math.PI * -0.25;
+                // Reset polar positions (above/below LIMNUS)
+                QMESH.binaural.polar.distance = 1.5;
+                QMESH.binaural.polar.angleA = -Math.PI / 2;  // Above
+                QMESH.binaural.polar.angleB = Math.PI / 2;   // Below
             }
 
             // F key: Start release
@@ -4806,21 +4810,19 @@
             }
         });
 
-        // Mouse: Camera orbit (right-click or shift+click) / Gather (left-click)
+        // Mouse: Left-click = camera orbit (when binaural active) or gather
         canvas.addEventListener('mousedown', e => {
             document.getElementById('start-overlay').classList.add('hidden');
 
-            // Right-click or shift+left-click: Start camera orbit drag
-            if (e.button === 2 || (e.button === 0 && e.shiftKey)) {
+            if (e.button === 0) {
+                // Left-click: Camera orbit if binaural field is on, otherwise gather
                 if (showQuantumMesh) {
                     QMESH.camera.dragging = true;
                     QMESH.camera.lastX = e.clientX;
                     QMESH.camera.lastY = e.clientY;
-                    e.preventDefault();
+                } else {
+                    gathering = true;
                 }
-            } else if (e.button === 0) {
-                // Regular left-click: Gather
-                gathering = true;
             }
         });
 
@@ -4832,13 +4834,6 @@
         canvas.addEventListener('mouseleave', () => {
             gathering = false;
             QMESH.camera.dragging = false;
-        });
-
-        // Prevent context menu on right-click (for camera orbit)
-        canvas.addEventListener('contextmenu', e => {
-            if (showQuantumMesh) {
-                e.preventDefault();
-            }
         });
 
         canvas.addEventListener('touchstart', e => {
@@ -4930,9 +4925,10 @@
         console.log('   Beat frequency |f_A - f_B| entrains consciousness');
         console.log('');
         console.log('   POLAR GEOMETRY:');
-        console.log('   Distance r = 1.8R from LIMNUS center');
-        console.log('   Mesh A at θ = 135° (upper-left)');
-        console.log('   Mesh B at θ = -45° (lower-right, polar opposite)');
+        console.log('   LIMNUS at center, meshes on opposite sides');
+        console.log('   Distance r = 1.5R from LIMNUS center');
+        console.log('   Mesh A at θ = -90° (above LIMNUS)');
+        console.log('   Mesh B at θ = 90° (below LIMNUS, polar opposite)');
         console.log('');
         console.log('   MESH A (warm): f=1.0 - energy/existence channel');
         console.log('   MESH B (cool): f=φ⁻¹ - relational/stability channel');
