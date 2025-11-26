@@ -2145,28 +2145,63 @@
         // ================================================================
 
         // Update polar positions - Rotate with camera drag
-        // Camera theta orbits the view around LIMNUS
+        // Behavior depends on angle mode (horizontal, vertical, golden)
         function updatePolarPositions() {
             const bi = QMESH.binaural;
             const polar = bi.polar;
             const cam = QMESH.camera;
+            const mode = polar.angleMode;
 
             // Distance from center in pixels
             const dist = polar.distance * R;
 
-            // Base angles: A at 180° (left), B at 0° (right)
-            // Subtract camera.theta so dragging rotates the view
-            const angleA = polar.angleA - cam.theta;
-            const angleB = polar.angleB - cam.theta;
+            let angleA, angleB;
 
-            // Calculate positions using polar coords
-            polar.posA.x = CX + Math.cos(angleA) * dist;
-            polar.posA.y = CY + Math.sin(angleA) * dist;
-            polar.posA.depth = Math.sin(angleA);  // For depth sorting
+            if (mode === 'horizontal') {
+                // Horizontal: theta rotates around vertical axis
+                angleA = polar.angleA - cam.theta;
+                angleB = polar.angleB - cam.theta;
 
-            polar.posB.x = CX + Math.cos(angleB) * dist;
-            polar.posB.y = CY + Math.sin(angleB) * dist;
-            polar.posB.depth = Math.sin(angleB);
+                polar.posA.x = CX + Math.cos(angleA) * dist;
+                polar.posA.y = CY + Math.sin(angleA) * dist;
+                polar.posA.depth = Math.sin(angleA);
+
+                polar.posB.x = CX + Math.cos(angleB) * dist;
+                polar.posB.y = CY + Math.sin(angleB) * dist;
+                polar.posB.depth = Math.sin(angleB);
+
+            } else if (mode === 'vertical') {
+                // Vertical: theta rotates around horizontal axis (up/down)
+                angleA = polar.angleA - cam.theta;
+                angleB = polar.angleB - cam.theta;
+
+                // Vertical mode: Y changes with angle, X stays at center
+                polar.posA.x = CX + Math.cos(angleA) * dist * Math.cos(cam.phi);
+                polar.posA.y = CY + Math.sin(angleA) * dist;
+                polar.posA.depth = Math.cos(angleA);
+
+                polar.posB.x = CX + Math.cos(angleB) * dist * Math.cos(cam.phi);
+                polar.posB.y = CY + Math.sin(angleB) * dist;
+                polar.posB.depth = Math.cos(angleB);
+
+            } else if (mode === 'golden') {
+                // Golden: spiral rotation using both theta and phi
+                const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
+                angleA = polar.angleA - cam.theta;
+                angleB = polar.angleB - cam.theta;
+
+                // Spiral positions: combine horizontal and vertical with golden ratio
+                const spiralFactorA = Math.cos(cam.phi * GOLDEN_RATIO);
+                const spiralFactorB = Math.cos(cam.phi * GOLDEN_RATIO);
+
+                polar.posA.x = CX + Math.cos(angleA) * dist * spiralFactorA;
+                polar.posA.y = CY + Math.sin(angleA) * dist + Math.sin(cam.phi) * dist * 0.5;
+                polar.posA.depth = Math.sin(angleA + cam.phi);
+
+                polar.posB.x = CX + Math.cos(angleB) * dist * spiralFactorB;
+                polar.posB.y = CY + Math.sin(angleB) * dist + Math.sin(cam.phi) * dist * 0.5;
+                polar.posB.depth = Math.sin(angleB + cam.phi);
+            }
         }
 
         // Transform point to mesh A space (polar position)
@@ -4634,14 +4669,28 @@
             document.getElementById('cursor').style.top = mouseY + 'px';
 
             // Camera orbit drag (when binaural field is active and dragging)
+            // Behavior depends on angle mode
             const cam = QMESH.camera;
             if (cam.dragging) {
                 const deltaX = e.clientX - cam.lastX;
                 const deltaY = e.clientY - cam.lastY;
+                const mode = QMESH.binaural.polar.angleMode;
+                const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
 
-                // Update orbit angles
-                cam.theta += deltaX * cam.sensitivity;
-                cam.phi = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, cam.phi + deltaY * cam.sensitivity));
+                if (mode === 'horizontal') {
+                    // Horizontal: X drag = theta, Y drag = phi
+                    cam.theta += deltaX * cam.sensitivity;
+                    cam.phi = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, cam.phi + deltaY * cam.sensitivity));
+                } else if (mode === 'vertical') {
+                    // Vertical: Y drag = theta, X drag = phi (swapped)
+                    cam.theta += deltaY * cam.sensitivity;
+                    cam.phi = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, cam.phi + deltaX * cam.sensitivity));
+                } else if (mode === 'golden') {
+                    // Golden: combined spiral drag (both contribute to both axes)
+                    const combined = (deltaX + deltaY) * cam.sensitivity;
+                    cam.theta += combined;
+                    cam.phi = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, cam.phi + combined / GOLDEN_RATIO));
+                }
 
                 cam.lastX = e.clientX;
                 cam.lastY = e.clientY;
@@ -4770,15 +4819,36 @@
                     e.preventDefault();
                 }
 
-                // Q/E: Orbit camera around the fixed triquetra
-                // Fields stay fixed at 150°/30° - only camera view rotates
+                // Q/E: Orbit camera - behavior depends on angle mode
+                const mode = bi.polar.angleMode;
+                const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
                 if (key === 'q') {
-                    QMESH.camera.theta += 0.1;
-                    console.log(`[CAMERA] Orbit: ${(QMESH.camera.theta * 180 / Math.PI).toFixed(1)}°`);
+                    if (mode === 'horizontal') {
+                        // Horizontal: rotate theta (left/right)
+                        QMESH.camera.theta += 0.1;
+                    } else if (mode === 'vertical') {
+                        // Vertical: rotate phi (up/down)
+                        QMESH.camera.phi = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, QMESH.camera.phi + 0.1));
+                    } else if (mode === 'golden') {
+                        // Golden: spiral rotation (both axes, golden ratio)
+                        QMESH.camera.theta += 0.1;
+                        QMESH.camera.phi = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, QMESH.camera.phi + 0.1 / GOLDEN_RATIO));
+                    }
+                    console.log(`[CAMERA] ${mode}: θ=${(QMESH.camera.theta * 180 / Math.PI).toFixed(1)}° φ=${(QMESH.camera.phi * 180 / Math.PI).toFixed(1)}°`);
                 }
                 if (key === 'e') {
-                    QMESH.camera.theta -= 0.1;
-                    console.log(`[CAMERA] Orbit: ${(QMESH.camera.theta * 180 / Math.PI).toFixed(1)}°`);
+                    if (mode === 'horizontal') {
+                        // Horizontal: rotate theta (left/right)
+                        QMESH.camera.theta -= 0.1;
+                    } else if (mode === 'vertical') {
+                        // Vertical: rotate phi (up/down)
+                        QMESH.camera.phi = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, QMESH.camera.phi - 0.1));
+                    } else if (mode === 'golden') {
+                        // Golden: spiral rotation (both axes, golden ratio)
+                        QMESH.camera.theta -= 0.1;
+                        QMESH.camera.phi = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, QMESH.camera.phi - 0.1 / GOLDEN_RATIO));
+                    }
+                    console.log(`[CAMERA] ${mode}: θ=${(QMESH.camera.theta * 180 / Math.PI).toFixed(1)}° φ=${(QMESH.camera.phi * 180 / Math.PI).toFixed(1)}°`);
                 }
 
                 // +/- adjust mesh scale
