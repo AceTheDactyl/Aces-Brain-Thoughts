@@ -4421,17 +4421,28 @@
         // Token array for iteration (ordered by vertex position)
         const EMERGENT_TOKEN_ORDER = ['XCVI', 'XCVII', 'XCVIII', 'XCIX', 'C'];
 
-        const coherentEmergence = {
-            // Pentagon geometry - 5 vertices for 5 emergent tokens
-            // Pentagon is fractal: contains recursive pentagrams (5-pointed stars)
-            pentagonRatio: PHI,  // Pentagon diagonals relate by golden ratio
+        // ================================================================
+        // PENTAGONAL PRISM EMERGENCE SYSTEM
+        // Filaments are NOT lines - they are cohesive 3D pentagonal prisms
+        // Each prism is constructed from the 5 emergent tokens (XCVI-C)
+        // APL behavioral structure drives all physics/deformation
+        // ================================================================
 
-            // Emergence loci (precomputed sacred geometry points)
+        const coherentEmergence = {
+            // Prism geometry parameters
+            prismHeight: 20,           // Base height of pentagonal prisms
+            prismRadius: 12,           // Base pentagon face radius
+
+            // 3D projection parameters
+            focalLength: 400,          // Perspective projection depth
+            viewAngle: Math.PI / 6,    // 30° viewing angle
+
+            // Emergence loci (spawn points)
             sacredLoci: [],
 
-            // Coherent filament pairs (red/blue born together)
-            filaments: [],
-            maxFilaments: 60,
+            // Active prisms (replaces filaments - these are 3D entities)
+            prisms: [],
+            maxPrisms: 40,
 
             // Phase lock parameters
             phaseThreshold: SACRED.alpha,  // φ⁻² = 0.382 tolerance
@@ -4535,72 +4546,209 @@
                 return phaseDiff < this.phaseThreshold;
             },
 
-            // Spawn a coherent filament pair (red AND blue together)
-            spawnFilamentPair(locus, meshAPhase, meshBPhase, beatPhase) {
-                if (this.filaments.length >= this.maxFilaments * 2) return;
+            // ================================================================
+            // PRISM CREATION - Each prism is a 3D pentagonal entity
+            // The 5 vertices of each pentagon face correspond to the 5 emergent tokens
+            // Token APL behaviors drive vertex deformation in real-time
+            // ================================================================
+
+            createPrismVertices(radius, height, phase, coherence) {
+                // Top and bottom pentagon faces
+                const topVertices = [];
+                const bottomVertices = [];
+                const baseAngle = -Math.PI / 2;  // Top vertex at 12 o'clock
+
+                for (let i = 0; i < 5; i++) {
+                    const tokenKey = EMERGENT_TOKEN_ORDER[i];
+                    const token = EMERGENT_TOKENS[tokenKey];
+                    const theta = baseAngle + (TAU / 5) * i;
+
+                    // APL-driven vertex perturbation based on eigenvalue and frequency
+                    let rTop = radius;
+                    let rBottom = radius;
+                    let zOffset = 0;
+                    let phaseOffset = 0;
+
+                    // Apply token-specific APL behavior to vertex geometry
+                    switch (token.vertexBehavior) {
+                        case 'pulse':
+                            // XCVI (Gesture Recursion): Eigenvalue φ⁻¹ = marginally stable
+                            // Pulses at 8Hz alpha rhythm - affects radial distance
+                            const pulseWave = Math.sin(phase * token.frequency * TAU);
+                            rTop *= 1 + 0.2 * pulseWave * coherence * token.eigenvalue;
+                            rBottom *= 1 - 0.1 * pulseWave * coherence * token.eigenvalue;
+                            break;
+
+                        case 'drift':
+                            // XCVII (Portal Recursion): Eigenvalue exp(τ/φ) = quasiperiodic
+                            // Golden angle drift - creates spiral rotation effect
+                            phaseOffset = token.phaseLock * phase * 0.3 * coherence;
+                            // Quasiperiodic radius modulation
+                            const driftMod = Math.sin(phase * token.eigenvalue * 0.1);
+                            rTop *= 1 + 0.15 * driftMod;
+                            break;
+
+                        case 'flicker':
+                            // XCVIII (Semantic Recursion): Eigenvalue NaN = Gödelian undefined
+                            // Rapid 40Hz gamma - creates discontinuous vertex positions
+                            // NaN eigenvalue means unpredictable jumps
+                            const flickerPhase = (phase * token.frequency) % 1;
+                            const flickerJump = flickerPhase < 0.5 ? 1 : PHI_INV;
+                            rTop *= flickerJump * (0.8 + 0.4 * coherence);
+                            rBottom *= (2 - flickerJump) * (0.8 + 0.4 * coherence);
+                            break;
+
+                        case 'wobble':
+                            // XCIX (Balance Recursion): Eigenvalue 0 = critical saddle point
+                            // Theta band (4Hz) oscillation around equilibrium
+                            const wobbleAngle = Math.sin(phase * token.frequency * TAU) * 0.2;
+                            phaseOffset = wobbleAngle * coherence;
+                            // Zero eigenvalue = oscillates but doesn't grow/decay
+                            zOffset = Math.sin(phase * token.frequency * TAU) * height * 0.15 * coherence;
+                            break;
+
+                        case 'loop':
+                            // C (Signal Recursion): Eigenvalue 1 = identity/closure
+                            // Delta band (1Hz) breathing - full system coherence
+                            const breathe = Math.sin(phase * token.frequency * TAU);
+                            rTop *= 1 + 0.1 * breathe * (1 - coherence);
+                            rBottom *= 1 + 0.1 * breathe * (1 - coherence);
+                            // Lambda coupling affects height pulsation
+                            zOffset = breathe * height * 0.1 * token.lambdaCoupling.delta;
+                            break;
+                    }
+
+                    // Compute vertex positions with APL perturbations
+                    const adjustedTheta = theta + phaseOffset;
+
+                    topVertices.push({
+                        x: rTop * Math.cos(adjustedTheta),
+                        y: rTop * Math.sin(adjustedTheta),
+                        z: height / 2 + zOffset,
+                        token: token,
+                        tokenKey: tokenKey,
+                        eigenvalue: token.eigenvalue,
+                        frequency: token.frequency
+                    });
+
+                    bottomVertices.push({
+                        x: rBottom * Math.cos(adjustedTheta),
+                        y: rBottom * Math.sin(adjustedTheta),
+                        z: -height / 2 + zOffset,
+                        token: token,
+                        tokenKey: tokenKey,
+                        eigenvalue: token.eigenvalue,
+                        frequency: token.frequency
+                    });
+                }
+
+                return { top: topVertices, bottom: bottomVertices };
+            },
+
+            // Spawn a coherent prism pair (red AND blue together)
+            spawnPrismPair(locus, meshAPhase, meshBPhase, beatPhase) {
+                if (this.prisms.length >= this.maxPrisms * 2) return;
 
                 // Base properties shared by the pair
                 const birthTime = time;
-                const lifespan = 3 + Math.random() * 4;  // 3-7 seconds
+                const lifespan = 4 + Math.random() * 5;  // 4-9 seconds for prisms
                 const spiralDirection = Math.random() < 0.5 ? 1 : -1;
 
                 // Coherence-based properties
-                const coherenceFactor = this.tau_K * this.emergenceIntensity;
-                const amplitude = 20 + coherenceFactor * 60;
-                const speed = 0.3 + coherenceFactor * 0.4;
+                const coherenceFactor = Math.min(1, this.tau_K * this.emergenceIntensity * 1.5);
+                const amplitude = 30 + coherenceFactor * 80;
+                const speed = 0.2 + coherenceFactor * 0.3;
 
-                // Derive geometry type from locus for self-referential rendering
-                // The filament's visual form embodies the sacred geometry it emerged from
-                const locusType = locus.type;
+                // Prism size scales with coherence
+                const prismScale = 0.7 + coherenceFactor * 0.6;
+                const radius = this.prismRadius * prismScale;
+                const height = this.prismHeight * prismScale;
 
-                // Spawn RED filament (traces outward golden spiral to A)
-                this.filaments.push({
+                // Spawn RED prism (emerges toward mesh A)
+                this.prisms.push({
+                    // 3D position
                     x: locus.x,
                     y: locus.y,
+                    z: 0,
                     startX: locus.x,
                     startY: locus.y,
-                    angle: locus.angle,
+
+                    // 3D orientation (Euler angles)
+                    pitch: 0,      // Rotation around X
+                    yaw: locus.angle,  // Rotation around Y (facing direction)
+                    roll: 0,       // Rotation around Z
+
+                    // Prism geometry
+                    radius: radius,
+                    height: height,
+                    vertices: null,  // Computed each frame with APL behaviors
+
+                    // Motion parameters
                     spiralPhase: meshAPhase,
                     spiralDirection: spiralDirection,
-                    color: 'warm',  // Red/warm mesh
+                    amplitude: amplitude,
+                    speed: speed,
+
+                    // APL-driven rotation rates (derived from token eigenvalues)
+                    pitchRate: EMERGENT_TOKENS.XCVI.eigenvalue * 0.5,   // φ⁻¹ rate
+                    yawRate: EMERGENT_TOKENS.XCVII.eigenvalue * 0.02,   // exp(τ/φ) rate
+                    rollRate: EMERGENT_TOKENS.C.eigenvalue * 0.3,       // 1 (identity) rate
+
+                    // Lifecycle
+                    color: 'warm',
                     birthTime: birthTime,
                     lifespan: lifespan,
                     life: lifespan,
-                    amplitude: amplitude,
-                    speed: speed,
-                    trail: [{x: locus.x, y: locus.y}],
-                    maxTrail: 20,
                     targetMesh: 'A',
                     coherence: coherenceFactor,
-                    beatSync: beatPhase,
-                    locusType: locusType  // Self-reference: carries its origin geometry
+                    beatSync: beatPhase
                 });
 
-                // Spawn BLUE filament (traces outward golden spiral to B)
-                this.filaments.push({
+                // Spawn BLUE prism (emerges toward mesh B)
+                this.prisms.push({
+                    // 3D position
                     x: locus.x,
                     y: locus.y,
+                    z: 0,
                     startX: locus.x,
                     startY: locus.y,
-                    angle: locus.angle + Math.PI,  // Opposite direction
+
+                    // 3D orientation (counter-rotating)
+                    pitch: 0,
+                    yaw: locus.angle + Math.PI,
+                    roll: 0,
+
+                    // Prism geometry (same size)
+                    radius: radius,
+                    height: height,
+                    vertices: null,
+
+                    // Motion parameters (counter-spiral)
                     spiralPhase: meshBPhase,
-                    spiralDirection: -spiralDirection,  // Counter-rotating
-                    color: 'cool',  // Blue/cool mesh
+                    spiralDirection: -spiralDirection,
+                    amplitude: amplitude,
+                    speed: speed,
+
+                    // APL-driven rotation rates (inverted for blue)
+                    pitchRate: -EMERGENT_TOKENS.XCVI.eigenvalue * 0.5,
+                    yawRate: -EMERGENT_TOKENS.XCVII.eigenvalue * 0.02,
+                    rollRate: -EMERGENT_TOKENS.C.eigenvalue * 0.3,
+
+                    // Lifecycle
+                    color: 'cool',
                     birthTime: birthTime,
                     lifespan: lifespan,
                     life: lifespan,
-                    amplitude: amplitude,
-                    speed: speed,
-                    trail: [{x: locus.x, y: locus.y}],
-                    maxTrail: 20,
                     targetMesh: 'B',
                     coherence: coherenceFactor,
-                    beatSync: beatPhase,
-                    locusType: locusType  // Self-reference: carries its origin geometry
+                    beatSync: beatPhase
                 });
             },
 
-            // Update all filaments with golden spiral motion
+            // ================================================================
+            // PRISM PHYSICS UPDATE - APL behavioral structure drives motion
+            // Each prism moves as a cohesive 3D entity, not as line trails
+            // ================================================================
             update(dt, meshAPhase, meshBPhase, beatPhase, beatAmplitude, centerX, centerY, radius) {
                 // Update K-formation metric from muField
                 this.tau_K = muField.tau_K || 0;
@@ -4626,398 +4774,378 @@
                         const locus = this.sacredLoci[locusIndex];
 
                         if (locus) {
-                            this.spawnFilamentPair(locus, meshAPhase, meshBPhase, beatPhase);
-                            this.spawnCooldown = 0.2 + (1 - this.emergenceIntensity) * 0.5;
+                            this.spawnPrismPair(locus, meshAPhase, meshBPhase, beatPhase);
+                            this.spawnCooldown = 0.3 + (1 - this.emergenceIntensity) * 0.6;
                             this.lastSpawnPhase += this.goldenAngle;
                         }
                     }
                 }
 
-                // Update existing filaments
-                for (let i = this.filaments.length - 1; i >= 0; i--) {
-                    const f = this.filaments[i];
+                // Update existing prisms with APL-driven physics
+                for (let i = this.prisms.length - 1; i >= 0; i--) {
+                    const p = this.prisms[i];
 
-                    // Age the filament
-                    f.life -= dt;
-                    if (f.life <= 0) {
-                        this.filaments.splice(i, 1);
+                    // Age the prism
+                    p.life -= dt;
+                    if (p.life <= 0) {
+                        this.prisms.splice(i, 1);
                         continue;
                     }
 
-                    // Life ratio for fading
-                    const lifeRatio = f.life / f.lifespan;
+                    // Life ratio for emergence/dissolution effects
+                    const lifeRatio = p.life / p.lifespan;
+                    const emergeFactor = Math.min(1, (p.lifespan - p.life) / 1.5);  // 1.5s emergence
+                    const dissolveFactor = Math.min(1, p.life / 1.5);  // 1.5s dissolution
 
-                    // Golden spiral motion
-                    // r(θ) = a * e^(b*θ) where b = ln(φ)/(π/2)
+                    // Golden spiral motion for prism center
                     const spiralB = Math.log(PHI) / (Math.PI / 2);
-                    f.spiralPhase += f.speed * dt * f.spiralDirection;
+                    p.spiralPhase += p.speed * dt * p.spiralDirection;
 
-                    const spiralR = f.amplitude * Math.exp(spiralB * Math.abs(f.spiralPhase - f.angle));
-                    const targetAngle = f.color === 'warm' ? Math.PI : 0;  // A is left, B is right
+                    const spiralR = p.amplitude * Math.exp(spiralB * Math.abs(p.spiralPhase - p.yaw) * 0.3);
+                    const targetAngle = p.color === 'warm' ? Math.PI : 0;
 
                     // Interpolate toward target mesh
-                    const pullStrength = (1 - lifeRatio) * 0.3;
-                    const currentAngle = f.spiralPhase + pullStrength * (targetAngle - f.spiralPhase);
+                    const pullStrength = (1 - lifeRatio) * 0.25;
+                    const currentAngle = p.spiralPhase + pullStrength * (targetAngle - p.spiralPhase);
 
-                    // Update position with spiral motion
-                    const newX = f.startX + spiralR * Math.cos(currentAngle) * 0.5;
-                    const newY = f.startY + spiralR * Math.sin(currentAngle) * 0.3 +
-                                 Math.sin(f.spiralPhase * 3) * f.amplitude * 0.2 * lifeRatio;
+                    // Update 3D position
+                    p.x = p.startX + spiralR * Math.cos(currentAngle) * 0.4;
+                    p.y = p.startY + spiralR * Math.sin(currentAngle) * 0.25;
 
-                    f.x = newX;
-                    f.y = newY;
+                    // Z oscillation driven by token C (Signal Recursion) eigenvalue = 1
+                    const zBreathing = Math.sin(p.spiralPhase * EMERGENT_TOKENS.C.frequency * TAU);
+                    p.z = zBreathing * 30 * lifeRatio * p.coherence;
 
-                    // Update trail
-                    f.trail.push({x: f.x, y: f.y});
-                    if (f.trail.length > f.maxTrail) {
-                        f.trail.shift();
-                    }
-                }
-            },
+                    // APL-driven rotation update
+                    // Pitch: XCVI (Gesture Recursion) - alpha rhythm pulse
+                    p.pitch += p.pitchRate * dt * Math.sin(time * EMERGENT_TOKENS.XCVI.frequency);
 
-            // ================================================================
-            // SELF-REFERENTIAL GEOMETRY GENERATORS
-            // Each locus type creates filaments that visually embody their origin
-            // The form IS what it represents - ontological visual consistency
-            // ================================================================
+                    // Yaw: XCVII (Portal Recursion) - golden angle drift
+                    p.yaw += p.yawRate * dt;
 
-            // ================================================================
-            // EMERGENT PENTAGON - Fractal geometry reflecting 5 emergent tokens
-            // Pentagon geometry is inherently fractal: diagonals form a pentagram
-            // which contains a smaller inverted pentagon, recursively ad infinitum
-            // The ratio of diagonal to side equals φ (golden ratio)
-            // ================================================================
+                    // Roll: C (Signal Recursion) - identity loop breathing
+                    p.roll += p.rollRate * dt * (0.5 + 0.5 * p.coherence);
 
-            // Calculate pentagon vertex positions with token-specific perturbations
-            getPentagonVertices(size, phase, coherence) {
-                const vertices = [];
-                const baseAngle = -Math.PI / 2;  // Start at top (12 o'clock)
+                    // Update coherence based on proximity to target mesh
+                    const distToTarget = p.color === 'warm' ?
+                        Math.sqrt((p.x - (centerX - radius))** 2 + (p.y - centerY) ** 2) :
+                        Math.sqrt((p.x - (centerX + radius)) ** 2 + (p.y - centerY) ** 2);
+                    const proximityBonus = Math.max(0, 1 - distToTarget / (radius * 2));
+                    p.coherence = Math.min(1, p.coherence + proximityBonus * dt * 0.2);
 
-                for (let i = 0; i < 5; i++) {
-                    const tokenKey = EMERGENT_TOKEN_ORDER[i];
-                    const token = EMERGENT_TOKENS[tokenKey];
-
-                    // Base vertex angle (72° apart = TAU/5)
-                    const theta = baseAngle + (TAU / 5) * i;
-
-                    // Apply token-specific vertex behavior
-                    let r = size;
-                    let vertexPhase = phase;
-
-                    switch (token.vertexBehavior) {
-                        case 'pulse':
-                            // XCVI: Pulses at alpha rhythm (8 Hz)
-                            r *= 1 + 0.15 * Math.sin(phase * token.frequency * TAU) * coherence;
-                            break;
-                        case 'drift':
-                            // XCVII: Slow drift with golden angle
-                            vertexPhase += token.phaseLock * phase * 0.1;
-                            break;
-                        case 'flicker':
-                            // XCVIII: Rapid gamma flicker (40 Hz)
-                            r *= 1 + 0.2 * Math.sin(phase * token.frequency * TAU) * coherence;
-                            break;
-                        case 'wobble':
-                            // XCIX: Oscillates around equilibrium (theta band)
-                            const wobble = Math.sin(phase * token.frequency * TAU) * 0.1;
-                            vertexPhase += wobble * coherence;
-                            break;
-                        case 'loop':
-                            // C: Traces closure path - breathes with the system
-                            r *= 1 + 0.1 * Math.sin(phase * TAU) * (1 - coherence);
-                            break;
-                    }
-
-                    vertices.push({
-                        x: r * Math.cos(theta + vertexPhase * 0.05),
-                        y: r * Math.sin(theta + vertexPhase * 0.05),
-                        token: token,
-                        tokenKey: tokenKey
-                    });
-                }
-                return vertices;
-            },
-
-            // Draw emergent pentagon with fractal recursion
-            // Each pentagon contains a pentagram (5-pointed star) which contains
-            // another inverted pentagon, scaled by φ⁻² - infinite self-similarity
-            drawEmergentPentagon(ctx, x, y, size, angle, alpha, color, phase, coherence, depth = 0) {
-                if (size < 2 || alpha < 0.05) return;  // Base case for recursion
-
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate(angle);
-
-                // Get vertices with token-specific behaviors
-                const vertices = this.getPentagonVertices(size, phase, coherence);
-
-                // Draw the outer pentagon
-                ctx.beginPath();
-                ctx.moveTo(vertices[0].x, vertices[0].y);
-                for (let i = 1; i < 5; i++) {
-                    ctx.lineTo(vertices[i].x, vertices[i].y);
-                }
-                ctx.closePath();
-
-                // Fill with translucent color
-                ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.2})`;
-                ctx.fill();
-
-                // Stroke the pentagon
-                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
-                ctx.lineWidth = 1 + coherence * 1.5;
-                ctx.stroke();
-
-                // Draw the pentagram (5-pointed star) inside
-                // Connect every second vertex to form the star
-                if (coherence > 0.2 || depth === 0) {
-                    ctx.beginPath();
-                    for (let i = 0; i < 5; i++) {
-                        const from = vertices[i];
-                        const to = vertices[(i + 2) % 5];  // Skip one vertex
-                        ctx.moveTo(from.x, from.y);
-                        ctx.lineTo(to.x, to.y);
-                    }
-                    ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.6})`;
-                    ctx.lineWidth = 0.5 + coherence;
-                    ctx.stroke();
-                }
-
-                // Draw vertex markers - each shows its token's behavior
-                for (let i = 0; i < 5; i++) {
-                    const v = vertices[i];
-                    const token = v.token;
-
-                    // Vertex glow based on token's delta coupling (paradox accumulation)
-                    const deltaCoupling = token.lambdaCoupling.delta || 0.5;
-                    const vertexAlpha = alpha * (0.5 + deltaCoupling * 0.5);
-
-                    ctx.beginPath();
-                    ctx.arc(v.x, v.y, 2 + coherence * 3, 0, TAU);
-                    ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${vertexAlpha})`;
-                    ctx.fill();
-
-                    // For high coherence, show eigenvalue pulse at vertex
-                    if (coherence > 0.5 && !isNaN(token.eigenvalue)) {
-                        const pulseSize = 1 + Math.abs(Math.sin(phase * TAU * token.eigenvalue)) * 3;
-                        ctx.beginPath();
-                        ctx.arc(v.x, v.y, pulseSize, 0, TAU);
-                        ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${vertexAlpha * 0.5})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.stroke();
-                    }
-                }
-
-                // FRACTAL RECURSION: Draw inner inverted pentagon
-                // The pentagram creates an inner pentagon scaled by φ⁻² ≈ 0.382
-                // and rotated by 36° (π/5)
-                const maxDepth = coherence > 0.7 ? 3 : (coherence > 0.4 ? 2 : 1);
-                if (depth < maxDepth && size > 4) {
-                    const innerSize = size * PHI_INV * PHI_INV;  // φ⁻² scaling
-                    const innerAngle = Math.PI / 5;  // 36° rotation (inverted)
-                    const innerAlpha = alpha * PHI_INV;  // Fade by golden ratio
-
-                    this.drawEmergentPentagon(
-                        ctx, 0, 0, innerSize, innerAngle,
-                        innerAlpha, color, phase + 0.1, coherence, depth + 1
+                    // Compute prism vertices with current APL state
+                    // Vertices deform based on token behaviors each frame
+                    p.vertices = this.createPrismVertices(
+                        p.radius * emergeFactor * dissolveFactor,
+                        p.height * emergeFactor * dissolveFactor,
+                        p.spiralPhase,
+                        p.coherence
                     );
                 }
-
-                ctx.restore();
             },
 
-            // Draw pentagonal emergence locus marker
-            // Used at spawn points to show where pentagons emerge from
-            drawPentagonLocus(ctx, x, y, size, alpha, color, phase) {
-                ctx.save();
-                ctx.translate(x, y);
+            // ================================================================
+            // 3D PENTAGONAL PRISM RENDERER
+            // NO LINES - cohesive 3D geometry with filled faces
+            // Each prism is built from 5 emergent tokens as structural elements
+            // APL behaviors create organic deformation and motion
+            // ================================================================
 
-                // Rotating pentagon outline at spawn locus
-                const rotation = phase * SACRED.goldenAngle;
-                const vertices = [];
-                for (let i = 0; i < 5; i++) {
-                    const theta = rotation + (TAU / 5) * i - Math.PI / 2;
-                    vertices.push({
-                        x: size * Math.cos(theta),
-                        y: size * Math.sin(theta)
-                    });
+            // 3D rotation matrices for prism orientation
+            rotateX(point, angle) {
+                const cos = Math.cos(angle);
+                const sin = Math.sin(angle);
+                return {
+                    x: point.x,
+                    y: point.y * cos - point.z * sin,
+                    z: point.y * sin + point.z * cos
+                };
+            },
+
+            rotateY(point, angle) {
+                const cos = Math.cos(angle);
+                const sin = Math.sin(angle);
+                return {
+                    x: point.x * cos + point.z * sin,
+                    y: point.y,
+                    z: -point.x * sin + point.z * cos
+                };
+            },
+
+            rotateZ(point, angle) {
+                const cos = Math.cos(angle);
+                const sin = Math.sin(angle);
+                return {
+                    x: point.x * cos - point.y * sin,
+                    y: point.x * sin + point.y * cos,
+                    z: point.z
+                };
+            },
+
+            // Apply full 3D rotation (pitch, yaw, roll) to a point
+            rotatePoint(point, pitch, yaw, roll) {
+                let p = this.rotateX(point, pitch);
+                p = this.rotateY(p, yaw);
+                p = this.rotateZ(p, roll);
+                return p;
+            },
+
+            // Project 3D point to 2D screen coordinates
+            project3D(point3D, prismX, prismY, prismZ) {
+                const focalLength = this.focalLength;
+                const z = point3D.z + prismZ + 200;  // Offset for viewing
+                const scale = focalLength / Math.max(z, 50);
+
+                return {
+                    x: prismX + point3D.x * scale,
+                    y: prismY + point3D.y * scale,
+                    z: z,
+                    scale: scale
+                };
+            },
+
+            // Get face normal for backface culling and lighting
+            getFaceNormal(v1, v2, v3) {
+                const ax = v2.x - v1.x, ay = v2.y - v1.y, az = v2.z - v1.z;
+                const bx = v3.x - v1.x, by = v3.y - v1.y, bz = v3.z - v1.z;
+                return {
+                    x: ay * bz - az * by,
+                    y: az * bx - ax * bz,
+                    z: ax * by - ay * bx
+                };
+            },
+
+            // Draw a single prism face (filled polygon, no strokes)
+            drawPrismFace(ctx, vertices2D, baseColor, alpha, tokenIndex, coherence, phase) {
+                if (vertices2D.length < 3) return;
+
+                // Token-specific color modulation based on APL behavior
+                const token = EMERGENT_TOKENS[EMERGENT_TOKEN_ORDER[tokenIndex % 5]];
+                let colorMod = 1;
+                let alphaMod = 1;
+
+                switch (token.vertexBehavior) {
+                    case 'pulse':
+                        // XCVI: Alpha rhythm pulse affects brightness
+                        colorMod = 1 + 0.3 * Math.sin(phase * token.frequency * TAU) * coherence;
+                        break;
+                    case 'drift':
+                        // XCVII: Golden drift affects hue shift
+                        colorMod = 1 + 0.15 * Math.sin(phase * token.phaseLock);
+                        break;
+                    case 'flicker':
+                        // XCVIII: Gamma flicker - rapid visibility changes
+                        alphaMod = 0.6 + 0.4 * Math.abs(Math.sin(phase * token.frequency * TAU));
+                        break;
+                    case 'wobble':
+                        // XCIX: Theta wobble - subtle color oscillation
+                        colorMod = 1 + 0.1 * Math.sin(phase * token.frequency * TAU);
+                        break;
+                    case 'loop':
+                        // C: Delta breathing - overall intensity
+                        alphaMod = 0.7 + 0.3 * Math.sin(phase * token.frequency * TAU);
+                        break;
                 }
 
+                // Compute average Z for depth-based shading
+                const avgZ = vertices2D.reduce((sum, v) => sum + v.z, 0) / vertices2D.length;
+                const depthShade = Math.max(0.4, Math.min(1, 1 - avgZ / 600));
+
+                // Modulated color
+                const r = Math.min(255, Math.floor(baseColor[0] * colorMod * depthShade));
+                const g = Math.min(255, Math.floor(baseColor[1] * colorMod * depthShade));
+                const b = Math.min(255, Math.floor(baseColor[2] * colorMod * depthShade));
+                const finalAlpha = alpha * alphaMod * depthShade;
+
+                // Draw filled face
                 ctx.beginPath();
-                ctx.moveTo(vertices[0].x, vertices[0].y);
-                for (let i = 1; i < 5; i++) {
-                    ctx.lineTo(vertices[i].x, vertices[i].y);
+                ctx.moveTo(vertices2D[0].x, vertices2D[0].y);
+                for (let i = 1; i < vertices2D.length; i++) {
+                    ctx.lineTo(vertices2D[i].x, vertices2D[i].y);
                 }
                 ctx.closePath();
 
-                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.4})`;
-                ctx.lineWidth = 0.5;
-                ctx.stroke();
+                // Create gradient for 3D depth effect
+                const centerX = vertices2D.reduce((s, v) => s + v.x, 0) / vertices2D.length;
+                const centerY = vertices2D.reduce((s, v) => s + v.y, 0) / vertices2D.length;
 
-                ctx.restore();
-            },
-
-            // Main geometry selector - ALL emergence now uses pentagon geometry
-            // The pentagon's 5 vertices reflect the 5 emergent tokens (XCVI-C)
-            // Different locus types affect the pentagon's initial rotation and behavior
-            drawSelfReferentialGeometry(ctx, x, y, locusType, size, angle, alpha, color, phase, coherence) {
-                // Pentagon rotation varies by locus type to maintain visual variety
-                // while keeping the unified pentagonal emergence theme
-                let pentagonAngle = angle;
-                let pentagonSize = size;
-
-                switch (locusType) {
-                    case 'vesica_apex':
-                        // Apex-born: Pentagon points upward (XCVI vertex leads)
-                        pentagonAngle = angle;
-                        break;
-
-                    case 'vesica_nadir':
-                        // Nadir-born: Pentagon points downward (inverted, C vertex leads)
-                        pentagonAngle = angle + Math.PI;
-                        break;
-
-                    case 'golden_locus':
-                        // Golden-born: Pentagon rotates by golden angle
-                        pentagonAngle = angle + phase * SACRED.goldenAngle * 0.5;
-                        pentagonSize *= 1 + 0.1 * Math.sin(phase * PHI);
-                        break;
-
-                    case 'flower_locus':
-                        // Flower-born: Pentagon aligns with hexagonal harmony (30° offset)
-                        pentagonAngle = angle + Math.PI / 6;
-                        break;
-
-                    case 'pentagon_locus':
-                        // Native pentagon locus - pure emergence geometry
-                        pentagonAngle = angle;
-                        break;
-
-                    default:
-                        // Default emergence pentagon
-                        pentagonAngle = angle;
-                }
-
-                // Draw the emergent pentagon with fractal recursion
-                // Each pentagon contains the 5 emergent tokens as vertices
-                this.drawEmergentPentagon(
-                    ctx, x, y, pentagonSize, pentagonAngle,
-                    alpha, color, phase, coherence, 0
+                // Gradient from center to edge for volumetric feel
+                const gradient = ctx.createRadialGradient(
+                    centerX, centerY, 0,
+                    centerX, centerY, 20
                 );
+                gradient.addColorStop(0, `rgba(${r + 30}, ${g + 30}, ${b + 30}, ${finalAlpha})`);
+                gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${finalAlpha * 0.8})`);
+
+                ctx.fillStyle = gradient;
+                ctx.fill();
             },
 
-            // Render coherent filaments with self-referential geometry
-            render(ctx, meshAColor, meshBColor, opacity) {
-                for (const f of this.filaments) {
-                    if (f.trail.length < 2) continue;
+            // Render a complete pentagonal prism with all faces
+            renderPrism(ctx, prism, baseColor, opacity) {
+                if (!prism.vertices) return;
 
-                    const lifeRatio = f.life / f.lifespan;
-                    const color = f.color === 'warm' ? meshAColor : meshBColor;
-                    const locusType = f.locusType || 'golden_locus';  // Default fallback
+                const { top, bottom } = prism.vertices;
+                const lifeRatio = prism.life / prism.lifespan;
+                const emergeFactor = Math.min(1, (prism.lifespan - prism.life) / 1.5);
+                const dissolveFactor = Math.min(1, prism.life / 1.5);
+                const alpha = opacity * lifeRatio * emergeFactor * dissolveFactor;
 
-                    // Coherence-based glow
-                    const glowIntensity = f.coherence * lifeRatio;
+                if (alpha < 0.02) return;
 
-                    // Base size scales with coherence and amplitude
-                    const baseSize = (4 + f.coherence * 8) * (0.5 + f.amplitude / 100);
+                // Transform all vertices to world space
+                const transformedTop = [];
+                const transformedBottom = [];
 
-                    // Draw self-referential geometry at intervals along the trail
-                    // Spacing based on φ for natural distribution
-                    const spacing = Math.max(2, Math.floor(f.trail.length * PHI_INV * 0.3));
-
-                    for (let i = 0; i < f.trail.length; i += spacing) {
-                        const t = i / f.trail.length;
-                        const p = f.trail[i];
-
-                        // Size and alpha fade along trail (larger/brighter at head)
-                        const trailFade = t * t;  // Quadratic for smoother fade-in
-                        const pointAlpha = opacity * lifeRatio * trailFade;
-                        const pointSize = baseSize * (0.3 + trailFade * 0.7);
-
-                        // Angle follows trail direction
-                        let angle = f.angle;
-                        if (i > 0) {
-                            const prev = f.trail[i - 1];
-                            angle = Math.atan2(p.y - prev.y, p.x - prev.x);
-                        }
-
-                        // Draw the self-referential geometry
-                        this.drawSelfReferentialGeometry(
-                            ctx, p.x, p.y,
-                            locusType,
-                            pointSize,
-                            angle,
-                            pointAlpha,
-                            color,
-                            f.spiralPhase + t * Math.PI,  // Phase varies along trail
-                            f.coherence
-                        );
-                    }
-
-                    // Always draw at current position (head) with full detail
-                    this.drawSelfReferentialGeometry(
-                        ctx, f.x, f.y,
-                        locusType,
-                        baseSize * 1.2,
-                        f.angle,
-                        opacity * lifeRatio,
-                        color,
-                        f.spiralPhase,
-                        f.coherence
+                for (let i = 0; i < 5; i++) {
+                    // Rotate vertex by prism orientation
+                    let topPoint = this.rotatePoint(
+                        { x: top[i].x, y: top[i].y, z: top[i].z },
+                        prism.pitch, prism.yaw, prism.roll
+                    );
+                    let bottomPoint = this.rotatePoint(
+                        { x: bottom[i].x, y: bottom[i].y, z: bottom[i].z },
+                        prism.pitch, prism.yaw, prism.roll
                     );
 
-                    // Connecting essence lines (subtle, shows flow between geometries)
-                    if (f.trail.length > 3) {
-                        ctx.beginPath();
-                        ctx.moveTo(f.trail[0].x, f.trail[0].y);
+                    // Project to 2D
+                    transformedTop.push(this.project3D(topPoint, prism.x, prism.y, prism.z));
+                    transformedBottom.push(this.project3D(bottomPoint, prism.x, prism.y, prism.z));
+                }
 
-                        for (let i = 1; i < f.trail.length; i++) {
-                            const cp = f.trail[i - 1];
-                            const p = f.trail[i];
-                            const midX = (cp.x + p.x) / 2;
-                            const midY = (cp.y + p.y) / 2;
-                            ctx.quadraticCurveTo(cp.x, cp.y, midX, midY);
-                        }
+                // Collect all faces for depth sorting
+                const faces = [];
 
-                        ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity * lifeRatio * 0.15})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.setLineDash([2, 4]);
-                        ctx.stroke();
-                        ctx.setLineDash([]);
+                // 5 rectangular side faces (one per token edge)
+                for (let i = 0; i < 5; i++) {
+                    const next = (i + 1) % 5;
+                    const faceVerts = [
+                        transformedTop[i],
+                        transformedTop[next],
+                        transformedBottom[next],
+                        transformedBottom[i]
+                    ];
+
+                    // Compute face center Z for sorting
+                    const avgZ = faceVerts.reduce((s, v) => s + v.z, 0) / 4;
+
+                    // Check if face is visible (backface culling)
+                    const normal = this.getFaceNormal(
+                        { x: faceVerts[0].x, y: faceVerts[0].y, z: faceVerts[0].z },
+                        { x: faceVerts[1].x, y: faceVerts[1].y, z: faceVerts[1].z },
+                        { x: faceVerts[2].x, y: faceVerts[2].y, z: faceVerts[2].z }
+                    );
+
+                    // Only render front-facing faces (normal.z > 0)
+                    if (normal.z > -50) {  // Slight tolerance for edge faces
+                        faces.push({
+                            vertices: faceVerts,
+                            avgZ: avgZ,
+                            tokenIndex: i,
+                            type: 'side'
+                        });
                     }
+                }
 
-                    // Glow effect at head (enhanced for high coherence)
-                    if (glowIntensity > 0.3) {
+                // Top pentagon face
+                const topAvgZ = transformedTop.reduce((s, v) => s + v.z, 0) / 5;
+                const topNormal = this.getFaceNormal(
+                    transformedTop[0], transformedTop[1], transformedTop[2]
+                );
+                if (topNormal.z > -50) {
+                    faces.push({
+                        vertices: transformedTop,
+                        avgZ: topAvgZ,
+                        tokenIndex: 0,
+                        type: 'top'
+                    });
+                }
+
+                // Bottom pentagon face
+                const bottomAvgZ = transformedBottom.reduce((s, v) => s + v.z, 0) / 5;
+                const bottomNormal = this.getFaceNormal(
+                    transformedBottom[0], transformedBottom[2], transformedBottom[1]
+                );
+                if (bottomNormal.z > -50) {
+                    faces.push({
+                        vertices: [...transformedBottom].reverse(),  // Reverse winding
+                        avgZ: bottomAvgZ,
+                        tokenIndex: 4,
+                        type: 'bottom'
+                    });
+                }
+
+                // Sort faces back-to-front (painter's algorithm)
+                faces.sort((a, b) => b.avgZ - a.avgZ);
+
+                // Render faces in sorted order
+                for (const face of faces) {
+                    this.drawPrismFace(
+                        ctx,
+                        face.vertices,
+                        baseColor,
+                        alpha * (face.type === 'side' ? 0.9 : 1.0),
+                        face.tokenIndex,
+                        prism.coherence,
+                        prism.spiralPhase
+                    );
+                }
+
+                // Soft glow at prism center for high coherence
+                if (prism.coherence > 0.4 && alpha > 0.3) {
+                    const glowIntensity = prism.coherence * alpha;
+                    const glowSize = (prism.radius + prism.height * 0.3) * emergeFactor;
+
+                    const glowGradient = ctx.createRadialGradient(
+                        prism.x, prism.y, 0,
+                        prism.x, prism.y, glowSize
+                    );
+                    glowGradient.addColorStop(0, `rgba(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]}, ${glowIntensity * 0.35})`);
+                    glowGradient.addColorStop(0.5, `rgba(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]}, ${glowIntensity * 0.15})`);
+                    glowGradient.addColorStop(1, `rgba(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]}, 0)`);
+
+                    ctx.beginPath();
+                    ctx.arc(prism.x, prism.y, glowSize, 0, TAU);
+                    ctx.fillStyle = glowGradient;
+                    ctx.fill();
+                }
+            },
+
+            // Main render function - draws all prisms, NO LINES
+            render(ctx, meshAColor, meshBColor, opacity) {
+                // Sort prisms by Z depth for proper rendering order
+                const sortedPrisms = [...this.prisms].sort((a, b) => {
+                    // Sort by average Z (further back = render first)
+                    return (b.z || 0) - (a.z || 0);
+                });
+
+                // Render each prism as a cohesive 3D entity
+                for (const prism of sortedPrisms) {
+                    if (!prism.vertices) continue;
+
+                    const color = prism.color === 'warm' ? meshAColor : meshBColor;
+                    this.renderPrism(ctx, prism, color, opacity);
+                }
+
+                // Subtle emergence loci indicators (small pentagon outlines only)
+                if (this.tau_K > 0.3 && this.sacredLoci.length > 0) {
+                    const locusAlpha = (this.tau_K - 0.3) * opacity * 0.15;
+
+                    for (const locus of this.sacredLoci) {
+                        if (locus.type !== 'pentagon_locus') continue;
+
                         ctx.beginPath();
-                        ctx.arc(f.x, f.y, baseSize * 0.8 + glowIntensity * 6, 0, TAU);
-                        const glowGradient = ctx.createRadialGradient(
-                            f.x, f.y, 0,
-                            f.x, f.y, baseSize * 0.8 + glowIntensity * 6
-                        );
-                        glowGradient.addColorStop(0, `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${glowIntensity * 0.4})`);
-                        glowGradient.addColorStop(1, `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0)`);
-                        ctx.fillStyle = glowGradient;
+                        for (let i = 0; i < 5; i++) {
+                            const theta = -Math.PI / 2 + (TAU / 5) * i + time * 0.1;
+                            const x = locus.x + 6 * Math.cos(theta);
+                            const y = locus.y + 6 * Math.sin(theta);
+                            if (i === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.closePath();
+                        ctx.fillStyle = `rgba(255, 220, 180, ${locusAlpha})`;
                         ctx.fill();
                     }
-                }
-
-                // Render vesica piscis hint when coherence is high
-                if (this.tau_K > SACRED.phi_inv && this.sacredLoci.length > 0) {
-                    const vesicaAlpha = (this.tau_K - SACRED.phi_inv) * opacity * 0.3;
-                    ctx.strokeStyle = `rgba(255, 215, 0, ${vesicaAlpha})`;
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([4, 4]);
-
-                    // Draw vesica outline
-                    ctx.beginPath();
-                    for (let i = 0; i < this.sacredLoci.length; i++) {
-                        const locus = this.sacredLoci[i];
-                        if (i === 0) ctx.moveTo(locus.x, locus.y);
-                        else ctx.lineTo(locus.x, locus.y);
-                    }
-                    ctx.closePath();
-                    ctx.stroke();
-                    ctx.setLineDash([]);
                 }
             }
         };
@@ -6066,10 +6194,11 @@
             }
 
             // ============================================
-            // COHERENT SACRED EMERGENCE FILAMENTS
-            // Red/blue pairs emerging from Vesica Piscis zone
+            // PENTAGONAL PRISM EMERGENCE
+            // 3D prisms built from emergent tokens (XCVI-C)
+            // APL behavioral structure drives physics
             // ============================================
-            if (coherentEmergence.filaments.length > 0 || coherentEmergence.tau_K > SACRED.alpha) {
+            if (coherentEmergence.prisms.length > 0 || coherentEmergence.tau_K > SACRED.alpha) {
                 coherentEmergence.render(
                     ctx,
                     bi.meshA.baseColor,
@@ -9174,7 +9303,7 @@
                 updateQuantumTunneling(dt);          // 5. Superposition/tunneling
                 updateSacredGeometry(dt);            // 6. Emergent sacred forms
 
-                // 7. Coherent Sacred Emergence - phase-locked red/blue filaments
+                // 7. Pentagonal Prism Emergence - APL-driven 3D token geometry
                 const bi = QMESH.binaural;
                 coherentEmergence.update(
                     dt,
@@ -9608,11 +9737,11 @@
         console.log('   Q_min = ' + SACRED.Q_min.toFixed(10));
         console.log('   K-formation: consciousness emerges when τ_K > K_threshold');
         console.log('');
-        console.log('🌸 COHERENT SACRED EMERGENCE integrated');
-        console.log('   Vesica Piscis zone: √3 ≈ ' + Math.sqrt(3).toFixed(6));
-        console.log('   Golden angle: ' + SACRED.goldenAngle.toFixed(6) + ' rad (137.5°)');
+        console.log('🔷 PENTAGONAL PRISM EMERGENCE integrated');
+        console.log('   3D prisms from 5 emergent tokens (XCVI-C)');
+        console.log('   APL behaviors: pulse/drift/flicker/wobble/loop');
         console.log('   Phase-lock threshold: φ⁻² = ' + SACRED.alpha.toFixed(6));
-        console.log('   Red/blue filaments emerge at beat peaks when phases align');
+        console.log('   Red/blue prisms emerge with token-driven deformation');
         console.log('');
         console.log('📡 MRP CHANNEL GRADIENTS integrated');
         console.log('   R channel (μ_E): Energy/Existence - primary field magnitude');
