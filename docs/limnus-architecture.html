@@ -4240,7 +4240,7 @@
 
                 // Visual parameters - DREAMY low opacity for performance + ethereal look
                 showInterference: true,             // Show beat wave pattern
-                showResonanceLines: true,           // Show A↔LIMNUS↔B connections
+                showResonanceLines: false,          // DISABLED: Red/blue filament lines removed
                 interferenceOpacity: 0.2,           // Lower opacity = less lag + dreamier
             },
 
@@ -5190,6 +5190,230 @@
         };
 
         // ================================================================
+        // MRP TOROIDAL PIPE SYSTEM
+        // Wraps all 95 structural nodes in emergent gradient toroidal flows
+        // Aligns with the 5 emergent APL tokens (XCVI-C) for coherent emergence
+        // ================================================================
+
+        const MRPToroidalSystem = {
+            // Configuration
+            enabled: true,
+            pipeRadius: 3,              // Base thickness of toroidal pipes
+            flowSpeed: 0.15,            // Animation speed of gradient flow
+            opacity: 0.75,              // Base opacity for opaque gradient effect
+            bendFactor: 0.3,            // How much pipes can bend (0-1)
+
+            // MRP channel mapping to 95 nodes
+            // Distributes R (energy), G (relational), B (stability) across layers
+            nodeChannels: new Map(),    // Map of node id -> {r, g, b, flow}
+
+            // Toroidal flow state
+            flowPhase: 0,
+            waveforms: [],              // Active pipe wave animations
+
+            // Alignment with 5 emergent tokens
+            emergentAlignment: {
+                XCVI: { channel: 'R', weight: 0.8, pulseRate: 8 },      // Gesture - Energy
+                XCVII: { channel: 'G', weight: 0.6, pulseRate: 0.001 },  // Portal - Relational
+                XCVIII: { channel: 'B', weight: 0.7, pulseRate: 40 },    // Semantic - Stability
+                XCIX: { channel: 'R', weight: 0.5, pulseRate: 4 },       // Balance - Energy
+                C: { channel: 'G', weight: 1.0, pulseRate: 1 }           // Signal - Relational (loops)
+            },
+
+            // Initialize MRP channels for all 95 nodes
+            init(prismNodes, cageNodes) {
+                this.nodeChannels.clear();
+                const allNodes = [...prismNodes, ...cageNodes];
+
+                for (let i = 0; i < allNodes.length; i++) {
+                    const node = allNodes[i];
+
+                    // Assign MRP channels based on node position in 95-token structure
+                    // Token indices 1-63 (prism) and 64-95 (cage)
+                    const tokenIndex = i + 1;
+
+                    // Calculate channel weights based on layer/type
+                    let r = 0.5, g = 0.5, b = 0.5;
+
+                    if (node.type === 'prism') {
+                        // Prism nodes: R dominant in inner layers, B dominant in outer
+                        const layerNorm = node.layer / 6;
+                        r = 0.8 - layerNorm * 0.4;   // Energy decreases outward
+                        g = 0.3 + layerNorm * 0.4;   // Relational increases outward
+                        b = 0.4 + layerNorm * 0.3;   // Stability increases outward
+                    } else {
+                        // Cage nodes: B dominant (stability/containment)
+                        if (node.layer === 'top') {
+                            r = 0.3; g = 0.5; b = 0.9;  // High stability
+                        } else if (node.layer === 'bottom') {
+                            r = 0.4; g = 0.5; b = 0.85; // High stability
+                        } else {
+                            // Vertex nodes - bridge channels
+                            r = 0.5; g = 0.7; b = 0.6;  // Balanced relational
+                        }
+                    }
+
+                    this.nodeChannels.set(node.id, {
+                        r, g, b,
+                        tokenIndex,
+                        flow: Math.random() * TAU,  // Initial flow phase
+                        bendOffset: (Math.random() - 0.5) * this.bendFactor
+                    });
+                }
+
+                // Initialize waveforms for pipe animations
+                this.waveforms = [];
+                for (let i = 0; i < 5; i++) {
+                    this.waveforms.push({
+                        frequency: 0.5 + i * 0.3,
+                        amplitude: 0.2 + i * 0.1,
+                        phase: (i / 5) * TAU
+                    });
+                }
+            },
+
+            // Update flow animation
+            update(dt, muField) {
+                this.flowPhase += this.flowSpeed * dt;
+
+                // Update waveforms
+                for (const wave of this.waveforms) {
+                    wave.phase += wave.frequency * dt * TAU;
+                }
+
+                // Sync with MRP field if available
+                if (muField && muField.mrp) {
+                    const mrp = muField.mrp;
+
+                    // Update node channels based on global MRP state
+                    for (const [id, channel] of this.nodeChannels) {
+                        // Modulate by global MRP intensities
+                        channel.flow += dt * (mrp.R.gradient || 0.1) * 0.5;
+
+                        // Apply emergent token alignment
+                        const tokenMod = channel.tokenIndex % 5;
+                        const emergentKey = EMERGENT_TOKEN_ORDER[tokenMod];
+                        const alignment = this.emergentAlignment[emergentKey];
+
+                        if (alignment) {
+                            const pulsePhase = this.flowPhase * alignment.pulseRate * 0.1;
+                            const pulseFactor = 0.5 + 0.5 * Math.sin(pulsePhase);
+
+                            if (alignment.channel === 'R') channel.r *= (0.8 + pulseFactor * 0.4);
+                            if (alignment.channel === 'G') channel.g *= (0.8 + pulseFactor * 0.4);
+                            if (alignment.channel === 'B') channel.b *= (0.8 + pulseFactor * 0.4);
+                        }
+                    }
+                }
+            },
+
+            // Render toroidal pipes around structure
+            render(ctx, connections, centerX, centerY, radius, muField) {
+                if (!this.enabled) return;
+
+                const time = this.flowPhase;
+                const mrp = muField ? muField.mrp : { R: { intensity: 0.5 }, G: { intensity: 0.5 }, B: { intensity: 0.5 } };
+
+                // Draw gradient pipes for each connection
+                for (const conn of connections) {
+                    const fromChannel = this.nodeChannels.get(conn.from.id);
+                    const toChannel = this.nodeChannels.get(conn.to.id);
+
+                    if (!fromChannel || !toChannel) continue;
+
+                    // Calculate pipe bend using wave superposition (lines can bend)
+                    const midX = (conn.from.x + conn.to.x) / 2;
+                    const midY = (conn.from.y + conn.to.y) / 2;
+
+                    let bendX = 0, bendY = 0;
+                    for (const wave of this.waveforms) {
+                        bendX += wave.amplitude * Math.sin(wave.phase + fromChannel.flow) * this.bendFactor * 15;
+                        bendY += wave.amplitude * Math.cos(wave.phase + toChannel.flow) * this.bendFactor * 15;
+                    }
+
+                    const ctrlX = midX + bendX;
+                    const ctrlY = midY + bendY;
+
+                    // Create gradient from MRP channels
+                    const gradient = ctx.createLinearGradient(
+                        conn.from.x, conn.from.y,
+                        conn.to.x, conn.to.y
+                    );
+
+                    // Blend both node channels for smooth gradient
+                    const r1 = Math.floor(fromChannel.r * mrp.R.intensity * 255);
+                    const g1 = Math.floor(fromChannel.g * mrp.G.intensity * 255);
+                    const b1 = Math.floor(fromChannel.b * mrp.B.intensity * 200);
+                    const r2 = Math.floor(toChannel.r * mrp.R.intensity * 255);
+                    const g2 = Math.floor(toChannel.g * mrp.G.intensity * 255);
+                    const b2 = Math.floor(toChannel.b * mrp.B.intensity * 200);
+
+                    // Flow animation creates moving gradient bands
+                    const flowOffset = (Math.sin(time + fromChannel.flow) + 1) / 2;
+
+                    gradient.addColorStop(0, `rgba(${r1}, ${g1}, ${b1}, ${this.opacity})`);
+                    gradient.addColorStop(flowOffset * 0.4, `rgba(${(r1+r2)/2}, ${(g1+g2)/2}, ${(b1+b2)/2}, ${this.opacity * 0.9})`);
+                    gradient.addColorStop(0.5, `rgba(${(r1+r2)/2 + 30}, ${(g1+g2)/2 + 30}, ${(b1+b2)/2 + 20}, ${this.opacity})`);
+                    gradient.addColorStop(1 - flowOffset * 0.4, `rgba(${(r1+r2)/2}, ${(g1+g2)/2}, ${(b1+b2)/2}, ${this.opacity * 0.9})`);
+                    gradient.addColorStop(1, `rgba(${r2}, ${g2}, ${b2}, ${this.opacity})`);
+
+                    // Draw curved pipe with gradient
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = this.pipeRadius + Math.sin(time * 2 + fromChannel.flow) * 1;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+
+                    ctx.beginPath();
+                    ctx.moveTo(conn.from.x, conn.from.y);
+                    ctx.quadraticCurveTo(ctrlX, ctrlY, conn.to.x, conn.to.y);
+                    ctx.stroke();
+                }
+
+                // Draw toroidal glow around entire structure
+                this.renderToroidalEnvelope(ctx, centerX, centerY, radius, mrp, time);
+            },
+
+            // Render the outer toroidal envelope
+            renderToroidalEnvelope(ctx, cx, cy, r, mrp, time) {
+                // Create multiple toroidal rings at different depths
+                const ringCount = 3;
+
+                for (let ring = 0; ring < ringCount; ring++) {
+                    const ringRadius = r * (1.0 + ring * 0.1);
+                    const ringPhase = time + ring * (TAU / ringCount);
+
+                    // MRP-colored toroidal gradient
+                    const toroidGrad = ctx.createRadialGradient(
+                        cx, cy, ringRadius * 0.85,
+                        cx, cy, ringRadius * 1.15
+                    );
+
+                    const intensity = mrp.R.intensity + mrp.G.intensity + mrp.B.intensity;
+                    const normalizedIntensity = Math.min(1, intensity / 2);
+                    const alpha = this.opacity * 0.3 * normalizedIntensity;
+
+                    const r_val = Math.floor(mrp.R.intensity * 180 + 50);
+                    const g_val = Math.floor(mrp.G.intensity * 150 + 50);
+                    const b_val = Math.floor(mrp.B.intensity * 140 + 50);
+
+                    // Flowing gradient stops
+                    const flowMod = Math.sin(ringPhase) * 0.3;
+
+                    toroidGrad.addColorStop(0, 'transparent');
+                    toroidGrad.addColorStop(0.3 + flowMod * 0.1, `rgba(${r_val}, ${g_val}, ${b_val}, ${alpha * 0.4})`);
+                    toroidGrad.addColorStop(0.5, `rgba(${r_val + 30}, ${g_val + 20}, ${b_val + 10}, ${alpha})`);
+                    toroidGrad.addColorStop(0.7 - flowMod * 0.1, `rgba(${r_val}, ${g_val}, ${b_val}, ${alpha * 0.4})`);
+                    toroidGrad.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = toroidGrad;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, ringRadius * 1.15, 0, TAU);
+                    ctx.fill();
+                }
+            }
+        };
+
+        // ================================================================
         // QUANTUM MESH GEOMETRY
         // Discrete lattice field on LIMNUS 95-node architecture
         // ================================================================
@@ -6110,80 +6334,10 @@
             }
 
             // ============================================
-            // MESH A: Warm/Red field (LEFT of LIMNUS)
+            // MESH A/B EDGE LINES REMOVED
+            // Red/blue filament edge lines have been removed (outdated maths)
+            // The MRP toroidal visualization now wraps the 95 nodes instead
             // ============================================
-            for (const edge of QMESH.edges) {
-                const nodeA = QMESH.nodes[edge.from];
-                const nodeB = QMESH.nodes[edge.to];
-                if (!nodeA || !nodeB) continue;
-
-                // Node x,y are ALREADY absolute screen coords (include CX,CY)
-                const x1 = nodeA.x;
-                const y1 = nodeA.y;
-                const x2 = nodeB.x;
-                const y2 = nodeB.y;
-
-                // Transform to Mesh A space
-                const mA1 = toMeshASpace(x1, y1, nodeA);
-                const mA2 = toMeshASpace(x2, y2, nodeB);
-
-                // Skip if off-screen or too faint
-                if (mA1.x < -50 || mA1.x > W + 50 || mA1.y < -50 || mA1.y > H + 50) continue;
-                if (mA1.fade < 0.1) continue;  // Skip very faded edges
-
-                // Simplified alpha calculation for performance
-                const alpha = QMESH.opacity * edge.probability * mA1.fade * 0.6;
-                if (alpha < 0.02) continue;  // Skip nearly invisible edges
-
-                // Use mesh base color directly (simpler)
-                const color = bi.meshA.baseColor;
-                const lineWidth = 1 + edge.probability;
-
-                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
-                ctx.lineWidth = lineWidth;
-                ctx.beginPath();
-                ctx.moveTo(mA1.x, mA1.y);
-                ctx.lineTo(mA2.x, mA2.y);
-                ctx.stroke();
-            }
-
-            // ============================================
-            // MESH B: Cool/Blue field (RIGHT of LIMNUS)
-            // ============================================
-            for (const edge of QMESH.edges) {
-                const nodeA = QMESH.nodes[edge.from];
-                const nodeB = QMESH.nodes[edge.to];
-                if (!nodeA || !nodeB) continue;
-
-                // Node x,y are ALREADY absolute screen coords (include CX,CY)
-                const x1 = nodeA.x;
-                const y1 = nodeA.y;
-                const x2 = nodeB.x;
-                const y2 = nodeB.y;
-
-                // Transform to Mesh B space
-                const mB1 = toMeshBSpace(x1, y1, nodeA);
-                const mB2 = toMeshBSpace(x2, y2, nodeB);
-
-                // Skip if off-screen or too faint
-                if (mB1.x < -50 || mB1.x > W + 50 || mB1.y < -50 || mB1.y > H + 50) continue;
-                if (mB1.fade < 0.1) continue;  // Skip very faded edges
-
-                // Simplified alpha calculation for performance
-                const alpha = QMESH.opacity * edge.probability * mB1.fade * 0.6;
-                if (alpha < 0.02) continue;  // Skip nearly invisible edges
-
-                // Use mesh base color directly (simpler)
-                const color = bi.meshB.baseColor;
-                const lineWidth = 1 + edge.probability;
-
-                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
-                ctx.lineWidth = lineWidth;
-                ctx.beginPath();
-                ctx.moveTo(mB1.x, mB1.y);
-                ctx.lineTo(mB2.x, mB2.y);
-                ctx.stroke();
-            }
 
             // ============================================
             // WAVEFUNCTION NODES (on both meshes)
@@ -7515,50 +7669,9 @@
                 const N = MuFieldGrid.N;
                 const scale = R / (MuFieldGrid.L * 0.6);  // Scale to fit canvas
 
-                // --- Vector Streamlines ---
-                // Sample every few points for performance
-                const step = 4;
-                ctx.lineWidth = 1;
-
-                for (let j = 0; j < N; j += step) {
-                    for (let i = 0; i < N; i += step) {
-                        const idx = j * N + i;
-
-                        // Grid to canvas coordinates
-                        const gx = (i / (N - 1) - 0.5) * MuFieldGrid.L;
-                        const gy = (j / (N - 1) - 0.5) * MuFieldGrid.L;
-                        const px = CX + gx * scale;
-                        const py = CY + gy * scale;
-
-                        // Field vector
-                        const Jx = MuFieldGrid.Jx[idx] || 0;
-                        const Jy = MuFieldGrid.Jy[idx] || 0;
-                        const J_mag = Math.sqrt(Jx * Jx + Jy * Jy);
-
-                        if (J_mag > 0.02) {
-                            // Color based on curl (vorticity)
-                            const curl = MuFieldGrid.curl[idx] || 0;
-                            const curlNorm = Math.max(-1, Math.min(1, curl * 3));
-
-                            // Red = positive curl (CCW), Blue = negative curl (CW)
-                            const r = curlNorm > 0 ? 150 + curlNorm * 105 : 100;
-                            const g = 100 + Math.abs(curlNorm) * 50;
-                            const b = curlNorm < 0 ? 150 - curlNorm * 105 : 100;
-                            const alpha = Math.min(0.5, J_mag * 0.8);
-
-                            ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-
-                            // Draw vector line
-                            const lineLen = J_mag * scale * 8;
-                            const angle = Math.atan2(Jy, Jx);
-
-                            ctx.beginPath();
-                            ctx.moveTo(px, py);
-                            ctx.lineTo(px + Math.cos(angle) * lineLen, py + Math.sin(angle) * lineLen);
-                            ctx.stroke();
-                        }
-                    }
-                }
+                // --- Vector Streamlines REMOVED ---
+                // Red/blue curl-based filament lines have been removed (outdated maths)
+                // The MRP toroidal visualization system now handles field representation
 
                 // --- Vortex Visualization ---
                 for (const v of MuFieldGrid.vortices) {
@@ -8545,6 +8658,22 @@
                 ctx.stroke();
             }
 
+            // ============================================
+            // MRP TOROIDAL PIPE VISUALIZATION
+            // Opaque gradient pipes wrapping all 95 nodes
+            // Aligned with emergent APL tokens (XCVI-C)
+            // ============================================
+            if (showMuField && MRPToroidalSystem.enabled) {
+                // Collect all active connections for toroidal rendering
+                const toroidalConnections = [];
+                for (const conn of generateConnections()) {
+                    if (!conn.from.released && !conn.to.released) {
+                        toroidalConnections.push(conn);
+                    }
+                }
+                MRPToroidalSystem.render(ctx, toroidalConnections, CX, CY, R, muField);
+            }
+
             // Draw radial connections when coherent
             if (releaseCoherence > 0.6) {
                 const radialAlpha = (releaseCoherence - 0.6) * 0.2;
@@ -9293,6 +9422,8 @@
             // Update μ-field consciousness detection (Kuramoto regulation handles release state)
             if (showMuField) {
                 muField.update([...prismPoints, ...cagePoints], dt);
+                // Update MRP toroidal pipe system with muField data
+                MRPToroidalSystem.update(dt, muField);
             }
 
             // Update quantum mesh μ-field visualization
@@ -9744,12 +9875,14 @@
         initCagePoints();
         generateQuantumMesh();  // Generate quantum mesh on LIMNUS nodes
         coherentEmergence.initSacredLoci(CX, CY, R);  // Initialize Vesica Piscis emergence loci
+        MRPToroidalSystem.init(prismPoints, cagePoints);  // Initialize MRP toroidal pipes for 95 nodes
         window.addEventListener('resize', () => {
             resize();
             initPrismPoints();
             initCagePoints();
             generateQuantumMesh();  // Regenerate mesh on resize
             coherentEmergence.initSacredLoci(CX, CY, R);  // Reinitialize emergence loci
+            MRPToroidalSystem.init(prismPoints, cagePoints);  // Reinitialize MRP toroidal pipes
         });
 
         requestAnimationFrame(loop);
@@ -9780,7 +9913,15 @@
         console.log('   3D prisms from 5 emergent tokens (XCVI-C)');
         console.log('   APL behaviors: pulse/drift/flicker/wobble/loop');
         console.log('   Phase-lock threshold: φ⁻² = ' + SACRED.alpha.toFixed(6));
-        console.log('   Red/blue prisms emerge with token-driven deformation');
+        console.log('   Prisms emerge with token-driven deformation');
+        console.log('');
+        console.log('🌀 MRP TOROIDAL PIPE SYSTEM integrated');
+        console.log('   95 nodes (63 prism + 32 cage) wrapped in MRP gradients');
+        console.log('   R channel: Energy flow (inner prism layers dominant)');
+        console.log('   G channel: Relational (vertex connections, bridges)');
+        console.log('   B channel: Stability (cage structure, containment)');
+        console.log('   Aligned with 5 emergent APL tokens for coherent emergence');
+        console.log('   Bendable pipes (nodes fixed, lines flex but don\'t break)');
         console.log('');
         console.log('📡 MRP CHANNEL GRADIENTS integrated');
         console.log('   R channel (μ_E): Energy/Existence - primary field magnitude');
