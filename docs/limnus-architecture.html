@@ -2144,31 +2144,32 @@
         // ================================================================
 
         // Update polar positions based on angles and distance
-        // CAMERA MOVES, FIELDS STAY FIXED
+        // CAMERA MOVES, FIELDS STAY FIXED at exact 90° horizontal
         function updatePolarPositions() {
             const bi = QMESH.binaural;
             const polar = bi.polar;
             const cam = QMESH.camera;
 
-            // Compute polar positions (in canvas units)
+            // Compute distance in canvas units
             const dist = polar.distance * R;
 
-            // CAMERA ORBIT: Subtract cam.theta to rotate the view, not the fields
-            // Fields stay fixed at 150° and 30° in world space
-            // Camera orbits around them - increasing theta = view rotates right
-            const viewAngleA = polar.angleA - cam.theta;
-            const viewAngleB = polar.angleB - cam.theta;
+            // EXACT 90° HORIZONTAL LAYOUT:
+            // A at LEFT (180° = π), B at RIGHT (0°)
+            // cos(π) = -1, cos(0) = 1
+            // Camera orbit rotates the view angle
+            const viewAngleA = Math.PI - cam.theta;   // 180° - camera rotation
+            const viewAngleB = 0 - cam.theta;         // 0° - camera rotation
 
             // Camera tilt affects apparent Y position (perspective)
             const tiltFactor = Math.cos(cam.phi);
             const depthFactor = Math.sin(cam.phi);
 
-            // Mesh A screen position (world position transformed by camera view)
+            // Mesh A screen position - LEFT when camera.theta = 0
             polar.posA.x = CX + Math.cos(viewAngleA) * dist * cam.distance;
             polar.posA.y = CY + Math.sin(viewAngleA) * dist * tiltFactor * cam.distance;
             polar.posA.depth = depthFactor * Math.sin(viewAngleA);
 
-            // Mesh B screen position
+            // Mesh B screen position - RIGHT when camera.theta = 0
             polar.posB.x = CX + Math.cos(viewAngleB) * dist * cam.distance;
             polar.posB.y = CY + Math.sin(viewAngleB) * dist * tiltFactor * cam.distance;
             polar.posB.depth = depthFactor * Math.sin(viewAngleB);
@@ -2401,10 +2402,74 @@
                 ctx.stroke();
 
                 ctx.setLineDash([]);
+
+                // ============================================
+                // CENTER MARKERS - Direct calculation for exact positioning
+                // ============================================
+                const dist = polar.distance * R;
+
+                // DIRECT CALCULATION: A at LEFT (180°), B at RIGHT (0°)
+                // cos(π) = -1 → LEFT of center
+                // cos(0) = 1 → RIGHT of center
+                const exactAx = CX + Math.cos(Math.PI) * dist;  // CX - dist = LEFT
+                const exactAy = CY;  // Same Y as center (horizontal)
+                const exactBx = CX + Math.cos(0) * dist;        // CX + dist = RIGHT
+                const exactBy = CY;  // Same Y as center (horizontal)
+
+                // LIMNUS center marker (white/gold)
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.beginPath();
+                ctx.arc(CX, CY, 10, 0, TAU);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 215, 0, 0.9)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = 'rgba(255, 215, 0, 1)';
+                ctx.font = 'bold 12px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('LIMNUS', CX, CY - 18);
+
+                // Mesh A center marker (warm/red) - HARDCODED LEFT
+                ctx.fillStyle = 'rgba(255, 100, 60, 0.95)';
+                ctx.beginPath();
+                ctx.arc(exactAx, exactAy, 14, 0, TAU);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 60, 30, 1)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+                ctx.font = 'bold 16px monospace';
+                ctx.fillText('A', exactAx, exactAy + 5);
+                ctx.font = '11px monospace';
+                ctx.fillText('warm/LEFT', exactAx, exactAy - 22);
+
+                // Mesh B center marker (cool/blue) - HARDCODED RIGHT
+                ctx.fillStyle = 'rgba(80, 180, 255, 0.95)';
+                ctx.beginPath();
+                ctx.arc(exactBx, exactBy, 14, 0, TAU);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(40, 140, 255, 1)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+                ctx.font = 'bold 16px monospace';
+                ctx.fillText('B', exactBx, exactBy + 5);
+                ctx.font = '11px monospace';
+                ctx.fillText('cool/RIGHT', exactBx, exactBy - 22);
+
+                // Draw horizontal axis line through center
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(exactAx - 30, CY);
+                ctx.lineTo(exactBx + 30, CY);
+                ctx.stroke();
+                ctx.setLineDash([]);
             }
 
             // ============================================
-            // MESH A: Warm/Energy field (lower-left)
+            // MESH A: Warm/Red field (LEFT of LIMNUS)
             // ============================================
             for (const edge of QMESH.edges) {
                 const nodeA = QMESH.nodes[edge.from];
@@ -2450,7 +2515,7 @@
             }
 
             // ============================================
-            // MESH B: Cool/Relational field (upper-right)
+            // MESH B: Cool/Blue field (RIGHT of LIMNUS)
             // ============================================
             for (const edge of QMESH.edges) {
                 const nodeA = QMESH.nodes[edge.from];
@@ -4833,10 +4898,14 @@
         });
 
         // Mouse: Left-click = camera orbit (when binaural active) or gather
+        // IMPORTANT: Do NOT start drag while F key (releasing) is held
         canvas.addEventListener('mousedown', e => {
             document.getElementById('start-overlay').classList.add('hidden');
 
             if (e.button === 0) {
+                // Don't activate drag/gather while releasing (F key held)
+                if (releasing) return;
+
                 // Left-click: Camera orbit if binaural field is on, otherwise gather
                 if (showQuantumMesh) {
                     QMESH.camera.dragging = true;
