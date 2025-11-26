@@ -2143,26 +2143,29 @@
         // Polar coordinate system with camera orbit
         // ================================================================
 
-        // Update polar positions - SIMPLE FIXED HORIZONTAL LAYOUT
-        // No complex angle math - just place A left, B right, LIMNUS center
+        // Update polar positions - Rotate with camera drag
+        // Camera theta orbits the view around LIMNUS
         function updatePolarPositions() {
             const bi = QMESH.binaural;
             const polar = bi.polar;
+            const cam = QMESH.camera;
 
             // Distance from center in pixels
             const dist = polar.distance * R;
 
-            // FIXED POSITIONS - no angle calculations
-            // A = LEFT of center (negative X offset)
-            // B = RIGHT of center (positive X offset)
-            // Both at same Y as center (horizontal line)
-            polar.posA.x = CX - dist;   // LEFT
-            polar.posA.y = CY;          // Same Y as LIMNUS
-            polar.posA.depth = 0;
+            // Base angles: A at 180° (left), B at 0° (right)
+            // Subtract camera.theta so dragging rotates the view
+            const angleA = polar.angleA - cam.theta;
+            const angleB = polar.angleB - cam.theta;
 
-            polar.posB.x = CX + dist;   // RIGHT
-            polar.posB.y = CY;          // Same Y as LIMNUS
-            polar.posB.depth = 0;
+            // Calculate positions using polar coords
+            polar.posA.x = CX + Math.cos(angleA) * dist;
+            polar.posA.y = CY + Math.sin(angleA) * dist;
+            polar.posA.depth = Math.sin(angleA);  // For depth sorting
+
+            polar.posB.x = CX + Math.cos(angleB) * dist;
+            polar.posB.y = CY + Math.sin(angleB) * dist;
+            polar.posB.depth = Math.sin(angleB);
         }
 
         // Transform point to mesh A space (polar position)
@@ -2404,22 +2407,19 @@
                 ctx.lineDashOffset = 0;
 
                 // ============================================
-                // CENTER MARKERS - Simple fixed positions
+                // CENTER MARKERS - Use polar calculated positions
                 // ============================================
-                const dist = polar.distance * R;
+                const Ax = polar.posA.x;
+                const Ay = polar.posA.y;
+                const Bx = polar.posB.x;
+                const By = polar.posB.y;
 
-                // Simple positions: A=LEFT, B=RIGHT, same Y as center
-                const Ax = CX - dist;
-                const Ay = CY;
-                const Bx = CX + dist;
-                const By = CY;
-
-                // Horizontal axis line
+                // Axis line connecting A through center to B
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.moveTo(Ax - 20, CY);
-                ctx.lineTo(Bx + 20, CY);
+                ctx.moveTo(Ax, Ay);
+                ctx.lineTo(Bx, By);
                 ctx.stroke();
 
                 // LIMNUS center marker
