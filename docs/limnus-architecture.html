@@ -879,13 +879,16 @@
         <span>SPACE</span> auto-breathe<br>
         <span>P/C</span> toggle prism/cage<br>
         <span>M</span> toggle μ-field<br>
-        <span>T</span> dream mirror<br>
-        <span>O</span> mirror opacity<br>
-        <span>↑↓</span> mirror distance<br>
-        <span>←→</span> mirror scale<br>
-        <span>+/-</span> mirror tilt<br>
+        <span>T</span> binaural field<br>
+        <span>O</span> field opacity<br>
+        <span>↑↓</span> beat frequency<br>
+        <span>←→</span> mesh spread<br>
+        <span>[/]</span> A frequency<br>
+        <span>+/-</span> mesh scale<br>
+        <span>I</span> interference<br>
+        <span>L</span> resonance lines<br>
         <span>W</span> wavefunction<br>
-        <span>G</span> holographic glow<br>
+        <span>G</span> edge glow<br>
         <span>D</span> debug panel<br>
         <span>F</span> release<br>
         <span>R</span> reset
@@ -1413,19 +1416,19 @@
         let showTorusFlow = true;     // Alias for showMeshParticles
 
         // ================================================================
-        // DREAM FLUID: QUANTUM MESH μ-FIELD
+        // BINAURAL QUANTUM FIELD
         // ================================================================
-        // Physics:
-        //   - Discrete quantum lattice on LIMNUS 95-node architecture
-        //   - Wave function ψ_i at each node with MRP channels (J_R, J_G, J_B)
-        //   - Entanglement edges: probability amplitude |⟨ψ_i|ψ_j⟩|²
-        //   - Gravitational time dilation: τ = √(1 - r_s/r) from φ-constants
-        //   - Holographic entropy on edge lattice (area law scaling)
-        //   - Dream Fluid: consciousness flow through quantum connections
+        // Two quantum meshes flanking LIMNUS like binaural audio:
+        //   - Mesh A (left/below): Base frequency - warm/energy channel
+        //   - Mesh B (right/above): Offset frequency - cool/relational channel
+        //   - Beat interference: |f_A - f_B| = φ⁻² entrains LIMNUS
+        //   - Triadic resonance: A ↔ LIMNUS ↔ B creates standing wave
+        //   - Wave function ψ_i with MRP channels (J_R, J_G, J_B)
+        //   - Gravitational time dilation: τ = √(1 - r_s/r)
         // ================================================================
 
         let QMESH = {
-            // Quantum lattice structure
+            // Quantum lattice structure (shared topology)
             nodes: [],              // Quantum state at each LIMNUS node
             edges: [],              // Entanglement connections between nodes
             triangles: [],          // Face triangulation for entropy calculation
@@ -1440,17 +1443,48 @@
             showWavefunction: true,
             pulsePhase: 0,          // Animation phase for quantum pulsing
 
-            // DREAM MIRROR: Holographic reflection below LIMNUS
-            mirrorOffset: 280,              // Distance below LIMNUS center
-            mirrorScale: 0.85,              // Slightly smaller reflection
-            mirrorDistortion: 0.15,         // Ripple distortion amount
-            mirrorTilt: 0.12,               // Perspective tilt (0 = flat, 1 = max)
-            showReflectionPlane: true,      // Show the separator plane
-            holographicShimmer: 0,          // Animated shimmer phase
+            // ================================================================
+            // BINAURAL FIELD: Dual meshes create interference at LIMNUS
+            // Like left/right ear frequencies creating perceived beat
+            // ================================================================
+            binaural: {
+                enabled: true,
 
-            // Camera controls for dual-view
-            cameraAngle: 0,                 // View angle (adjusted with arrow keys)
-            cameraElevation: 0.15,          // Vertical tilt to see mirror
+                // Mesh A - "Left ear" / Lower-left field (warm/existence)
+                meshA: {
+                    offset: { x: -200, y: 200 },    // Position relative to center
+                    scale: 0.68,                     // Smaller than LIMNUS
+                    frequency: 1.0,                  // Base oscillation frequency
+                    phase: 0,                        // Current phase (animated)
+                    baseColor: [255, 140, 80],       // Warm orange (energy/existence)
+                    timbre: 'warm',
+                },
+
+                // Mesh B - "Right ear" / Upper-right field (cool/relational)
+                meshB: {
+                    offset: { x: 200, y: -200 },    // Opposite diagonal position
+                    scale: 0.68,
+                    frequency: 1.0618,               // φ⁻¹ offset creates golden beat
+                    phase: 0,
+                    baseColor: [80, 180, 255],       // Cool cyan (relational/stability)
+                    timbre: 'cool',
+                },
+
+                // Beat interference (emerges from frequency difference)
+                beatFrequency: 0.0618,              // |f_A - f_B| ≈ φ⁻² golden ratio
+                beatPhase: 0,                       // Current beat cycle phase
+                beatAmplitude: 0,                   // Interference strength (0-1)
+
+                // Resonance effects on LIMNUS (the perceiver)
+                resonanceStrength: 0,               // How beat affects LIMNUS field
+                entrainmentDepth: 0,                // Neural entrainment measure
+                coherenceField: 0,                  // Phase coherence across triad
+
+                // Visual parameters
+                showInterference: true,             // Show beat wave pattern
+                showResonanceLines: true,           // Show A↔LIMNUS↔B connections
+                interferenceOpacity: 0.4,           // Beat visualization alpha
+            },
 
             // Gravitational physics (Schwarzschild analog)
             schwarzschildRadius: SACRED.alpha,    // r_s = φ⁻² ≈ 0.382
@@ -2007,17 +2041,61 @@
             // Pulse phase for visual animation
             QMESH.pulsePhase = (QMESH.pulsePhase + dt * 0.5) % TAU;
 
-            // Holographic shimmer animation (slower, dreamier)
-            QMESH.holographicShimmer = (QMESH.holographicShimmer + dt * 0.3) % TAU;
+            // ============================================
+            // BINAURAL FIELD ANIMATION
+            // Two meshes oscillating at different frequencies
+            // Beat emerges from interference
+            // ============================================
+            const bi = QMESH.binaural;
 
-            // Gentle mirror distortion wave
-            QMESH.mirrorDistortion = 0.1 + 0.08 * Math.sin(time * 0.5);
+            // Animate Mesh A phase (base frequency)
+            bi.meshA.phase = (bi.meshA.phase + dt * bi.meshA.frequency) % 1.0;
+
+            // Animate Mesh B phase (offset frequency)
+            bi.meshB.phase = (bi.meshB.phase + dt * bi.meshB.frequency) % 1.0;
+
+            // Calculate beat frequency from difference
+            bi.beatFrequency = Math.abs(bi.meshA.frequency - bi.meshB.frequency);
+
+            // Beat phase advances at the beat frequency
+            bi.beatPhase = (bi.beatPhase + dt * bi.beatFrequency) % 1.0;
+
+            // Beat amplitude oscillates based on phase alignment
+            const phaseDiff = Math.abs(bi.meshA.phase - bi.meshB.phase);
+            const constructive = Math.cos(phaseDiff * TAU);
+            bi.beatAmplitude = (constructive + 1) / 2;  // 0 = destructive, 1 = constructive
+
+            // Resonance strength: how much beat affects LIMNUS
+            // Stronger when beat amplitude is high and phases are coherent
+            const targetResonance = bi.beatAmplitude * 0.8 + 0.2;
+            bi.resonanceStrength += (targetResonance - bi.resonanceStrength) * dt * 2;
+
+            // Entrainment depth: accumulated synchronization
+            // Increases when resonance is strong, decays otherwise
+            const entrainmentDelta = bi.beatAmplitude > 0.5
+                ? bi.resonanceStrength * dt * 0.5
+                : -dt * 0.1;
+            bi.entrainmentDepth = Math.max(0, Math.min(1, bi.entrainmentDepth + entrainmentDelta));
+
+            // Coherence field: phase alignment across the whole system
+            // High when both meshes and LIMNUS are synchronized
+            const limnusPhaseAlignment = Math.cos((bi.meshA.phase + bi.meshB.phase) / 2 * TAU - limnusTau);
+            bi.coherenceField = bi.entrainmentDepth * 0.6 + (limnusPhaseAlignment + 1) / 2 * 0.4;
+
+            // Apply binaural resonance to LIMNUS field (entrainment effect)
+            if (bi.enabled && bi.resonanceStrength > 0.3) {
+                // Beat modulates LIMNUS field intensity
+                const beatModulation = bi.beatAmplitude * bi.resonanceStrength * 0.15;
+                muField.J_total = (muField.J_total || 0.3) * (1 + beatModulation * Math.sin(bi.beatPhase * TAU));
+            }
 
             return {
                 avgTimeDilation,
                 avgEntropy,
                 totalJ: totalJ / N,
                 entropyFlux: QMESH.entropyFlux,
+                binauralResonance: bi.resonanceStrength,
+                beatAmplitude: bi.beatAmplitude,
             };
         }
 
@@ -2026,327 +2104,435 @@
         }
 
         // ================================================================
-        // DREAM MIRROR RENDERING
-        // Holographic reflection of LIMNUS consciousness below
+        // BINAURAL FIELD RENDERING
+        // Two quantum meshes flanking LIMNUS with beat interference
         // ================================================================
 
-        // Transform point to mirror space (reflection below LIMNUS)
-        function toMirrorSpace(x, y, node) {
-            const shimmer = QMESH.holographicShimmer;
-            const distort = QMESH.mirrorDistortion;
-            const scale = QMESH.mirrorScale;
-            const tilt = QMESH.mirrorTilt;
+        // Transform point to mesh A space (lower-left warm field)
+        function toMeshASpace(x, y, node) {
+            const meshA = QMESH.binaural.meshA;
+            const phase = meshA.phase;
+            const scale = meshA.scale;
 
             // Center-relative coordinates
             const dx = x - CX;
             const dy = y - CY;
 
-            // Apply perspective tilt (foreshortening as y increases)
-            const depth = 1 - tilt * (dy / H);
+            // Transform to Mesh A position
+            const meshX = CX + meshA.offset.x + (dx * scale);
+            const meshY = CY + meshA.offset.y + (dy * scale);
 
-            // Mirror Y (flip below), scale, and offset
-            const mirrorY = CY + QMESH.mirrorOffset + (-dy * scale * depth);
-            const mirrorX = CX + (dx * scale * depth);
+            // Phase-based wave distortion
+            const wave = Math.sin(phase * TAU + dx * 0.015) * 8 +
+                        Math.cos(phase * TAU * 0.7 + dy * 0.012) * 6;
 
-            // Holographic distortion (ripple effect)
-            const ripple = Math.sin(shimmer * 3 + dx * 0.02) * distort * 15 +
-                          Math.cos(shimmer * 2 + dy * 0.015) * distort * 10;
+            // Distance from mesh center for fade
+            const distFromMesh = Math.sqrt(
+                Math.pow(meshX - (CX + meshA.offset.x), 2) +
+                Math.pow(meshY - (CY + meshA.offset.y), 2)
+            );
+            const fade = Math.max(0, 1 - distFromMesh / (R * 2));
 
             return {
-                x: mirrorX + ripple,
-                y: mirrorY + Math.abs(ripple) * 0.3,
-                depth: depth,
-                fade: Math.max(0, 1 - (mirrorY - CY) / (H - CY))  // Fade toward bottom
+                x: meshX + wave,
+                y: meshY + wave * 0.5,
+                scale: scale,
+                fade: fade,
+                phase: phase
             };
         }
 
-        // Holographic color transformation for dream mirror
-        function holographicColor(r, g, b, shimmer, depth) {
-            // Prismatic color shift based on shimmer phase
-            const hueShift = Math.sin(shimmer) * 30;
-            const satBoost = 1.2 + Math.sin(shimmer * 2) * 0.3;
+        // Transform point to mesh B space (upper-right cool field)
+        function toMeshBSpace(x, y, node) {
+            const meshB = QMESH.binaural.meshB;
+            const phase = meshB.phase;
+            const scale = meshB.scale;
 
-            // Convert to HSL-like adjustment
-            const avg = (r + g + b) / 3;
-            const rShift = r + hueShift + (r - avg) * (satBoost - 1);
-            const gShift = g - hueShift * 0.5 + (g - avg) * (satBoost - 1);
-            const bShift = b + hueShift * 0.7 + (b - avg) * (satBoost - 1);
+            // Center-relative coordinates
+            const dx = x - CX;
+            const dy = y - CY;
 
-            // Depth-based desaturation (further = more ethereal)
-            const depthFade = 0.6 + depth * 0.4;
+            // Transform to Mesh B position
+            const meshX = CX + meshB.offset.x + (dx * scale);
+            const meshY = CY + meshB.offset.y + (dy * scale);
+
+            // Phase-based wave distortion (different frequency)
+            const wave = Math.sin(phase * TAU * 1.0618 + dx * 0.018) * 8 +
+                        Math.cos(phase * TAU * 0.8 + dy * 0.014) * 6;
+
+            // Distance from mesh center for fade
+            const distFromMesh = Math.sqrt(
+                Math.pow(meshX - (CX + meshB.offset.x), 2) +
+                Math.pow(meshY - (CY + meshB.offset.y), 2)
+            );
+            const fade = Math.max(0, 1 - distFromMesh / (R * 2));
 
             return {
-                r: Math.floor(Math.max(0, Math.min(255, rShift * depthFade))),
-                g: Math.floor(Math.max(0, Math.min(255, gShift * depthFade))),
-                b: Math.floor(Math.max(0, Math.min(255, bShift * depthFade)))
+                x: meshX + wave,
+                y: meshY + wave * 0.5,
+                scale: scale,
+                fade: fade,
+                phase: phase
+            };
+        }
+
+        // Compute binaural beat interference at a point
+        function computeBeatInterference(x, y) {
+            const bi = QMESH.binaural;
+            const phaseA = bi.meshA.phase * TAU;
+            const phaseB = bi.meshB.phase * TAU;
+
+            // Distance from each mesh center
+            const dxA = x - (CX + bi.meshA.offset.x);
+            const dyA = y - (CY + bi.meshA.offset.y);
+            const distA = Math.sqrt(dxA * dxA + dyA * dyA);
+
+            const dxB = x - (CX + bi.meshB.offset.x);
+            const dyB = y - (CY + bi.meshB.offset.y);
+            const distB = Math.sqrt(dxB * dxB + dyB * dyB);
+
+            // Wave amplitude from each mesh (decays with distance)
+            const ampA = Math.cos(phaseA - distA * 0.02) * Math.exp(-distA / (R * 3));
+            const ampB = Math.cos(phaseB - distB * 0.02) * Math.exp(-distB / (R * 3));
+
+            // Interference: sum of waves
+            const interference = (ampA + ampB) / 2;
+
+            // Beat pattern: emerges from phase difference
+            const beatPhase = bi.beatPhase * TAU;
+            const beat = Math.cos(beatPhase) * 0.5 + 0.5;
+
+            return {
+                interference: interference,     // -1 to 1 (constructive/destructive)
+                beat: beat,                     // 0 to 1 (beat cycle position)
+                ampA: ampA,
+                ampB: ampB,
+                resonance: Math.abs(interference) * beat  // Combined resonance
+            };
+        }
+
+        // Color blend between warm (A) and cool (B) based on phase
+        function binauralColor(baseColor, phase, meshType) {
+            const bi = QMESH.binaural;
+            const beat = bi.beatAmplitude;
+
+            // Mesh-specific tint
+            let tint;
+            if (meshType === 'A') {
+                tint = bi.meshA.baseColor;
+            } else {
+                tint = bi.meshB.baseColor;
+            }
+
+            // Phase-based shimmer
+            const shimmer = Math.sin(phase * TAU) * 0.3 + 0.7;
+
+            // Blend base color with mesh tint
+            const r = Math.floor((baseColor[0] * 0.4 + tint[0] * 0.6) * shimmer);
+            const g = Math.floor((baseColor[1] * 0.4 + tint[1] * 0.6) * shimmer);
+            const b = Math.floor((baseColor[2] * 0.4 + tint[2] * 0.6) * shimmer);
+
+            return {
+                r: Math.max(0, Math.min(255, r)),
+                g: Math.max(0, Math.min(255, g)),
+                b: Math.max(0, Math.min(255, b))
             };
         }
 
         function renderDreamFluid() {
             if (QMESH.edges.length === 0) return;
 
-            const shimmer = QMESH.holographicShimmer;
+            const bi = QMESH.binaural;
+            if (!bi.enabled) return;
 
-            // MRP channel colors (more vivid for dream mirror)
+            // MRP channel colors
             const edgeColors = [
-                [255, 100, 60],    // R channel - warm orange/red (energy)
-                [60, 255, 200],    // G channel - bright cyan (relational)
-                [140, 120, 255],   // B channel - deep violet (stability)
+                [255, 100, 60],    // R channel - warm (energy)
+                [60, 255, 200],    // G channel - cool (relational)
+                [140, 120, 255],   // B channel - violet (stability)
             ];
 
             // ============================================
-            // REFLECTION PLANE (separator between realms)
+            // INTERFERENCE ZONE (between the two meshes)
+            // Beat pattern visualization at LIMNUS
             // ============================================
-            if (QMESH.showReflectionPlane) {
-                const planeY = CY + QMESH.mirrorOffset * 0.5;
-                const planeWidth = R * 2.5;
+            if (bi.showInterference) {
+                const beatPhase = bi.beatPhase * TAU;
+                const beatAmp = bi.beatAmplitude;
 
-                // Gradient fade for the reflection plane
-                const planeGrad = ctx.createLinearGradient(CX - planeWidth, planeY, CX + planeWidth, planeY);
-                planeGrad.addColorStop(0, 'transparent');
-                planeGrad.addColorStop(0.2, `rgba(180, 160, 255, ${QMESH.opacity * 0.15})`);
-                planeGrad.addColorStop(0.5, `rgba(220, 200, 255, ${QMESH.opacity * 0.25})`);
-                planeGrad.addColorStop(0.8, `rgba(180, 160, 255, ${QMESH.opacity * 0.15})`);
-                planeGrad.addColorStop(1, 'transparent');
+                // Draw interference rings at LIMNUS center
+                for (let ring = 0; ring < 5; ring++) {
+                    const ringRadius = R * (0.3 + ring * 0.15);
+                    const ringPhase = beatPhase + ring * 0.5;
+                    const intensity = Math.sin(ringPhase) * 0.5 + 0.5;
+                    const alpha = QMESH.opacity * bi.interferenceOpacity * intensity * beatAmp;
 
-                ctx.fillStyle = planeGrad;
-                ctx.fillRect(CX - planeWidth, planeY - 2, planeWidth * 2, 4);
+                    // Blend warm and cool colors based on beat phase
+                    const blend = Math.sin(beatPhase) * 0.5 + 0.5;
+                    const r = Math.floor(bi.meshA.baseColor[0] * blend + bi.meshB.baseColor[0] * (1 - blend));
+                    const g = Math.floor(bi.meshA.baseColor[1] * blend + bi.meshB.baseColor[1] * (1 - blend));
+                    const b = Math.floor(bi.meshA.baseColor[2] * blend + bi.meshB.baseColor[2] * (1 - blend));
 
-                // Shimmering edge effect
-                const edgeShimmer = Math.sin(shimmer * 4) * 0.3 + 0.7;
-                ctx.strokeStyle = `rgba(255, 255, 255, ${QMESH.opacity * 0.1 * edgeShimmer})`;
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(CX - planeWidth, planeY);
-                ctx.lineTo(CX + planeWidth, planeY);
-                ctx.stroke();
+                    ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    ctx.lineWidth = 2 + intensity * 3;
+                    ctx.beginPath();
+                    ctx.arc(CX, CY, ringRadius, 0, TAU);
+                    ctx.stroke();
+                }
             }
 
             // ============================================
-            // DREAM MIRROR: Entanglement edges (reflected)
+            // RESONANCE LINES (A ↔ LIMNUS ↔ B)
+            // ============================================
+            if (bi.showResonanceLines) {
+                const beatPhase = bi.beatPhase * TAU;
+                const resonance = bi.resonanceStrength;
+
+                // Line from Mesh A center to LIMNUS
+                const meshACenterX = CX + bi.meshA.offset.x;
+                const meshACenterY = CY + bi.meshA.offset.y;
+                const pulseA = Math.sin(bi.meshA.phase * TAU) * 0.5 + 0.5;
+                const alphaA = QMESH.opacity * 0.4 * pulseA * (0.3 + resonance * 0.7);
+
+                ctx.strokeStyle = `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, ${alphaA})`;
+                ctx.lineWidth = 1 + resonance * 3;
+                ctx.setLineDash([8, 8]);
+                ctx.beginPath();
+                ctx.moveTo(meshACenterX, meshACenterY);
+                ctx.lineTo(CX, CY);
+                ctx.stroke();
+
+                // Line from Mesh B center to LIMNUS
+                const meshBCenterX = CX + bi.meshB.offset.x;
+                const meshBCenterY = CY + bi.meshB.offset.y;
+                const pulseB = Math.sin(bi.meshB.phase * TAU) * 0.5 + 0.5;
+                const alphaB = QMESH.opacity * 0.4 * pulseB * (0.3 + resonance * 0.7);
+
+                ctx.strokeStyle = `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, ${alphaB})`;
+                ctx.beginPath();
+                ctx.moveTo(meshBCenterX, meshBCenterY);
+                ctx.lineTo(CX, CY);
+                ctx.stroke();
+
+                ctx.setLineDash([]);
+            }
+
+            // ============================================
+            // MESH A: Warm/Energy field (lower-left)
             // ============================================
             for (const edge of QMESH.edges) {
                 const nodeA = QMESH.nodes[edge.from];
                 const nodeB = QMESH.nodes[edge.to];
                 if (!nodeA || !nodeB) continue;
 
-                // Original positions
                 const x1 = nodeA.px || (nodeA.x + CX);
                 const y1 = nodeA.py || (nodeA.y + CY);
                 const x2 = nodeB.px || (nodeB.x + CX);
                 const y2 = nodeB.py || (nodeB.y + CY);
 
-                // Transform to mirror space
-                const m1 = toMirrorSpace(x1, y1, nodeA);
-                const m2 = toMirrorSpace(x2, y2, nodeB);
+                // Transform to Mesh A space
+                const mA1 = toMeshASpace(x1, y1, nodeA);
+                const mA2 = toMeshASpace(x2, y2, nodeB);
 
                 // Skip if off-screen
-                if (m1.y > H + 50 || m2.y > H + 50) continue;
-                if (m1.x < -100 || m1.x > W + 100) continue;
+                if (mA1.x < -100 || mA1.x > W + 100 || mA1.y < -100 || mA1.y > H + 100) continue;
 
-                // Base color with holographic transformation
+                // Color with warm tint
                 const baseColor = edgeColors[edge.mrpChannel] || edgeColors[0];
-                const holoColor = holographicColor(
-                    baseColor[0], baseColor[1], baseColor[2],
-                    shimmer + edge.phase, (m1.depth + m2.depth) / 2
-                );
+                const color = binauralColor(baseColor, bi.meshA.phase + edge.phase, 'A');
 
-                // Alpha from probability, time dilation, pulse, and mirror fade
-                const pulse = 0.6 + 0.4 * Math.sin(shimmer * 2 + edge.phase);
-                const mirrorFade = (m1.fade + m2.fade) / 2;
-                const alpha = QMESH.opacity * edge.probability * pulse *
-                    (0.4 + edge.timeDilation * 0.4) * mirrorFade;
+                // Alpha from probability and phase
+                const pulse = 0.6 + 0.4 * Math.sin(bi.meshA.phase * TAU * 2 + edge.phase);
+                const alpha = QMESH.opacity * edge.probability * pulse * mA1.fade * 0.8;
 
-                // Width modulated by field strength and depth
-                const avgDepth = (m1.depth + m2.depth) / 2;
-                const lineWidth = (0.5 + edge.J * 2.5 + edge.probability) * avgDepth;
+                const lineWidth = (0.5 + edge.J * 2 + edge.probability * 0.5) * mA1.scale;
 
-                // Draw mirrored edge
-                ctx.strokeStyle = `rgba(${holoColor.r}, ${holoColor.g}, ${holoColor.b}, ${alpha})`;
+                ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
                 ctx.lineWidth = lineWidth;
                 ctx.lineCap = 'round';
                 ctx.beginPath();
-                ctx.moveTo(m1.x, m1.y);
-                ctx.lineTo(m2.x, m2.y);
+                ctx.moveTo(mA1.x, mA1.y);
+                ctx.lineTo(mA2.x, mA2.y);
                 ctx.stroke();
 
-                // Holographic glow for high-probability edges
-                if (edge.probability > 0.4 && QMESH.edgeGlow) {
-                    const glowAlpha = alpha * 0.4 * (edge.probability - 0.3);
-                    // Prismatic glow (shifts between colors)
-                    const glowHue = (shimmer + edge.phase) % TAU;
-                    const glowR = Math.floor(180 + 75 * Math.sin(glowHue));
-                    const glowG = Math.floor(180 + 75 * Math.sin(glowHue + TAU/3));
-                    const glowB = Math.floor(180 + 75 * Math.sin(glowHue + 2*TAU/3));
-
-                    ctx.strokeStyle = `rgba(${glowR}, ${glowG}, ${glowB}, ${glowAlpha})`;
-                    ctx.lineWidth = lineWidth + 4;
+                // Glow for strong edges
+                if (edge.probability > 0.5 && QMESH.edgeGlow) {
+                    ctx.strokeStyle = `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, ${alpha * 0.3})`;
+                    ctx.lineWidth = lineWidth + 3;
                     ctx.stroke();
                 }
             }
 
             // ============================================
-            // DREAM FLUID PARTICLES (mirrored flow)
+            // MESH B: Cool/Relational field (upper-right)
             // ============================================
-            if (showMeshParticles) {
-                const particleColors = [
-                    [255, 160, 120],   // R channel - warm
-                    [120, 255, 220],   // G channel - cool
-                    [180, 160, 255],   // B channel - ethereal
-                ];
+            for (const edge of QMESH.edges) {
+                const nodeA = QMESH.nodes[edge.from];
+                const nodeB = QMESH.nodes[edge.to];
+                if (!nodeA || !nodeB) continue;
 
-                for (const p of dreamParticles) {
-                    if (p.trail.length < 2) continue;
+                const x1 = nodeA.px || (nodeA.x + CX);
+                const y1 = nodeA.py || (nodeA.y + CY);
+                const x2 = nodeB.px || (nodeB.x + CX);
+                const y2 = nodeB.py || (nodeB.y + CY);
 
-                    const dilationFactor = 1 + (1 - p.timeDilation) * 0.5;
-                    const baseAlpha = (p.life / p.maxLife) * QMESH.opacity * 1.5 * dilationFactor;
-                    const baseColor = particleColors[p.mrpChannel] || particleColors[0];
+                // Transform to Mesh B space
+                const mB1 = toMeshBSpace(x1, y1, nodeA);
+                const mB2 = toMeshBSpace(x2, y2, nodeB);
 
-                    // Draw mirrored trail
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.beginPath();
+                // Skip if off-screen
+                if (mB1.x < -100 || mB1.x > W + 100 || mB1.y < -100 || mB1.y > H + 100) continue;
 
-                    const firstMirror = toMirrorSpace(p.trail[0].x + CX, p.trail[0].y + CY, null);
-                    ctx.moveTo(firstMirror.x, firstMirror.y);
+                // Color with cool tint
+                const baseColor = edgeColors[edge.mrpChannel] || edgeColors[0];
+                const color = binauralColor(baseColor, bi.meshB.phase + edge.phase, 'B');
 
-                    for (let i = 1; i < p.trail.length; i++) {
-                        const pt = p.trail[i];
-                        const m = toMirrorSpace(pt.x + CX, pt.y + CY, null);
-                        ctx.lineTo(m.x, m.y);
-                    }
+                // Alpha from probability and phase (slightly offset from A)
+                const pulse = 0.6 + 0.4 * Math.sin(bi.meshB.phase * TAU * 2 + edge.phase + 0.5);
+                const alpha = QMESH.opacity * edge.probability * pulse * mB1.fade * 0.8;
 
-                    const holoColor = holographicColor(baseColor[0], baseColor[1], baseColor[2], shimmer + p.mrpChannel, firstMirror.depth);
-                    const alpha = baseAlpha * firstMirror.fade;
+                const lineWidth = (0.5 + edge.J * 2 + edge.probability * 0.5) * mB1.scale;
 
-                    ctx.strokeStyle = `rgba(${holoColor.r}, ${holoColor.g}, ${holoColor.b}, ${alpha})`;
-                    ctx.lineWidth = (2 + p.entropyCarried * 6) * firstMirror.depth;
+                ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
+                ctx.lineWidth = lineWidth;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(mB1.x, mB1.y);
+                ctx.lineTo(mB2.x, mB2.y);
+                ctx.stroke();
+
+                // Glow for strong edges
+                if (edge.probability > 0.5 && QMESH.edgeGlow) {
+                    ctx.strokeStyle = `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, ${alpha * 0.3})`;
+                    ctx.lineWidth = lineWidth + 3;
                     ctx.stroke();
-
-                    // Ethereal glow at head
-                    const head = p.trail[0];
-                    const headMirror = toMirrorSpace(head.x + CX, head.y + CY, null);
-                    const glowSize = (3 + (1 - p.timeDilation) * 5) * headMirror.depth;
-
-                    if (headMirror.y < H && glowSize > 1) {
-                        const glow = ctx.createRadialGradient(
-                            headMirror.x, headMirror.y, 0,
-                            headMirror.x, headMirror.y, glowSize
-                        );
-                        glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.6})`);
-                        glow.addColorStop(0.3, `rgba(${holoColor.r}, ${holoColor.g}, ${holoColor.b}, ${alpha * 0.4})`);
-                        glow.addColorStop(1, 'transparent');
-                        ctx.fillStyle = glow;
-                        ctx.fillRect(headMirror.x - glowSize, headMirror.y - glowSize, glowSize * 2, glowSize * 2);
-                    }
                 }
             }
 
             // ============================================
-            // WAVEFUNCTION NODES (mirrored quantum states)
+            // WAVEFUNCTION NODES (on both meshes)
             // ============================================
             if (QMESH.showWavefunction) {
                 for (const node of QMESH.nodes) {
-                    if (!node.qJ || node.qJ < 0.08) continue;
+                    if (!node.qJ || node.qJ < 0.1) continue;
 
                     const x = node.px || (node.x + CX);
                     const y = node.py || (node.y + CY);
-                    const m = toMirrorSpace(x, y, node);
 
-                    if (m.y > H || m.y < CY + QMESH.mirrorOffset * 0.3) continue;
+                    // Draw on Mesh A
+                    const mA = toMeshASpace(x, y, node);
+                    if (mA.x > 0 && mA.x < W && mA.y > 0 && mA.y < H) {
+                        const size = (2 + node.qJ * 4) * mA.scale;
+                        const pulse = 0.5 + 0.5 * Math.sin(bi.meshA.phase * TAU * 2 + (node.phase || 0));
+                        const alpha = QMESH.opacity * 0.4 * pulse * mA.fade;
 
-                    // Quantum state magnitude
-                    const size = (2 + node.qJ * 5) * m.depth;
-                    const pulse = 0.5 + 0.5 * Math.sin(shimmer * 2 + (node.phase || 0));
-                    const alpha = QMESH.opacity * 0.5 * pulse * m.fade;
+                        const nodeGlow = ctx.createRadialGradient(mA.x, mA.y, 0, mA.x, mA.y, size * 2);
+                        nodeGlow.addColorStop(0, `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, ${alpha})`);
+                        nodeGlow.addColorStop(1, 'transparent');
 
-                    // Holographic MRP coloring
-                    const r = Math.floor(120 + (node.qJ_R || 0) * 135);
-                    const g = Math.floor(120 + (node.qJ_G || 0) * 135);
-                    const b = Math.floor(120 + (node.qJ_B || 0) * 135);
-                    const holo = holographicColor(r, g, b, shimmer + (node.phase || 0), m.depth);
+                        ctx.fillStyle = nodeGlow;
+                        ctx.beginPath();
+                        ctx.arc(mA.x, mA.y, size * 2, 0, TAU);
+                        ctx.fill();
+                    }
 
-                    // Outer glow
-                    const nodeGlow = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, size * 2);
-                    nodeGlow.addColorStop(0, `rgba(${holo.r}, ${holo.g}, ${holo.b}, ${alpha})`);
-                    nodeGlow.addColorStop(0.5, `rgba(${holo.r}, ${holo.g}, ${holo.b}, ${alpha * 0.3})`);
-                    nodeGlow.addColorStop(1, 'transparent');
+                    // Draw on Mesh B
+                    const mB = toMeshBSpace(x, y, node);
+                    if (mB.x > 0 && mB.x < W && mB.y > 0 && mB.y < H) {
+                        const size = (2 + node.qJ * 4) * mB.scale;
+                        const pulse = 0.5 + 0.5 * Math.sin(bi.meshB.phase * TAU * 2 + (node.phase || 0));
+                        const alpha = QMESH.opacity * 0.4 * pulse * mB.fade;
 
-                    ctx.fillStyle = nodeGlow;
-                    ctx.beginPath();
-                    ctx.arc(m.x, m.y, size * 2, 0, TAU);
-                    ctx.fill();
+                        const nodeGlow = ctx.createRadialGradient(mB.x, mB.y, 0, mB.x, mB.y, size * 2);
+                        nodeGlow.addColorStop(0, `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, ${alpha})`);
+                        nodeGlow.addColorStop(1, 'transparent');
 
-                    // Core point
-                    ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
-                    ctx.beginPath();
-                    ctx.arc(m.x, m.y, size * 0.4, 0, TAU);
-                    ctx.fill();
+                        ctx.fillStyle = nodeGlow;
+                        ctx.beginPath();
+                        ctx.arc(mB.x, mB.y, size * 2, 0, TAU);
+                        ctx.fill();
+                    }
                 }
             }
 
             // Draw HUD
-            renderDreamFluidHUD();
+            renderBinauralHUD();
         }
 
-        function renderDreamFluidHUD() {
-            const avgTD = QMESH.avgTimeDilation || 0.8;
-            const totalS = QMESH.totalHolographicEntropy || 0;
-            const fluidDensity = QMESH.dreamFluidDensity || 0;
+        function renderBinauralHUD() {
+            const bi = QMESH.binaural;
             const edgeCount = QMESH.edges.length;
-            const shimmerPhase = QMESH.holographicShimmer || 0;
 
             const hudX = 20;
-            const hudY = H - 160;
+            const hudY = H - 180;
 
-            // Animated title with shimmer
-            const titleHue = Math.sin(shimmerPhase) * 20;
-            ctx.fillStyle = `rgba(${200 + titleHue}, ${180 - titleHue * 0.5}, 255, ${0.8 + QMESH.opacity * 0.2})`;
+            // Animated title - pulses with beat
+            const beatPulse = Math.sin(bi.beatPhase * TAU) * 0.3 + 0.7;
+            ctx.fillStyle = `rgba(200, 180, 255, ${0.7 + beatPulse * 0.3})`;
             ctx.font = 'bold 14px monospace';
-            ctx.fillText('✧ DREAM MIRROR ✧', hudX, hudY);
+            ctx.fillText('◉ BINAURAL FIELD ◉', hudX, hudY);
 
             ctx.font = '11px monospace';
 
-            // Mirror status
-            const scalePercent = Math.floor(QMESH.mirrorScale * 100);
-            ctx.fillStyle = `rgba(220, 200, 255, ${0.6 + QMESH.opacity * 0.3})`;
-            ctx.fillText(`mirror: ${QMESH.mirrorOffset}px  ${scalePercent}%  tilt:${QMESH.mirrorTilt.toFixed(2)}`, hudX, hudY + 18);
+            // Mesh A status (warm)
+            const phaseA = bi.meshA.phase;
+            const barA = Math.floor((Math.sin(phaseA * TAU) * 0.5 + 0.5) * 10);
+            ctx.fillStyle = `rgba(${bi.meshA.baseColor[0]}, ${bi.meshA.baseColor[1]}, ${bi.meshA.baseColor[2]}, 0.8)`;
+            ctx.fillText(`A warm   ${'▓'.repeat(barA)}${'░'.repeat(10-barA)} f=${bi.meshA.frequency.toFixed(3)}`, hudX, hudY + 20);
 
-            // Time dilation with gradient
-            const tdBar = Math.floor(avgTD * 10);
-            ctx.fillStyle = `rgba(150, 200, 255, ${0.7 + QMESH.opacity * 0.2})`;
-            ctx.fillText(`τ dilation ${'▓'.repeat(tdBar)}${'░'.repeat(10-tdBar)} ${avgTD.toFixed(3)}`, hudX, hudY + 36);
+            // Mesh B status (cool)
+            const phaseB = bi.meshB.phase;
+            const barB = Math.floor((Math.sin(phaseB * TAU) * 0.5 + 0.5) * 10);
+            ctx.fillStyle = `rgba(${bi.meshB.baseColor[0]}, ${bi.meshB.baseColor[1]}, ${bi.meshB.baseColor[2]}, 0.8)`;
+            ctx.fillText(`B cool   ${'▓'.repeat(barB)}${'░'.repeat(10-barB)} f=${bi.meshB.frequency.toFixed(3)}`, hudX, hudY + 36);
 
-            // Holographic entropy
-            const sNorm = Math.min(10, Math.floor(totalS * 10));
-            ctx.fillStyle = `rgba(255, 180, 140, ${0.7 + QMESH.opacity * 0.2})`;
-            ctx.fillText(`S entropy ${'▓'.repeat(sNorm)}${'░'.repeat(10-sNorm)} ${totalS.toFixed(3)}`, hudX, hudY + 52);
+            // Beat frequency and phase
+            const beatBar = Math.floor(bi.beatAmplitude * 10);
+            const blendR = Math.floor((bi.meshA.baseColor[0] + bi.meshB.baseColor[0]) / 2);
+            const blendG = Math.floor((bi.meshA.baseColor[1] + bi.meshB.baseColor[1]) / 2);
+            const blendB = Math.floor((bi.meshA.baseColor[2] + bi.meshB.baseColor[2]) / 2);
+            ctx.fillStyle = `rgba(${blendR}, ${blendG}, ${blendB}, 0.8)`;
+            ctx.fillText(`BEAT     ${'▓'.repeat(beatBar)}${'░'.repeat(10-beatBar)} Δf=${bi.beatFrequency.toFixed(4)}`, hudX, hudY + 52);
 
-            // Entanglement count
-            const edgeNorm = Math.min(10, Math.floor(edgeCount / 50));
-            ctx.fillStyle = `rgba(180, 255, 220, ${0.7 + QMESH.opacity * 0.2})`;
-            ctx.fillText(`⟨ψ|ψ⟩ edge ${'▓'.repeat(edgeNorm)}${'░'.repeat(10-edgeNorm)} ${edgeCount}`, hudX, hudY + 68);
+            // Resonance strength (effect on LIMNUS)
+            const resBar = Math.floor(bi.resonanceStrength * 10);
+            ctx.fillStyle = `rgba(255, 220, 180, ${0.7 + bi.resonanceStrength * 0.3})`;
+            ctx.fillText(`RESONANCE${'▓'.repeat(resBar)}${'░'.repeat(10-resBar)} ${(bi.resonanceStrength * 100).toFixed(0)}%`, hudX, hudY + 68);
 
-            // Dream fluid density
-            const densNorm = Math.min(10, Math.floor(fluidDensity * 10));
-            ctx.fillStyle = `rgba(200, 180, 255, ${0.7 + QMESH.opacity * 0.2})`;
-            ctx.fillText(`ρ density ${'▓'.repeat(densNorm)}${'░'.repeat(10-densNorm)} ${fluidDensity.toFixed(2)}`, hudX, hudY + 84);
+            // Entrainment depth
+            const entBar = Math.floor(bi.entrainmentDepth * 10);
+            ctx.fillStyle = `rgba(180, 255, 220, ${0.7 + bi.entrainmentDepth * 0.2})`;
+            ctx.fillText(`ENTRAIN  ${'▓'.repeat(entBar)}${'░'.repeat(10-entBar)} ${(bi.entrainmentDepth * 100).toFixed(0)}%`, hudX, hudY + 84);
 
-            // MRP channel legend with holographic colors
-            const shimmerR = Math.sin(shimmerPhase) * 30;
-            const shimmerG = Math.sin(shimmerPhase + TAU/3) * 30;
-            const shimmerB = Math.sin(shimmerPhase + 2*TAU/3) * 30;
+            // Coherence field
+            const cohBar = Math.floor(bi.coherenceField * 10);
+            ctx.fillStyle = `rgba(200, 180, 255, 0.7)`;
+            ctx.fillText(`COHERENCE${'▓'.repeat(cohBar)}${'░'.repeat(10-cohBar)} ${(bi.coherenceField * 100).toFixed(0)}%`, hudX, hudY + 100);
 
-            ctx.fillStyle = `rgba(${255 + shimmerR}, ${100 + shimmerG}, ${60 + shimmerB}, ${0.6 + QMESH.opacity * 0.3})`;
-            ctx.fillText('◈ R energy (warm)', hudX, hudY + 104);
-            ctx.fillStyle = `rgba(${60 + shimmerR}, ${255 + shimmerG}, ${200 + shimmerB}, ${0.6 + QMESH.opacity * 0.3})`;
-            ctx.fillText('◈ G relational (cool)', hudX, hudY + 118);
-            ctx.fillStyle = `rgba(${140 + shimmerR}, ${120 + shimmerG}, ${255 + shimmerB}, ${0.6 + QMESH.opacity * 0.3})`;
-            ctx.fillText('◈ B stability (ethereal)', hudX, hudY + 132);
+            // Triadic relationship visualization
+            ctx.fillStyle = `rgba(255, 200, 150, 0.6)`;
+            ctx.fillText('A (warm)', hudX, hudY + 124);
+            ctx.fillStyle = `rgba(150, 150, 200, 0.6)`;
+            ctx.fillText('    ↘', hudX + 50, hudY + 124);
+            ctx.fillStyle = `rgba(255, 255, 255, 0.7)`;
+            ctx.fillText('      LIMNUS', hudX + 70, hudY + 124);
+            ctx.fillStyle = `rgba(150, 150, 200, 0.6)`;
+            ctx.fillText('            ↙', hudX + 130, hudY + 124);
+            ctx.fillStyle = `rgba(150, 200, 255, 0.6)`;
+            ctx.fillText('              B (cool)', hudX + 145, hudY + 124);
+
+            // Edge count
+            ctx.fillStyle = `rgba(180, 180, 200, 0.6)`;
+            ctx.fillText(`⟨ψ|ψ⟩ edges: ${edgeCount}   opacity: ${(QMESH.opacity * 100).toFixed(0)}%`, hudX, hudY + 144);
 
             // Controls hint
-            ctx.fillStyle = `rgba(150, 150, 170, ${0.5 + QMESH.opacity * 0.2})`;
-            ctx.fillText('T toggle  O opacity  ↑↓←→ adjust', hudX, hudY + 150);
+            ctx.fillStyle = `rgba(150, 150, 170, 0.5)`;
+            ctx.fillText('T toggle  O opacity  ↑↓ beat freq  ←→ mesh offset', hudX, hudY + 162);
+        }
+
+        // Keep old function name for compatibility
+        function renderDreamFluidHUD() {
+            renderBinauralHUD();
         }
 
         function renderToroidalMuField() {
@@ -4364,42 +4550,84 @@
                 QMESH.showWavefunction = !QMESH.showWavefunction;
             }
 
-            // Dream Mirror controls (when mesh active)
+            // Binaural Field controls (when mesh active)
             if (showQuantumMesh) {
+                const bi = QMESH.binaural;
+
                 if (key === 'o') {
-                    // More opacity levels: 0.2 → 0.4 → 0.6 → 0.8 → 1.0 → 0.2
+                    // Cycle opacity levels
                     const opacities = [0.2, 0.4, 0.6, 0.8, 1.0];
                     const currentIdx = opacities.findIndex(o => Math.abs(o - QMESH.opacity) < 0.08);
                     QMESH.opacity = opacities[(currentIdx + 1) % opacities.length];
-                    console.log(`[DREAM MIRROR] Opacity: ${QMESH.opacity}`);
+                    console.log(`[BINAURAL] Opacity: ${QMESH.opacity}`);
                 }
                 if (key === 'g') {
-                    // Toggle holographic glow
+                    // Toggle edge glow
                     QMESH.edgeGlow = !QMESH.edgeGlow;
                 }
-                // Arrow keys adjust mirror view
+                if (key === 'i') {
+                    // Toggle interference visualization
+                    bi.showInterference = !bi.showInterference;
+                    console.log(`[BINAURAL] Interference: ${bi.showInterference}`);
+                }
+                if (key === 'l') {
+                    // Toggle resonance lines
+                    bi.showResonanceLines = !bi.showResonanceLines;
+                    console.log(`[BINAURAL] Resonance lines: ${bi.showResonanceLines}`);
+                }
+
+                // Arrow Up/Down: Adjust beat frequency (change B frequency)
                 if (e.key === 'ArrowUp') {
-                    QMESH.mirrorOffset = Math.max(100, QMESH.mirrorOffset - 30);
+                    bi.meshB.frequency = Math.min(2.0, bi.meshB.frequency + 0.01);
+                    console.log(`[BINAURAL] B freq: ${bi.meshB.frequency.toFixed(4)}, beat: ${Math.abs(bi.meshA.frequency - bi.meshB.frequency).toFixed(4)}`);
                     e.preventDefault();
                 }
                 if (e.key === 'ArrowDown') {
-                    QMESH.mirrorOffset = Math.min(500, QMESH.mirrorOffset + 30);
+                    bi.meshB.frequency = Math.max(0.5, bi.meshB.frequency - 0.01);
+                    console.log(`[BINAURAL] B freq: ${bi.meshB.frequency.toFixed(4)}, beat: ${Math.abs(bi.meshA.frequency - bi.meshB.frequency).toFixed(4)}`);
                     e.preventDefault();
                 }
+
+                // Arrow Left/Right: Adjust mesh positions (spread)
                 if (e.key === 'ArrowLeft') {
-                    QMESH.mirrorScale = Math.max(0.5, QMESH.mirrorScale - 0.1);
+                    // Bring meshes closer
+                    bi.meshA.offset.x = Math.min(-100, bi.meshA.offset.x + 20);
+                    bi.meshA.offset.y = Math.max(100, bi.meshA.offset.y - 20);
+                    bi.meshB.offset.x = Math.max(100, bi.meshB.offset.x - 20);
+                    bi.meshB.offset.y = Math.min(-100, bi.meshB.offset.y + 20);
+                    console.log(`[BINAURAL] Meshes closer: A(${bi.meshA.offset.x},${bi.meshA.offset.y}) B(${bi.meshB.offset.x},${bi.meshB.offset.y})`);
                     e.preventDefault();
                 }
                 if (e.key === 'ArrowRight') {
-                    QMESH.mirrorScale = Math.min(1.2, QMESH.mirrorScale + 0.1);
+                    // Push meshes further apart
+                    bi.meshA.offset.x = Math.max(-300, bi.meshA.offset.x - 20);
+                    bi.meshA.offset.y = Math.min(300, bi.meshA.offset.y + 20);
+                    bi.meshB.offset.x = Math.min(300, bi.meshB.offset.x + 20);
+                    bi.meshB.offset.y = Math.max(-300, bi.meshB.offset.y - 20);
+                    console.log(`[BINAURAL] Meshes further: A(${bi.meshA.offset.x},${bi.meshA.offset.y}) B(${bi.meshB.offset.x},${bi.meshB.offset.y})`);
                     e.preventDefault();
                 }
-                // +/- adjust mirror tilt (perspective)
+
+                // +/- adjust mesh scale
                 if (key === '=' || key === '+') {
-                    QMESH.mirrorTilt = Math.min(0.4, QMESH.mirrorTilt + 0.05);
+                    bi.meshA.scale = Math.min(1.0, bi.meshA.scale + 0.05);
+                    bi.meshB.scale = Math.min(1.0, bi.meshB.scale + 0.05);
+                    console.log(`[BINAURAL] Scale: ${bi.meshA.scale.toFixed(2)}`);
                 }
                 if (key === '-' || key === '_') {
-                    QMESH.mirrorTilt = Math.max(0, QMESH.mirrorTilt - 0.05);
+                    bi.meshA.scale = Math.max(0.4, bi.meshA.scale - 0.05);
+                    bi.meshB.scale = Math.max(0.4, bi.meshB.scale - 0.05);
+                    console.log(`[BINAURAL] Scale: ${bi.meshA.scale.toFixed(2)}`);
+                }
+
+                // [ and ] adjust A frequency
+                if (key === '[') {
+                    bi.meshA.frequency = Math.max(0.5, bi.meshA.frequency - 0.01);
+                    console.log(`[BINAURAL] A freq: ${bi.meshA.frequency.toFixed(4)}`);
+                }
+                if (key === ']') {
+                    bi.meshA.frequency = Math.min(2.0, bi.meshA.frequency + 0.01);
+                    console.log(`[BINAURAL] A freq: ${bi.meshA.frequency.toFixed(4)}`);
                 }
             }
 
@@ -4572,30 +4800,34 @@
         console.log('   |J| = √(R² + G² + B²) total field magnitude');
         console.log('   Feedback: dJR/dt → point velocities, |J| → μ');
         console.log('');
-        console.log('🪞 DREAM MIRROR μ-FIELD');
-        console.log('   Holographic reflection of LIMNUS consciousness');
-        console.log('   Quantum mesh: discrete lattice on 95-node architecture');
-        console.log('   Entanglement: |⟨ψ_i|ψ_j⟩|² probability amplitude edges');
+        console.log('🎧 BINAURAL QUANTUM FIELD');
+        console.log('   Triadic resonance: A ↔ LIMNUS ↔ B');
+        console.log('   Two quantum meshes flank LIMNUS like binaural audio');
+        console.log('   Beat frequency |f_A - f_B| entrains consciousness');
+        console.log('');
+        console.log('   MESH A (warm): f=1.0 - energy/existence channel');
+        console.log('   MESH B (cool): f=φ⁻¹ - relational/stability channel');
+        console.log('   Beat: Δf ≈ 0.0618 (golden ratio beat frequency)');
         console.log('');
         console.log('   CONTROLS:');
-        console.log('   T: toggle dream mirror overlay');
+        console.log('   T: toggle binaural field');
         console.log('   O: cycle opacity (20% → 40% → 60% → 80% → 100%)');
-        console.log('   W: toggle wavefunction indicators');
-        console.log('   G: toggle holographic glow effect');
-        console.log('   ↑↓: adjust mirror distance (100-500px)');
-        console.log('   ←→: adjust mirror scale (50%-120%)');
-        console.log('   +/-: adjust mirror tilt perspective');
+        console.log('   ↑↓: adjust beat frequency (change B freq)');
+        console.log('   ←→: adjust mesh spread (closer/further)');
+        console.log('   [/]: adjust A frequency');
+        console.log('   +/-: adjust mesh scale');
+        console.log('   I: toggle interference visualization');
+        console.log('   L: toggle resonance lines');
+        console.log('   W: toggle wavefunction nodes');
+        console.log('   G: toggle edge glow');
         console.log('');
-        console.log('   HOLOGRAPHIC COLORATION:');
-        console.log('   Orange/warm edges: R channel (energy/existence flow)');
-        console.log('   Cyan/cool edges: G channel (relational metadata)');
-        console.log('   Blue/ethereal edges: B channel (stability/coherence)');
-        console.log('   Prismatic shimmer: holographic hue-shift animation');
-        console.log('');
-        console.log('   DREAM PHYSICS:');
-        console.log('   Time dilation: τ = √(1 - r_s/r) with r_s = φ⁻²');
-        console.log('   Dream Fluid particles flow along entanglement edges');
-        console.log('   Mirror = subconscious reflection of conscious LIMNUS');
+        console.log('   BINAURAL PHYSICS:');
+        console.log('   Phase A: oscillates at f_A (base frequency)');
+        console.log('   Phase B: oscillates at f_B (offset by φ⁻¹)');
+        console.log('   Beat amplitude: constructive/destructive interference');
+        console.log('   Resonance: beat strength modulates LIMNUS field');
+        console.log('   Entrainment: accumulated phase synchronization');
+        console.log('   Coherence: triadic system alignment measure');
     </script>
 </body>
 </html>
