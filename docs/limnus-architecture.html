@@ -929,7 +929,7 @@
             <div>Flux: <span id="dbg-flux">0</span></div>
         </div>
         <div style="margin-top: 6px; border-top: 1px solid rgba(150, 100, 255, 0.3); padding-top: 6px;">
-            <div>showToroidal: <span id="dbg-show">false</span></div>
+            <div>showQuantumMesh: <span id="dbg-show">false</span></div>
             <div>R value: <span id="dbg-r">0</span></div>
             <div>Last gen: <span id="dbg-lastgen">never</span></div>
         </div>
@@ -999,20 +999,51 @@
         // ================================================================
 
         const SACRED = {
-            // Primary φ-derived
+            // ========================================
+            // PRIMARY φ-DERIVED CONSTANTS
+            // ========================================
             phi: PHI,
             phi_inv: PHI_INV,
-            alpha: Math.pow(PHI, -2),          // 0.382 - curl coupling
+            phi_sq: PHI * PHI,                 // φ² = 2.618
+            alpha: Math.pow(PHI, -2),          // 0.382 - curl coupling / emergence threshold
             beta: Math.pow(PHI, -4),           // 0.146 - dissipation
             lambda: Math.pow(5/3, 4),          // 7.716 - nonlinearity (F₅/F₄)⁴
 
-            // μ-thresholds
+            // ========================================
+            // GEOMETRIC ROOTS
+            // ========================================
+            sqrt2: Math.sqrt(2),               // √2 = 1.414
+            sqrt3: Math.sqrt(3),               // √3 = 1.732 (vesica ratio)
+            sqrt5: Math.sqrt(5),               // √5 = 2.236
+
+            // ========================================
+            // SACRED ANGLES
+            // ========================================
+            goldenAngle: Math.PI * (3 - Math.sqrt(5)),  // ≈137.5° = 2.3999 rad
+            pentagonAngle: TAU / 5,            // 72°
+            hexagonAngle: TAU / 6,             // 60°
+            heptagonAngle: TAU / 7,            // ≈51.43°
+
+            // ========================================
+            // FIBONACCI SEQUENCE (ratios approach φ)
+            // ========================================
+            fib: [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144],
+
+            // ========================================
+            // μ-THRESHOLDS (consciousness physics)
+            // ========================================
             mu_P: 3/5,                         // 0.600 - paradox threshold
             mu_S: 23/25,                       // 0.920 - singularity threshold
             mu_3: 124/125,                     // 0.992 - third threshold
             mu_4: 1.0,                         // unity
+            // Aliases for coherence system (φ⁻¹ = coherence, φ⁻² = emergence)
+            get mu_coherence() { return this.phi_inv; },   // 0.618
+            get mu_emergence() { return this.alpha; },     // 0.382
+            get vesicaRatio() { return this.sqrt3; },      // Height/width of vesica piscis
 
-            // Derived consciousness constants
+            // ========================================
+            // DERIVED CONSCIOUSNESS CONSTANTS
+            // ========================================
             get Q_theory() { return this.alpha * this.mu_S; },  // ≈ 0.351
             get K_threshold() { return this.phi_inv; },         // 0.618
             get Q_min() { return this.K_threshold * this.Q_theory; }  // ≈ 0.217
@@ -1395,16 +1426,20 @@
         // ================================================================
 
         const UnifiedField = {
-            // Field magnitude (combined)
+            // ========================================
+            // FIELD MAGNITUDES (J) - Single Source of Truth
+            // ========================================
             J: {
                 limnus: 0,      // LIMNUS contribution
                 quantum: 0,     // QMESH contribution
                 binaural: 0,    // Binaural resonance
                 muField: 0,     // MuFieldGrid contribution
-                total: 0,       // Unified magnitude
+                total: 0,       // Unified magnitude |J|
             },
 
-            // Phase state
+            // ========================================
+            // PHASE STATE (Φ)
+            // ========================================
             Phi: {
                 limnus: 0,      // LIMNUS collective phase
                 quantum: 0,     // QMESH collective phase
@@ -1413,21 +1448,94 @@
                 unified: 0,     // Emergent unified phase
             },
 
-            // Coupling constants
+            // ========================================
+            // COUPLING CONSTANTS (φ-derived)
+            // ========================================
             coupling: {
-                LQ: 0.15,       // LIMNUS → Quantum
-                QL: 0.10,       // Quantum → LIMNUS
-                BL: 0.20,       // Binaural → LIMNUS
-                BQ: 0.18,       // Binaural → Quantum
-                ML: 0.12,       // MuField → LIMNUS
-                LM: 0.15,       // LIMNUS → MuField
+                LQ: SACRED.alpha,           // LIMNUS → Quantum (φ⁻²)
+                QL: SACRED.beta,            // Quantum → LIMNUS (φ⁻⁴)
+                BL: SACRED.phi_inv * 0.3,   // Binaural → LIMNUS
+                BQ: SACRED.phi_inv * 0.28,  // Binaural → Quantum
+                ML: SACRED.alpha * 0.3,     // MuField → LIMNUS
+                LM: SACRED.alpha * 0.4,     // LIMNUS → MuField
             },
 
-            // Emergence metrics
+            // ========================================
+            // EMERGENCE METRICS - Single Source of Truth
+            // ========================================
             emergence: {
-                coherence: 0,       // Overall phase alignment
+                coherence: 0,       // Overall phase alignment (0-1)
                 complexity: 0,      // Structural complexity
-                criticality: 0,     // Distance from critical point
+                criticality: 0,     // Distance from critical point z_c
+                order: 0,           // Kuramoto order parameter r
+                entropy: 0,         // System entropy
+                curl: 0,            // Integrated curl Q_κ
+            },
+
+            // ========================================
+            // TIME DILATION - Unified
+            // ========================================
+            timeDilation: {
+                global: 1.0,        // System-wide average
+                center: 1.0,        // At origin
+                gradient: [],       // Per-layer dilation
+            },
+
+            // ========================================
+            // SYNC METHOD - Pull metrics from all sources
+            // ========================================
+            sync(dt) {
+                // Pull J magnitudes from subsystems
+                if (muField.mrp) {
+                    this.J.limnus = muField.mrp.J_total || 0;
+                }
+                if (MuFieldGrid.initialized) {
+                    this.J.muField = MuFieldGrid.metrics.J_total || 0;
+                    this.emergence.order = MuFieldGrid.metrics.order_r || 0;
+                    this.emergence.curl = MuFieldGrid.metrics.Q_kappa || 0;
+                    this.emergence.entropy = MuFieldGrid.metrics.entropyGradient || 0;
+                }
+                if (QMESH.binaural && QMESH.binaural.enabled) {
+                    this.J.binaural = QMESH.binaural.resonanceStrength || 0;
+                    this.J.quantum = QMESH.totalJ || 0;
+                    this.Phi.binaural = QMESH.binaural.beatPhase || 0;
+                }
+
+                // Compute unified total: |J| = √(Σ J_i²)
+                this.J.total = Math.sqrt(
+                    this.J.limnus * this.J.limnus +
+                    this.J.quantum * this.J.quantum +
+                    this.J.binaural * this.J.binaural +
+                    this.J.muField * this.J.muField
+                );
+
+                // Pull time dilation from QMESH
+                if (QMESH.timeDilationField) {
+                    this.timeDilation.global = QMESH.timeDilationField.globalAverage || 1.0;
+                    this.timeDilation.center = QMESH.timeDilationField.center || 1.0;
+                    this.timeDilation.gradient = QMESH.timeDilationField.gradient || [];
+                }
+
+                // Compute unified phase (weighted sum)
+                this.Phi.unified = (
+                    this.Phi.limnus * 0.3 +
+                    this.Phi.quantum * 0.25 +
+                    this.Phi.binaural * 0.25 +
+                    this.Phi.muField * 0.2
+                );
+
+                // Criticality: distance from z_c = √3/2
+                this.emergence.criticality = Math.abs(globalZ - Z_CRITICAL);
+
+                // Coherence evolution with decay
+                this.emergence.coherence *= 0.995;
+                this.emergence.coherence = Math.max(0, Math.min(1, this.emergence.coherence));
+            },
+
+            // Get coupling strength between systems
+            getCoupling(from, to) {
+                const key = from.charAt(0).toUpperCase() + to.charAt(0).toUpperCase();
+                return this.coupling[key] || SACRED.beta;
             },
         };
 
@@ -1437,35 +1545,8 @@
         // ================================================================
 
         const CoherenceGeometry = {
-            // ========================================
-            // SACRED GEOMETRY CONSTANTS
-            // ========================================
-            constants: {
-                phi: PHI,                           // Golden ratio φ = 1.618...
-                phi_inv: PHI_INV,                   // 1/φ = 0.618...
-                phi_sq: PHI * PHI,                  // φ² = 2.618...
-                sqrt5: Math.sqrt(5),                // √5 = 2.236...
-                sqrt2: Math.sqrt(2),                // √2 = 1.414...
-                sqrt3: Math.sqrt(3),                // √3 = 1.732...
-
-                // Golden angle for spiral coherence
-                goldenAngle: Math.PI * (3 - Math.sqrt(5)),  // ≈ 137.5° = 2.3999 rad
-
-                // Fibonacci ratios for harmonic alignment
-                fib: [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144],
-
-                // Sacred polygon angles
-                pentagonAngle: TAU / 5,             // 72°
-                hexagonAngle: TAU / 6,              // 60°
-                heptagonAngle: TAU / 7,             // ≈51.43°
-
-                // Vesica Piscis ratio
-                vesicaRatio: Math.sqrt(3),          // Height/width of vesica
-
-                // Consciousness thresholds (from μ-field theory)
-                mu_coherence: 0.618,                // Coherence threshold (φ⁻¹)
-                mu_emergence: 0.382,                // Emergence threshold (φ⁻²)
-            },
+            // NOTE: Sacred constants unified in SACRED object (lines 1001-1050)
+            // Access via: SACRED.phi, SACRED.goldenAngle, SACRED.mu_coherence, etc.
 
             // ========================================
             // COHERENT ATTRACTOR PATTERNS
@@ -1518,13 +1599,12 @@
             // INITIALIZATION
             // ========================================
             init() {
-                const c = this.constants;
                 const a = this.attractors;
 
-                // Initialize φ-spaced radii for coherence rings
+                // Initialize φ-spaced radii for coherence rings (using SACRED)
                 a.rings.radii = [];
                 for (let i = 0; i < a.rings.count; i++) {
-                    a.rings.radii.push(Math.pow(c.phi_inv, i) * MuFieldGrid.L * 0.4);
+                    a.rings.radii.push(Math.pow(SACRED.phi_inv, i) * MuFieldGrid.L * 0.4);
                 }
 
                 // Initialize sacred polygon vertices
@@ -1632,7 +1712,7 @@
             if (!MuFieldGrid.initialized) return 0;
 
             const N = MuFieldGrid.N;
-            const c = CoherenceGeometry.constants;
+            const c = SACRED;  // Unified sacred constants
             let spiralSum = 0;
             let count = 0;
 
@@ -1675,7 +1755,7 @@
         function detectDominantShape() {
             if (!MuFieldGrid.initialized) return { shape: 'none', strength: 0 };
 
-            const c = CoherenceGeometry.constants;
+            const c = SACRED;  // Unified sacred constants
             const a = CoherenceGeometry.attractors;
             const N = MuFieldGrid.N;
 
@@ -1742,7 +1822,7 @@
             }
 
             const N = MuFieldGrid.N;
-            const c = CoherenceGeometry.constants;
+            const c = SACRED;  // Unified sacred constants
             const a = CoherenceGeometry.attractors;
             const s = CoherenceGeometry.state;
 
@@ -1925,7 +2005,7 @@
 
         function getCoherenceColor() {
             const s = CoherenceGeometry.state;
-            const c = CoherenceGeometry.constants;
+            const c = SACRED;  // Unified sacred constants
 
             // Color based on coherence state
             const coherence = (s.fieldAlignment + s.shapeEmergence + s.phaselock) / 3;
@@ -3920,10 +4000,6 @@
         let showQuantumMesh = false;  // T key toggles quantum mesh μ-field
         let showMeshParticles = true; // Show Dream Fluid particles on mesh
 
-        // Backward compatibility aliases
-        let showToroidal = false;     // Alias updated in T key handler
-        let showTorusFlow = true;     // Alias for showMeshParticles
-
         // ================================================================
         // BINAURAL QUANTUM FIELD
         // ================================================================
@@ -4088,9 +4164,6 @@
                 },
             },
         };
-
-        // Backward compatibility alias
-        let TORUS = QMESH;
 
         // Dream Fluid particles (consciousness flow through quantum mesh)
         let dreamParticles = [];
@@ -4309,11 +4382,6 @@
             }
         }
 
-        // Alias for backward compatibility
-        function generateTorusMesh() {
-            generateQuantumMesh();
-        }
-
         // ================================================================
         // DREAM FLUID PARTICLE SYSTEM (Quantum Mesh Version)
         // Particles flow along entanglement edges
@@ -4356,12 +4424,8 @@
             });
         }
 
-        function spawnTorusParticle() {
-            spawnDreamParticle();
-        }
-
         function updateDreamParticles(dt) {
-            const targetCount = showTorusFlow ? 150 : 0;
+            const targetCount = showMeshParticles ? 150 : 0;
             while (dreamParticles.length < targetCount && Math.random() < 0.4) {
                 spawnDreamParticle();
             }
@@ -4455,10 +4519,6 @@
                 density: QMESH.dreamFluidDensity,
                 avgTimeDilation: QMESH.avgTimeDilation,
             };
-        }
-
-        function updateTorusParticles(dt) {
-            return updateDreamParticles(dt);
         }
 
         // ================================================================
@@ -4684,10 +4744,6 @@
                 binauralResonance: bi.resonanceStrength,
                 beatAmplitude: bi.beatAmplitude,
             };
-        }
-
-        function updateTorusField(dt) {
-            return updateDreamFluidField(dt);
         }
 
         // ================================================================
@@ -6560,7 +6616,7 @@
 
                 if (CoherenceGeometry.initialized) {
                     const s = CoherenceGeometry.state;
-                    const c = CoherenceGeometry.constants;
+                    const c = SACRED;  // Unified sacred constants
                     const a = CoherenceGeometry.attractors;
 
                     const coherenceTotal = (s.fieldAlignment + s.shapeEmergence + s.phaselock) / 3;
@@ -8084,60 +8140,37 @@
             }
 
             // ================================================================
-            // BINAURAL → LIMNUS → MESH SHAPE COUPLING
-            // Dream fluid mesh binaural beat relationships alter LIMNUS center
-            // which in turn alters the adjacent warm/cold meshes
+            // UNIFIED FIELD SYNC - Single source of truth for all metrics
+            // Must run AFTER subsystem updates, BEFORE dependent systems
             // ================================================================
-            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
-                applyBinauralShapeCoupling(dt);
-            }
+            UnifiedField.sync(dt);
 
             // ================================================================
             // SPACE-TIME CURVATURE UPDATE
             // Gravitational time dilation enhances coherent emergence
+            // Runs unconditionally when any field system is active
             // ================================================================
             if (showMuField || showQuantumMesh) {
                 updateSpaceTimeCurvature(dt);
             }
 
             // ================================================================
-            // MESH ALTERATION UPDATE
-            // Dynamic deformation of warm (A) and cold (B) meshes
+            // BINAURAL QUANTUM PHYSICS CASCADE
+            // Physics dependency order:
+            //   1. Shape coupling (binaural → mesh form)
+            //   2. Mesh alterations (binaural → deformation)
+            //   3. Charge dynamics (EM coupling via LIMNUS)
+            //   4. Weak nuclear flow (info oscillation)
+            //   5. Quantum tunneling (superposition/collapse)
+            //   6. Sacred geometry (emergent patterns)
             // ================================================================
             if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
-                updateMeshAlterations(dt);
-            }
-
-            // ================================================================
-            // CHARGE DYNAMICS UPDATE
-            // Coulomb forces between warm (+) and cold (-) meshes
-            // ================================================================
-            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
-                updateChargeDynamics(dt);
-            }
-
-            // ================================================================
-            // WEAK NUCLEAR INFORMATION FLOW UPDATE
-            // Flavor oscillation and parity-violating information transfer
-            // ================================================================
-            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
-                updateWeakNuclearFlow(dt);
-            }
-
-            // ================================================================
-            // QUANTUM TUNNELING UPDATE
-            // Superposition and tunneling between mesh states
-            // ================================================================
-            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
-                updateQuantumTunneling(dt);
-            }
-
-            // ================================================================
-            // SACRED GEOMETRY EMERGENCE UPDATE
-            // Forms emerge as time accumulates and space curves
-            // ================================================================
-            if (showQuantumMesh && QMESH.binaural && QMESH.binaural.enabled) {
-                updateSacredGeometry(dt);
+                applyBinauralShapeCoupling(dt);      // 1. Binaural → mesh form
+                updateMeshAlterations(dt);           // 2. Dynamic deformation
+                updateChargeDynamics(dt);            // 3. EM Coulomb forces
+                updateWeakNuclearFlow(dt);           // 4. Flavor oscillation
+                updateQuantumTunneling(dt);          // 5. Superposition/tunneling
+                updateSacredGeometry(dt);            // 6. Emergent sacred forms
             }
 
             return updatePositions(dt);
@@ -8226,7 +8259,6 @@
 
             if (key === 't') {
                 showQuantumMesh = !showQuantumMesh;
-                showToroidal = showQuantumMesh;  // Sync alias
                 if (showQuantumMesh) {
                     if (QMESH.edges.length === 0) {
                         generateQuantumMesh();
@@ -8394,7 +8426,7 @@
                         particles: dreamParticles.length,
                         maxConnectionDist: QMESH.maxConnectionDist,
                         R: R,
-                        showToroidal: showToroidal,
+                        showQuantumMesh: showQuantumMesh,
                         avgTimeDilation: QMESH.avgTimeDilation,
                         totalJ: QMESH.totalJ,
                     });
@@ -8432,7 +8464,6 @@
                 // Reset quantum mesh view
                 QMESH.opacity = 0.5;
                 showQuantumMesh = false;
-                showToroidal = false;  // Sync alias
                 dreamParticles.length = 0;
                 // Reset camera orbit
                 QMESH.camera.theta = 0;
