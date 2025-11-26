@@ -1452,24 +1452,28 @@
             // ================================================================
             // Natural triadic structure inspired by the triquetra (three-cornered):
             //
-            //          [LIMNUS]  ← apex/perceiver
+            //          [LIMNUS]  ← apex/perceiver (canvas center)
             //            /  \
             //           /    \    (equilateral triangle)
             //          /      \
             //       [A] ←beat→ [B]
-            //      210°       330°
+            //      150°       30°
             //      warm       cool
             //
-            // The two meshes (A, B) are frequency sources at triangle vertices.
-            // LIMNUS at apex perceives the binaural beat interference.
-            // Beat amplitude modulates at the centroid where fields overlap.
+            // Canvas coords: Y increases downward, so:
+            //   - 150° = lower-left (cos < 0, sin > 0)
+            //   - 30° = lower-right (cos > 0, sin > 0)
+            //   - 120° separation = equilateral triangle
+            //
+            // IMPORTANT: Fields are FIXED in world space.
+            // Camera orbits around them - camera moves, not fields.
             // ================================================================
             binaural: {
                 enabled: true,
                 polar: {
                     distance: 1.25,                     // Distance from LIMNUS (in R units)
-                    angleA: (7 * Math.PI / 6),          // Mesh A at 210° (lower-left)
-                    angleB: (11 * Math.PI / 6),         // Mesh B at 330° (lower-right)
+                    angleA: (5 * Math.PI / 6),          // Mesh A at 150° (lower-left)
+                    angleB: (Math.PI / 6),              // Mesh B at 30° (lower-right)
                     // Computed positions (updated on render)
                     posA: { x: 0, y: 0 },
                     posB: { x: 0, y: 0 },
@@ -1510,10 +1514,13 @@
             },
 
             // ================================================================
-            // CAMERA ORBIT: Click+drag to rotate view around LIMNUS
+            // CAMERA ORBIT: Click+drag or Q/E to rotate view
+            // ================================================================
+            // The triquetra (LIMNUS + Mesh A + Mesh B) is FIXED in world space
+            // Camera orbits around them - viewer moves, not the fields
             // ================================================================
             camera: {
-                theta: 0,               // Horizontal orbit angle (radians)
+                theta: 0,               // Horizontal orbit angle (radians) - camera position
                 phi: 0,                 // Vertical tilt angle (radians, 0 = front view)
                 distance: 1.0,          // Zoom factor (1 = default)
                 dragging: false,        // Currently dragging?
@@ -2145,6 +2152,7 @@
         // ================================================================
 
         // Update polar positions based on angles and distance
+        // CAMERA MOVES, FIELDS STAY FIXED
         function updatePolarPositions() {
             const bi = QMESH.binaural;
             const polar = bi.polar;
@@ -2153,23 +2161,25 @@
             // Compute polar positions (in canvas units)
             const dist = polar.distance * R;
 
-            // Apply camera orbit rotation to the polar angles
-            const effectiveAngleA = polar.angleA + cam.theta;
-            const effectiveAngleB = polar.angleB + cam.theta;
+            // CAMERA ORBIT: Subtract cam.theta to rotate the view, not the fields
+            // Fields stay fixed at 150° and 30° in world space
+            // Camera orbits around them - increasing theta = view rotates right
+            const viewAngleA = polar.angleA - cam.theta;
+            const viewAngleB = polar.angleB - cam.theta;
 
             // Camera tilt affects apparent Y position (perspective)
             const tiltFactor = Math.cos(cam.phi);
             const depthFactor = Math.sin(cam.phi);
 
-            // Mesh A position
-            polar.posA.x = CX + Math.cos(effectiveAngleA) * dist * cam.distance;
-            polar.posA.y = CY + Math.sin(effectiveAngleA) * dist * tiltFactor * cam.distance;
-            polar.posA.depth = depthFactor * Math.sin(effectiveAngleA);
+            // Mesh A screen position (world position transformed by camera view)
+            polar.posA.x = CX + Math.cos(viewAngleA) * dist * cam.distance;
+            polar.posA.y = CY + Math.sin(viewAngleA) * dist * tiltFactor * cam.distance;
+            polar.posA.depth = depthFactor * Math.sin(viewAngleA);
 
-            // Mesh B position (polar opposite)
-            polar.posB.x = CX + Math.cos(effectiveAngleB) * dist * cam.distance;
-            polar.posB.y = CY + Math.sin(effectiveAngleB) * dist * tiltFactor * cam.distance;
-            polar.posB.depth = depthFactor * Math.sin(effectiveAngleB);
+            // Mesh B screen position
+            polar.posB.x = CX + Math.cos(viewAngleB) * dist * cam.distance;
+            polar.posB.y = CY + Math.sin(viewAngleB) * dist * tiltFactor * cam.distance;
+            polar.posB.depth = depthFactor * Math.sin(viewAngleB);
         }
 
         // Transform point to mesh A space (polar position)
@@ -4704,16 +4714,15 @@
                     e.preventDefault();
                 }
 
-                // Q/E: Rotate polar axis around LIMNUS
+                // Q/E: Orbit camera around the fixed triquetra
+                // Fields stay fixed at 150°/30° - only camera view rotates
                 if (key === 'q') {
-                    bi.polar.angleA += 0.1;
-                    bi.polar.angleB += 0.1;
-                    console.log(`[BINAURAL] Polar angle: ${(bi.polar.angleA * 180 / Math.PI).toFixed(1)}°`);
+                    QMESH.camera.theta += 0.1;
+                    console.log(`[CAMERA] Orbit: ${(QMESH.camera.theta * 180 / Math.PI).toFixed(1)}°`);
                 }
                 if (key === 'e') {
-                    bi.polar.angleA -= 0.1;
-                    bi.polar.angleB -= 0.1;
-                    console.log(`[BINAURAL] Polar angle: ${(bi.polar.angleA * 180 / Math.PI).toFixed(1)}°`);
+                    QMESH.camera.theta -= 0.1;
+                    console.log(`[CAMERA] Orbit: ${(QMESH.camera.theta * 180 / Math.PI).toFixed(1)}°`);
                 }
 
                 // +/- adjust mesh scale
@@ -4798,10 +4807,10 @@
                 QMESH.camera.phi = 0;
                 QMESH.camera.distance = 1.0;
                 QMESH.camera.dragging = false;
-                // Reset polar positions (triquetra: lower-left/lower-right)
+                // Reset polar positions (triquetra: 150°/30° for canvas coords)
                 QMESH.binaural.polar.distance = 1.25;
-                QMESH.binaural.polar.angleA = (7 * Math.PI / 6);  // 210° lower-left
-                QMESH.binaural.polar.angleB = (11 * Math.PI / 6); // 330° lower-right
+                QMESH.binaural.polar.angleA = (5 * Math.PI / 6);  // 150° lower-left
+                QMESH.binaural.polar.angleB = (Math.PI / 6);      // 30° lower-right
             }
 
             // F key: Start release
