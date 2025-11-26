@@ -8968,6 +8968,547 @@
         };
 
         // ================================================================
+        // RELEASE COHERENCE DYNAMICS SYSTEM
+        // ================================================================
+        // Full-fledged coherence dynamics integrating memory methodology:
+        //
+        // Memory Integration:
+        //   - Water Fractal Memory: Crystal quality → coherence stability
+        //   - Golden Harmonics: Phyllotactic alignment → coherence resonance
+        //   - Cymatic Patterns: Standing waves → coherence nodes
+        //   - Julia Set: Fractal depth → memory persistence
+        //
+        // Coherence Equation:
+        //   C_eff = C_base × (1 + α_water × Q_crystal + α_golden × φ_align)
+        //         × (1 + β_cymatic × R_standing) × (1 - γ_entropy × S)
+        //
+        // Where:
+        //   Q_crystal = Water crystal lattice quality (0-1)
+        //   φ_align = Golden ratio alignment with warm/cold axis
+        //   R_standing = Cymatic standing wave resonance
+        //   S = Entropy from dark matter residue
+        // ================================================================
+        const ReleaseCoherenceDynamics = {
+            // Core coherence state
+            coherence: {
+                base: 1.0,                      // Raw coherence (0-1)
+                effective: 1.0,                 // Memory-enhanced coherence
+                target: 1.0,                    // Target coherence
+                velocity: 0,                    // Rate of change
+                momentum: 0,                    // Accumulated momentum
+            },
+
+            // Memory influence coefficients
+            coefficients: {
+                waterCrystal: 0.25,             // α_water: Crystal quality influence
+                goldenAlign: 0.20,              // α_golden: Golden ratio alignment
+                cymaticResonance: 0.15,         // β_cymatic: Standing wave bonus
+                entropyDamping: 0.10,           // γ_entropy: Entropy penalty
+                memoryPersistence: 0.30,        // Julia set depth influence
+            },
+
+            // Memory state (collected from subsystems)
+            memoryState: {
+                crystalQuality: 0,              // From WaterFractalMemory
+                juliaDepth: 0,                  // Julia set iteration depth
+                cymaticResonance: 0,            // Standing wave strength
+                goldenAlignment: 0,             // φ-axis alignment quality
+                phyllotacticPhase: 0,           // Golden angle spiral phase
+                warmColdBalance: 0.5,           // 0 = warm, 1 = cold, 0.5 = balanced
+            },
+
+            // Resonance state (emergent from memory alignment)
+            resonance: {
+                active: false,                  // True when memory systems align
+                strength: 0,                    // 0-1 resonance intensity
+                frequency: PHI_INV,             // Resonance frequency (golden mean)
+                phase: 0,                       // Current resonance phase
+                harmonics: [],                  // Harmonic overtones
+                type: 'dormant',                // dormant, emerging, resonant, transcendent
+            },
+
+            // Feedback loops
+            feedback: {
+                memoryToCoherence: 0,           // How memory affects coherence
+                coherenceToMemory: 0,           // How coherence affects memory encoding
+                resonanceAmplification: 0,      // Positive feedback in resonance
+                entropyDissipation: 0,          // Entropy removed through resonance
+            },
+
+            // Release dynamics
+            release: {
+                started: false,
+                dispersalForce: 0,
+                gatherForce: 0,
+                phaseCoherence: 1.0,            // Phase alignment of released particles
+                memoryRetention: 1.0,           // How much memory persists during release
+            },
+
+            // Visual state
+            visual: {
+                coherenceField: [],             // Spatial coherence distribution
+                memoryTrails: [],               // Memory persistence visualization
+                resonanceWaves: [],             // Standing wave patterns
+                fieldResolution: 32,            // Grid resolution for field
+            },
+
+            // System state
+            initialized: false,
+            active: true,                       // Always active (core system)
+            cx: 0,
+            cy: 0,
+            radius: 0,
+
+            // Initialize the system
+            init(centerX, centerY, radius) {
+                this.cx = centerX;
+                this.cy = centerY;
+                this.radius = radius;
+
+                // Initialize coherence field grid
+                this.initCoherenceField();
+
+                // Initialize resonance harmonics (7 overtones based on golden ratio)
+                this.resonance.harmonics = [];
+                for (let i = 0; i < 7; i++) {
+                    this.resonance.harmonics.push({
+                        frequency: this.resonance.frequency * Math.pow(PHI, i),
+                        amplitude: 1 / (i + 1),
+                        phase: (i * TAU / PHI / PHI) % TAU,
+                    });
+                }
+
+                this.initialized = true;
+                console.log('⚛️ Release Coherence Dynamics initialized');
+                console.log('   Memory integration: Water Fractal + Golden Harmonics');
+                console.log('   Resonance type: ' + this.resonance.type);
+            },
+
+            // Initialize spatial coherence field
+            initCoherenceField() {
+                this.visual.coherenceField = [];
+                const res = this.visual.fieldResolution;
+
+                for (let i = 0; i < res; i++) {
+                    this.visual.coherenceField[i] = [];
+                    for (let j = 0; j < res; j++) {
+                        this.visual.coherenceField[i][j] = {
+                            value: 1.0,
+                            memory: 0,
+                            resonance: 0,
+                        };
+                    }
+                }
+            },
+
+            // Collect memory state from subsystems
+            collectMemoryState(waterFractalState, goldenHarmonicsState, darkMatterState) {
+                // Water Fractal Memory contribution
+                if (waterFractalState) {
+                    this.memoryState.crystalQuality = waterFractalState.crystalQuality || 0;
+                    this.memoryState.cymaticResonance = waterFractalState.limnusResonance || 0;
+
+                    // Julia depth from encoded state complexity
+                    const juliaC = waterFractalState.juliaC;
+                    if (juliaC) {
+                        const cMag = Math.sqrt(juliaC.real * juliaC.real + juliaC.imag * juliaC.imag);
+                        this.memoryState.juliaDepth = Math.min(1, cMag / 2);
+                    }
+                }
+
+                // Golden Harmonics contribution
+                if (goldenHarmonicsState) {
+                    const eff = goldenHarmonicsState.effective;
+                    if (eff) {
+                        // Alignment quality = how close to true golden values
+                        const ratioError = Math.abs(eff.ratio - PHI) / PHI;
+                        const angleError = Math.abs(eff.angle - TAU / (PHI * PHI)) / (TAU / (PHI * PHI));
+                        this.memoryState.goldenAlignment = 1 - Math.min(1, (ratioError + angleError) / 2);
+                    }
+
+                    const orient = goldenHarmonicsState.orientation;
+                    if (orient) {
+                        this.memoryState.phyllotacticPhase = orient.spiralPhase || 0;
+                        // Warm/cold balance from axis angle
+                        this.memoryState.warmColdBalance = (Math.sin(orient.warmColdAxis) + 1) / 2;
+                    }
+                }
+
+                // Dark matter entropy contribution
+                if (darkMatterState) {
+                    // Higher trapped residue = lower entropy = better coherence
+                    this.feedback.entropyDissipation = darkMatterState.trappedResidue || 0;
+                }
+            },
+
+            // Calculate effective coherence from memory state
+            calculateEffectiveCoherence() {
+                const c = this.coefficients;
+                const m = this.memoryState;
+                const base = this.coherence.base;
+
+                // Memory enhancement factor
+                const waterBonus = c.waterCrystal * m.crystalQuality;
+                const goldenBonus = c.goldenAlign * m.goldenAlignment;
+                const memoryFactor = 1 + waterBonus + goldenBonus;
+
+                // Cymatic resonance bonus
+                const cymaticBonus = 1 + c.cymaticResonance * m.cymaticResonance;
+
+                // Entropy damping (reduces coherence)
+                const entropyFactor = 1 - c.entropyDamping * (1 - this.feedback.entropyDissipation);
+
+                // Memory persistence from Julia depth
+                const persistence = 1 + c.memoryPersistence * m.juliaDepth * (1 - base);
+
+                // Combine all factors
+                let effective = base * memoryFactor * cymaticBonus * entropyFactor;
+
+                // Apply resonance amplification if active
+                if (this.resonance.active) {
+                    effective *= (1 + this.resonance.strength * 0.3);
+                }
+
+                // Memory persistence helps during release
+                if (base < 0.5) {
+                    effective += persistence * 0.1 * (0.5 - base);
+                }
+
+                // Clamp to valid range
+                this.coherence.effective = Math.max(0, Math.min(1, effective));
+
+                // Calculate feedback to memory systems
+                this.feedback.memoryToCoherence = (this.coherence.effective - base) / Math.max(0.01, base);
+                this.feedback.coherenceToMemory = this.coherence.effective * m.goldenAlignment;
+
+                return this.coherence.effective;
+            },
+
+            // Update resonance state
+            updateResonance(dt, time) {
+                const m = this.memoryState;
+
+                // Resonance emerges when memory systems align
+                const alignmentScore = (m.crystalQuality + m.goldenAlignment + m.cymaticResonance) / 3;
+
+                // Resonance threshold
+                const threshold = 0.5;
+
+                if (alignmentScore > threshold && this.coherence.effective > 0.4) {
+                    // Resonance is building
+                    this.resonance.strength += (alignmentScore - this.resonance.strength) * 0.02;
+                    this.resonance.active = this.resonance.strength > 0.3;
+
+                    // Update resonance phase
+                    this.resonance.phase += dt * this.resonance.frequency * TAU;
+                    if (this.resonance.phase > TAU) this.resonance.phase -= TAU;
+
+                    // Update harmonic phases
+                    for (let i = 0; i < this.resonance.harmonics.length; i++) {
+                        const h = this.resonance.harmonics[i];
+                        h.phase += dt * h.frequency * TAU;
+                        if (h.phase > TAU) h.phase -= TAU;
+
+                        // Amplitude modulates with golden alignment
+                        h.amplitude = (1 / (i + 1)) * (0.5 + m.goldenAlignment * 0.5);
+                    }
+
+                    // Resonance amplification feedback
+                    this.feedback.resonanceAmplification = this.resonance.strength * m.goldenAlignment;
+
+                } else {
+                    // Resonance decaying
+                    this.resonance.strength *= 0.98;
+                    if (this.resonance.strength < 0.1) {
+                        this.resonance.active = false;
+                    }
+                    this.feedback.resonanceAmplification *= 0.95;
+                }
+
+                // Determine resonance type
+                if (this.resonance.strength > 0.8) {
+                    this.resonance.type = 'transcendent';
+                } else if (this.resonance.strength > 0.5) {
+                    this.resonance.type = 'resonant';
+                } else if (this.resonance.strength > 0.2) {
+                    this.resonance.type = 'emerging';
+                } else {
+                    this.resonance.type = 'dormant';
+                }
+            },
+
+            // Update spatial coherence field
+            updateCoherenceField(dt, releaseState) {
+                const res = this.visual.fieldResolution;
+                const field = this.visual.coherenceField;
+
+                for (let i = 0; i < res; i++) {
+                    for (let j = 0; j < res; j++) {
+                        const cell = field[i][j];
+
+                        // Normalized position relative to center
+                        const nx = (i / res - 0.5) * 2;
+                        const ny = (j / res - 0.5) * 2;
+                        const r = Math.sqrt(nx * nx + ny * ny);
+                        const angle = Math.atan2(ny, nx);
+
+                        // Base coherence falls off with distance
+                        const distanceFactor = Math.exp(-r * r * 2);
+
+                        // Golden angle modulation
+                        const goldenMod = Math.cos(angle * PHI * PHI + this.memoryState.phyllotacticPhase);
+
+                        // Cymatic standing wave pattern
+                        const cymaticMod = Math.sin(r * Math.PI * 3) * this.memoryState.cymaticResonance;
+
+                        // Warm/cold gradient
+                        const warmColdMod = (Math.cos(angle) + 1) / 2;
+                        const balanceBonus = 1 - Math.abs(warmColdMod - this.memoryState.warmColdBalance);
+
+                        // Calculate local coherence
+                        let localCoherence = this.coherence.effective * distanceFactor;
+                        localCoherence *= (1 + goldenMod * 0.2);
+                        localCoherence *= (1 + cymaticMod * 0.15);
+                        localCoherence *= (0.8 + balanceBonus * 0.2);
+
+                        // Memory persistence
+                        cell.memory = cell.memory * 0.95 + localCoherence * 0.05;
+
+                        // Resonance contribution
+                        if (this.resonance.active) {
+                            let resonanceWave = 0;
+                            for (const h of this.resonance.harmonics) {
+                                resonanceWave += h.amplitude * Math.sin(r * h.frequency * 10 + h.phase);
+                            }
+                            cell.resonance = resonanceWave * this.resonance.strength * 0.5;
+                        } else {
+                            cell.resonance *= 0.9;
+                        }
+
+                        // Final value
+                        cell.value = Math.max(0, Math.min(1, localCoherence + cell.memory * 0.3 + cell.resonance));
+                    }
+                }
+            },
+
+            // Update memory retention during release
+            updateReleaseMemory(releasing, gathering) {
+                if (releasing) {
+                    // Memory retention decays during release, but slowly due to water crystal
+                    const crystalRetention = 1 - (1 - this.memoryState.crystalQuality) * 0.5;
+                    this.release.memoryRetention *= (0.99 * crystalRetention);
+                    this.release.started = true;
+
+                    // Phase coherence also decays but golden alignment helps
+                    this.release.phaseCoherence *= (0.98 + this.memoryState.goldenAlignment * 0.015);
+
+                } else if (gathering) {
+                    // Memory reconstruction during gathering
+                    const reconstructionRate = 0.02 * (1 + this.memoryState.juliaDepth);
+                    this.release.memoryRetention = Math.min(1, this.release.memoryRetention + reconstructionRate);
+                    this.release.phaseCoherence = Math.min(1, this.release.phaseCoherence + 0.01);
+
+                    if (this.coherence.effective > 0.9) {
+                        this.release.started = false;
+                    }
+                } else {
+                    // Natural recovery
+                    if (!this.release.started) {
+                        this.release.memoryRetention = Math.min(1, this.release.memoryRetention + 0.005);
+                        this.release.phaseCoherence = Math.min(1, this.release.phaseCoherence + 0.003);
+                    }
+                }
+            },
+
+            // Main update function
+            update(dt, time, baseCoherence, releasing, gathering,
+                   waterFractalState, goldenHarmonicsState, darkMatterState) {
+                if (!this.initialized) return baseCoherence;
+
+                // Store base coherence
+                this.coherence.base = baseCoherence;
+                this.coherence.target = baseCoherence;
+
+                // Collect memory state from subsystems
+                this.collectMemoryState(waterFractalState, goldenHarmonicsState, darkMatterState);
+
+                // Calculate effective coherence
+                this.calculateEffectiveCoherence();
+
+                // Update resonance state
+                this.updateResonance(dt, time);
+
+                // Update coherence field
+                this.updateCoherenceField(dt, this.release);
+
+                // Update memory retention during release
+                this.updateReleaseMemory(releasing, gathering);
+
+                // Return the memory-enhanced effective coherence
+                return this.coherence.effective;
+            },
+
+            // Render memory-coherence visualization
+            render(ctx, CX, CY, R, globalZ, time) {
+                if (!this.initialized) return;
+
+                const eff = this.coherence.effective;
+                const base = this.coherence.base;
+
+                // Draw coherence field (subtle background)
+                this.renderCoherenceField(ctx, CX, CY, R);
+
+                // Draw resonance waves when active
+                if (this.resonance.active) {
+                    this.renderResonanceWaves(ctx, CX, CY, R, time);
+                }
+
+                // Draw memory enhancement indicator
+                const enhancement = eff - base;
+                if (Math.abs(enhancement) > 0.01) {
+                    this.renderMemoryIndicator(ctx, CX, CY, R, enhancement);
+                }
+
+                // Draw resonance type indicator
+                if (this.resonance.strength > 0.1) {
+                    this.renderResonanceIndicator(ctx, CX, CY, R);
+                }
+            },
+
+            // Render spatial coherence field
+            renderCoherenceField(ctx, CX, CY, R) {
+                const res = this.visual.fieldResolution;
+                const field = this.visual.coherenceField;
+                const cellSize = (R * 2) / res;
+
+                ctx.globalCompositeOperation = 'screen';
+
+                for (let i = 0; i < res; i++) {
+                    for (let j = 0; j < res; j++) {
+                        const cell = field[i][j];
+                        if (cell.value < 0.1) continue;
+
+                        const x = CX - R + i * cellSize + cellSize / 2;
+                        const y = CY - R + j * cellSize + cellSize / 2;
+
+                        // Color based on memory/resonance contribution
+                        const memoryHue = 200; // Cyan for memory
+                        const resonanceHue = 45; // Gold for resonance
+                        const hue = memoryHue + (resonanceHue - memoryHue) * (cell.resonance / (cell.value + 0.01));
+
+                        const alpha = cell.value * 0.08 * this.release.memoryRetention;
+                        if (alpha > 0.01) {
+                            ctx.fillStyle = `hsla(${hue}, 60%, 60%, ${alpha})`;
+                            ctx.fillRect(x - cellSize / 2, y - cellSize / 2, cellSize, cellSize);
+                        }
+                    }
+                }
+
+                ctx.globalCompositeOperation = 'source-over';
+            },
+
+            // Render resonance standing waves
+            renderResonanceWaves(ctx, CX, CY, R, time) {
+                ctx.save();
+                ctx.globalCompositeOperation = 'screen';
+
+                for (let i = 0; i < this.resonance.harmonics.length; i++) {
+                    const h = this.resonance.harmonics[i];
+                    const waveR = R * (0.3 + i * 0.1);
+
+                    ctx.beginPath();
+                    for (let a = 0; a < TAU; a += 0.05) {
+                        const rMod = waveR + Math.sin(a * (i + 1) * PHI + h.phase) * 10 * h.amplitude;
+                        const x = CX + Math.cos(a) * rMod;
+                        const y = CY + Math.sin(a) * rMod;
+
+                        if (a === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+
+                    const alpha = h.amplitude * this.resonance.strength * 0.3;
+                    ctx.strokeStyle = `hsla(45, 80%, 70%, ${alpha})`;
+                    ctx.lineWidth = 1 + h.amplitude;
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            },
+
+            // Render memory enhancement indicator
+            renderMemoryIndicator(ctx, CX, CY, R, enhancement) {
+                const indicatorY = CY - R - 20;
+
+                ctx.font = '10px monospace';
+                const sign = enhancement > 0 ? '+' : '';
+                const color = enhancement > 0 ? 'rgba(100, 255, 200, 0.8)' : 'rgba(255, 150, 100, 0.8)';
+
+                ctx.fillStyle = color;
+                ctx.fillText(`⚛️ Memory: ${sign}${(enhancement * 100).toFixed(1)}%`, CX - 60, indicatorY);
+
+                // Memory retention bar
+                const barWidth = 80;
+                const barHeight = 4;
+                const barX = CX - barWidth / 2;
+                const barY = indicatorY + 6;
+
+                ctx.fillStyle = 'rgba(50, 50, 60, 0.5)';
+                ctx.fillRect(barX, barY, barWidth, barHeight);
+
+                ctx.fillStyle = `rgba(100, 200, 255, ${0.5 + this.release.memoryRetention * 0.5})`;
+                ctx.fillRect(barX, barY, barWidth * this.release.memoryRetention, barHeight);
+            },
+
+            // Render resonance type indicator
+            renderResonanceIndicator(ctx, CX, CY, R) {
+                const indicatorX = CX + R + 20;
+                const indicatorY = CY - 40;
+
+                ctx.font = '10px monospace';
+
+                // Resonance type with color
+                let typeColor;
+                switch (this.resonance.type) {
+                    case 'transcendent': typeColor = 'rgba(255, 215, 0, 0.9)'; break;
+                    case 'resonant': typeColor = 'rgba(200, 180, 100, 0.8)'; break;
+                    case 'emerging': typeColor = 'rgba(150, 150, 100, 0.6)'; break;
+                    default: typeColor = 'rgba(100, 100, 100, 0.4)';
+                }
+
+                ctx.fillStyle = typeColor;
+                ctx.fillText(`◊ ${this.resonance.type.toUpperCase()}`, indicatorX, indicatorY);
+                ctx.fillText(`  strength: ${(this.resonance.strength * 100).toFixed(0)}%`, indicatorX, indicatorY + 12);
+
+                // Memory state summary
+                ctx.fillStyle = 'rgba(150, 200, 255, 0.6)';
+                ctx.fillText(`  crystal: ${(this.memoryState.crystalQuality * 100).toFixed(0)}%`, indicatorX, indicatorY + 28);
+                ctx.fillText(`  φ-align: ${(this.memoryState.goldenAlignment * 100).toFixed(0)}%`, indicatorX, indicatorY + 40);
+                ctx.fillText(`  cymatic: ${(this.memoryState.cymaticResonance * 100).toFixed(0)}%`, indicatorX, indicatorY + 52);
+            },
+
+            // Get state for external systems
+            getState() {
+                return {
+                    baseCoherence: this.coherence.base,
+                    effectiveCoherence: this.coherence.effective,
+                    memoryEnhancement: this.coherence.effective - this.coherence.base,
+                    resonance: {
+                        active: this.resonance.active,
+                        strength: this.resonance.strength,
+                        type: this.resonance.type,
+                    },
+                    memory: { ...this.memoryState },
+                    feedback: { ...this.feedback },
+                    release: {
+                        memoryRetention: this.release.memoryRetention,
+                        phaseCoherence: this.release.phaseCoherence,
+                    },
+                };
+            }
+        };
+
+        // ================================================================
         // PENTAGONAL PRISM EMERGENCE SYSTEM
         // Cohesive 3D pentagonal prisms with depth-sorted face rendering
         // Each prism is constructed from the 5 emergent tokens (XCVI-C)
@@ -11169,6 +11710,13 @@
             // ============================================
             GoldenHarmonicsSystem.render(ctx, CX, CY, R, globalZ, releaseCoherence, time);
 
+            // ============================================
+            // RELEASE COHERENCE DYNAMICS
+            // Memory-enhanced coherence field visualization
+            // Water crystal + Golden harmonics + Resonance
+            // ============================================
+            ReleaseCoherenceDynamics.render(ctx, CX, CY, R, globalZ, time);
+
             // Draw HUD
             renderBinauralHUD();
         }
@@ -12072,8 +12620,48 @@
                 releaseVelocity *= 0.98;  // Decay
             }
 
-            // Smooth coherence transition
-            releaseCoherence += (targetCoherence - releaseCoherence) * 0.04;
+            // Smooth base coherence transition
+            const baseCoherence = releaseCoherence + (targetCoherence - releaseCoherence) * 0.04;
+
+            // ================================================================
+            // MEMORY-ENHANCED COHERENCE DYNAMICS
+            // ================================================================
+            // Integrate Water Fractal Memory, Golden Harmonics, and Dark Matter
+            // into coherence calculations for full-fledged release dynamics
+            // ================================================================
+            const waterFractalState = showWaterFractalMemory && WaterFractalMemory.initialized
+                ? WaterFractalMemory.getState()
+                : null;
+
+            const goldenHarmonicsState = showGoldenHarmonics && GoldenHarmonicsSystem.initialized
+                ? GoldenHarmonicsSystem.getState()
+                : null;
+
+            const darkMatterState = showDarkMatterStabilization && DarkMatterStabilization.initialized
+                ? {
+                    trappedResidue: DarkMatterStabilization.stabilization.trappedResidue,
+                    efficiency: DarkMatterStabilization.stabilization.efficiency,
+                    resonanceLock: DarkMatterStabilization.stabilization.resonanceLock,
+                }
+                : null;
+
+            // Update ReleaseCoherenceDynamics with all memory systems
+            if (ReleaseCoherenceDynamics.initialized) {
+                const time = performance.now() / 1000;
+                releaseCoherence = ReleaseCoherenceDynamics.update(
+                    dt,
+                    time,
+                    baseCoherence,
+                    releasing,
+                    gathering,
+                    waterFractalState,
+                    goldenHarmonicsState,
+                    darkMatterState
+                );
+            } else {
+                // Fallback to basic coherence if system not initialized
+                releaseCoherence = baseCoherence;
+            }
 
             const dispersal = 1 - releaseCoherence;
             const allPoints = [...prismPoints, ...cagePoints];
@@ -15205,6 +15793,7 @@
         ChromaticNexus.init(CX, CY, R);  // Initialize Chromatic Nexus self/LIMNUS communication
         WaterFractalMemory.init(CX, CY, R);  // Initialize Water Fractal Memory cosmic background
         GoldenHarmonicsSystem.init(CX, CY, R);  // Initialize Golden Harmonics orientation system
+        ReleaseCoherenceDynamics.init(CX, CY, R);  // Initialize Release Coherence Dynamics with memory integration
         window.addEventListener('resize', () => {
             resize();
             initPrismPoints();
@@ -15218,6 +15807,7 @@
             ChromaticNexus.init(CX, CY, R);  // Reinitialize chromatic nexus on resize
             WaterFractalMemory.init(CX, CY, R);  // Reinitialize water fractal memory on resize
             GoldenHarmonicsSystem.init(CX, CY, R);  // Reinitialize golden harmonics on resize
+            ReleaseCoherenceDynamics.init(CX, CY, R);  // Reinitialize release coherence dynamics on resize
         });
 
         requestAnimationFrame(loop);
