@@ -4695,9 +4695,10 @@
                     QMESH.opacity = opacities[(currentIdx + 1) % opacities.length];
                     console.log(`[BINAURAL] Opacity: ${QMESH.opacity}`);
                 }
-                if (key === 'g') {
-                    // Toggle edge glow
+                if (key === 'y') {
+                    // Toggle edge glow (Y key)
                     QMESH.edgeGlow = !QMESH.edgeGlow;
+                    console.log(`[BINAURAL] Edge glow: ${QMESH.edgeGlow}`);
                 }
                 if (key === 'i') {
                     // Toggle interference visualization
