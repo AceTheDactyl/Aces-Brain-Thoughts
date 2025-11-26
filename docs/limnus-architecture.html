@@ -2445,10 +2445,11 @@
                 const nodeB = QMESH.nodes[edge.to];
                 if (!nodeA || !nodeB) continue;
 
-                const x1 = nodeA.px || (nodeA.x + CX);
-                const y1 = nodeA.py || (nodeA.y + CY);
-                const x2 = nodeB.px || (nodeB.x + CX);
-                const y2 = nodeB.py || (nodeB.y + CY);
+                // Node x,y are ALREADY absolute screen coords (include CX,CY)
+                const x1 = nodeA.x;
+                const y1 = nodeA.y;
+                const x2 = nodeB.x;
+                const y2 = nodeB.y;
 
                 // Transform to Mesh A space
                 const mA1 = toMeshASpace(x1, y1, nodeA);
@@ -2491,10 +2492,11 @@
                 const nodeB = QMESH.nodes[edge.to];
                 if (!nodeA || !nodeB) continue;
 
-                const x1 = nodeA.px || (nodeA.x + CX);
-                const y1 = nodeA.py || (nodeA.y + CY);
-                const x2 = nodeB.px || (nodeB.x + CX);
-                const y2 = nodeB.py || (nodeB.y + CY);
+                // Node x,y are ALREADY absolute screen coords (include CX,CY)
+                const x1 = nodeA.x;
+                const y1 = nodeA.y;
+                const x2 = nodeB.x;
+                const y2 = nodeB.y;
 
                 // Transform to Mesh B space
                 const mB1 = toMeshBSpace(x1, y1, nodeA);
@@ -2536,8 +2538,9 @@
                 for (const node of QMESH.nodes) {
                     if (!node.qJ || node.qJ < 0.1) continue;
 
-                    const x = node.px || (node.x + CX);
-                    const y = node.py || (node.y + CY);
+                    // Node x,y are ALREADY absolute screen coords
+                    const x = node.x;
+                    const y = node.y;
 
                     // Draw on Mesh A
                     const mA = toMeshASpace(x, y, node);
