@@ -1441,10 +1441,10 @@
             maxConnectionDist: 100,         // Updated in generateQuantumMesh()
             entanglementThreshold: 0.05,    // Min probability for visible edge
 
-            // View controls
-            opacity: 0.6,
-            edgeGlow: true,
-            showWavefunction: true,
+            // View controls - DREAMY ethereal settings
+            opacity: 0.35,              // Lower for dreamy transparency + performance
+            edgeGlow: false,            // Disabled for performance
+            showWavefunction: false,    // Disabled for cleaner dreamy look
             pulsePhase: 0,          // Animation phase for quantum pulsing
 
             // ================================================================
@@ -1463,7 +1463,7 @@
             binaural: {
                 enabled: true,
                 polar: {
-                    distance: 1.25,                     // Distance from LIMNUS center (in R units)
+                    distance: 2.2,                      // INCREASED for more dreamy separation
                     angleA: Math.PI,                    // Mesh A at 180° (LEFT)
                     angleB: 0,                          // Mesh B at 0° (RIGHT)
                     // Computed positions (updated on render)
@@ -1471,21 +1471,21 @@
                     posB: { x: 0, y: 0 },
                 },
 
-                // Mesh A - polar positive (warm/existence)
+                // Mesh A - dreamy warm rose
                 meshA: {
-                    scale: 0.62,                     // Smaller than LIMNUS
-                    frequency: 1.0,                  // Base oscillation frequency
-                    phase: 0,                        // Current phase (animated)
-                    baseColor: [255, 140, 80],       // Warm orange (energy/existence)
+                    scale: 0.5,                      // Smaller for dreamy floating feel
+                    frequency: 0.7,                  // Slower, dreamier oscillation
+                    phase: 0,
+                    baseColor: [255, 150, 150],      // Soft rose pink (dreamy warm)
                     timbre: 'warm',
                 },
 
-                // Mesh B - polar negative (cool/relational)
+                // Mesh B - dreamy cool azure
                 meshB: {
-                    scale: 0.62,
-                    frequency: 1.0618,               // φ⁻¹ offset creates golden beat
+                    scale: 0.5,
+                    frequency: 0.75,                 // Gentle beat difference
                     phase: 0,
-                    baseColor: [80, 180, 255],       // Cool cyan (relational/stability)
+                    baseColor: [150, 180, 255],      // Soft lavender blue (dreamy cool)
                     timbre: 'cool',
                 },
 
@@ -1499,10 +1499,10 @@
                 entrainmentDepth: 0,                // Neural entrainment measure
                 coherenceField: 0,                  // Phase coherence across triad
 
-                // Visual parameters
+                // Visual parameters - DREAMY low opacity for performance + ethereal look
                 showInterference: true,             // Show beat wave pattern
                 showResonanceLines: true,           // Show A↔LIMNUS↔B connections
-                interferenceOpacity: 0.4,           // Beat visualization alpha
+                interferenceOpacity: 0.2,           // Lower opacity = less lag + dreamier
             },
 
             // ================================================================
@@ -2336,12 +2336,12 @@
                 const beatPhase = bi.beatPhase * TAU;
                 const beatAmp = bi.beatAmplitude;
 
-                // Draw interference rings at LIMNUS center
-                for (let ring = 0; ring < 5; ring++) {
-                    const ringRadius = R * (0.3 + ring * 0.15);
-                    const ringPhase = beatPhase + ring * 0.5;
+                // Draw interference rings at LIMNUS center (reduced for performance)
+                for (let ring = 0; ring < 3; ring++) {
+                    const ringRadius = R * (0.3 + ring * 0.2);
+                    const ringPhase = beatPhase + ring * 0.6;
                     const intensity = Math.sin(ringPhase) * 0.5 + 0.5;
-                    const alpha = QMESH.opacity * bi.interferenceOpacity * intensity * beatAmp;
+                    const alpha = QMESH.opacity * bi.interferenceOpacity * intensity * beatAmp * 0.7;
 
                     // Blend warm and cool colors based on beat phase
                     const blend = Math.sin(beatPhase) * 0.5 + 0.5;
@@ -4689,7 +4689,7 @@
                     // Red/warm (A) on LEFT, Blue/cool (B) on RIGHT
                     QMESH.binaural.polar.angleA = Math.PI;  // 180° = LEFT
                     QMESH.binaural.polar.angleB = 0;        // 0° = RIGHT
-                    QMESH.binaural.polar.distance = 1.25;
+                    QMESH.binaural.polar.distance = 2.2;    // Dreamy separation
                     // Reset camera to straight-on view (0,0,0)
                     QMESH.camera.theta = 0;
                     QMESH.camera.phi = 0;
@@ -4847,10 +4847,10 @@
                 QMESH.camera.phi = 0;
                 QMESH.camera.distance = 1.0;
                 QMESH.camera.dragging = false;
-                // Reset polar positions (90° horizontal: LEFT/RIGHT)
-                QMESH.binaural.polar.distance = 1.25;
-                QMESH.binaural.polar.angleA = Math.PI;  // 180° = LEFT (red/warm)
-                QMESH.binaural.polar.angleB = 0;        // 0° = RIGHT (blue/cool)
+                // Reset polar positions (90° horizontal: LEFT/RIGHT) - DREAMY
+                QMESH.binaural.polar.distance = 2.2;
+                QMESH.binaural.polar.angleA = Math.PI;  // 180° = LEFT (rose)
+                QMESH.binaural.polar.angleB = 0;        // 0° = RIGHT (azure)
             }
 
             // F key: Start release
