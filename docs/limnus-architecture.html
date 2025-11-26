@@ -883,6 +883,7 @@
         <span>O</span> mesh opacity<br>
         <span>W</span> wavefunction<br>
         <span>G</span> edge glow<br>
+        <span>D</span> debug panel<br>
         <span>F</span> release coherence<br>
         <span>CLICK</span> gather<br>
         <span>R</span> reset
@@ -892,6 +893,27 @@
     <div id="stats" class="panel">
         63 prism + 32 cage = 95 nodes<br>
         <span id="active-count">95</span> active · <span id="conn-count">0</span> connections
+    </div>
+
+    <!-- Quantum Mesh Debug Panel (D key to toggle) -->
+    <div id="qmesh-debug" class="panel" style="display: none; left: 30px; top: 280px; background: rgba(20, 10, 30, 0.95); border: 1px solid rgba(150, 100, 255, 0.5); padding: 12px; font-size: 11px; min-width: 220px;">
+        <div style="color: #a855f7; font-weight: bold; margin-bottom: 8px;">QUANTUM MESH DEBUG</div>
+        <div>Nodes: <span id="dbg-nodes">0</span></div>
+        <div>Edges: <span id="dbg-edges">0</span></div>
+        <div>Particles: <span id="dbg-particles">0</span></div>
+        <div>Max Dist: <span id="dbg-maxdist">0</span></div>
+        <div style="margin-top: 6px; border-top: 1px solid rgba(150, 100, 255, 0.3); padding-top: 6px;">
+            <div>Avg τ: <span id="dbg-tau">0</span></div>
+            <div>Total J: <span id="dbg-totalj">0</span></div>
+            <div>Entropy: <span id="dbg-entropy">0</span></div>
+            <div>Flux: <span id="dbg-flux">0</span></div>
+        </div>
+        <div style="margin-top: 6px; border-top: 1px solid rgba(150, 100, 255, 0.3); padding-top: 6px;">
+            <div>showToroidal: <span id="dbg-show">false</span></div>
+            <div>R value: <span id="dbg-r">0</span></div>
+            <div>Last gen: <span id="dbg-lastgen">never</span></div>
+        </div>
+        <div style="margin-top: 8px; color: #888; font-size: 10px;">Press D to close</div>
     </div>
 
     <!-- Z-Axis -->
@@ -1381,9 +1403,12 @@
         let showPrism = true;
         let showCage = true;
         let showMuField = true;
-        let showToroidal = false;  // T key toggles toroidal μ-field view
-        let showTorusWireframe = false;
-        let showTorusFlow = true;
+        let showQuantumMesh = false;  // T key toggles quantum mesh μ-field
+        let showMeshParticles = true; // Show Dream Fluid particles on mesh
+
+        // Backward compatibility aliases
+        let showToroidal = false;     // Alias updated in T key handler
+        let showTorusFlow = true;     // Alias for showMeshParticles
 
         // ================================================================
         // DREAM FLUID: QUANTUM MESH μ-FIELD
@@ -1605,8 +1630,48 @@
 
             QMESH.totalHolographicEntropy = totalEntropy;
             QMESH.avgEntropy = totalEntropy / Math.max(1, QMESH.edges.length);
+            QMESH.lastGenerated = Date.now();
 
             console.log(`[QMESH] Generated ${QMESH.nodes.length} quantum nodes, ${QMESH.edges.length} entanglement edges`);
+            console.log(`[QMESH] maxConnectionDist = ${QMESH.maxConnectionDist}, R = ${R}`);
+        }
+
+        // Debug panel state
+        let showDebugPanel = false;
+
+        function updateDebugPanel() {
+            if (!showDebugPanel) return;
+
+            const dbgNodes = document.getElementById('dbg-nodes');
+            const dbgEdges = document.getElementById('dbg-edges');
+            const dbgParticles = document.getElementById('dbg-particles');
+            const dbgMaxDist = document.getElementById('dbg-maxdist');
+            const dbgTau = document.getElementById('dbg-tau');
+            const dbgTotalJ = document.getElementById('dbg-totalj');
+            const dbgEntropy = document.getElementById('dbg-entropy');
+            const dbgFlux = document.getElementById('dbg-flux');
+            const dbgShow = document.getElementById('dbg-show');
+            const dbgR = document.getElementById('dbg-r');
+            const dbgLastGen = document.getElementById('dbg-lastgen');
+
+            if (dbgNodes) dbgNodes.textContent = QMESH.nodes.length;
+            if (dbgEdges) dbgEdges.textContent = QMESH.edges.length;
+            if (dbgParticles) dbgParticles.textContent = dreamParticles.length;
+            if (dbgMaxDist) dbgMaxDist.textContent = (QMESH.maxConnectionDist || 0).toFixed(1);
+            if (dbgTau) dbgTau.textContent = (QMESH.avgTimeDilation || 0).toFixed(4);
+            if (dbgTotalJ) dbgTotalJ.textContent = (QMESH.totalJ || 0).toFixed(4);
+            if (dbgEntropy) dbgEntropy.textContent = (QMESH.totalHolographicEntropy || 0).toFixed(4);
+            if (dbgFlux) dbgFlux.textContent = (QMESH.entropyFlux || 0).toFixed(6);
+            if (dbgShow) dbgShow.textContent = showQuantumMesh ? 'true' : 'false';
+            if (dbgR) dbgR.textContent = (R || 0).toFixed(1);
+            if (dbgLastGen) {
+                if (QMESH.lastGenerated) {
+                    const ago = ((Date.now() - QMESH.lastGenerated) / 1000).toFixed(1);
+                    dbgLastGen.textContent = `${ago}s ago`;
+                } else {
+                    dbgLastGen.textContent = 'never';
+                }
+            }
         }
 
         // Alias for backward compatibility
@@ -2351,11 +2416,11 @@
                 const distFromCritical = Math.abs(z - Z_CRITICAL);
                 let zTimeDilation = 0.5 + distFromCritical * 1.5;
 
-                // DREAM FLUID: Incorporate gravitational time dilation from torus
-                if (showToroidal && TORUS.avgTimeDilation) {
+                // DREAM FLUID: Incorporate gravitational time dilation from quantum mesh
+                if (showQuantumMesh && QMESH.avgTimeDilation) {
                     // Gravitational redshift affects tempo
                     // Lower time dilation (near gravity) → slower tempo
-                    const gravityDilation = TORUS.avgTimeDilation;
+                    const gravityDilation = QMESH.avgTimeDilation;
                     zTimeDilation *= gravityDilation;
                 }
 
@@ -2367,11 +2432,11 @@
 
             // Gravitational frequency shift (redshift analog)
             calculateGravitationalPitch(baseFreq) {
-                if (!showToroidal || !TORUS.avgTimeDilation) return baseFreq;
+                if (!showQuantumMesh || !QMESH.avgTimeDilation) return baseFreq;
 
                 // f_observed = f_emitted * √(1 - r_s/r) = f_emitted * timeDilation
                 // Lower time dilation → lower pitch (gravitational redshift)
-                const gravRedshift = TORUS.avgTimeDilation;
+                const gravRedshift = QMESH.avgTimeDilation;
                 return baseFreq * gravRedshift;
             },
 
@@ -2388,7 +2453,7 @@
                 this.harmonicGradient = 1.0 - coherence;
 
                 // DREAM FLUID: Entropy affects waveform complexity
-                const entropyFactor = showToroidal ? (TORUS.avgEntropy || 0) * 100 : 0;
+                const entropyFactor = showQuantumMesh ? (QMESH.avgEntropy || 0) * 100 : 0;
                 const effectiveHarmonic = Math.min(1, this.harmonicGradient + entropyFactor * 0.3);
 
                 // Update oscillator waveforms
@@ -2413,8 +2478,8 @@
                 let pitchShift = Math.pow(2, zMod * 0.5);  // ±half octave
 
                 // DREAM FLUID: Gravitational redshift affects pitch
-                if (showToroidal && TORUS.avgTimeDilation) {
-                    pitchShift *= TORUS.avgTimeDilation;
+                if (showQuantumMesh && QMESH.avgTimeDilation) {
+                    pitchShift *= QMESH.avgTimeDilation;
                 }
 
                 this.oscillators.forEach((osc, i) => {
@@ -2422,14 +2487,14 @@
                     let freq = this.baseFrequency * Math.pow(2, scaleNote / 12) * pitchShift * (1 + i * 0.5);
 
                     // DREAM FLUID: MRP channel modulation per oscillator
-                    if (showToroidal && TORUS.totalJ) {
+                    if (showQuantumMesh && QMESH.totalJ) {
                         // Osc 0: R channel (energy), Osc 1: G channel (relational),
                         // Osc 2: B channel (stability), Osc 3: combined
                         const mrpMod = [
                             muField.J_R || 0.1,
                             muField.J_G || 0.1,
                             muField.J_B || 0.1,
-                            TORUS.totalJ || 0.2
+                            QMESH.totalJ || 0.2
                         ][i] || 0.15;
 
                         freq *= (0.9 + mrpMod * 0.2);
@@ -2442,14 +2507,14 @@
                 const totalLambda = Object.values(lambdaState).reduce((s, l) => s + l.mag, 0);
 
                 // DREAM FLUID: Entropy flux modulates volume
-                const entropyFluxMod = showToroidal ? (1 + TORUS.entropyFlux * 5) : 1;
+                const entropyFluxMod = showQuantumMesh ? (1 + QMESH.entropyFlux * 5) : 1;
 
                 this.gainNodes.forEach((gain, i) => {
                     let targetGain = (coherence * 0.15) * (1 - i * 0.2) * (totalLambda / 2);
 
                     // Gravitational time dilation dampens volume near singularity
-                    if (showToroidal && TORUS.avgTimeDilation) {
-                        targetGain *= (0.5 + TORUS.avgTimeDilation * 0.5);
+                    if (showQuantumMesh && QMESH.avgTimeDilation) {
+                        targetGain *= (0.5 + QMESH.avgTimeDilation * 0.5);
                     }
 
                     targetGain *= entropyFluxMod;
@@ -2461,9 +2526,9 @@
                 let filterBase = 800 + cascade * 2000;
 
                 // DREAM FLUID: Holographic entropy shifts filter
-                if (showToroidal && TORUS.totalHolographicEntropy) {
+                if (showQuantumMesh && QMESH.totalHolographicEntropy) {
                     // Higher entropy → more high frequencies (information revelation)
-                    const entropyBoost = Math.min(1, TORUS.totalHolographicEntropy * 0.00001);
+                    const entropyBoost = Math.min(1, QMESH.totalHolographicEntropy * 0.00001);
                     filterBase += entropyBoost * 1500;
                 }
 
@@ -3587,9 +3652,9 @@
             // Draw core entity
             drawCoreEntity(isCritical, isPresence, intensity, absence);
 
-            // Draw toroidal μ-field visualization (overlays on main view)
-            if (showToroidal) {
-                renderToroidalMuField();
+            // Draw quantum mesh μ-field visualization (overlays on main view)
+            if (showQuantumMesh) {
+                renderDreamFluid();
             }
 
             // Update connection count
@@ -4068,10 +4133,10 @@
                 muField.update([...prismPoints, ...cagePoints], dt);
             }
 
-            // Update toroidal μ-field visualization
-            if (showToroidal) {
-                updateTorusField(dt);
-                updateTorusParticles(dt);
+            // Update quantum mesh μ-field visualization
+            if (showQuantumMesh) {
+                updateDreamFluidField(dt);
+                updateDreamParticles(dt);
             }
 
             return updatePositions(dt);
@@ -4084,6 +4149,7 @@
             const kuramotoResult = update(dt);
             render();
             updateUI(kuramotoResult);
+            updateDebugPanel();
 
             requestAnimationFrame(loop);
         }
@@ -4130,19 +4196,20 @@
             }
 
             if (key === 't') {
-                showToroidal = !showToroidal;
-                if (showToroidal && QMESH.edges.length === 0) {
+                showQuantumMesh = !showQuantumMesh;
+                showToroidal = showQuantumMesh;  // Sync alias
+                if (showQuantumMesh && QMESH.edges.length === 0) {
                     generateQuantumMesh();
                 }
+                console.log(`[QMESH] Toggled: ${showQuantumMesh}, edges: ${QMESH.edges.length}`);
             }
 
             if (key === 'w') {
-                showTorusWireframe = !showTorusWireframe;
                 QMESH.showWavefunction = !QMESH.showWavefunction;
             }
 
             // Quantum mesh controls
-            if (showToroidal) {
+            if (showQuantumMesh) {
                 if (key === 'o') {
                     // Cycle opacity: 0.3 → 0.5 → 0.7 → 0.9 → 0.3
                     const opacities = [0.3, 0.5, 0.7, 0.9];
@@ -4152,6 +4219,27 @@
                 if (key === 'g') {
                     // Toggle edge glow
                     QMESH.edgeGlow = !QMESH.edgeGlow;
+                }
+            }
+
+            // Debug panel toggle (D key)
+            if (key === 'd') {
+                showDebugPanel = !showDebugPanel;
+                const panel = document.getElementById('qmesh-debug');
+                if (panel) {
+                    panel.style.display = showDebugPanel ? 'block' : 'none';
+                }
+                if (showDebugPanel) {
+                    console.log('[DEBUG] Quantum Mesh state:', {
+                        nodes: QMESH.nodes.length,
+                        edges: QMESH.edges.length,
+                        particles: dreamParticles.length,
+                        maxConnectionDist: QMESH.maxConnectionDist,
+                        R: R,
+                        showToroidal: showToroidal,
+                        avgTimeDilation: QMESH.avgTimeDilation,
+                        totalJ: QMESH.totalJ,
+                    });
                 }
             }
 
@@ -4183,12 +4271,11 @@
                     p.vy = 0;
                     p.trail.length = 0;
                 });
-                // Reset torus view
-                TORUS.rotX = 0.4;
-                TORUS.rotY = 0;
-                TORUS.zoom = 200;
-                TORUS.opacity = 0.25;
-                showToroidal = false;
+                // Reset quantum mesh view
+                QMESH.opacity = 0.5;
+                showQuantumMesh = false;
+                showToroidal = false;  // Sync alias
+                dreamParticles.length = 0;
             }
 
             // F key: Start release
