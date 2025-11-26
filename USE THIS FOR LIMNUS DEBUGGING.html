@@ -829,7 +829,7 @@
         <span>SPACE</span> auto-breathe<br>
         <span>P/C/Q/M</span> toggle prism/cage/qmesh/mu<br>
         <span>F</span> release coherence<br>
-        <span>CLICK</span> gather<br>
+        <span>G</span> gather<br>
         <span>R</span> reset
     </div>
 
@@ -852,7 +852,7 @@
         <div id="coherence-indicator">████████████████</div>
     </div>
 
-    <div id="release-hint" class="hidden">HOLD F TO RELEASE · CLICK TO GATHER</div>
+    <div id="release-hint" class="hidden">HOLD F TO RELEASE · HOLD G TO GATHER</div>
 
     <!-- Start Overlay -->
     <div id="start-overlay">
@@ -1122,7 +1122,7 @@
         let targetCoherence = 1.0;
         let releaseVelocity = 0;
         let releasing = false;           // F key held
-        let gathering = false;           // Click held
+        let gathering = false;           // G key held
         let releaseStarted = false;
         
         // Sparks for release effects
@@ -3502,7 +3502,7 @@
         // ================================================================
 
         function updateReleaseCoherence(dt) {
-            // Coherence dynamics based on F key (release) and click (gather)
+            // Coherence dynamics based on F key (release) and G key (gather)
             if (releasing) {
                 releaseVelocity += dt * 0.1;
                 targetCoherence = Math.max(0, targetCoherence - releaseVelocity * dt);
@@ -4815,14 +4815,25 @@
                 releasing = true;
                 document.getElementById('start-overlay').classList.add('hidden');
             }
+
+            // G key: Start gathering (complementary to F release)
+            if (key === 'g') {
+                gathering = true;
+                document.getElementById('start-overlay').classList.add('hidden');
+            }
         });
 
         document.addEventListener('keyup', e => {
             const key = e.key.toLowerCase();
-            
+
             // F key released: Stop releasing
             if (key === 'f') {
                 releasing = false;
+            }
+
+            // G key released: Stop gathering
+            if (key === 'g') {
+                gathering = false;
             }
         });
 
@@ -4894,7 +4905,7 @@
         console.log('');
         console.log('🌟 RELEASE COHERENCE integrated');
         console.log('   HOLD F: release coherence (COHERENT → FREE)');
-        console.log('   CLICK: gather souls back to center');
+        console.log('   HOLD G: gather souls back to center');
         console.log('   FREE state: souls dispersed, radiant core');
         console.log('');
         console.log('⚛️ QUANTUM MESH EMERGENCE activated');
