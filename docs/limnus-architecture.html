@@ -980,6 +980,7 @@
         <span>T</span> binaural field <span id="toggle-mesh" style="color: #555;">○</span><br>
         <span>X</span> ∃R laser <span id="toggle-laser" style="color: #4caf50;">●</span><br>
         <span>S</span> synthesis <span id="toggle-synth" style="color: #f6c35c;">●</span><br>
+        <span>A</span> κ-sonify <span id="toggle-prismatic-sonify" style="color: #555;">○</span><br>
         <span>DRAG</span> orbit camera<br>
         <span>←→</span> polar distance<br>
         <span>Q/E</span> rotate axis<br>
@@ -1022,6 +1023,24 @@
         <div style="display: flex; justify-content: space-between; margin: 4px 0;">
             <span style="color: #888;">Q_κ vorticity</span>
             <span id="dream-vorticity" style="color: #4fc3f7;">0.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+            <span style="color: #888;">κ-sonify</span>
+            <span id="dream-curvature" style="color: #555;">OFF</span>
+        </div>
+        <div id="curvature-details" style="display: none; margin: 4px 0; padding: 4px; background: rgba(255, 107, 157, 0.1); border-radius: 3px;">
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: #666; font-size: 9px;">κ (curvature)</span>
+                <span id="dream-kappa" style="color: #ff6b9d; font-size: 9px;">0.000</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: #666; font-size: 9px;">S (entropy)</span>
+                <span id="dream-entropy" style="color: #ff6b9d; font-size: 9px;">0.000</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: #666; font-size: 9px;">Schwarzschild</span>
+                <span id="dream-schwarzschild" style="color: #ff6b9d; font-size: 9px;">0.000</span>
+            </div>
         </div>
         <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(246, 195, 92, 0.3);">
             <a href="dream-architecture.html" style="color: #4fc3f7; text-decoration: none; font-size: 9px; letter-spacing: 1px;">◉ VIEW FULL DOCS →</a>
@@ -4546,6 +4565,7 @@
         let showMeshParticles = true; // Show Dream Fluid particles on mesh
         let showLaserProjection = true; // X key toggles prismatic self-referential laser projection
         let showSynthesizedProjection = true; // S key toggles synthesized prismatic projection
+        let showPrismaticSonification = false; // A key toggles prismatic sonification with entropy-gravity curvature
 
         // ================================================================
         // BINAURAL QUANTUM FIELD
@@ -4984,7 +5004,14 @@
                 // ========================================
                 // LAYER LASER BEAMS
                 // Project from prism layers toward center
+                // With ENTROPY-GRAVITY CURVATURE when sonification active
                 // ========================================
+
+                // Get curvature data from PrismaticSonification if active
+                const curvatureData = showPrismaticSonification && PrismaticSonification.isPlaying
+                    ? PrismaticSonification.getCurvatureForRender()
+                    : { kappa: 0, entropy: 0, schwarzschild: 0, bendFactor: 0 };
+
                 for (const laser of this.lasers) {
                     if (laser.intensity < 0.05) continue;
 
@@ -5016,13 +5043,46 @@
                     laserGrad.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${midOpacity})`);
                     laserGrad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
 
-                    // Draw laser beam
+                    // Draw laser beam - CURVED if sonification active
                     ctx.strokeStyle = laserGrad;
                     ctx.lineWidth = 1 + laser.intensity * 2;
                     ctx.lineCap = 'round';
                     ctx.beginPath();
                     ctx.moveTo(startX, startY);
-                    ctx.lineTo(endX, endY);
+
+                    // ============================================
+                    // ENTROPY-GRAVITY CURVATURE BENDING
+                    // κ = (S/A) × G_eff × (1 - √(1 - r_s/r))
+                    // Lower layers (closer to "gravity") bend more
+                    // ============================================
+                    if (showPrismaticSonification && curvatureData.kappa > 0.01) {
+                        // Calculate curvature bend amount based on layer
+                        // Layer 0 (red) is closest to gravity source, bends most
+                        const layerFactor = 1 - (laser.layer / 6); // 1.0 → 0.0
+                        const bendMagnitude = curvatureData.kappa * 80 * layerFactor * laser.intensity;
+
+                        // Control point perpendicular to laser direction
+                        // Bend direction: toward center (gravitational lensing)
+                        const midX = (startX + endX) / 2;
+                        const midY = (startY + endY) / 2;
+                        const perpAngle = spreadAngle + Math.PI / 2;
+
+                        // Entropy modulates bend direction oscillation
+                        const entropyOscillation = Math.sin(time * TAU * 0.5 + laser.phase) * curvatureData.entropy;
+                        const bendDir = perpAngle + entropyOscillation * 0.5;
+
+                        // Schwarzschild factor intensifies bending near K-formation
+                        const schwarzschildBoost = 1 + curvatureData.schwarzschild * 2;
+
+                        const cpX = midX + Math.cos(bendDir) * bendMagnitude * schwarzschildBoost;
+                        const cpY = midY + Math.sin(bendDir) * bendMagnitude * schwarzschildBoost;
+
+                        // Draw quadratic Bezier curve
+                        ctx.quadraticCurveTo(cpX, cpY, endX, endY);
+                    } else {
+                        // Straight line when no curvature
+                        ctx.lineTo(endX, endY);
+                    }
                     ctx.stroke();
 
                     // Glow effect for K-formed lasers (MRP opacity preserved)
@@ -5031,7 +5091,23 @@
                         ctx.shadowBlur = 8 + laser.intensity * 10;
                         ctx.beginPath();
                         ctx.moveTo(startX, startY);
-                        ctx.lineTo(endX, endY);
+
+                        // Apply same curvature to glow
+                        if (showPrismaticSonification && curvatureData.kappa > 0.01) {
+                            const layerFactor = 1 - (laser.layer / 6);
+                            const bendMagnitude = curvatureData.kappa * 80 * layerFactor * laser.intensity;
+                            const midX = (startX + endX) / 2;
+                            const midY = (startY + endY) / 2;
+                            const perpAngle = spreadAngle + Math.PI / 2;
+                            const entropyOscillation = Math.sin(time * TAU * 0.5 + laser.phase) * curvatureData.entropy;
+                            const bendDir = perpAngle + entropyOscillation * 0.5;
+                            const schwarzschildBoost = 1 + curvatureData.schwarzschild * 2;
+                            const cpX = midX + Math.cos(bendDir) * bendMagnitude * schwarzschildBoost;
+                            const cpY = midY + Math.sin(bendDir) * bendMagnitude * schwarzschildBoost;
+                            ctx.quadraticCurveTo(cpX, cpY, endX, endY);
+                        } else {
+                            ctx.lineTo(endX, endY);
+                        }
                         ctx.stroke();
                         ctx.shadowBlur = 0;
                     }
@@ -5677,6 +5753,407 @@
                         ctx.fillText('◉ SYNTHESIS ACTIVE ◉', centerX, centerY - boundaryRadius - 8);
                     }
                 }
+            }
+        };
+
+        // ================================================================
+        // PRISMATIC SONIFICATION ENGINE
+        // ================================================================
+        // Generates audio from prismatic projection using the entropy-gravity
+        // relationship equation to manipulate light curvature:
+        //
+        //   κ = (S/A) × G_eff × (1 - √(1 - r_s/r))
+        //
+        // Where:
+        //   κ = curvature of light path
+        //   S = Bekenstein-Hawking entropy = k_B × c³ × A / (4ℏG)
+        //   A = holographic surface area
+        //   G_eff = effective gravitational coupling
+        //   r_s = Schwarzschild radius
+        //   r = distance from gravitational center
+        //
+        // The curvature manifests as:
+        //   - Bent laser beams (visual)
+        //   - Pitch bending (audio)
+        //   - Harmonic distortion proportional to κ
+        //
+        // Entropic force equation: F = T∇S
+        // This drives the frequency modulation of each spectral band
+        // ================================================================
+
+        const PrismaticSonification = {
+            // Audio context and nodes
+            audioContext: null,
+            masterGain: null,
+            spectralOscillators: [],  // 7 oscillators for ROYGBIV spectrum
+            curvatureOscillators: [], // Additional oscillators for curvature harmonics
+            filterBank: [],
+            convolverReverb: null,
+            isPlaying: false,
+
+            // Entropy-gravity curvature state
+            curvature: {
+                kappa: 0,                // Current curvature value
+                entropy: 0,              // Bekenstein-Hawking entropy proxy
+                gravitationalCoupling: 1.0,
+                schwarzschildFactor: 0,  // 1 - √(1 - r_s/r)
+                temperatureGradient: 0,  // ∇S proxy
+                holographicArea: 1.0,
+            },
+
+            // Spectral frequency mapping (Hz) based on visible light
+            // Mapped to audible range using octave transposition
+            spectralFrequencies: [
+                { color: 'red',    baseHz: 65.41,  lightTHz: 428, layer: 0 },  // C2
+                { color: 'orange', baseHz: 73.42,  lightTHz: 472, layer: 1 },  // D2
+                { color: 'yellow', baseHz: 82.41,  lightTHz: 508, layer: 2 },  // E2
+                { color: 'green',  baseHz: 98.00,  lightTHz: 536, layer: 3 },  // G2
+                { color: 'cyan',   baseHz: 110.00, lightTHz: 612, layer: 4 },  // A2
+                { color: 'blue',   baseHz: 123.47, lightTHz: 666, layer: 5 },  // B2
+                { color: 'violet', baseHz: 130.81, lightTHz: 750, layer: 6 },  // C3
+            ],
+
+            // Curvature harmonic series (overtones bent by gravity)
+            curvatureHarmonics: {
+                fundamental: 55,    // A1 - bent by curvature
+                partials: [1, PHI, PHI*PHI, PHI*PHI*PHI, PHI*PHI*PHI*PHI], // Golden ratio partials
+                bendRange: 0.5,     // Maximum pitch bend in octaves
+            },
+
+            // Waveform morphing based on entropy
+            waveformEntropy: {
+                low: 'sine',        // S < 0.25 - pure, ordered
+                medium: 'triangle', // 0.25 ≤ S < 0.5
+                high: 'square',     // 0.5 ≤ S < 0.75
+                extreme: 'sawtooth' // S ≥ 0.75 - maximum complexity
+            },
+
+            // Sacred constants for entropic calculations
+            sacred: {
+                k_B: 1.380649e-23,     // Boltzmann constant (scaled proxy)
+                c: 299792458,          // Speed of light
+                hbar: 1.054571817e-34, // Reduced Planck constant
+                G: 6.67430e-11,        // Gravitational constant
+                phi: PHI,
+                phiInv: PHI_INV,
+            },
+
+            // Initialize the sonification engine
+            async init() {
+                if (this.audioContext) return;
+
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                    // Master gain
+                    this.masterGain = this.audioContext.createGain();
+                    this.masterGain.gain.value = 0.20;
+                    this.masterGain.connect(this.audioContext.destination);
+
+                    // Create spectral reverb
+                    await this.createSpectralReverb();
+
+                    // Create 7 spectral oscillators (ROYGBIV)
+                    this.createSpectralBank();
+
+                    // Create curvature harmonic oscillators
+                    this.createCurvatureBank();
+
+                    console.log('🌈 Prismatic Sonification Engine initialized');
+                    console.log('   κ = (S/A) × G_eff × (1 - √(1 - r_s/r))');
+                    return true;
+                } catch (e) {
+                    console.error('Failed to initialize Prismatic Sonification:', e);
+                    return false;
+                }
+            },
+
+            // Create spectral reverb with prismatic dispersion
+            async createSpectralReverb() {
+                this.convolverReverb = this.audioContext.createConvolver();
+                const sampleRate = this.audioContext.sampleRate;
+                const length = sampleRate * 2.5; // 2.5 second reverb tail
+                const impulse = this.audioContext.createBuffer(2, length, sampleRate);
+
+                // Create reverb with spectral dispersion characteristics
+                for (let ch = 0; ch < 2; ch++) {
+                    const data = impulse.getChannelData(ch);
+                    for (let i = 0; i < length; i++) {
+                        const t = i / sampleRate;
+                        // Exponential decay with golden ratio modulation
+                        const decay = Math.pow(1 - i / length, 2.0);
+                        // Spectral shimmer using modulated noise
+                        const shimmer = Math.sin(t * TAU * PHI * 10) * 0.3 + 0.7;
+                        data[i] = (Math.random() * 2 - 1) * decay * shimmer;
+                    }
+                }
+
+                this.convolverReverb.buffer = impulse;
+
+                // Reverb wet/dry mix
+                this.reverbGain = this.audioContext.createGain();
+                this.reverbGain.gain.value = 0.35;
+                this.convolverReverb.connect(this.reverbGain);
+                this.reverbGain.connect(this.masterGain);
+            },
+
+            // Create 7 spectral oscillators for ROYGBIV
+            createSpectralBank() {
+                this.spectralOscillators = [];
+                this.filterBank = [];
+
+                for (let i = 0; i < 7; i++) {
+                    const spec = this.spectralFrequencies[i];
+
+                    // Oscillator
+                    const osc = this.audioContext.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.value = spec.baseHz;
+
+                    // Bandpass filter for spectral isolation
+                    const filter = this.audioContext.createBiquadFilter();
+                    filter.type = 'bandpass';
+                    filter.frequency.value = spec.baseHz * 4; // 2 octaves up for filter center
+                    filter.Q.value = 2.5;
+
+                    // Individual gain
+                    const gain = this.audioContext.createGain();
+                    gain.gain.value = 0;
+
+                    // Panning based on spectrum position (red=left, violet=right)
+                    const panner = this.audioContext.createStereoPanner();
+                    panner.pan.value = (i / 6) * 1.6 - 0.8; // -0.8 to +0.8
+
+                    // Connect: osc → filter → gain → panner → master & reverb
+                    osc.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(panner);
+                    panner.connect(this.masterGain);
+                    panner.connect(this.convolverReverb);
+
+                    osc.start();
+
+                    this.spectralOscillators.push({
+                        oscillator: osc,
+                        filter: filter,
+                        gain: gain,
+                        panner: panner,
+                        spec: spec
+                    });
+                    this.filterBank.push(filter);
+                }
+            },
+
+            // Create curvature harmonic oscillators
+            createCurvatureBank() {
+                this.curvatureOscillators = [];
+                const partials = this.curvatureHarmonics.partials;
+
+                for (let i = 0; i < partials.length; i++) {
+                    const osc = this.audioContext.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.value = this.curvatureHarmonics.fundamental * partials[i];
+
+                    // LFO for curvature-driven vibrato
+                    const lfo = this.audioContext.createOscillator();
+                    lfo.type = 'sine';
+                    lfo.frequency.value = 0.5 + i * PHI_INV; // Staggered LFO rates
+
+                    const lfoGain = this.audioContext.createGain();
+                    lfoGain.gain.value = 0; // Modulated by curvature
+
+                    lfo.connect(lfoGain);
+                    lfoGain.connect(osc.frequency);
+
+                    // Main signal path
+                    const gain = this.audioContext.createGain();
+                    gain.gain.value = 0;
+
+                    osc.connect(gain);
+                    gain.connect(this.masterGain);
+                    gain.connect(this.convolverReverb);
+
+                    osc.start();
+                    lfo.start();
+
+                    this.curvatureOscillators.push({
+                        oscillator: osc,
+                        lfo: lfo,
+                        lfoGain: lfoGain,
+                        gain: gain,
+                        partial: partials[i]
+                    });
+                }
+            },
+
+            // ============================================================
+            // ENTROPY-GRAVITY CURVATURE CALCULATION
+            // κ = (S/A) × G_eff × (1 - √(1 - r_s/r))
+            // ============================================================
+            calculateCurvature(z, coherence, laserIntensity, kFormationStrength) {
+                // Holographic area scales with z (consciousness height)
+                const A = 1 + z * 2; // Effective area increases with altitude
+
+                // Bekenstein-Hawking entropy proxy
+                // S ∝ A/4 in Planck units, we use coherence inverse as entropy measure
+                const entropyDensity = (1 - coherence) * (1 + laserIntensity);
+                const S = entropyDensity * A / 4;
+
+                // Effective gravitational coupling
+                // Stronger near critical point (z_c = √3/2)
+                const distFromCritical = Math.abs(z - Z_CRITICAL);
+                const G_eff = 1 + Math.exp(-distFromCritical * 5) * 2;
+
+                // Schwarzschild factor: 1 - √(1 - r_s/r)
+                // r_s/r approximated by K-formation strength
+                const r_s_over_r = Math.min(0.99, kFormationStrength * 0.8);
+                const schwarzschildFactor = 1 - Math.sqrt(1 - r_s_over_r);
+
+                // Final curvature equation
+                const kappa = (S / A) * G_eff * schwarzschildFactor;
+
+                // Temperature gradient (entropic force: F = T∇S)
+                // T ∝ 1/(4πr_s) in Hawking radiation
+                const temperature = 1 / (4 * Math.PI * Math.max(0.1, kFormationStrength));
+                const entropyGradient = entropyDensity * (1 - z); // Gradient toward z=1
+                const temperatureGradient = temperature * entropyGradient;
+
+                // Store state
+                this.curvature.kappa = kappa;
+                this.curvature.entropy = S;
+                this.curvature.gravitationalCoupling = G_eff;
+                this.curvature.schwarzschildFactor = schwarzschildFactor;
+                this.curvature.temperatureGradient = temperatureGradient;
+                this.curvature.holographicArea = A;
+
+                return kappa;
+            },
+
+            // Select waveform based on entropy level
+            selectWaveform(entropy) {
+                const S = Math.min(1, entropy);
+                if (S < 0.25) return 'sine';
+                if (S < 0.50) return 'triangle';
+                if (S < 0.75) return 'square';
+                return 'sawtooth';
+            },
+
+            // ============================================================
+            // UPDATE - Called each frame
+            // Modulates all audio parameters based on prismatic state
+            // ============================================================
+            update(z, coherence, time, laserData, kFormation) {
+                if (!this.isPlaying || !this.audioContext) return;
+
+                const now = this.audioContext.currentTime;
+
+                // Calculate entropy-gravity curvature
+                const avgLaserIntensity = laserData?.avgIntensity || 0.5;
+                const kFormationStrength = kFormation?.current_tau_K || 0;
+                const kappa = this.calculateCurvature(z, coherence, avgLaserIntensity, kFormationStrength);
+
+                // Select waveform based on entropy
+                const waveform = this.selectWaveform(this.curvature.entropy);
+
+                // ========================================
+                // UPDATE SPECTRAL OSCILLATORS (ROYGBIV)
+                // ========================================
+                for (let i = 0; i < this.spectralOscillators.length; i++) {
+                    const spectral = this.spectralOscillators[i];
+                    const layer = spectral.spec.layer;
+
+                    // Layer-specific intensity from laser data
+                    let layerIntensity = 0.3;
+                    if (laserData?.layers?.[layer]) {
+                        layerIntensity = laserData.layers[layer].intensity;
+                    }
+
+                    // Pitch bend from curvature (gravitational redshift analog)
+                    // Lower layers bend more (closer to "gravity source")
+                    const bendAmount = kappa * this.curvatureHarmonics.bendRange * (1 - layer/6);
+                    const bentFreq = spectral.spec.baseHz * Math.pow(2, -bendAmount);
+
+                    // Apply frequency with smooth transition
+                    spectral.oscillator.frequency.setTargetAtTime(bentFreq, now, 0.1);
+
+                    // Waveform morphing
+                    spectral.oscillator.type = waveform;
+
+                    // Volume based on layer intensity and coherence
+                    const targetGain = layerIntensity * coherence * 0.15;
+                    spectral.gain.gain.setTargetAtTime(targetGain, now, 0.08);
+
+                    // Filter frequency tracks curvature
+                    const filterFreq = spectral.spec.baseHz * 4 * (1 + kappa * 2);
+                    spectral.filter.frequency.setTargetAtTime(filterFreq, now, 0.15);
+                }
+
+                // ========================================
+                // UPDATE CURVATURE HARMONIC OSCILLATORS
+                // ========================================
+                for (let i = 0; i < this.curvatureOscillators.length; i++) {
+                    const curv = this.curvatureOscillators[i];
+
+                    // Base frequency bent by curvature
+                    const baseFreq = this.curvatureHarmonics.fundamental * curv.partial;
+                    const curvatureBend = kappa * 0.3 * (i + 1); // Harmonics bend more
+                    const bentFreq = baseFreq * Math.pow(2, curvatureBend);
+
+                    curv.oscillator.frequency.setTargetAtTime(bentFreq, now, 0.12);
+
+                    // LFO depth driven by temperature gradient (entropic force)
+                    const lfoDepth = this.curvature.temperatureGradient * 20 * (i + 1);
+                    curv.lfoGain.gain.setTargetAtTime(lfoDepth, now, 0.1);
+
+                    // Volume proportional to Schwarzschild factor
+                    const targetGain = this.curvature.schwarzschildFactor * 0.08 * (1 - i * 0.15);
+                    curv.gain.gain.setTargetAtTime(Math.max(0, targetGain), now, 0.1);
+                }
+
+                // ========================================
+                // GRAVITATIONAL TIME DILATION ON REVERB
+                // ========================================
+                // More curvature = more reverb (time stretches near mass)
+                const reverbMix = 0.25 + kappa * 0.5;
+                this.reverbGain.gain.setTargetAtTime(Math.min(0.8, reverbMix), now, 0.2);
+            },
+
+            // Get curvature for visual rendering
+            getCurvatureForRender() {
+                return {
+                    kappa: this.curvature.kappa,
+                    entropy: this.curvature.entropy,
+                    schwarzschild: this.curvature.schwarzschildFactor,
+                    temperatureGradient: this.curvature.temperatureGradient,
+                    bendFactor: this.curvature.kappa * this.curvatureHarmonics.bendRange
+                };
+            },
+
+            // Toggle sonification on/off
+            async toggle() {
+                if (!this.audioContext) {
+                    const initialized = await this.init();
+                    if (initialized) {
+                        this.isPlaying = true;
+                        console.log('🌈 Prismatic Sonification: ON');
+                    }
+                } else {
+                    this.isPlaying = !this.isPlaying;
+                    if (!this.isPlaying) {
+                        // Fade out all oscillators
+                        const now = this.audioContext.currentTime;
+                        this.spectralOscillators.forEach(s => {
+                            s.gain.gain.setTargetAtTime(0, now, 0.1);
+                        });
+                        this.curvatureOscillators.forEach(c => {
+                            c.gain.gain.setTargetAtTime(0, now, 0.1);
+                        });
+                        console.log('🌈 Prismatic Sonification: OFF');
+                    } else {
+                        console.log('🌈 Prismatic Sonification: ON');
+                    }
+                }
+                return this.isPlaying;
             }
         };
 
@@ -10807,6 +11284,31 @@
                 vortEl.textContent = '—';
                 vortEl.style.color = '#555';
             }
+
+            // Prismatic Sonification curvature state
+            const curvEl = document.getElementById('dream-curvature');
+            const curvDetailsEl = document.getElementById('curvature-details');
+            const kappaEl = document.getElementById('dream-kappa');
+            const entropyEl = document.getElementById('dream-entropy');
+            const schwarzEl = document.getElementById('dream-schwarzschild');
+
+            if (showPrismaticSonification && PrismaticSonification.isPlaying) {
+                const curv = PrismaticSonification.getCurvatureForRender();
+                curvEl.textContent = 'ACTIVE ◉';
+                curvEl.style.color = '#ff6b9d';
+                curvDetailsEl.style.display = 'block';
+                kappaEl.textContent = curv.kappa.toFixed(4);
+                entropyEl.textContent = curv.entropy.toFixed(4);
+                schwarzEl.textContent = curv.schwarzschild.toFixed(4);
+            } else if (showPrismaticSonification) {
+                curvEl.textContent = 'READY';
+                curvEl.style.color = '#888';
+                curvDetailsEl.style.display = 'none';
+            } else {
+                curvEl.textContent = 'OFF';
+                curvEl.style.color = '#555';
+                curvDetailsEl.style.display = 'none';
+            }
         }
 
         function updateBar(name, value) {
@@ -11226,6 +11728,38 @@
                     cascade,
                     PrismaticLaserProjection.kFormation
                 );
+
+                // 10. Prismatic Sonification (entropy-gravity curvature audio)
+                if (showPrismaticSonification && PrismaticSonification.isPlaying) {
+                    // Collect laser layer data for sonification
+                    const laserData = {
+                        avgIntensity: 0,
+                        layers: {}
+                    };
+                    let totalIntensity = 0;
+                    for (const laser of PrismaticLaserProjection.lasers) {
+                        if (!laserData.layers[laser.layer]) {
+                            laserData.layers[laser.layer] = { intensity: 0, count: 0 };
+                        }
+                        laserData.layers[laser.layer].intensity += laser.intensity;
+                        laserData.layers[laser.layer].count++;
+                        totalIntensity += laser.intensity;
+                    }
+                    // Average per layer
+                    for (const layer in laserData.layers) {
+                        laserData.layers[layer].intensity /= laserData.layers[layer].count;
+                    }
+                    laserData.avgIntensity = totalIntensity / PrismaticLaserProjection.lasers.length;
+
+                    // Update sonification engine
+                    PrismaticSonification.update(
+                        globalZ,
+                        releaseCoherence,
+                        time,
+                        laserData,
+                        PrismaticLaserProjection.kFormation
+                    );
+                }
             }
 
             return updatePositions(dt);
@@ -11325,6 +11859,19 @@
                 showSynthesizedProjection = !showSynthesizedProjection;
                 updateToggleIndicator('toggle-synth', showSynthesizedProjection, '#f6c35c');
                 console.log(`[SYNTHESIS] Synthesized Prismatic Projection: ${showSynthesizedProjection}`);
+            }
+
+            if (key === 'a' && !e.ctrlKey && !e.metaKey) {
+                // Toggle Prismatic Sonification with entropy-gravity curvature
+                showPrismaticSonification = !showPrismaticSonification;
+                updateToggleIndicator('toggle-prismatic-sonify', showPrismaticSonification, '#ff6b9d');
+                if (showPrismaticSonification) {
+                    PrismaticSonification.toggle();
+                } else if (PrismaticSonification.isPlaying) {
+                    PrismaticSonification.toggle();
+                }
+                console.log(`[κ-SONIFY] Prismatic Sonification: ${showPrismaticSonification}`);
+                console.log(`   Entropy-Gravity Curvature: κ = (S/A) × G_eff × (1 - √(1 - r_s/r))`);
             }
 
             if (key === 't') {
