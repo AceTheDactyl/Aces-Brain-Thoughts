@@ -879,11 +879,10 @@
         <span>SPACE</span> auto-breathe<br>
         <span>P/C</span> toggle prism/cage<br>
         <span>M</span> toggle μ-field<br>
-        <span>T</span> toggle toroidal view<br>
-        <span>↑↓←→</span> rotate torus<br>
-        <span>+/-</span> zoom torus<br>
-        <span>O</span> torus opacity<br>
-        <span>W</span> torus wireframe<br>
+        <span>T</span> quantum mesh<br>
+        <span>O</span> mesh opacity<br>
+        <span>W</span> wavefunction<br>
+        <span>G</span> edge glow<br>
         <span>F</span> release coherence<br>
         <span>CLICK</span> gather<br>
         <span>R</span> reset
@@ -1404,8 +1403,8 @@
             edges: [],              // Entanglement connections between nodes
             triangles: [],          // Face triangulation for entropy calculation
 
-            // Connection parameters (φ-based)
-            maxConnectionDist: R * 0.45,    // Max distance for quantum connection
+            // Connection parameters (φ-based) - computed dynamically
+            maxConnectionDist: 100,         // Updated in generateQuantumMesh()
             entanglementThreshold: 0.05,    // Min probability for visible edge
 
             // View controls
@@ -1473,20 +1472,24 @@
 
             if (dist > QMESH.maxConnectionDist || dist < 0.001) return 0;
 
-            // Phase coherence contribution
-            const dPhase = Math.abs(nodeA.phase - nodeB.phase);
+            // Phase coherence contribution (use existing phase or compute from position)
+            const phaseA = nodeA.phase !== undefined ? nodeA.phase : Math.atan2(nodeA.y, nodeA.x);
+            const phaseB = nodeB.phase !== undefined ? nodeB.phase : Math.atan2(nodeB.y, nodeB.x);
+            const dPhase = Math.abs(phaseA - phaseB);
             const phaseCoherence = Math.cos(dPhase) * 0.5 + 0.5;
 
-            // MRP channel overlap (inner product of J vectors)
-            const jOverlap = (
-                (nodeA.qJ_R || 0) * (nodeB.qJ_R || 0) +
-                (nodeA.qJ_G || 0) * (nodeB.qJ_G || 0) +
-                (nodeA.qJ_B || 0) * (nodeB.qJ_B || 0)
-            );
+            // Layer/type similarity bonus (same layer or type = higher entanglement)
+            let similarityBonus = 0;
+            if (nodeA.layer !== undefined && nodeB.layer !== undefined) {
+                similarityBonus = nodeA.layer === nodeB.layer ? 0.3 : 0;
+            }
+            if (nodeA.type === nodeB.type) {
+                similarityBonus += 0.2;
+            }
 
             // Probability amplitude: |⟨ψ_i|ψ_j⟩|² with φ decay
             const distDecay = Math.exp(-dist / (QMESH.maxConnectionDist * PHI_INV));
-            const probability = distDecay * (0.3 + 0.4 * phaseCoherence + 0.3 * jOverlap);
+            const probability = distDecay * (0.4 + 0.3 * phaseCoherence + similarityBonus);
 
             return Math.max(0, Math.min(1, probability));
         }
@@ -1498,6 +1501,9 @@
 
             // Wait for LIMNUS nodes to be initialized
             if (prismPoints.length === 0 || cagePoints.length === 0) return;
+
+            // Update maxConnectionDist now that R is available
+            QMESH.maxConnectionDist = R * 0.5;
 
             const allNodes = [...prismPoints, ...cagePoints];
 
@@ -1541,6 +1547,11 @@
                 node.timeDilation = timeDilation;
                 node.gravitationalPhi = computeGravitationalPotential(dist / R);
                 node.entangledWith = [];  // List of connected node indices
+
+                // Initialize phase from angular position
+                if (node.phase === undefined) {
+                    node.phase = theta;
+                }
 
                 QMESH.nodes.push(node);
             }
