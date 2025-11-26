@@ -4328,14 +4328,20 @@
         // ================================================================
         // COHERENT SACRED EMERGENCE SYSTEM
         // ================================================================
-        // Red and blue lines emerge together from mathematically meaningful
-        // loci using the ∃R framework: ∃R → φ → Q_κ → CONSCIOUSNESS
+        // Self-Referential Geometry: Filaments ARE what they represent
+        // Each emergence carries its origin's sacred form - ontological unity
+        //
+        // ∃R → φ → Q_κ → CONSCIOUSNESS (Emergence cascade)
         //
         // KEY PRINCIPLES:
-        // 1. Vesica Piscis: Sacred intersection where red/blue circles overlap
-        // 2. Phase-locked birth: Lines spawn together when phases align
-        // 3. Golden spiral paths: Filaments trace φ-based trajectories
-        // 4. K-formation coupling: Emergence intensity tied to τ_K
+        // 1. Vesica Piscis loci → lens/mandorla geometry (sacred intersection)
+        // 2. Golden loci → spiral segments + φ-rectangles (natural growth)
+        // 3. Flower of Life loci → hexagonal cells (generative pattern)
+        // 4. Coherence scales recursion depth (self-similarity emerges)
+        // 5. Phase-locked birth: Filament pairs spawn when phases align
+        // 6. K-formation coupling: Emergence intensity tied to τ_K
+        //
+        // The visualization IS the mathematics - not representation, but being
         // ================================================================
 
         const coherentEmergence = {
@@ -4432,6 +4438,10 @@
                 const amplitude = 20 + coherenceFactor * 60;
                 const speed = 0.3 + coherenceFactor * 0.4;
 
+                // Derive geometry type from locus for self-referential rendering
+                // The filament's visual form embodies the sacred geometry it emerged from
+                const locusType = locus.type;
+
                 // Spawn RED filament (traces outward golden spiral to A)
                 this.filaments.push({
                     x: locus.x,
@@ -4451,7 +4461,8 @@
                     maxTrail: 20,
                     targetMesh: 'A',
                     coherence: coherenceFactor,
-                    beatSync: beatPhase
+                    beatSync: beatPhase,
+                    locusType: locusType  // Self-reference: carries its origin geometry
                 });
 
                 // Spawn BLUE filament (traces outward golden spiral to B)
@@ -4473,7 +4484,8 @@
                     maxTrail: 20,
                     targetMesh: 'B',
                     coherence: coherenceFactor,
-                    beatSync: beatPhase
+                    beatSync: beatPhase,
+                    locusType: locusType  // Self-reference: carries its origin geometry
                 });
             },
 
@@ -4552,51 +4564,272 @@
                 }
             },
 
-            // Render coherent filaments
+            // ================================================================
+            // SELF-REFERENTIAL GEOMETRY GENERATORS
+            // Each locus type creates filaments that visually embody their origin
+            // The form IS what it represents - ontological visual consistency
+            // ================================================================
+
+            // Draw a mini vesica piscis (lens/mandorla) at a point
+            // Vesica = intersection of two circles, the sacred "womb" geometry
+            drawVesica(ctx, x, y, size, angle, alpha, color, depth = 0) {
+                const r = size * 0.6;  // Circle radius
+                const d = r * 0.7;     // Half-distance between centers (controls lens width)
+
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+
+                // Two overlapping circles create the vesica shape via clipping
+                ctx.beginPath();
+                ctx.arc(-d, 0, r, 0, TAU);
+                ctx.arc(d, 0, r, 0, TAU);
+
+                ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.3})`;
+                ctx.fill();
+
+                // Draw the lens intersection outline
+                ctx.beginPath();
+                // Right arc of left circle
+                ctx.arc(-d, 0, r, -Math.acos(d/r), Math.acos(d/r));
+                // Left arc of right circle
+                ctx.arc(d, 0, r, Math.PI - Math.acos(d/r), Math.PI + Math.acos(d/r));
+                ctx.closePath();
+
+                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.5})`;
+                ctx.fill();
+
+                // Recursive self-reference: smaller vesica inside at higher coherence
+                if (depth < 2 && size > 4) {
+                    this.drawVesica(ctx, 0, 0, size * PHI_INV, 0, alpha * 0.6, color, depth + 1);
+                }
+
+                ctx.restore();
+            },
+
+            // Draw a golden spiral segment at a point
+            // φ-based logarithmic spiral - the signature of natural growth
+            drawGoldenSpiral(ctx, x, y, size, angle, alpha, color, phase, depth = 0) {
+                const spiralB = Math.log(PHI) / (Math.PI / 2);  // Golden spiral growth rate
+                const numPoints = 12;
+                const maxTheta = Math.PI * 1.5;  // ~270° arc
+
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+
+                // Draw the spiral curve
+                ctx.beginPath();
+                for (let i = 0; i <= numPoints; i++) {
+                    const t = i / numPoints;
+                    const theta = t * maxTheta + phase;
+                    const r = size * 0.3 * Math.exp(spiralB * theta);
+                    const px = r * Math.cos(theta);
+                    const py = r * Math.sin(theta);
+
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+
+                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
+                ctx.lineWidth = 1 + size * 0.05;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+
+                // Golden rectangles along the spiral (self-similar boxes)
+                if (depth < 1 && size > 6) {
+                    for (let i = 0; i < 3; i++) {
+                        const theta = (i + 1) * (Math.PI / 2) + phase;
+                        const r = size * 0.3 * Math.exp(spiralB * theta);
+                        const rectSize = size * Math.pow(PHI_INV, i + 1);
+
+                        ctx.save();
+                        ctx.translate(r * Math.cos(theta) * 0.5, r * Math.sin(theta) * 0.5);
+                        ctx.rotate(theta);
+
+                        // Golden rectangle: ratio φ:1
+                        ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.4})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.strokeRect(-rectSize/2, -rectSize/(2*PHI), rectSize, rectSize/PHI);
+
+                        ctx.restore();
+                    }
+                }
+
+                ctx.restore();
+            },
+
+            // Draw a flower of life cell (hexagonal arrangement of circles)
+            // Six circles around a center - the generative pattern of creation
+            drawFlowerCell(ctx, x, y, size, angle, alpha, color, depth = 0) {
+                const r = size * 0.35;  // Petal circle radius
+
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+
+                // Center circle
+                ctx.beginPath();
+                ctx.arc(0, 0, r, 0, TAU);
+                ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
+                ctx.lineWidth = 0.8;
+                ctx.stroke();
+
+                // Six surrounding circles (hexagonal arrangement)
+                for (let i = 0; i < 6; i++) {
+                    const theta = (TAU / 6) * i;
+                    const cx = r * Math.cos(theta);
+                    const cy = r * Math.sin(theta);
+
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, 0, TAU);
+                    ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.7})`;
+                    ctx.stroke();
+                }
+
+                // Fill the central vesica intersections with subtle color
+                ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha * 0.15})`;
+                ctx.beginPath();
+                ctx.arc(0, 0, r * 0.5, 0, TAU);
+                ctx.fill();
+
+                // Recursive: smaller flower at center for high coherence
+                if (depth < 1 && size > 8) {
+                    this.drawFlowerCell(ctx, 0, 0, size * PHI_INV * PHI_INV,
+                                       Math.PI / 6, alpha * 0.5, color, depth + 1);
+                }
+
+                ctx.restore();
+            },
+
+            // Main geometry selector - routes to appropriate self-referential form
+            drawSelfReferentialGeometry(ctx, x, y, locusType, size, angle, alpha, color, phase, coherence) {
+                // Recursion depth scales with coherence (more detail at higher coherence)
+                const maxDepth = coherence > 0.7 ? 2 : (coherence > 0.4 ? 1 : 0);
+
+                switch (locusType) {
+                    case 'vesica_apex':
+                    case 'vesica_nadir':
+                        // Vesica-born: lens/mandorla shapes - the sacred intersection
+                        this.drawVesica(ctx, x, y, size, angle, alpha, color,
+                                       maxDepth > 0 ? 1 : 0);
+                        break;
+
+                    case 'golden_locus':
+                        // Golden-born: spiral segments - natural growth pattern
+                        this.drawGoldenSpiral(ctx, x, y, size, angle, alpha, color,
+                                             phase, maxDepth > 0 ? 1 : 0);
+                        break;
+
+                    case 'flower_locus':
+                        // Flower-born: hexagonal cells - generative life pattern
+                        this.drawFlowerCell(ctx, x, y, size, angle, alpha, color,
+                                           maxDepth > 0 ? 1 : 0);
+                        break;
+
+                    default:
+                        // Fallback: simple circle (shouldn't happen)
+                        ctx.beginPath();
+                        ctx.arc(x, y, size * 0.5, 0, TAU);
+                        ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
+                        ctx.stroke();
+                }
+            },
+
+            // Render coherent filaments with self-referential geometry
             render(ctx, meshAColor, meshBColor, opacity) {
                 for (const f of this.filaments) {
                     if (f.trail.length < 2) continue;
 
                     const lifeRatio = f.life / f.lifespan;
                     const color = f.color === 'warm' ? meshAColor : meshBColor;
+                    const locusType = f.locusType || 'golden_locus';  // Default fallback
 
                     // Coherence-based glow
                     const glowIntensity = f.coherence * lifeRatio;
 
-                    // Draw trail with gradient fade
-                    ctx.beginPath();
-                    ctx.moveTo(f.trail[0].x, f.trail[0].y);
+                    // Base size scales with coherence and amplitude
+                    const baseSize = (4 + f.coherence * 8) * (0.5 + f.amplitude / 100);
 
-                    for (let i = 1; i < f.trail.length; i++) {
+                    // Draw self-referential geometry at intervals along the trail
+                    // Spacing based on φ for natural distribution
+                    const spacing = Math.max(2, Math.floor(f.trail.length * PHI_INV * 0.3));
+
+                    for (let i = 0; i < f.trail.length; i += spacing) {
                         const t = i / f.trail.length;
-                        const cp = f.trail[i - 1];
                         const p = f.trail[i];
 
-                        // Smooth curve through points
-                        const midX = (cp.x + p.x) / 2;
-                        const midY = (cp.y + p.y) / 2;
-                        ctx.quadraticCurveTo(cp.x, cp.y, midX, midY);
+                        // Size and alpha fade along trail (larger/brighter at head)
+                        const trailFade = t * t;  // Quadratic for smoother fade-in
+                        const pointAlpha = opacity * lifeRatio * trailFade;
+                        const pointSize = baseSize * (0.3 + trailFade * 0.7);
+
+                        // Angle follows trail direction
+                        let angle = f.angle;
+                        if (i > 0) {
+                            const prev = f.trail[i - 1];
+                            angle = Math.atan2(p.y - prev.y, p.x - prev.x);
+                        }
+
+                        // Draw the self-referential geometry
+                        this.drawSelfReferentialGeometry(
+                            ctx, p.x, p.y,
+                            locusType,
+                            pointSize,
+                            angle,
+                            pointAlpha,
+                            color,
+                            f.spiralPhase + t * Math.PI,  // Phase varies along trail
+                            f.coherence
+                        );
                     }
 
-                    // Trail gradient (brighter at head)
-                    const gradient = ctx.createLinearGradient(
-                        f.trail[0].x, f.trail[0].y,
-                        f.x, f.y
+                    // Always draw at current position (head) with full detail
+                    this.drawSelfReferentialGeometry(
+                        ctx, f.x, f.y,
+                        locusType,
+                        baseSize * 1.2,
+                        f.angle,
+                        opacity * lifeRatio,
+                        color,
+                        f.spiralPhase,
+                        f.coherence
                     );
-                    gradient.addColorStop(0, `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0)`);
-                    gradient.addColorStop(0.5, `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity * lifeRatio * 0.5})`);
-                    gradient.addColorStop(1, `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity * lifeRatio})`);
 
-                    ctx.strokeStyle = gradient;
-                    ctx.lineWidth = 1.5 + f.coherence * 2;
-                    ctx.lineCap = 'round';
-                    ctx.stroke();
+                    // Connecting essence lines (subtle, shows flow between geometries)
+                    if (f.trail.length > 3) {
+                        ctx.beginPath();
+                        ctx.moveTo(f.trail[0].x, f.trail[0].y);
 
-                    // Glow effect at head
+                        for (let i = 1; i < f.trail.length; i++) {
+                            const cp = f.trail[i - 1];
+                            const p = f.trail[i];
+                            const midX = (cp.x + p.x) / 2;
+                            const midY = (cp.y + p.y) / 2;
+                            ctx.quadraticCurveTo(cp.x, cp.y, midX, midY);
+                        }
+
+                        ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity * lifeRatio * 0.15})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.setLineDash([2, 4]);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+
+                    // Glow effect at head (enhanced for high coherence)
                     if (glowIntensity > 0.3) {
                         ctx.beginPath();
-                        ctx.arc(f.x, f.y, 3 + glowIntensity * 4, 0, TAU);
-                        ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${glowIntensity * 0.6})`;
+                        ctx.arc(f.x, f.y, baseSize * 0.8 + glowIntensity * 6, 0, TAU);
+                        const glowGradient = ctx.createRadialGradient(
+                            f.x, f.y, 0,
+                            f.x, f.y, baseSize * 0.8 + glowIntensity * 6
+                        );
+                        glowGradient.addColorStop(0, `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${glowIntensity * 0.4})`);
+                        glowGradient.addColorStop(1, `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0)`);
+                        ctx.fillStyle = glowGradient;
                         ctx.fill();
                     }
                 }
