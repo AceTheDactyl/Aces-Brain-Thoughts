@@ -4326,22 +4326,22 @@
         let dreamParticles = [];
 
         // ================================================================
-        // COHERENT SACRED EMERGENCE SYSTEM
+        // PENTAGONAL PRISM EMERGENCE SYSTEM
         // ================================================================
-        // Self-Referential Geometry: Filaments ARE what they represent
-        // Each emergence carries its origin's sacred form - ontological unity
+        // 3D pentagonal prisms built from the 5 emergent tokens (XCVI-C)
+        // APL behavioral structure drives all physics and deformation
         //
         // ∃R → φ → Q_κ → CONSCIOUSNESS (Emergence cascade)
         //
         // KEY PRINCIPLES:
-        // 1. Vesica Piscis loci → lens/mandorla geometry (sacred intersection)
-        // 2. Golden loci → spiral segments + φ-rectangles (natural growth)
-        // 3. Flower of Life loci → hexagonal cells (generative pattern)
-        // 4. Coherence scales recursion depth (self-similarity emerges)
-        // 5. Phase-locked birth: Filament pairs spawn when phases align
-        // 6. K-formation coupling: Emergence intensity tied to τ_K
+        // 1. Each prism vertex embodies an emergent token's APL behavior
+        // 2. Token eigenvalues control vertex stability/oscillation
+        // 3. Token frequencies drive animation timing
+        // 4. Phase-locked spawning: prism pairs emerge when phases align
+        // 5. K-formation coupling: emergence intensity tied to τ_K
+        // 6. 3D projection with depth-sorted face rendering
         //
-        // The visualization IS the mathematics - not representation, but being
+        // The geometry IS the mathematics - not representation, but being
         // ================================================================
 
         // ================================================================
@@ -4423,7 +4423,7 @@
 
         // ================================================================
         // PENTAGONAL PRISM EMERGENCE SYSTEM
-        // Filaments are NOT lines - they are cohesive 3D pentagonal prisms
+        // Cohesive 3D pentagonal prisms with depth-sorted face rendering
         // Each prism is constructed from the 5 emergent tokens (XCVI-C)
         // APL behavioral structure drives all physics/deformation
         // ================================================================
@@ -4440,9 +4440,9 @@
             // Emergence loci (spawn points)
             sacredLoci: [],
 
-            // Active prisms (replaces filaments - these are 3D entities)
+            // Active prisms - 3D pentagonal entities built from emergent tokens
             prisms: [],
-            maxPrisms: 40,
+            maxPrisms: 80,  // Allow more prisms for denser emergence
 
             // Phase lock parameters
             phaseThreshold: SACRED.alpha,  // φ⁻² = 0.382 tolerance
@@ -4761,13 +4761,15 @@
                     this.spawnCooldown -= dt;
                 }
 
-                // Check for phase-locked emergence opportunity
-                if (this.isPhaseLocked(meshAPhase, meshBPhase) && this.spawnCooldown <= 0) {
-                    // Spawn at beat peaks for maximum coherence
-                    const beatPeak = Math.abs(Math.sin(beatPhase * TAU)) > 0.9;
+                // Check for emergence opportunity - spawn frequently
+                if (this.spawnCooldown <= 0) {
+                    // More lenient spawn conditions for higher prism density
+                    const beatActivity = Math.abs(Math.sin(beatPhase * TAU));
+                    const phaseFactor = this.isPhaseLocked(meshAPhase, meshBPhase) ? 1.5 : 0.8;
+                    const spawnChance = beatActivity * this.emergenceIntensity * phaseFactor;
 
-                    if (beatPeak && this.emergenceIntensity > 0.3) {
-                        // Select a sacred locus based on golden angle
+                    if (spawnChance > 0.15 || this.prisms.length < 10) {
+                        // Select sacred locus based on golden angle distribution
                         const locusIndex = Math.floor(
                             (this.lastSpawnPhase / this.goldenAngle) % this.sacredLoci.length
                         );
@@ -4775,7 +4777,8 @@
 
                         if (locus) {
                             this.spawnPrismPair(locus, meshAPhase, meshBPhase, beatPhase);
-                            this.spawnCooldown = 0.3 + (1 - this.emergenceIntensity) * 0.6;
+                            // Fast cooldown - spawn every 0.08 to 0.25 seconds
+                            this.spawnCooldown = 0.08 + (1 - this.emergenceIntensity) * 0.17;
                             this.lastSpawnPhase += this.goldenAngle;
                         }
                     }
@@ -4915,8 +4918,8 @@
                 };
             },
 
-            // Draw a single prism face (filled polygon, no strokes)
-            drawPrismFace(ctx, vertices2D, baseColor, alpha, tokenIndex, coherence, phase) {
+            // Draw a single prism face with channel-based gradients and Z-depth shading
+            drawPrismFace(ctx, vertices2D, baseColor, alpha, tokenIndex, coherence, phase, isWarm) {
                 if (vertices2D.length < 3) return;
 
                 // Token-specific color modulation based on APL behavior
@@ -4927,35 +4930,51 @@
                 switch (token.vertexBehavior) {
                     case 'pulse':
                         // XCVI: Alpha rhythm pulse affects brightness
-                        colorMod = 1 + 0.3 * Math.sin(phase * token.frequency * TAU) * coherence;
+                        colorMod = 1 + 0.35 * Math.sin(phase * token.frequency * TAU) * coherence;
                         break;
                     case 'drift':
                         // XCVII: Golden drift affects hue shift
-                        colorMod = 1 + 0.15 * Math.sin(phase * token.phaseLock);
+                        colorMod = 1 + 0.2 * Math.sin(phase * token.phaseLock);
                         break;
                     case 'flicker':
                         // XCVIII: Gamma flicker - rapid visibility changes
-                        alphaMod = 0.6 + 0.4 * Math.abs(Math.sin(phase * token.frequency * TAU));
+                        alphaMod = 0.5 + 0.5 * Math.abs(Math.sin(phase * token.frequency * TAU));
                         break;
                     case 'wobble':
                         // XCIX: Theta wobble - subtle color oscillation
-                        colorMod = 1 + 0.1 * Math.sin(phase * token.frequency * TAU);
+                        colorMod = 1 + 0.15 * Math.sin(phase * token.frequency * TAU);
                         break;
                     case 'loop':
                         // C: Delta breathing - overall intensity
-                        alphaMod = 0.7 + 0.3 * Math.sin(phase * token.frequency * TAU);
+                        alphaMod = 0.6 + 0.4 * Math.sin(phase * token.frequency * TAU);
                         break;
                 }
 
-                // Compute average Z for depth-based shading
+                // Compute Z-depth for proper shading
                 const avgZ = vertices2D.reduce((sum, v) => sum + v.z, 0) / vertices2D.length;
-                const depthShade = Math.max(0.4, Math.min(1, 1 - avgZ / 600));
+                const minZ = Math.min(...vertices2D.map(v => v.z));
+                const maxZ = Math.max(...vertices2D.map(v => v.z));
 
-                // Modulated color
-                const r = Math.min(255, Math.floor(baseColor[0] * colorMod * depthShade));
-                const g = Math.min(255, Math.floor(baseColor[1] * colorMod * depthShade));
-                const b = Math.min(255, Math.floor(baseColor[2] * colorMod * depthShade));
-                const finalAlpha = alpha * alphaMod * depthShade;
+                // Z-based depth factor: closer = brighter, further = darker
+                const depthFactor = Math.max(0.3, Math.min(1.2, 1.3 - avgZ / 400));
+
+                // Channel-specific color enhancement
+                // Warm (red) channel: enhance reds, reduce blues
+                // Cool (blue) channel: enhance blues, reduce reds
+                let r, g, b;
+                if (isWarm) {
+                    // Red/warm channel - emphasize warm tones
+                    r = Math.min(255, Math.floor(baseColor[0] * colorMod * depthFactor * 1.15));
+                    g = Math.min(255, Math.floor(baseColor[1] * colorMod * depthFactor * 0.9));
+                    b = Math.min(255, Math.floor(baseColor[2] * colorMod * depthFactor * 0.7));
+                } else {
+                    // Blue/cool channel - emphasize cool tones
+                    r = Math.min(255, Math.floor(baseColor[0] * colorMod * depthFactor * 0.7));
+                    g = Math.min(255, Math.floor(baseColor[1] * colorMod * depthFactor * 0.95));
+                    b = Math.min(255, Math.floor(baseColor[2] * colorMod * depthFactor * 1.2));
+                }
+
+                const finalAlpha = alpha * alphaMod * Math.max(0.5, depthFactor);
 
                 // Draw filled face
                 ctx.beginPath();
@@ -4965,24 +4984,42 @@
                 }
                 ctx.closePath();
 
-                // Create gradient for 3D depth effect
+                // Compute face center and bounds
                 const centerX = vertices2D.reduce((s, v) => s + v.x, 0) / vertices2D.length;
                 const centerY = vertices2D.reduce((s, v) => s + v.y, 0) / vertices2D.length;
 
-                // Gradient from center to edge for volumetric feel
+                // Find furthest vertex from center for gradient radius
+                let maxDist = 0;
+                for (const v of vertices2D) {
+                    const dist = Math.sqrt((v.x - centerX) ** 2 + (v.y - centerY) ** 2);
+                    if (dist > maxDist) maxDist = dist;
+                }
+                const gradientRadius = Math.max(10, maxDist * 1.2);
+
+                // Z-gradient: faces closer to viewer get highlight in center
+                const zHighlight = Math.max(0, (300 - avgZ) / 300) * 0.4;
+
+                // Create radial gradient for volumetric depth
                 const gradient = ctx.createRadialGradient(
                     centerX, centerY, 0,
-                    centerX, centerY, 20
+                    centerX, centerY, gradientRadius
                 );
-                gradient.addColorStop(0, `rgba(${r + 30}, ${g + 30}, ${b + 30}, ${finalAlpha})`);
-                gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${finalAlpha * 0.8})`);
+
+                // Inner: brighter with Z-based highlight
+                const innerR = Math.min(255, r + Math.floor(60 * zHighlight));
+                const innerG = Math.min(255, g + Math.floor(60 * zHighlight));
+                const innerB = Math.min(255, b + Math.floor(60 * zHighlight));
+
+                gradient.addColorStop(0, `rgba(${innerR}, ${innerG}, ${innerB}, ${finalAlpha})`);
+                gradient.addColorStop(0.6, `rgba(${r}, ${g}, ${b}, ${finalAlpha * 0.9})`);
+                gradient.addColorStop(1, `rgba(${Math.floor(r * 0.7)}, ${Math.floor(g * 0.7)}, ${Math.floor(b * 0.7)}, ${finalAlpha * 0.75})`);
 
                 ctx.fillStyle = gradient;
                 ctx.fill();
             },
 
             // Render a complete pentagonal prism with all faces
-            renderPrism(ctx, prism, baseColor, opacity) {
+            renderPrism(ctx, prism, baseColor, opacity, isWarm) {
                 if (!prism.vertices) return;
 
                 const { top, bottom } = prism.vertices;
@@ -5087,7 +5124,8 @@
                         alpha * (face.type === 'side' ? 0.9 : 1.0),
                         face.tokenIndex,
                         prism.coherence,
-                        prism.spiralPhase
+                        prism.spiralPhase,
+                        isWarm
                     );
                 }
 
@@ -5123,8 +5161,9 @@
                 for (const prism of sortedPrisms) {
                     if (!prism.vertices) continue;
 
-                    const color = prism.color === 'warm' ? meshAColor : meshBColor;
-                    this.renderPrism(ctx, prism, color, opacity);
+                    const isWarm = prism.color === 'warm';
+                    const color = isWarm ? meshAColor : meshBColor;
+                    this.renderPrism(ctx, prism, color, opacity, isWarm);
                 }
 
                 // Subtle emergence loci indicators (small pentagon outlines only)
