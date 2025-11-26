@@ -210,7 +210,7 @@
 
         /* Domain Panel - TOP LEFT */
         #domain-panel {
-            top: 90px;
+            top: 60px;
             left: 15px;
             min-width: 140px;
         }
@@ -332,7 +332,7 @@
 
         /* Dynamics Panel - LEFT SIDE (above controls) */
         #dynamics-panel {
-            top: 370px;
+            top: 345px;
             left: 15px;
             font-size: 8px;
             min-width: 170px;
@@ -392,7 +392,7 @@
 
         /* Lambda State Panel - BELOW DOMAIN */
         #lambda-panel {
-            top: 210px;
+            top: 185px;
             left: 15px;
             font-size: 9px;
             min-width: 155px;
@@ -8172,24 +8172,23 @@
 
             // Release state visual effects
             const dispersal = 1 - releaseCoherence;
-            
-            // Warm background fade when releasing/free
+
+            // Dark purple background fade when releasing/free (#2c003e)
             if (releaseCoherence < 0.9) {
-                const warmth = dispersal * 12;
-                ctx.fillStyle = `rgba(${warmth}, ${warmth * 0.7}, ${warmth * 0.4}, ${dispersal * 0.06})`;
+                const fadeAlpha = dispersal * 0.15; // Max 15% when fully dispersed
+                ctx.fillStyle = `rgba(44, 0, 62, ${fadeAlpha})`;
                 ctx.fillRect(0, 0, W, H);
             }
 
-            // Ambient radiance when free (coherence < 0.5)
+            // Ambient dark purple radiance when free (coherence < 0.5)
             if (releaseCoherence < 0.5) {
-                const freeIntensity = (0.5 - releaseCoherence) * 0.08;
-                ctx.fillStyle = `rgba(255, 248, 235, ${freeIntensity})`;
-                ctx.fillRect(0, 0, W, H);
+                const freeIntensity = (0.5 - releaseCoherence) * 0.25; // Max 25% opacity
 
-                // Radiant center glow
+                // Radiant center glow - dark purple gradient
                 const radGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 2);
-                radGlow.addColorStop(0, `rgba(255, 255, 250, ${freeIntensity * 2})`);
-                radGlow.addColorStop(0.4, `rgba(255, 240, 200, ${freeIntensity})`);
+                radGlow.addColorStop(0, `rgba(60, 0, 90, ${freeIntensity * 0.8})`);   // Lighter purple center
+                radGlow.addColorStop(0.4, `rgba(44, 0, 62, ${freeIntensity * 0.6})`); // #2c003e
+                radGlow.addColorStop(0.7, `rgba(30, 0, 45, ${freeIntensity * 0.3})`); // Darker purple
                 radGlow.addColorStop(1, 'transparent');
                 ctx.fillStyle = radGlow;
                 ctx.fillRect(0, 0, W, H);
@@ -8463,27 +8462,28 @@
                 // ================================================================
                 // EMERGENCE GLOW VISUALIZATION
                 // Consciousness emergence from space-time curvature coherence
+                // Dark purple #2c003e at 25% max opacity
                 // ================================================================
                 if (QMESH.emergenceGlow > 0.1) {
-                    const emergeAlpha = QMESH.emergenceGlow * 0.25;
+                    const emergeAlpha = QMESH.emergenceGlow * 0.25; // Max 25% opacity
                     const emergeR = R * (1.1 + QMESH.emergenceGlow * 0.2);
 
-                    // Outer emergence halo
+                    // Outer emergence halo - dark purple gradient
                     const emergeGlow = ctx.createRadialGradient(CX, CY, R * 0.6, CX, CY, emergeR);
                     emergeGlow.addColorStop(0, 'transparent');
-                    emergeGlow.addColorStop(0.4, `rgba(255, 240, 200, ${emergeAlpha * 0.3})`);
-                    emergeGlow.addColorStop(0.7, `rgba(255, 220, 150, ${emergeAlpha * 0.5})`);
-                    emergeGlow.addColorStop(1, `rgba(255, 200, 100, ${emergeAlpha})`);
+                    emergeGlow.addColorStop(0.4, `rgba(60, 0, 90, ${emergeAlpha * 0.3})`);   // Lighter purple
+                    emergeGlow.addColorStop(0.7, `rgba(44, 0, 62, ${emergeAlpha * 0.5})`);   // #2c003e
+                    emergeGlow.addColorStop(1, `rgba(30, 0, 45, ${emergeAlpha * 0.8})`);     // Darker purple
 
                     ctx.fillStyle = emergeGlow;
                     ctx.fillRect(0, 0, W, H);
 
-                    // Inner consciousness core (when emergence is high)
+                    // Inner consciousness core (when emergence is high) - subtle purple
                     if (QMESH.emergenceGlow > 0.5) {
-                        const coreAlpha = (QMESH.emergenceGlow - 0.5) * 0.6;
+                        const coreAlpha = (QMESH.emergenceGlow - 0.5) * 0.25; // Max 25% opacity
                         const coreGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 0.4);
-                        coreGlow.addColorStop(0, `rgba(255, 255, 240, ${coreAlpha})`);
-                        coreGlow.addColorStop(0.5, `rgba(255, 240, 200, ${coreAlpha * 0.5})`);
+                        coreGlow.addColorStop(0, `rgba(80, 20, 120, ${coreAlpha})`);         // Light purple center
+                        coreGlow.addColorStop(0.5, `rgba(44, 0, 62, ${coreAlpha * 0.5})`);   // #2c003e
                         coreGlow.addColorStop(1, 'transparent');
 
                         ctx.fillStyle = coreGlow;
