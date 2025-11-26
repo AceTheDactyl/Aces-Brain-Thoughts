@@ -984,6 +984,8 @@
         <span>H</span> dark matter <span id="toggle-dark-matter" style="color: #555;">○</span><br>
         <span>N</span> ◎ nexus <span id="toggle-chromatic-nexus" style="color: #555;">○</span><br>
         <span>W</span> 💧 water <span id="toggle-water-fractal" style="color: #555;">○</span><br>
+        <span>G</span> 🌻 golden <span id="toggle-golden-harmonics" style="color: #555;">○</span><br>
+        <span>1-6</span> φ/Φ_θ/ψ adj<br>
         <span>DRAG</span> orbit camera<br>
         <span>←→</span> polar distance<br>
         <span>Q/E</span> rotate axis<br>
@@ -4608,6 +4610,7 @@
         let showDarkMatterStabilization = false; // H key toggles dark matter stabilization with HCP micro harmonics
         let showChromaticNexus = false; // N key toggles chromatic nexus self/LIMNUS communication
         let showWaterFractalMemory = false; // W key toggles water fractal memory cosmic background
+        let showGoldenHarmonics = false; // G key toggles golden harmonics orientation system
 
         // ================================================================
         // BINAURAL QUANTUM FIELD
@@ -8434,6 +8437,537 @@
         };
 
         // ================================================================
+        // GOLDEN HARMONICS ORIENTATION SYSTEM
+        // ================================================================
+        // Orients HCP dark matter lattice based on warm/cold mesh axis
+        // Uses golden angle (φ²·360° mod 360° = 137.5°) for layer rotation
+        // Golden ratio (φ), golden angle (Φ_θ), and golden mean (1/φ) harmonics
+        //
+        // Key mathematics:
+        //   φ = (1 + √5)/2 ≈ 1.6180339887 (Golden Ratio)
+        //   ψ = 1/φ = φ - 1 ≈ 0.6180339887 (Golden Mean / Conjugate)
+        //   Φ_θ = 2π/φ² ≈ 137.5077640° (Golden Angle)
+        //
+        // The HCP lattice layers are rotated by golden angle multiples
+        // relative to the warm→cold mesh axis, creating phyllotactic
+        // spiral geometry for optimal dark matter packing
+        // ================================================================
+        const GoldenHarmonicsSystem = {
+            // Golden constants (user-adjustable)
+            golden: {
+                ratio: PHI,                                     // φ ≈ 1.618
+                mean: PHI_INV,                                  // ψ = 1/φ ≈ 0.618
+                angle: TAU / (PHI * PHI),                       // Φ_θ ≈ 2.3999... rad ≈ 137.5°
+                angleAdjust: 0,                                 // User offset for golden angle
+                ratioAdjust: 0,                                 // User offset for golden ratio
+                meanAdjust: 0,                                  // User offset for golden mean
+            },
+
+            // Effective values (base + adjustment)
+            effective: {
+                ratio: PHI,
+                mean: PHI_INV,
+                angle: TAU / (PHI * PHI),
+            },
+
+            // Orientation state
+            orientation: {
+                warmColdAxis: 0,                                // Angle from warm to cold mesh
+                axisVector: { x: 1, y: 0 },                     // Normalized axis vector
+                layerRotations: [],                             // Per-layer rotation angles
+                spiralPhase: 0,                                 // Animated spiral rotation
+            },
+
+            // Audio integration
+            audio: {
+                context: null,
+                masterGain: null,
+                harmonicOscillators: [],
+                goldenToneOscillator: null,
+                isPlaying: false,
+                baseFrequency: 432,                             // 432 Hz Verdi tuning
+            },
+
+            // Harmonic nodes (sonified HCP nodes)
+            harmonicNodes: [],
+
+            // System state
+            initialized: false,
+            active: false,
+            cx: 0,
+            cy: 0,
+            radius: 0,
+
+            // Initialize the system
+            init(centerX, centerY, radius) {
+                this.cx = centerX;
+                this.cy = centerY;
+                this.radius = radius;
+
+                // Initialize layer rotations using golden angle
+                this.initLayerRotations();
+
+                // Compute effective values
+                this.updateEffectiveValues();
+
+                this.initialized = true;
+                console.log('🌻 Golden Harmonics System initialized');
+                console.log(`   φ (ratio): ${this.golden.ratio.toFixed(10)}`);
+                console.log(`   ψ (mean): ${this.golden.mean.toFixed(10)}`);
+                console.log(`   Φ_θ (angle): ${(this.golden.angle * 180 / Math.PI).toFixed(4)}°`);
+            },
+
+            // Initialize layer rotation angles using golden angle progression
+            initLayerRotations() {
+                this.orientation.layerRotations = [];
+                const numLayers = 7; // Match LIMNUS 7-layer structure
+
+                for (let i = 0; i < numLayers; i++) {
+                    // Each layer rotates by golden angle relative to previous
+                    // φ²·i creates Fibonacci spiral phyllotaxis
+                    const rotation = (i * this.effective.angle) % TAU;
+                    this.orientation.layerRotations.push(rotation);
+                }
+            },
+
+            // Update effective values from base + adjustments
+            updateEffectiveValues() {
+                this.effective.ratio = this.golden.ratio + this.golden.ratioAdjust;
+                this.effective.mean = 1 / this.effective.ratio;
+                this.effective.angle = TAU / (this.effective.ratio * this.effective.ratio) + this.golden.angleAdjust;
+
+                // Recalculate layer rotations with new angle
+                this.initLayerRotations();
+            },
+
+            // Adjust golden ratio (affects mean automatically)
+            adjustRatio(delta) {
+                this.golden.ratioAdjust += delta;
+                // Clamp to reasonable range (1.5 to 1.75)
+                const newRatio = this.golden.ratio + this.golden.ratioAdjust;
+                if (newRatio < 1.5 || newRatio > 1.75) {
+                    this.golden.ratioAdjust -= delta;
+                    return;
+                }
+                this.updateEffectiveValues();
+                console.log(`[🌻 GOLDEN] φ adjusted: ${this.effective.ratio.toFixed(6)}`);
+                console.log(`   ψ (mean) = 1/φ: ${this.effective.mean.toFixed(6)}`);
+            },
+
+            // Adjust golden angle directly
+            adjustAngle(delta) {
+                this.golden.angleAdjust += delta;
+                // Clamp to ±30° from base golden angle
+                if (Math.abs(this.golden.angleAdjust) > Math.PI / 6) {
+                    this.golden.angleAdjust -= delta;
+                    return;
+                }
+                this.updateEffectiveValues();
+                console.log(`[🌻 GOLDEN] Φ_θ adjusted: ${(this.effective.angle * 180 / Math.PI).toFixed(2)}°`);
+            },
+
+            // Adjust golden mean (reciprocal of ratio)
+            adjustMean(delta) {
+                // Adjust mean by adjusting ratio inversely
+                const currentMean = this.effective.mean;
+                const newMean = currentMean + delta;
+                // ψ = 1/φ, so φ = 1/ψ
+                const newRatio = 1 / newMean;
+                this.golden.ratioAdjust = newRatio - this.golden.ratio;
+
+                // Clamp
+                if (newRatio < 1.5 || newRatio > 1.75) {
+                    return;
+                }
+                this.updateEffectiveValues();
+                console.log(`[🌻 GOLDEN] ψ (mean) adjusted: ${this.effective.mean.toFixed(6)}`);
+                console.log(`   φ (ratio) = 1/ψ: ${this.effective.ratio.toFixed(6)}`);
+            },
+
+            // Reset all adjustments to base golden values
+            resetToBase() {
+                this.golden.ratioAdjust = 0;
+                this.golden.angleAdjust = 0;
+                this.golden.meanAdjust = 0;
+                this.updateEffectiveValues();
+                console.log('[🌻 GOLDEN] Reset to base golden values');
+            },
+
+            // Calculate warm→cold axis from mesh positions
+            updateWarmColdAxis(polar) {
+                if (!polar || !polar.posA || !polar.posB) return;
+
+                const dx = polar.posB.x - polar.posA.x;
+                const dy = polar.posB.y - polar.posA.y;
+                const len = Math.sqrt(dx * dx + dy * dy);
+
+                if (len > 0) {
+                    this.orientation.axisVector.x = dx / len;
+                    this.orientation.axisVector.y = dy / len;
+                    this.orientation.warmColdAxis = Math.atan2(dy, dx);
+                }
+            },
+
+            // Get rotation for a specific HCP layer (combines axis + golden angle)
+            getLayerRotation(layerIndex) {
+                const baseRotation = this.orientation.layerRotations[layerIndex] || 0;
+                return this.orientation.warmColdAxis + baseRotation + this.orientation.spiralPhase;
+            },
+
+            // Initialize audio system for golden harmonics
+            async initAudio() {
+                if (this.audio.context) return true;
+
+                try {
+                    this.audio.context = new (window.AudioContext || window.webkitAudioContext)();
+
+                    // Master gain
+                    this.audio.masterGain = this.audio.context.createGain();
+                    this.audio.masterGain.gain.value = 0.12;
+                    this.audio.masterGain.connect(this.audio.context.destination);
+
+                    // Create harmonic oscillators based on golden ratio frequency relationships
+                    this.audio.harmonicOscillators = [];
+
+                    // 7 harmonics for 7 layers: f_n = f_base × φ^(n-3)
+                    // This centers the harmonics around the base frequency
+                    for (let i = 0; i < 7; i++) {
+                        const exponent = i - 3; // -3, -2, -1, 0, 1, 2, 3
+                        const freq = this.audio.baseFrequency * Math.pow(this.effective.ratio, exponent * this.effective.mean);
+
+                        const osc = this.audio.context.createOscillator();
+                        osc.type = 'sine';
+                        osc.frequency.value = freq;
+
+                        // Gain envelope per oscillator
+                        const gain = this.audio.context.createGain();
+                        gain.gain.value = 0;
+
+                        // Stereo pan based on warm/cold (layer position)
+                        const panner = this.audio.context.createStereoPanner();
+                        // Odd layers pan toward warm (left), even toward cold (right)
+                        panner.pan.value = (i % 2 === 0 ? -1 : 1) * this.effective.mean * (i / 6);
+
+                        // LFO modulation at golden angle frequency (sub-audible)
+                        const lfo = this.audio.context.createOscillator();
+                        lfo.type = 'sine';
+                        lfo.frequency.value = this.effective.angle / TAU; // Convert angle to Hz-like value
+
+                        const lfoGain = this.audio.context.createGain();
+                        lfoGain.gain.value = freq * 0.05; // 5% frequency modulation
+
+                        lfo.connect(lfoGain);
+                        lfoGain.connect(osc.frequency);
+
+                        osc.connect(gain);
+                        gain.connect(panner);
+                        panner.connect(this.audio.masterGain);
+
+                        osc.start();
+                        lfo.start();
+
+                        this.audio.harmonicOscillators.push({
+                            osc, gain, panner, lfo, lfoGain,
+                            baseFreq: freq,
+                            layer: i,
+                        });
+                    }
+
+                    // Golden tone oscillator (fundamental at golden ratio × base)
+                    const goldenFreq = this.audio.baseFrequency * this.effective.ratio;
+                    const goldenOsc = this.audio.context.createOscillator();
+                    goldenOsc.type = 'triangle';
+                    goldenOsc.frequency.value = goldenFreq;
+
+                    const goldenGain = this.audio.context.createGain();
+                    goldenGain.gain.value = 0;
+
+                    goldenOsc.connect(goldenGain);
+                    goldenGain.connect(this.audio.masterGain);
+                    goldenOsc.start();
+
+                    this.audio.goldenToneOscillator = { osc: goldenOsc, gain: goldenGain, baseFreq: goldenFreq };
+
+                    console.log('🌻 Golden Harmonics audio initialized');
+                    console.log(`   Base frequency: ${this.audio.baseFrequency} Hz`);
+                    console.log(`   Golden tone: ${goldenFreq.toFixed(2)} Hz`);
+                    return true;
+                } catch (e) {
+                    console.error('Failed to initialize Golden Harmonics audio:', e);
+                    return false;
+                }
+            },
+
+            // Update audio parameters based on current state
+            updateAudio(coherence, muEnergy, darkMatterEfficiency) {
+                if (!this.audio.context || !this.active) return;
+
+                const ctx = this.audio.context;
+                const now = ctx.currentTime;
+
+                // Update each harmonic oscillator
+                for (const h of this.audio.harmonicOscillators) {
+                    // Frequency modulation based on coherence and layer
+                    const layerFactor = (h.layer + 1) / 7;
+                    const newFreq = h.baseFreq * (1 + (coherence - 0.5) * 0.1 * layerFactor);
+                    h.osc.frequency.setTargetAtTime(newFreq, now, 0.1);
+
+                    // Gain based on dark matter stabilization efficiency
+                    const targetGain = this.audio.isPlaying ?
+                        (darkMatterEfficiency * 0.15 * (1 - layerFactor * 0.3)) : 0;
+                    h.gain.gain.setTargetAtTime(targetGain, now, 0.05);
+
+                    // Pan modulation based on warm/cold axis angle
+                    const panMod = Math.sin(this.orientation.warmColdAxis + h.layer * this.effective.angle);
+                    h.panner.pan.setTargetAtTime(panMod * this.effective.mean, now, 0.1);
+                }
+
+                // Golden tone responds to overall system coherence
+                if (this.audio.goldenToneOscillator) {
+                    const gt = this.audio.goldenToneOscillator;
+                    const goldenGain = this.audio.isPlaying ?
+                        (coherence * muEnergy * 0.08) : 0;
+                    gt.gain.gain.setTargetAtTime(goldenGain, now, 0.1);
+
+                    // Frequency tracks effective golden ratio
+                    const newGoldenFreq = this.audio.baseFrequency * this.effective.ratio;
+                    gt.osc.frequency.setTargetAtTime(newGoldenFreq, now, 0.2);
+                }
+            },
+
+            // Start audio playback
+            async startAudio() {
+                if (!this.audio.context) {
+                    await this.initAudio();
+                }
+                if (this.audio.context.state === 'suspended') {
+                    await this.audio.context.resume();
+                }
+                this.audio.isPlaying = true;
+            },
+
+            // Stop audio playback
+            stopAudio() {
+                this.audio.isPlaying = false;
+                if (this.audio.context) {
+                    const now = this.audio.context.currentTime;
+                    for (const h of this.audio.harmonicOscillators) {
+                        h.gain.gain.setTargetAtTime(0, now, 0.1);
+                    }
+                    if (this.audio.goldenToneOscillator) {
+                        this.audio.goldenToneOscillator.gain.gain.setTargetAtTime(0, now, 0.1);
+                    }
+                }
+            },
+
+            // Main update function
+            update(time, coherence, muEnergy, polar, darkMatterState) {
+                if (!this.initialized || !this.active) return;
+
+                // Update warm/cold axis orientation
+                this.updateWarmColdAxis(polar);
+
+                // Animate spiral phase (slow rotation)
+                this.orientation.spiralPhase += 0.002 * this.effective.mean;
+                if (this.orientation.spiralPhase > TAU) {
+                    this.orientation.spiralPhase -= TAU;
+                }
+
+                // Get dark matter efficiency
+                const dmEfficiency = darkMatterState ? darkMatterState.efficiency : 0.5;
+
+                // Update audio
+                this.updateAudio(coherence, muEnergy, dmEfficiency);
+
+                // Update harmonic nodes (sonified HCP mappings)
+                this.updateHarmonicNodes(time, coherence, darkMatterState);
+            },
+
+            // Update harmonic node mappings
+            updateHarmonicNodes(time, coherence, darkMatterState) {
+                if (!darkMatterState || !darkMatterState.nodes) return;
+
+                // Map DarkMatterStabilization HCP nodes to golden harmonics
+                this.harmonicNodes = [];
+                const nodes = darkMatterState.nodes;
+
+                for (let i = 0; i < nodes.length; i++) {
+                    const node = nodes[i];
+                    const layerRotation = this.getLayerRotation(node.layer);
+
+                    // Apply golden angle rotation to node position
+                    const cos_r = Math.cos(layerRotation);
+                    const sin_r = Math.sin(layerRotation);
+                    const rotatedX = node.x * cos_r - node.y * sin_r;
+                    const rotatedY = node.x * sin_r + node.y * cos_r;
+
+                    // Harmonic intensity based on position along warm→cold axis
+                    const axisProjection = rotatedX * this.orientation.axisVector.x +
+                                          rotatedY * this.orientation.axisVector.y;
+                    const normalizedProjection = (axisProjection / (this.radius * 0.3) + 1) / 2; // 0 = warm, 1 = cold
+
+                    // Golden spiral radius modulation
+                    const spiralR = Math.pow(this.effective.ratio, normalizedProjection * 2 - 1);
+
+                    this.harmonicNodes.push({
+                        x: rotatedX,
+                        y: rotatedY,
+                        z: node.z,
+                        layer: node.layer,
+                        rotation: layerRotation,
+                        warmColdFactor: normalizedProjection,
+                        spiralRadius: spiralR,
+                        harmonicIntensity: node.stabilized ? 1.0 : 0.3,
+                        phaseOffset: (i * this.effective.angle) % TAU,
+                    });
+                }
+            },
+
+            // Render the golden harmonic orientation visualization
+            render(ctx, CX, CY, R, globalZ, coherence, time) {
+                if (!this.initialized || !this.active) return;
+
+                const muEnergy = globalZ * coherence;
+
+                // Draw warm→cold axis line
+                const axisLen = R * 0.8;
+                const axisStartX = CX - this.orientation.axisVector.x * axisLen;
+                const axisStartY = CY - this.orientation.axisVector.y * axisLen;
+                const axisEndX = CX + this.orientation.axisVector.x * axisLen;
+                const axisEndY = CY + this.orientation.axisVector.y * axisLen;
+
+                // Axis gradient from warm to cold
+                const axisGrad = ctx.createLinearGradient(axisStartX, axisStartY, axisEndX, axisEndY);
+                axisGrad.addColorStop(0, 'rgba(255, 150, 150, 0.3)'); // Warm rose
+                axisGrad.addColorStop(1, 'rgba(150, 180, 255, 0.3)'); // Cool azure
+
+                ctx.beginPath();
+                ctx.moveTo(axisStartX, axisStartY);
+                ctx.lineTo(axisEndX, axisEndY);
+                ctx.strokeStyle = axisGrad;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw golden spiral from center
+                ctx.beginPath();
+                let spiralR = 5;
+                let spiralAngle = 0;
+                const spiralSteps = 100;
+                const growthRate = Math.pow(this.effective.ratio, 1 / (TAU / this.effective.angle));
+
+                for (let i = 0; i < spiralSteps; i++) {
+                    const x = CX + Math.cos(spiralAngle + this.orientation.spiralPhase) * spiralR;
+                    const y = CY + Math.sin(spiralAngle + this.orientation.spiralPhase) * spiralR;
+
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+
+                    spiralAngle += this.effective.angle * 0.5;
+                    spiralR *= growthRate;
+
+                    if (spiralR > R * 0.7) break;
+                }
+
+                const spiralAlpha = 0.2 + muEnergy * 0.3;
+                ctx.strokeStyle = `rgba(255, 215, 0, ${spiralAlpha})`; // Golden color
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // Draw golden angle sectors (phyllotaxis pattern)
+                for (let i = 0; i < 7; i++) {
+                    const rotation = this.getLayerRotation(i);
+                    const sectorR = R * (0.3 + i * 0.08);
+
+                    // Draw sector arc
+                    ctx.beginPath();
+                    ctx.arc(CX, CY, sectorR, rotation, rotation + this.effective.angle, false);
+                    const layerAlpha = 0.1 + (i / 7) * 0.15;
+                    ctx.strokeStyle = `rgba(218, 165, 32, ${layerAlpha})`; // Goldenrod
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    // Draw radial line at layer rotation
+                    const lineX = CX + Math.cos(rotation) * sectorR;
+                    const lineY = CY + Math.sin(rotation) * sectorR;
+
+                    ctx.beginPath();
+                    ctx.moveTo(CX, CY);
+                    ctx.lineTo(lineX, lineY);
+                    ctx.strokeStyle = `rgba(255, 215, 0, ${layerAlpha * 0.5})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+
+                // Draw harmonic nodes if dark matter is active
+                if (this.harmonicNodes.length > 0) {
+                    for (const node of this.harmonicNodes) {
+                        const screenX = CX + node.x;
+                        const screenY = CY + node.y - node.z * R * 0.3;
+                        const nodeSize = 2 + node.harmonicIntensity * 2;
+
+                        // Color interpolation warm→cold
+                        const warmR = 255, warmG = 150, warmB = 150;
+                        const coldR = 150, coldG = 180, coldB = 255;
+                        const t = node.warmColdFactor;
+                        const r = Math.floor(warmR + (coldR - warmR) * t);
+                        const g = Math.floor(warmG + (coldG - warmG) * t);
+                        const b = Math.floor(warmB + (coldB - warmB) * t);
+
+                        const nodeAlpha = 0.3 + node.harmonicIntensity * 0.4;
+                        ctx.beginPath();
+                        ctx.arc(screenX, screenY, nodeSize, 0, TAU);
+                        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${nodeAlpha})`;
+                        ctx.fill();
+                    }
+                }
+
+                // Draw indicator
+                const indicatorX = 30;
+                const indicatorY = CY + R * 0.6;
+                ctx.font = '10px monospace';
+                ctx.fillStyle = `rgba(255, 215, 0, 0.8)`;
+                ctx.fillText(`🌻 φ: ${this.effective.ratio.toFixed(4)}  ψ: ${this.effective.mean.toFixed(4)}`, indicatorX, indicatorY);
+                ctx.fillText(`   Φ_θ: ${(this.effective.angle * 180 / Math.PI).toFixed(2)}°`, indicatorX, indicatorY + 12);
+                ctx.fillText(`   Axis: ${(this.orientation.warmColdAxis * 180 / Math.PI).toFixed(1)}°`, indicatorX, indicatorY + 24);
+            },
+
+            // Get current state for external systems
+            getState() {
+                return {
+                    effective: { ...this.effective },
+                    orientation: {
+                        warmColdAxis: this.orientation.warmColdAxis,
+                        spiralPhase: this.orientation.spiralPhase,
+                        layerRotations: [...this.orientation.layerRotations],
+                    },
+                    harmonicNodes: this.harmonicNodes.length,
+                    audioPlaying: this.audio.isPlaying,
+                };
+            },
+
+            // Toggle system on/off
+            async toggle() {
+                this.active = !this.active;
+
+                if (this.active) {
+                    await this.startAudio();
+                    console.log('🌻 Golden Harmonics: ACTIVE');
+                    console.log(`   φ = ${this.effective.ratio.toFixed(6)} (golden ratio)`);
+                    console.log(`   ψ = ${this.effective.mean.toFixed(6)} (golden mean)`);
+                    console.log(`   Φ_θ = ${(this.effective.angle * 180 / Math.PI).toFixed(4)}° (golden angle)`);
+                } else {
+                    this.stopAudio();
+                    console.log('🌻 Golden Harmonics: INACTIVE');
+                }
+
+                return this.active;
+            }
+        };
+
+        // ================================================================
         // PENTAGONAL PRISM EMERGENCE SYSTEM
         // Cohesive 3D pentagonal prisms with depth-sorted face rendering
         // Each prism is constructed from the 5 emergent tokens (XCVI-C)
@@ -10627,6 +11161,13 @@
             // Julia Set: z² + c | Cymatic Resonance | Ice Ih Crystals
             // ============================================
             WaterFractalMemory.render(ctx, CX, CY, R, globalZ, releaseCoherence, time);
+
+            // ============================================
+            // GOLDEN HARMONICS ORIENTATION
+            // HCP dark matter with golden angle phyllotaxis
+            // warm→cold axis alignment with φ-harmonics
+            // ============================================
+            GoldenHarmonicsSystem.render(ctx, CX, CY, R, globalZ, releaseCoherence, time);
 
             // Draw HUD
             renderBinauralHUD();
@@ -14146,6 +14687,24 @@
                         darkMatterState
                     );
                 }
+
+                // Update Golden Harmonics orientation system if active
+                if (showGoldenHarmonics && GoldenHarmonicsSystem.initialized) {
+                    const darkMatterState = showDarkMatterStabilization && DarkMatterStabilization.initialized
+                        ? {
+                            efficiency: DarkMatterStabilization.stabilization.efficiency,
+                            nodes: DarkMatterStabilization.hcp.nodes,
+                            resonanceLock: DarkMatterStabilization.stabilization.resonanceLock,
+                        }
+                        : null;
+                    GoldenHarmonicsSystem.update(
+                        time,
+                        releaseCoherence,
+                        globalZ,  // μ-energy
+                        QMESH.binaural.polar,
+                        darkMatterState
+                    );
+                }
             }
 
             return updatePositions(dt);
@@ -14289,6 +14848,47 @@
                 console.log(`   Julia Set: z² + c where c = f(coherence, μ, entropy)`);
                 console.log(`   Dream CMB: T = 2.725K analog, δT/T ~ 10⁻⁵`);
                 console.log(`   Cymatic Resonance: 7 harmonic modes (Chladni patterns)`);
+            }
+
+            if (key === 'g' && !e.ctrlKey && !e.metaKey) {
+                // Toggle Golden Harmonics orientation system
+                showGoldenHarmonics = !showGoldenHarmonics;
+                updateToggleIndicator('toggle-golden-harmonics', showGoldenHarmonics, '#ffd700');
+                GoldenHarmonicsSystem.toggle();
+                console.log(`[🌻 GOLDEN] Harmonics System: ${showGoldenHarmonics}`);
+                console.log(`   φ = ${GoldenHarmonicsSystem.effective.ratio.toFixed(6)} (golden ratio)`);
+                console.log(`   ψ = ${GoldenHarmonicsSystem.effective.mean.toFixed(6)} (golden mean)`);
+                console.log(`   Φ_θ = ${(GoldenHarmonicsSystem.effective.angle * 180 / Math.PI).toFixed(4)}° (golden angle)`);
+            }
+
+            // Golden harmonics adjustment keys (1-6, 0 to reset)
+            if (key === '1' && showGoldenHarmonics) {
+                // Increase golden ratio (φ)
+                GoldenHarmonicsSystem.adjustRatio(0.01);
+            }
+            if (key === '2' && showGoldenHarmonics) {
+                // Decrease golden ratio (φ)
+                GoldenHarmonicsSystem.adjustRatio(-0.01);
+            }
+            if (key === '3' && showGoldenHarmonics) {
+                // Increase golden angle (Φ_θ)
+                GoldenHarmonicsSystem.adjustAngle(0.02);
+            }
+            if (key === '4' && showGoldenHarmonics) {
+                // Decrease golden angle (Φ_θ)
+                GoldenHarmonicsSystem.adjustAngle(-0.02);
+            }
+            if (key === '5' && showGoldenHarmonics) {
+                // Increase golden mean (ψ)
+                GoldenHarmonicsSystem.adjustMean(0.01);
+            }
+            if (key === '6' && showGoldenHarmonics) {
+                // Decrease golden mean (ψ)
+                GoldenHarmonicsSystem.adjustMean(-0.01);
+            }
+            if (key === '0' && showGoldenHarmonics) {
+                // Reset to base golden values
+                GoldenHarmonicsSystem.resetToBase();
             }
 
             if (key === 't') {
@@ -14604,6 +15204,7 @@
         DarkMatterStabilization.init(CX, CY, R);  // Initialize Dark Matter Stabilization with HCP micro harmonics
         ChromaticNexus.init(CX, CY, R);  // Initialize Chromatic Nexus self/LIMNUS communication
         WaterFractalMemory.init(CX, CY, R);  // Initialize Water Fractal Memory cosmic background
+        GoldenHarmonicsSystem.init(CX, CY, R);  // Initialize Golden Harmonics orientation system
         window.addEventListener('resize', () => {
             resize();
             initPrismPoints();
@@ -14616,6 +15217,7 @@
             DarkMatterStabilization.init(CX, CY, R);  // Reinitialize dark matter stabilization on resize
             ChromaticNexus.init(CX, CY, R);  // Reinitialize chromatic nexus on resize
             WaterFractalMemory.init(CX, CY, R);  // Reinitialize water fractal memory on resize
+            GoldenHarmonicsSystem.init(CX, CY, R);  // Reinitialize golden harmonics on resize
         });
 
         requestAnimationFrame(loop);
