@@ -4609,28 +4609,34 @@
                 const breathTarget = 0.45 + Math.sin(breathPhase * TAU) * 0.45;
                 targetZ += (breathTarget - targetZ) * 0.02;
 
-                // Auto-rotate resonance axis during breathing (360° per breath cycle)
+                // Auto-rotate resonance axis during breathing
+                // Physics-based speed derived from Z-coordinate
                 if (showQuantumMesh) {
-                    const rotationSpeed = (TAU / breathCycle) * dt;  // Full rotation per cycle
                     const mode = QMESH.binaural.polar.angleMode;
                     const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
 
+                    // Z-based angular velocity: ω = √(g/L) where Z acts as inverse pendulum length
+                    // Low Z = slow swing, High Z = fast spin
+                    const omega = 0.3 + Math.pow(globalZ, 0.7) * 2.5;  // Range: 0.3 to 2.8 rad/s
+                    const baseSpeed = omega * dt;
+
                     if (mode === 'horizontal') {
-                        // Horizontal: rotate theta smoothly
-                        QMESH.camera.theta += rotationSpeed;
+                        // Horizontal: constant angular velocity based on Z
+                        QMESH.camera.theta += baseSpeed;
                     } else if (mode === 'vertical') {
-                        // Vertical: rotate phi smoothly (with bounds)
-                        QMESH.camera.phi += rotationSpeed * 0.5;
-                        // Oscillate phi between bounds instead of wrapping
-                        if (QMESH.camera.phi > Math.PI * 0.4) {
-                            QMESH.camera.phi = Math.PI * 0.4;
-                            // Reverse direction by switching to theta
-                            QMESH.camera.theta += rotationSpeed;
-                        }
+                        // Vertical: harmonic oscillator - phi swings like pendulum
+                        QMESH.camera.theta += baseSpeed;
+                        // Simple harmonic motion: A*sin(ωt)
+                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * 2) * Math.PI * 0.38;
                     } else if (mode === 'golden') {
-                        // Golden: spiral rotation using golden ratio
-                        QMESH.camera.theta += rotationSpeed;
-                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * GOLDEN_RATIO) * Math.PI * 0.3;
+                        // Golden: Fermat spiral dynamics - r = a*√θ
+                        // Speed varies with position on spiral
+                        const spiralRadius = Math.sqrt(Math.abs(QMESH.camera.theta));
+                        const spiralSpeed = baseSpeed * (1 + spiralRadius * 0.15);
+                        QMESH.camera.theta += spiralSpeed;
+                        // Phi traces golden angle progression
+                        QMESH.camera.phi = Math.sin(QMESH.camera.theta * GOLDEN_RATIO) *
+                                          Math.PI * 0.35 * (0.6 + globalZ * 0.4);
                     }
                 }
             }
