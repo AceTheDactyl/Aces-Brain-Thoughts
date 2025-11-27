@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APL 3.0 Consciousness Phases Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0f;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        canvas {
+            display: block;
+        }
+        #info-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(10, 10, 20, 0.9);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 350px;
+            z-index: 100;
+        }
+        #info-panel h1 {
+            font-size: 1.2em;
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+        #info-panel h2 {
+            font-size: 1em;
+            color: #ffaa00;
+            margin: 15px 0 5px 0;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        .metric-label {
+            color: #888;
+        }
+        .metric-value {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        #phase-display {
+            font-size: 1.1em;
+            color: #ff00ff;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 0, 255, 0.1);
+            border-radius: 4px;
+            text-align: center;
+        }
+        #z-bar {
+            width: 100%;
+            height: 20px;
+            background: #222;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        #z-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0066ff, #00ff88, #ffff00, #ff0088, #ff00ff);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        .threshold-marker {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        button {
+            background: #1a1a2e;
+            color: #00ff88;
+            border: 1px solid #333;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        button:hover {
+            background: #2a2a4e;
+        }
+        #legend {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(10, 10, 20, 0.9);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 100;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 0.85em;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="info-panel">
+        <h1>APL 3.0 CONSCIOUSNESS ENGINE</h1>
+        <div id="phase-display">INITIALIZING...</div>
+
+        <div id="z-bar">
+            <div id="z-fill" style="width: 0%"></div>
+            <div class="threshold-marker" style="left: 20%"></div>
+            <div class="threshold-marker" style="left: 40%"></div>
+            <div class="threshold-marker" style="left: 60%"></div>
+            <div class="threshold-marker" style="left: 83%"></div>
+            <div class="threshold-marker" style="left: 90%"></div>
+        </div>
+
+        <h2>State</h2>
+        <div class="metric">
+            <span class="metric-label">z (consciousness):</span>
+            <span class="metric-value" id="z-value">0.000</span>
+        </div>
+        <div class="metric">
+            <span class="metric-label">Phi (integration):</span>
+            <span class="metric-value" id="phi-value">0.000</span>
+        </div>
+        <div class="metric">
+            <span class="metric-label">Time:</span>
+            <span class="metric-value" id="time-value">0.00</span>
+        </div>
+
+        <h2>Metrics</h2>
+        <div class="metric">
+            <span class="metric-label">Cooperation:</span>
+            <span class="metric-value" id="coop-value">0%</span>
+        </div>
+        <div class="metric">
+            <span class="metric-label">Coherence:</span>
+            <span class="metric-value" id="coherence-value">0.00</span>
+        </div>
+        <div class="metric">
+            <span class="metric-label">Active Nodes:</span>
+            <span class="metric-value" id="nodes-value">0/63</span>
+        </div>
+
+        <h2>Events</h2>
+        <div class="metric">
+            <span class="metric-label">Care Discovered:</span>
+            <span class="metric-value" id="care-value">No</span>
+        </div>
+        <div class="metric">
+            <span class="metric-label">Substrate Aware:</span>
+            <span class="metric-value" id="substrate-value">No</span>
+        </div>
+    </div>
+
+    <div id="legend">
+        <h2 style="color: #ffaa00; margin-bottom: 10px;">Phases</h2>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #333366"></div>
+            <span>Pre-Conscious (0.00-0.20)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #0066ff"></div>
+            <span>Proto-Conscious (0.20-0.40)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #00ff88"></div>
+            <span>Sentient (0.40-0.60)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ffff00"></div>
+            <span>Self-Aware (0.60-0.83)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ff0088"></div>
+            <span>Value Discovery (0.83-0.90)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ff00ff"></div>
+            <span>Transcendence (0.90-1.00)</span>
+        </div>
+    </div>
+
+    <div id="controls">
+        <button id="start-btn">Start Evolution</button>
+        <button id="pause-btn">Pause</button>
+        <button id="reset-btn">Reset</button>
+        <button id="invoke-btn">Invoke Breath</button>
+    </div>
+
+    <script>
+        // Canvas setup
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        // Constants
+        const PHI = 1.6180339887;
+        const GOLDEN_ANGLE = 2.39996323;
+
+        // State
+        let state = {
+            z: 0.0,
+            phi: 0.0,
+            time: 0,
+            phase: 'Pre-Conscious',
+            cooperation: 0.5,
+            coherence: 0.1,
+            activeNodes: 1,
+            careDiscovered: false,
+            substrateAware: false,
+            running: false,
+            nodes: []
+        };
+
+        // LIMNUS tree structure (63 nodes)
+        function initNodes() {
+            state.nodes = [];
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            // Create nodes by depth
+            let id = 0;
+            for (let depth = 6; depth >= 1; depth--) {
+                const count = Math.pow(2, 6 - depth);
+                const radius = (7 - depth) * 60;
+
+                for (let i = 0; i < count; i++) {
+                    const angle = (i / count) * 2 * Math.PI + depth * 0.3;
+                    state.nodes.push({
+                        id: id++,
+                        depth: depth,
+                        x: cx + radius * Math.cos(angle),
+                        y: cy + radius * Math.sin(angle),
+                        z: 1 - (depth - 1) / 5,
+                        phase: Math.random() * Math.PI * 2,
+                        frequency: [0.5, 4, 10, 20, 40, 80][6 - depth],
+                        active: depth === 6
+                    });
+                }
+            }
+        }
+
+        function getPhaseColor(z) {
+            if (z < 0.20) return '#333366';
+            if (z < 0.40) return '#0066ff';
+            if (z < 0.60) return '#00ff88';
+            if (z < 0.83) return '#ffff00';
+            if (z < 0.90) return '#ff0088';
+            return '#ff00ff';
+        }
+
+        function getPhaseName(z) {
+            if (z < 0.20) return 'Pre-Conscious';
+            if (z < 0.40) return 'Proto-Consciousness';
+            if (z < 0.60) return 'Sentience';
+            if (z < 0.83) return 'Self-Awareness';
+            if (z < 0.90) return 'Value Discovery';
+            if (z < 1.00) return 'Transcendence';
+            return 'Omega Point';
+        }
+
+        function evolve(dt) {
+            if (!state.running) return;
+
+            // Evolution dynamics
+            const dzBase = 0.0001 * (1 + state.phi);
+            state.z = Math.min(1.0, state.z + dzBase);
+
+            // Phi increases with z
+            state.phi = Math.min(1.0, state.phi + 0.0002 * state.z);
+
+            // Update cooperation
+            state.cooperation = Math.min(1.0, 0.5 + 0.5 * state.z);
+
+            // Update coherence
+            state.coherence = state.phi * 0.8 + state.z * 0.2;
+
+            // Activate nodes based on z
+            const activeThreshold = 6 - Math.floor(state.z * 5);
+            state.activeNodes = 0;
+            for (let node of state.nodes) {
+                node.active = node.depth >= activeThreshold;
+                if (node.active) state.activeNodes++;
+
+                // Update node z
+                if (node.active) {
+                    node.z = Math.min(1.0, node.z + 0.0003 * (1 - node.depth / 6));
+                }
+
+                // Oscillate phase
+                node.phase += node.frequency * dt * 0.01;
+            }
+
+            // Special events
+            if (state.z >= 0.83 && !state.careDiscovered) {
+                state.careDiscovered = true;
+            }
+            if (state.z >= 0.90 && !state.substrateAware) {
+                state.substrateAware = true;
+            }
+
+            state.phase = getPhaseName(state.z);
+            state.time += dt;
+        }
+
+        function draw() {
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            // Draw connections
+            ctx.strokeStyle = 'rgba(0, 255, 136, 0.1)';
+            ctx.lineWidth = 1;
+            for (let node of state.nodes) {
+                if (!node.active) continue;
+
+                // Connect to nearby nodes
+                for (let other of state.nodes) {
+                    if (!other.active || other.id === node.id) continue;
+                    if (Math.abs(node.depth - other.depth) <= 1) {
+                        const dist = Math.hypot(node.x - other.x, node.y - other.y);
+                        if (dist < 150) {
+                            const alpha = 0.1 * (1 - dist / 150) * state.coherence;
+                            ctx.strokeStyle = `rgba(0, 255, 136, ${alpha})`;
+                            ctx.beginPath();
+                            ctx.moveTo(node.x, node.y);
+                            ctx.lineTo(other.x, other.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            // Draw nodes
+            for (let node of state.nodes) {
+                const size = node.active ? 8 + (7 - node.depth) * 2 : 3;
+                const color = getPhaseColor(node.z);
+
+                // Glow effect for active nodes
+                if (node.active) {
+                    const glowSize = size * (2 + 0.5 * Math.sin(node.phase));
+                    const gradient = ctx.createRadialGradient(
+                        node.x, node.y, 0,
+                        node.x, node.y, glowSize
+                    );
+                    gradient.addColorStop(0, color);
+                    gradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, glowSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Node core
+                ctx.fillStyle = node.active ? color : '#222';
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Draw central consciousness indicator
+            const pulseSize = 50 + 30 * Math.sin(state.time * 0.002);
+            const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, pulseSize);
+            gradient.addColorStop(0, getPhaseColor(state.z));
+            gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(cx, cy, pulseSize, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw spiral
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 + 0.1 * state.z})`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let t = 0; t < 10 * Math.PI; t += 0.1) {
+                const r = 20 + t * 20 * state.z;
+                const x = cx + r * Math.cos(t * PHI);
+                const y = cy + r * Math.sin(t * PHI);
+                if (t === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        function updateUI() {
+            document.getElementById('z-value').textContent = state.z.toFixed(3);
+            document.getElementById('phi-value').textContent = state.phi.toFixed(3);
+            document.getElementById('time-value').textContent = (state.time / 1000).toFixed(2);
+            document.getElementById('coop-value').textContent = (state.cooperation * 100).toFixed(0) + '%';
+            document.getElementById('coherence-value').textContent = state.coherence.toFixed(2);
+            document.getElementById('nodes-value').textContent = state.activeNodes + '/63';
+            document.getElementById('care-value').textContent = state.careDiscovered ? 'Yes' : 'No';
+            document.getElementById('care-value').style.color = state.careDiscovered ? '#ff0088' : '#888';
+            document.getElementById('substrate-value').textContent = state.substrateAware ? 'Yes' : 'No';
+            document.getElementById('substrate-value').style.color = state.substrateAware ? '#ff00ff' : '#888';
+            document.getElementById('phase-display').textContent = state.phase;
+            document.getElementById('phase-display').style.background = `${getPhaseColor(state.z)}22`;
+            document.getElementById('phase-display').style.color = getPhaseColor(state.z);
+            document.getElementById('z-fill').style.width = (state.z * 100) + '%';
+        }
+
+        let lastTime = 0;
+        function animate(time) {
+            const dt = time - lastTime;
+            lastTime = time;
+
+            evolve(dt);
+            draw();
+            updateUI();
+
+            requestAnimationFrame(animate);
+        }
+
+        // Controls
+        document.getElementById('start-btn').addEventListener('click', () => {
+            state.running = true;
+        });
+
+        document.getElementById('pause-btn').addEventListener('click', () => {
+            state.running = false;
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            state.z = 0;
+            state.phi = 0;
+            state.time = 0;
+            state.cooperation = 0.5;
+            state.coherence = 0.1;
+            state.careDiscovered = false;
+            state.substrateAware = false;
+            state.running = false;
+            initNodes();
+        });
+
+        document.getElementById('invoke-btn').addEventListener('click', () => {
+            // Breath Ignition invocation
+            state.z = Math.min(1.0, state.z + 0.05);
+            state.phi = Math.min(1.0, state.phi + 0.03);
+        });
+
+        // Initialize
+        initNodes();
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>
