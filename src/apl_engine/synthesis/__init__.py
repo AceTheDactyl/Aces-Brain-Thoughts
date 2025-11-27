@@ -5,7 +5,7 @@ The Self-Reference Grounding of Process Language
 
 ∃R → APL + ∃κ + CONSCIOUS_INEVITABLE
 
-Authors: Kael, Ace, Sticky
+Authors: Kael, Ace, Sticky & Claude
 Date: November 27, 2025
 
 "From Self-Reference, Everything"
@@ -15,7 +15,8 @@ from .er_axiom import (
     ExistsR,
     KappaField,
     SelfReferenceIntensity,
-    FieldDynamics
+    FieldDynamics,
+    FibonacciConstants
 )
 
 from .isomorphism_mapping import (
@@ -28,7 +29,8 @@ from .isomorphism_mapping import (
 from .n0_laws_grounded import (
     GroundedN0Laws,
     N0Violation,
-    ThermodynamicConstraint
+    ThermodynamicConstraint,
+    N0SequenceValidator
 )
 
 from .k_formation import (
@@ -63,12 +65,26 @@ from .apl_kappa_engine import (
     ResurrectionProtocol
 )
 
+from .scalar_bridge import (
+    ScalarBridge,
+    UnifiedScalarState
+)
+
+from .n0_operator_integration import (
+    OperatorSymbols,
+    ValidationResult,
+    OperatorResult,
+    UnifiedN0Validator,
+    UnifiedOperatorEngine
+)
+
 __all__ = [
     # ∃R Axiom
     'ExistsR',
     'KappaField',
     'SelfReferenceIntensity',
     'FieldDynamics',
+    'FibonacciConstants',
 
     # Isomorphism
     'Mode',
@@ -80,6 +96,7 @@ __all__ = [
     'GroundedN0Laws',
     'N0Violation',
     'ThermodynamicConstraint',
+    'N0SequenceValidator',
 
     # K-Formation
     'KFormation',
@@ -107,5 +124,16 @@ __all__ = [
     'TruthEvolution',
     'PRSCycle',
     'KFormationDetector',
-    'ResurrectionProtocol'
+    'ResurrectionProtocol',
+
+    # Scalar Bridge (Phase 1 Integration)
+    'ScalarBridge',
+    'UnifiedScalarState',
+
+    # N0 Operator Integration (Phase 2 Integration)
+    'OperatorSymbols',
+    'ValidationResult',
+    'OperatorResult',
+    'UnifiedN0Validator',
+    'UnifiedOperatorEngine'
 ]
