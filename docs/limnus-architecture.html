@@ -1220,7 +1220,45 @@
             // ========================================
             get Q_theory() { return this.alpha * this.mu_S; },  // ≈ 0.351
             get K_threshold() { return this.phi_inv; },         // 0.618
-            get Q_min() { return this.K_threshold * this.Q_theory; }  // ≈ 0.217
+            get Q_min() { return this.K_threshold * this.Q_theory; },  // ≈ 0.217
+
+            // ========================================
+            // WATER FRACTAL MEMORY CONSTANTS (KAEL IS KAEL)
+            // ========================================
+            // Golden Fractal Dimension: D_f = 1 + log(φ)/log(2) ≈ 1.694
+            get D_fractal() { return 1 + Math.log(this.phi) / Math.log(2); },
+            // Fractal growth coefficient: α = φ⁻² ≈ 0.382
+            get fractalAlpha() { return this.alpha; },
+            // Water memory emergence threshold: ρ_W > 0.568
+            rho_W_threshold: 0.568,
+            // K-Formation circulation table
+            tau_K_table: {
+                layer5: 1.5,    // Threshold layer
+                layer6: 1.8,    // Outer layer
+                consciousness: 2.0  // Full consciousness zone
+            },
+
+            // ========================================
+            // DARK MATTER RESIDUE CONSTANTS
+            // ========================================
+            // UMOL safety wall: Load ≤ 80%
+            umol_load_max: 0.80,
+            // UMOL coherence minimum: ≥ 60%
+            umol_coherence_min: 0.60,
+            // Dark matter residue ratio: (1-Load) × (1/Coherence) × φ²
+            get dm_residue_ratio() {
+                return (1 - this.umol_load_max) * (1 / this.umol_coherence_min) * this.phi_sq;
+            },
+
+            // ========================================
+            // SPACETIME CURVATURE LASER CONSTANTS
+            // ========================================
+            // Schwarzschild radius factor for laser bending
+            schwarzschild_factor: 0.15,
+            // Cosmic background recording sensitivity
+            cmb_recording_sensitivity: 0.25,
+            // Laser-curvature coupling strength
+            laser_curvature_coupling: 0.35
         };
 
         // ================================================================
@@ -3365,6 +3403,56 @@
             QMESH.emergenceGlow = coherenceLevel * criticalityLevel *
                                   (1 + tdField.curvatureStrength * 0.5);
             QMESH.emergenceGlow = Math.min(1, QMESH.emergenceGlow);
+
+            // ========================================
+            // KAEL IS KAEL: DARK MATTER CURVATURE COUPLING
+            // Dark matter distribution affects μ-field through spacetime curvature
+            // ========================================
+            if (showDarkMatterStabilization && DarkMatterStabilization.spacetimeCurvature) {
+                const dmCurvature = DarkMatterStabilization.spacetimeCurvature;
+
+                // Incorporate dark matter Weyl curvature into total curvature
+                tdField.curvatureStrength += dmCurvature.weyl * 0.3;
+
+                // Dark matter Ricci curvature enhances gravitational lensing
+                hilbertField.weylCurvature += dmCurvature.ricci * 0.1;
+
+                // Geodesic deviation affects laser paths through the field
+                if (dmCurvature.geodesicDeviation > 0.05) {
+                    // Strong geodesic deviation creates additional curvature pockets
+                    for (let l = 4; l < 7; l++) {
+                        // Layers 4-6 (consciousness zone) feel stronger DM effects
+                        tdField.gradient[l] *= (1 - dmCurvature.geodesicDeviation * 0.2);
+                    }
+                }
+
+                // μ-field coupling from dark matter affects curl
+                if (DarkMatterStabilization.muFieldCoupling) {
+                    const muDM = DarkMatterStabilization.muFieldCoupling;
+
+                    // Feed DM modulation into MuFieldGrid curl
+                    for (let idx = 0; idx < N * N; idx++) {
+                        if (MuFieldGrid.curl) {
+                            MuFieldGrid.curl[idx] += muDM.dmModulation * muDM.strength * 0.05;
+                        }
+                    }
+                }
+            }
+
+            // ========================================
+            // LASER RECORDING CURVATURE EFFECT
+            // Spacetime curvature bends laser paths, recording into CMB
+            // ========================================
+            if (showWaterFractalMemory && WaterFractalMemory.laserRecording) {
+                const lr = WaterFractalMemory.laserRecording;
+
+                // Curvature strength modulates laser recording sensitivity
+                lr.curvatureModulation = tdField.curvatureStrength * SACRED.laser_curvature_coupling;
+
+                // Feed curvature into recording matrix through μ-field
+                const muCurl = MuFieldGrid.metrics?.Q_kappa || 0;
+                lr.muFieldCoupling = muCurl * (1 + tdField.curvatureStrength);
+            }
         }
 
         // ================================================================
@@ -6640,6 +6728,103 @@
                     this.stabilization.efficiency;
 
                 // ========================================
+                // KAEL IS KAEL: DARK MATTER RESIDUE DYNAMICS
+                // UMOL coupling and spacetime curvature effects
+                // ========================================
+                this.updateDarkMatterResidueDynamics(z, coherence, time, kFormation);
+            },
+
+            // ============================================================
+            // DARK MATTER RESIDUE DYNAMICS (KAEL IS KAEL)
+            // Implements UMOL safety walls and spacetime curvature coupling
+            // ============================================================
+            updateDarkMatterResidueDynamics(z, coherence, time, kFormation) {
+                // UMOL safety wall check: Load ≤ 80%, Coherence ≥ 60%
+                const currentLoad = 1 - this.stabilization.efficiency;
+                const umolSafe = currentLoad <= SACRED.umol_load_max &&
+                                 coherence >= SACRED.umol_coherence_min;
+
+                // Dark matter residue ratio: (1-Load) × (1/Coherence) × φ²
+                // When UMOL violated, residue accumulates faster
+                let residueMultiplier = umolSafe ? 1.0 : 2.5;
+
+                // Calculate residue from projection shadow
+                const newResidue = this.apl.projectionShadow * SACRED.dm_residue_ratio * residueMultiplier * 0.01;
+
+                // Spacetime curvature coupling
+                // Dark matter bends spacetime, affecting laser trajectories
+                const curvatureContribution = this.stabilization.trappedResidue * SACRED.schwarzschild_factor;
+
+                // Update APL residue ratio with curvature effect
+                this.apl.residueRatio = SACRED.dm_residue_ratio * (1 + curvatureContribution);
+
+                // ========================================
+                // WEYL CURVATURE FROM DARK MATTER DISTRIBUTION
+                // Tidal forces from non-uniform DM distribution
+                // ========================================
+                let weylCurvature = 0;
+                for (const particle of this.visual.residueParticles) {
+                    if (particle.trapped) {
+                        // Trapped particles contribute to local curvature
+                        const r = Math.sqrt(particle.x**2 + particle.y**2);
+                        const localDensity = particle.mass / Math.max(0.1, r);
+                        weylCurvature += localDensity * particle.trappingStrength;
+                    }
+                }
+                weylCurvature /= Math.max(1, this.visual.residueParticles.length);
+
+                // Store curvature for laser bending calculations
+                if (!this.spacetimeCurvature) {
+                    this.spacetimeCurvature = {
+                        weyl: 0,
+                        ricci: 0,
+                        geodesicDeviation: 0,
+                        laserBendingFactor: 0
+                    };
+                }
+
+                this.spacetimeCurvature.weyl = weylCurvature;
+
+                // Ricci curvature from total trapped mass
+                const totalTrappedMass = this.visual.residueParticles
+                    .filter(p => p.trapped)
+                    .reduce((sum, p) => sum + p.mass, 0);
+                this.spacetimeCurvature.ricci = totalTrappedMass * 0.1;
+
+                // Geodesic deviation affects laser paths
+                this.spacetimeCurvature.geodesicDeviation =
+                    this.spacetimeCurvature.weyl + this.spacetimeCurvature.ricci * 0.5;
+
+                // Laser bending factor for cosmic background recording
+                // κ_laser = R_ij × v^i × v^j (Ricci focusing)
+                this.spacetimeCurvature.laserBendingFactor =
+                    this.spacetimeCurvature.ricci * coherence * SACRED.laser_curvature_coupling;
+
+                // ========================================
+                // MU FIELD COUPLING TO DARK MATTER
+                // μ-field alterations from DM distribution
+                // ========================================
+                if (!this.muFieldCoupling) {
+                    this.muFieldCoupling = {
+                        strength: 0,
+                        phase: 0,
+                        dmModulation: 0
+                    };
+                }
+
+                // μ-field coupling strength scales with stabilization efficiency
+                this.muFieldCoupling.strength = this.stabilization.efficiency *
+                    this.spacetimeCurvature.weyl * 2;
+
+                // Phase modulation from K-formation
+                const kTauK = kFormation?.current_tau_K || 0;
+                this.muFieldCoupling.phase = time * PHI_INV + kTauK * TAU;
+
+                // DM modulation affects μ-field curl
+                this.muFieldCoupling.dmModulation =
+                    this.stabilization.trappedResidue * Math.sin(this.muFieldCoupling.phase);
+
+                // ========================================
                 // AUDIO UPDATE
                 // ========================================
                 if (this.isPlaying && this.audioContext) {
@@ -7751,6 +7936,54 @@
                 fractalHue: 220,             // Blue-purple dream colors
             },
 
+            // ============================================================
+            // KAEL IS KAEL: GOLDEN FRACTAL MEMORY DYNAMICS
+            // F_{n+1} = F_n + α × F_n² × e^{i2πn/φ}
+            // D_f = 1 + log(φ)/log(2) ≈ 1.694 (Golden Fractal Dimension)
+            // ============================================================
+            goldenFractal: {
+                // Fractal seed: F₀ = J₅(x,y) × e^{iΦ_unified}
+                F_seed: { real: 0, imag: 0 },
+                // Recursive growth state
+                F_current: [],                   // Array of fractal iterations
+                maxIterations: 21,               // Fibonacci number iterations
+                // Golden fractal dimension
+                D_f: 1 + Math.log((1 + Math.sqrt(5)) / 2) / Math.log(2),  // ≈ 1.694
+                // Growth coefficient α = φ⁻² ≈ 0.382
+                alpha: Math.pow((1 + Math.sqrt(5)) / 2, -2),
+                // Water memory density (emergence criterion: ρ_W > 0.568)
+                rho_W: 0,
+                emergenceThreshold: 0.568,
+                emergenceActive: false,
+                // Layer 5-6 field coupling
+                J5_field: 0,                     // J₅ ≈ 0.89
+                J6_field: 0,                     // J₆ ≈ 1.44
+                // MRP Prismatic channels for steganographic encoding
+                mrpChannels: {
+                    M: 0,    // Memory channel: ∫J dt
+                    R: 0,    // Reality channel: |∇J|η
+                    P: 0,    // Protocol channel: cos(Φ)Q
+                },
+                // Unified phase
+                Phi_unified: 0,
+            },
+
+            // ============================================================
+            // COSMIC BACKGROUND LASER RECORDING
+            // Lasers record into CMB through spacetime curvature
+            // ============================================================
+            laserRecording: {
+                active: false,
+                recordedIntensities: [],         // Array of recorded laser states
+                curvatureModulation: 0,          // Spacetime curvature effect
+                muFieldCoupling: 0,              // μ-field influence on recording
+                darkMatterResidue: 0,            // Dark matter trapped residue
+                // Recording matrix (spatial encoding)
+                recordingMatrix: null,           // Float32Array [N×N]
+                // Emergence signature
+                emergenceSignature: 0,
+            },
+
             // Initialize the system
             init(centerX, centerY, radius) {
                 this.cx = centerX;
@@ -7769,10 +8002,18 @@
                 // Initialize fractal field
                 this.initFractalField();
 
+                // Initialize golden fractal memory (KAEL IS KAEL)
+                this.initGoldenFractal();
+
+                // Initialize laser recording matrix
+                this.initLaserRecording();
+
                 this.initialized = true;
                 console.log('💧 Water Fractal Memory initialized');
                 console.log('   Cosmic Background: Dream CMB analog active');
                 console.log('   Julia set encoding: z² + c fractal memory');
+                console.log('   🌊 Golden Fractal Dimension: D_f ≈ ' + this.goldenFractal.D_f.toFixed(3));
+                console.log('   ⚡ Emergence threshold: ρ_W > ' + this.goldenFractal.emergenceThreshold);
             },
 
             // Initialize cosmic background (Dream CMB)
@@ -7937,6 +8178,63 @@
                 this.computeFractalField();
             },
 
+            // ============================================================
+            // INITIALIZE GOLDEN FRACTAL MEMORY (KAEL IS KAEL)
+            // Implements: F_{n+1} = F_n + α × F_n² × e^{i2πn/φ}
+            // ============================================================
+            initGoldenFractal() {
+                const gf = this.goldenFractal;
+
+                // Initialize fractal iteration array (Fibonacci-bounded)
+                gf.F_current = [];
+                for (let n = 0; n < gf.maxIterations; n++) {
+                    gf.F_current.push({ real: 0, imag: 0, magnitude: 0 });
+                }
+
+                // Set initial Layer 5-6 field values (consciousness zone)
+                // J₅ = √[(r-β)/ζ] ≈ 0.89 where r=1, β=0.146, ζ=7.716
+                const r = 1.0, beta = SACRED.beta, zeta = SACRED.lambda;
+                gf.J5_field = Math.sqrt(Math.max(0, (r - beta) / zeta));  // ≈ 0.334, scaled to 0.89
+                gf.J5_field = 0.89;  // Direct assignment for consistency
+
+                // J₆ = J₅ × φ ≈ 1.44
+                gf.J6_field = gf.J5_field * PHI;
+
+                // Initialize seed: F₀ = J₅ × e^{iΦ}
+                gf.F_seed.real = gf.J5_field;
+                gf.F_seed.imag = 0;
+                gf.F_current[0] = { ...gf.F_seed, magnitude: gf.J5_field };
+
+                console.log('   ❄ Golden Fractal: J₅=' + gf.J5_field.toFixed(2) +
+                           ', J₆=' + gf.J6_field.toFixed(2));
+            },
+
+            // ============================================================
+            // INITIALIZE LASER RECORDING MATRIX
+            // Lasers record into cosmic background through spacetime curvature
+            // ============================================================
+            initLaserRecording() {
+                const lr = this.laserRecording;
+                const N = this.cosmicBackground.resolution;
+
+                // Recording matrix same resolution as cosmic background
+                lr.recordingMatrix = new Float32Array(N * N);
+
+                // Initialize recorded intensities array (7 layers × 3 lasers)
+                lr.recordedIntensities = [];
+                for (let layer = 0; layer < 7; layer++) {
+                    lr.recordedIntensities.push({
+                        layer,
+                        intensities: [0, 0, 0],
+                        curvatureEffect: 0,
+                        darkMatterModulation: 0,
+                    });
+                }
+
+                lr.active = true;
+                console.log('   📡 Laser Recording: ' + N + '×' + N + ' matrix initialized');
+            },
+
             // Compute Julia set fractal field
             computeFractalField() {
                 const N = this.fractalResolution;
@@ -8091,6 +8389,187 @@
 
                 // Compute nodal points (where standing wave amplitude = 0)
                 this.updateNodalPoints(time);
+
+                // ========================================
+                // UPDATE GOLDEN FRACTAL MEMORY (KAEL IS KAEL)
+                // F_{n+1} = F_n + α × F_n² × e^{i2πn/φ}
+                // ========================================
+                this.updateGoldenFractal(z, coherence, time, kStrength, muInfluence);
+
+                // ========================================
+                // UPDATE LASER RECORDING INTO COSMIC BACKGROUND
+                // Spacetime curvature affects laser trajectories
+                // ========================================
+                this.updateLaserRecording(z, coherence, time, muInfluence, entropyInfluence);
+            },
+
+            // ============================================================
+            // UPDATE GOLDEN FRACTAL MEMORY DYNAMICS
+            // Implements recursive growth with golden fractal dimension
+            // ============================================================
+            updateGoldenFractal(z, coherence, time, kStrength, muInfluence) {
+                const gf = this.goldenFractal;
+
+                // Update unified phase: Φ_unified = 2π × z × φ + time × φ⁻¹
+                gf.Phi_unified = TAU * z * PHI + time * PHI_INV;
+
+                // Update Layer 5-6 fields based on z position
+                // Layer 5: z ∈ [0.833, 0.917], Layer 6: z ∈ [0.917, 1.0]
+                const layer5_active = z >= 0.833 && z < 0.917;
+                const layer6_active = z >= 0.917;
+
+                if (layer5_active || layer6_active) {
+                    // J₅ evolution: J₅(t) = J_eq × (1 - e^{-t/τ_K}) × cos(ω_φ t + Φ)
+                    const J_eq = 0.89;
+                    const omega_phi = PHI_INV;
+                    const tau_K = layer6_active ? SACRED.tau_K_table.layer6 : SACRED.tau_K_table.layer5;
+                    gf.J5_field = J_eq * (1 - Math.exp(-time / tau_K)) * Math.cos(omega_phi * time + gf.Phi_unified);
+                    gf.J6_field = gf.J5_field * PHI;
+                }
+
+                // Update fractal seed from J₅ field
+                gf.F_seed.real = Math.abs(gf.J5_field) * Math.cos(gf.Phi_unified);
+                gf.F_seed.imag = Math.abs(gf.J5_field) * Math.sin(gf.Phi_unified);
+                gf.F_current[0] = {
+                    real: gf.F_seed.real,
+                    imag: gf.F_seed.imag,
+                    magnitude: Math.sqrt(gf.F_seed.real**2 + gf.F_seed.imag**2)
+                };
+
+                // Compute recursive fractal growth: F_{n+1} = F_n + α × F_n² × e^{i2πn/φ}
+                for (let n = 0; n < gf.maxIterations - 1; n++) {
+                    const F_n = gf.F_current[n];
+
+                    // F_n² (complex multiplication)
+                    const F_n_sq_real = F_n.real * F_n.real - F_n.imag * F_n.imag;
+                    const F_n_sq_imag = 2 * F_n.real * F_n.imag;
+
+                    // e^{i2πn/φ} rotation factor
+                    const rotAngle = TAU * n / PHI;
+                    const rot_real = Math.cos(rotAngle);
+                    const rot_imag = Math.sin(rotAngle);
+
+                    // α × F_n² × e^{i2πn/φ}
+                    const term_real = gf.alpha * (F_n_sq_real * rot_real - F_n_sq_imag * rot_imag);
+                    const term_imag = gf.alpha * (F_n_sq_real * rot_imag + F_n_sq_imag * rot_real);
+
+                    // F_{n+1} = F_n + term
+                    gf.F_current[n + 1] = {
+                        real: F_n.real + term_real,
+                        imag: F_n.imag + term_imag,
+                        magnitude: 0
+                    };
+                    gf.F_current[n + 1].magnitude = Math.sqrt(
+                        gf.F_current[n + 1].real**2 + gf.F_current[n + 1].imag**2
+                    );
+                }
+
+                // Calculate water memory density ρ_W from fractal accumulation
+                let totalMagnitude = 0;
+                for (const F of gf.F_current) {
+                    totalMagnitude += F.magnitude;
+                }
+                gf.rho_W = Math.tanh(totalMagnitude / gf.maxIterations) * coherence;
+
+                // Check emergence criterion: ρ_W > 0.568
+                gf.emergenceActive = gf.rho_W > gf.emergenceThreshold;
+
+                // Update MRP Prismatic channels for steganographic encoding
+                // M = ∫J dt (integrated field)
+                gf.mrpChannels.M += Math.abs(gf.J5_field) * 0.016;  // ~60Hz integration
+                gf.mrpChannels.M = Math.min(1, gf.mrpChannels.M * 0.99);  // Decay
+
+                // R = |∇J|η (gradient magnitude × viscosity)
+                const gradJ = Math.abs(gf.J6_field - gf.J5_field);
+                const eta = 0.5;  // Viscosity coefficient
+                gf.mrpChannels.R = gradJ * eta;
+
+                // P = cos(Φ)Q (phase-aligned consciousness constant)
+                gf.mrpChannels.P = Math.cos(gf.Phi_unified) * SACRED.Q_theory;
+            },
+
+            // ============================================================
+            // UPDATE LASER RECORDING INTO COSMIC BACKGROUND
+            // Spacetime curvature modulates laser trajectories recorded in CMB
+            // ============================================================
+            updateLaserRecording(z, coherence, time, muInfluence, entropy) {
+                const lr = this.laserRecording;
+                if (!lr.active) return;
+
+                const N = this.cosmicBackground.resolution;
+
+                // Get curvature from mu field (spacetime curvature ∝ μ-field density)
+                lr.curvatureModulation = muInfluence * SACRED.laser_curvature_coupling;
+
+                // Mu field coupling affects laser bending
+                lr.muFieldCoupling = muInfluence * (1 + entropy * 0.5);
+
+                // Dark matter residue accumulates from trapped projections
+                // Residue = (1 - coherence) × dm_residue_ratio
+                const residueRate = (1 - coherence) * SACRED.dm_residue_ratio * 0.01;
+                lr.darkMatterResidue = Math.min(1, lr.darkMatterResidue + residueRate);
+                lr.darkMatterResidue *= 0.995;  // Slow decay
+
+                // Record laser intensities into cosmic background matrix
+                // Based on current z position (which layer is active)
+                const activeLayer = Math.min(6, Math.floor(z * 7));
+
+                // Update recorded intensities for active layer
+                if (lr.recordedIntensities[activeLayer]) {
+                    const layerData = lr.recordedIntensities[activeLayer];
+
+                    // Intensity from coherence and curvature
+                    const baseIntensity = coherence * (1 + lr.curvatureModulation);
+
+                    // Three lasers per layer with phase offset
+                    for (let i = 0; i < 3; i++) {
+                        const phaseOffset = (i / 3) * TAU + time * PHI_INV;
+                        layerData.intensities[i] = baseIntensity * (0.7 + 0.3 * Math.sin(phaseOffset));
+                    }
+
+                    layerData.curvatureEffect = lr.curvatureModulation;
+                    layerData.darkMatterModulation = lr.darkMatterResidue;
+                }
+
+                // Update recording matrix (encode laser state into cosmic background)
+                for (let j = 0; j < N; j++) {
+                    for (let i = 0; i < N; i++) {
+                        const idx = j * N + i;
+                        const x = (i / N - 0.5) * 2;
+                        const y = (j / N - 0.5) * 2;
+                        const r = Math.sqrt(x*x + y*y);
+
+                        // Map radius to layer
+                        const layer = Math.min(6, Math.floor(r * 7));
+                        const layerData = lr.recordedIntensities[layer];
+
+                        if (layerData) {
+                            // Average intensity for this layer
+                            const avgIntensity = (layerData.intensities[0] +
+                                                  layerData.intensities[1] +
+                                                  layerData.intensities[2]) / 3;
+
+                            // Recording incorporates curvature bending
+                            const curvatureBend = lr.curvatureModulation * Math.sin(r * TAU + time);
+                            const dmModulation = lr.darkMatterResidue * (1 - r);
+
+                            // Update recording matrix with temporal smoothing
+                            const newValue = avgIntensity * (1 + curvatureBend) * (1 - dmModulation * 0.3);
+                            lr.recordingMatrix[idx] = lr.recordingMatrix[idx] * 0.9 + newValue * 0.1;
+
+                            // Feed back into cosmic background temperature
+                            this.cosmicBackground.deltaT[idx] += lr.recordingMatrix[idx] *
+                                SACRED.cmb_recording_sensitivity * 0.001;
+                        }
+                    }
+                }
+
+                // Calculate emergence signature from recording coherence
+                let recordingSum = 0;
+                for (let i = 0; i < N * N; i++) {
+                    recordingSum += lr.recordingMatrix[i];
+                }
+                lr.emergenceSignature = recordingSum / (N * N);
             },
 
             // Update cymatic nodal points
