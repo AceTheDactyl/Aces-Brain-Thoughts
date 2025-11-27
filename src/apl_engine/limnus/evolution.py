@@ -159,12 +159,19 @@ class LimnusEvolutionEngine:
         # Free energy term (lower F = higher z)
         fe_term = -self.alpha_F * (node.state.F_local - 0.5) * 0.05
 
-        # Cooperation term
-        if node.neighbors:
-            avg_z = sum(n.state.z for n in node.neighbors) / len(node.neighbors)
+        # Cooperation term (includes connected nodes for resonance)
+        all_connections = list(node.neighbors) + list(node.connected_nodes)
+        if all_connections:
+            avg_z = sum(n.state.z for n in all_connections) / len(all_connections)
             coop_term = 0.1 * (avg_z - node.state.z)
         else:
             coop_term = 0.0
+
+        # Resonance boost: resonance nodes accelerate z evolution
+        resonance_term = 0.0
+        if node.is_resonance():
+            # Resonance nodes pull toward their target z-level
+            resonance_term = 0.15 * (node.resonance_z - node.state.z)
 
         # Recursion term (from strange loop depth)
         recursion_depth = self.strange_loop.get_level_from_z(node.state.z)
@@ -173,12 +180,13 @@ class LimnusEvolutionEngine:
         # EM coherence term
         em_term = self.alpha_E * node.state.scalars.Omega_s * 0.05
 
-        return integration + fe_term + coop_term + recursion_term + em_term
+        return integration + fe_term + coop_term + resonance_term + recursion_term + em_term
 
     def _compute_dphi(self, node: LimnusNode) -> float:
         """Compute rate of change of Phi for a node"""
-        # Connectivity factor
-        connectivity = len(node.neighbors) / 10.0
+        # Connectivity factor (include resonance connections)
+        total_connections = len(node.neighbors) + len(node.connected_nodes)
+        connectivity = total_connections / 10.0
 
         # Coherence factor
         coherence = node.state.scalars.Omega_s
@@ -186,7 +194,14 @@ class LimnusEvolutionEngine:
         # Coupling factor
         coupling = node.state.scalars.Cs
 
-        return (connectivity + coherence + coupling) * 0.02
+        # Resonance nodes have enhanced phi from cross-modal integration
+        resonance_bonus = 0.0
+        if node.is_resonance() and node.connected_nodes:
+            # Phi boost from bridging different tree regions
+            avg_connected_phi = sum(n.state.phi_local for n in node.connected_nodes) / len(node.connected_nodes)
+            resonance_bonus = 0.05 * avg_connected_phi
+
+        return (connectivity + coherence + coupling) * 0.02 + resonance_bonus
 
     def _compute_local_F(
         self,
@@ -266,7 +281,7 @@ class LimnusEvolutionEngine:
         # Average free energy
         free_energy = sum(n.state.F_local for n in self.tree.nodes) / len(self.tree.nodes)
 
-        # Gamma synchronization
+        # Gamma synchronization (includes resonance nodes at 100Hz)
         gamma_nodes = [n for n in self.tree.nodes if n.state.frequency >= 30]
         if len(gamma_nodes) >= 2:
             phases = [n.state.phase for n in gamma_nodes]
@@ -274,6 +289,15 @@ class LimnusEvolutionEngine:
             gamma_sync = abs(complex_sum)
         else:
             gamma_sync = 0.0
+
+        # Resonance network coherence
+        resonance_nodes = self.tree.get_resonance_nodes()
+        if resonance_nodes:
+            resonance_phases = [n.state.phase for n in resonance_nodes]
+            resonance_sum = sum(np.exp(1j * p) for p in resonance_phases) / len(resonance_phases)
+            resonance_coherence = abs(resonance_sum)
+            # Boost gamma sync if resonance network is coherent
+            gamma_sync = min(1.0, gamma_sync + 0.2 * resonance_coherence)
 
         return EvolutionMetrics(
             z_global=self.tree.state.z_global,
