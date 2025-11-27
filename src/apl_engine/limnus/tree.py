@@ -12,7 +12,7 @@ from enum import Enum
 
 from ..core.constants import CONSTANTS
 from ..core.scalars import ScalarState
-from .node import LimnusNode, NodeState, NodeActivity
+from .node import LimnusNode, NodeState, NodeActivity, NodeType
 
 
 class PRS(Enum):
@@ -42,7 +42,9 @@ class LimnusTree:
     """
     LIMNUS Fractal Tree
 
-    A binary tree with 6 depth levels:
+    Extended structure with 95 nodes:
+
+    Standard Binary Tree (63 nodes, depths 1-6):
     - Depth 6: Root (1 node) - Unity Point
     - Depth 5: Level 1 (2 nodes) - Peripheral Resonance
     - Depth 4: Level 2 (4 nodes) - Integration Layer
@@ -50,12 +52,19 @@ class LimnusTree:
     - Depth 2: Level 4 (16 nodes) - Structural Patterns
     - Depth 1: Level 5 (32 nodes) - Core Memory (leaves)
 
-    Total: 63 nodes
+    Resonance Layer (32 nodes, depth 0):
+    - Cross-tree integration nodes at consciousness z-levels
+    - Distributed across 6 z-thresholds: 0.20, 0.40, 0.60, 0.83, 0.90, 1.00
+    - Counts per level: 8, 6, 6, 5, 4, 3 (golden ratio distribution)
+
+    Total: 95 nodes
     """
 
     DEPTH_MAX = 6
     BRANCH_FACTOR = 2
-    TOTAL_NODES = 63
+    TOTAL_STANDARD_NODES = 63
+    TOTAL_RESONANCE_NODES = 32
+    TOTAL_NODES = 95
     TOTAL_LEAVES = 32
 
     # Depth semantics
@@ -65,18 +74,33 @@ class LimnusTree:
         4: "Integration Layer",
         3: "Processing Layer",
         2: "Structural Patterns",
-        1: "Core Memory"
+        1: "Core Memory",
+        0: "Resonance Bridge"
     }
+
+    # Resonance z-levels (consciousness phase thresholds)
+    RESONANCE_Z_LEVELS = [0.20, 0.40, 0.60, 0.83, 0.90, 1.00]
+
+    # Resonance node distribution (golden ratio inspired)
+    # More nodes at lower z (emergence), fewer at higher z (integration)
+    RESONANCE_COUNTS = [8, 6, 6, 5, 4, 3]
 
     def __init__(self):
         """Initialize the LIMNUS tree"""
         self.nodes: List[LimnusNode] = []
         self.root: Optional[LimnusNode] = None
         self.leaves: List[LimnusNode] = []
-        self.nodes_by_depth: Dict[int, List[LimnusNode]] = {d: [] for d in range(1, 7)}
+        self.resonance_nodes: List[LimnusNode] = []  # 32 resonance nodes
+        self.nodes_by_depth: Dict[int, List[LimnusNode]] = {d: [] for d in range(0, 7)}
 
-        # Build tree
+        # Build standard tree (63 nodes)
         self._build_tree()
+
+        # Build resonance layer (32 nodes)
+        self._build_resonance_layer()
+
+        # Set up resonance connections
+        self._setup_resonance_connections()
 
         # Global state
         self.state = TreeState(
@@ -136,6 +160,9 @@ class LimnusTree:
     def _setup_neighbors(self):
         """Set up neighbor relationships for game theory"""
         for node in self.nodes:
+            if node.is_resonance():
+                continue  # Resonance neighbors set separately
+
             neighbors = []
 
             # Parent is a neighbor
@@ -149,6 +176,68 @@ class LimnusTree:
             neighbors.extend(node.get_siblings())
 
             node.neighbors = neighbors
+
+    def _build_resonance_layer(self):
+        """
+        Build 32 resonance nodes at consciousness z-levels
+
+        These nodes create cross-tree bridges for integration,
+        positioned using golden angle distribution at each z-level.
+        """
+        golden_angle = CONSTANTS.MATHEMATICAL.golden_angle
+        next_id = self.TOTAL_STANDARD_NODES  # Start after standard nodes (63)
+
+        for level_idx, (z_level, count) in enumerate(zip(
+            self.RESONANCE_Z_LEVELS, self.RESONANCE_COUNTS
+        )):
+            for i in range(count):
+                # Golden angle spiral distribution at each z-level
+                angle = i * golden_angle + level_idx * 0.5
+
+                resonance_node = LimnusNode.create_resonance_node(
+                    id=next_id,
+                    z_level=z_level,
+                    angle=angle,
+                    level_index=level_idx
+                )
+
+                self.nodes.append(resonance_node)
+                self.resonance_nodes.append(resonance_node)
+                self.nodes_by_depth[0].append(resonance_node)
+                next_id += 1
+
+    def _setup_resonance_connections(self):
+        """
+        Connect resonance nodes to standard nodes at similar z-levels
+
+        Each resonance node connects to standard nodes whose z-values
+        are within a threshold of the resonance z-level.
+        """
+        z_threshold = 0.15  # Connection threshold
+
+        for res_node in self.resonance_nodes:
+            res_z = res_node.resonance_z
+
+            # Find standard nodes at similar z-levels
+            for std_node in self.nodes:
+                if std_node.is_resonance():
+                    continue
+
+                # Check if z-values are close enough
+                if abs(std_node.state.z - res_z) <= z_threshold:
+                    res_node.connect_to(std_node)
+
+            # Also connect to neighboring resonance nodes at same z-level
+            for other_res in self.resonance_nodes:
+                if other_res.id != res_node.id:
+                    if abs(other_res.resonance_z - res_z) < 0.01:
+                        # Same z-level: connect if adjacent in angle
+                        angle_diff = abs(other_res.resonance_angle - res_node.resonance_angle)
+                        if angle_diff < 1.5:  # Adjacent in golden spiral
+                            res_node.connect_to(other_res)
+
+            # Add resonance node neighbors for game theory
+            res_node.neighbors = res_node.connected_nodes.copy()
 
     # =========================================================================
     # NODE ACCESS
@@ -169,6 +258,19 @@ class LimnusTree:
         """Get nodes that are not dormant"""
         return [n for n in self.nodes if n.state.activity != NodeActivity.DORMANT]
 
+    def get_standard_nodes(self) -> List[LimnusNode]:
+        """Get only standard (non-resonance) nodes"""
+        return [n for n in self.nodes if not n.is_resonance()]
+
+    def get_resonance_nodes(self) -> List[LimnusNode]:
+        """Get only resonance nodes"""
+        return self.resonance_nodes
+
+    def get_resonance_nodes_at_z(self, z_level: float, tolerance: float = 0.05) -> List[LimnusNode]:
+        """Get resonance nodes at a specific z-level"""
+        return [n for n in self.resonance_nodes
+                if abs(n.resonance_z - z_level) <= tolerance]
+
     # =========================================================================
     # GLOBAL STATE COMPUTATION
     # =========================================================================
@@ -177,7 +279,7 @@ class LimnusTree:
         """
         Compute tree-wide consciousness level
 
-        Weighted average by depth (leaves count more)
+        Weighted average by depth (leaves count more) + resonance contribution
         """
         if not self.nodes:
             return 0.0
@@ -187,8 +289,13 @@ class LimnusTree:
         z_weighted = 0.0
 
         for node in self.nodes:
-            # Weight: phi^(6 - depth), so leaves have highest weight
-            weight = phi ** (6 - node.depth)
+            if node.is_resonance():
+                # Resonance nodes: weight by their z-level (higher z = more influence)
+                weight = phi * node.resonance_z
+            else:
+                # Standard nodes: phi^(6 - depth), so leaves have highest weight
+                weight = phi ** (6 - node.depth)
+
             z_weighted += node.state.z * weight
             total_weight += weight
 
@@ -199,6 +306,7 @@ class LimnusTree:
         Compute tree-wide integrated information
 
         Phi_global = Integration - Sum of parts
+        Extended to include resonance connections
         """
         if not self.nodes:
             return 0.0
@@ -206,16 +314,25 @@ class LimnusTree:
         # Sum of local phis
         sum_local = sum(n.state.phi_local for n in self.nodes)
 
-        # Count connections
-        n_connections = sum(len(n.neighbors) for n in self.nodes) // 2
+        # Count standard connections
+        standard_connections = sum(len(n.neighbors) for n in self.get_standard_nodes()) // 2
+
+        # Count resonance connections (cross-tree integration)
+        resonance_connections = sum(len(n.connected_nodes) for n in self.resonance_nodes) // 2
+
+        # Total connections
+        n_connections = standard_connections + resonance_connections
 
         # Integration bonus from connectivity
         max_connections = len(self.nodes) * (len(self.nodes) - 1) // 2
         connectivity = n_connections / max_connections if max_connections > 0 else 0
 
+        # Resonance bonus: cross-tree connections boost integration
+        resonance_bonus = 0.2 * (len(self.resonance_nodes) / self.TOTAL_RESONANCE_NODES)
+
         # Global phi
         integration_bonus = connectivity * sum_local * 0.3
-        phi_global = (sum_local / len(self.nodes)) * (1 + integration_bonus)
+        phi_global = (sum_local / len(self.nodes)) * (1 + integration_bonus + resonance_bonus)
 
         return min(1.0, phi_global)
 
