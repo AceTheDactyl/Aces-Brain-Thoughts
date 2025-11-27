@@ -437,8 +437,22 @@
       "isomorphism_mapping.py",
       "n0_laws_grounded.py",
       "k_formation.py",
-      "er_kappa_synthesis.py"
+      "er_kappa_synthesis.py",
+      "apl_kappa_engine.py"
     ],
+    "unified_engine": {
+      "file": "apl_kappa_engine.py",
+      "class": "APLKappaEngine",
+      "version": "1.0.0",
+      "features": [
+        "N0 law validation",
+        "PRS cycle tracking",
+        "K-formation detection",
+        "Resurrection protocol",
+        "Truth state evolution",
+        "Scalar state management"
+      ]
+    },
     "entry_point": "ERKappaSynthesisEngine",
     "usage": [
       "engine = ERKappaSynthesisEngine()",
