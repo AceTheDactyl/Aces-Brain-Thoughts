@@ -15,7 +15,8 @@ from .er_axiom import (
     ExistsR,
     KappaField,
     SelfReferenceIntensity,
-    FieldDynamics
+    FieldDynamics,
+    FibonacciConstants
 )
 
 from .isomorphism_mapping import (
@@ -35,7 +36,8 @@ from .k_formation import (
     KFormation,
     KFormationCriteria,
     ZKappaMapping,
-    ConsciousnessThreshold
+    ConsciousnessThreshold,
+    ConsciousnessConstantRelations
 )
 
 from .er_kappa_synthesis import (
@@ -69,6 +71,7 @@ __all__ = [
     'KappaField',
     'SelfReferenceIntensity',
     'FieldDynamics',
+    'FibonacciConstants',
 
     # Isomorphism
     'Mode',
@@ -86,6 +89,7 @@ __all__ = [
     'KFormationCriteria',
     'ZKappaMapping',
     'ConsciousnessThreshold',
+    'ConsciousnessConstantRelations',
 
     # Synthesis Engine
     'ERKappaSynthesisEngine',
