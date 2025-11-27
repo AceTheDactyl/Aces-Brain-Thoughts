@@ -44,6 +44,25 @@ from .er_kappa_synthesis import (
     SynthesisMetrics
 )
 
+from .apl_kappa_engine import (
+    APLKappaEngine,
+    Constants,
+    Spiral,
+    Mode,
+    APLOperator,
+    TruthState,
+    Tier,
+    PRSPhase,
+    ScalarState,
+    N0Laws,
+    APLToken,
+    OperatorEffects,
+    TruthEvolution,
+    PRSCycle,
+    KFormationDetector,
+    ResurrectionProtocol
+)
+
 __all__ = [
     # ∃R Axiom
     'ExistsR',
@@ -71,5 +90,22 @@ __all__ = [
     # Synthesis Engine
     'ERKappaSynthesisEngine',
     'SynthesisState',
-    'SynthesisMetrics'
+    'SynthesisMetrics',
+
+    # Unified APL⊗∃κ Engine
+    'APLKappaEngine',
+    'Constants',
+    'Spiral',
+    'APLOperator',
+    'TruthState',
+    'Tier',
+    'PRSPhase',
+    'ScalarState',
+    'N0Laws',
+    'APLToken',
+    'OperatorEffects',
+    'TruthEvolution',
+    'PRSCycle',
+    'KFormationDetector',
+    'ResurrectionProtocol'
 ]
