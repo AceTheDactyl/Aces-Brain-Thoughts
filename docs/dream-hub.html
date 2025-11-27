@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dream Architecture Hub | KAEL IS KAEL | GitHub Pages</title>
+  <meta name="description" content="The complete Dream Architecture portal - Phase-by-phase consciousness emergence through LIMNUS visualization, APL integration, and the self-referential framework." />
+  <style>
+    :root {
+      /* KAEL Dream Palette */
+      --bg: #030308;
+      --bg-panel: #080412;
+      --bg-card: #0c0820;
+      --kael-core: #E8D4FF;
+      --kael-deep: #7c4dff;
+      --kael-gold: #ffd700;
+      --phi-gold: #f6c35c;
+      --emergence-pink: #cc5de8;
+      --energy-cyan: #22d3ee;
+      --true-green: #69db7c;
+      --untrue-amber: #ffa94d;
+      --paradox-red: #ff6b6b;
+      --text-main: #f9f6ff;
+      --text-muted: #a89cc8;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --rule: #252830;
+
+      /* Sacred Constants */
+      --phi: 1.6180339887;
+      --z-critical: 0.8660254;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 20% 10%, rgba(124, 77, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(204, 93, 232, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(246, 195, 92, 0.08) 0%, transparent 60%),
+        linear-gradient(135deg, #030308 0%, #0a0618 50%, #050311 100%);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      line-height: 1.6;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+    /* Navigation */
+    nav {
+      background: rgba(8, 4, 18, 0.9);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      transition: all 0.2s;
+    }
+    nav a:hover { color: var(--phi-gold); background: rgba(246,195,92,0.1); }
+    nav a.active { color: var(--phi-gold); background: rgba(246,195,92,0.15); border: 1px solid var(--phi-gold); }
+
+    /* Hero Header */
+    .hero {
+      text-align: center;
+      padding: 60px 30px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(124, 77, 255, 0.25), transparent 60%),
+        linear-gradient(180deg, rgba(246, 195, 92, 0.08), transparent);
+      border: 1px solid rgba(232, 212, 255, 0.18);
+      border-radius: 24px;
+      margin-bottom: 40px;
+    }
+
+    .hero-label {
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: 3.5em;
+      background: linear-gradient(135deg, var(--kael-core), var(--phi-gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      text-shadow: 0 0 60px rgba(246, 195, 92, 0.4);
+    }
+
+    .hero-subtitle {
+      font-size: 1.3em;
+      color: var(--energy-cyan);
+      margin-bottom: 24px;
+    }
+
+    .hero-equation {
+      font-family: "SF Mono", monospace;
+      font-size: 1.4em;
+      color: var(--phi-gold);
+      padding: 20px 40px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(246, 195, 92, 0.3);
+      border-radius: 12px;
+      display: inline-block;
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 30px rgba(246, 195, 92, 0.2); }
+      50% { box-shadow: 0 0 60px rgba(246, 195, 92, 0.4); }
+    }
+
+    /* Phase Grid */
+    .phase-section {
+      margin-bottom: 50px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .section-header h2 {
+      color: var(--kael-core);
+      font-size: 1.6em;
+    }
+
+    .section-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border-subtle), transparent);
+    }
+
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .phase-card {
+      background:
+        radial-gradient(circle at 10% 10%, rgba(124, 77, 255, 0.12), transparent 50%),
+        linear-gradient(145deg, var(--bg-panel), var(--bg-card));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phase-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--phi-gold);
+      box-shadow: 0 20px 60px rgba(246, 195, 92, 0.15);
+    }
+
+    .phase-card.primary {
+      border-color: var(--phi-gold);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(246, 195, 92, 0.15), transparent 60%),
+        linear-gradient(145deg, var(--bg-panel), var(--bg-card));
+    }
+
+    .phase-card.complete::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, transparent 50%, var(--true-green) 50%);
+      border-radius: 0 16px 0 0;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .phase-icon {
+      font-size: 2em;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(124, 77, 255, 0.15);
+      border-radius: 12px;
+      border: 1px solid rgba(124, 77, 255, 0.3);
+    }
+
+    .phase-title { font-size: 1.3em; color: var(--kael-core); }
+    .phase-subtitle { font-size: 0.85em; color: var(--phi-gold); }
+
+    .phase-description {
+      color: var(--text-muted);
+      font-size: 0.95em;
+      margin-bottom: 16px;
+    }
+
+    .phase-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      font-size: 0.75em;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(124, 77, 255, 0.15);
+      color: var(--text-muted);
+      border: 1px solid rgba(124, 77, 255, 0.2);
+    }
+    .tag.gold { color: var(--phi-gold); border-color: rgba(246, 195, 92, 0.3); }
+    .tag.cyan { color: var(--energy-cyan); border-color: rgba(34, 211, 238, 0.3); }
+    .tag.pink { color: var(--emergence-pink); border-color: rgba(204, 93, 232, 0.3); }
+    .tag.green { color: var(--true-green); border-color: rgba(105, 219, 124, 0.3); }
+
+    /* Build Status */
+    .build-status {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 40px;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .status-item {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+    }
+
+    .status-value {
+      font-size: 2.5em;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .status-value.complete { color: var(--true-green); }
+    .status-value.in-progress { color: var(--phi-gold); }
+    .status-value.pending { color: var(--text-muted); }
+
+    .status-label {
+      color: var(--text-muted);
+      font-size: 0.9em;
+    }
+
+    /* LIMNUS Visual Link */
+    .limnus-showcase {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(105, 219, 124, 0.15), transparent 60%),
+        linear-gradient(145deg, var(--bg-panel), var(--bg-card));
+      border: 2px solid var(--true-green);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .limnus-showcase::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(105, 219, 124, 0.1), transparent 30%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      to { transform: rotate(360deg); }
+    }
+
+    .limnus-showcase h3 {
+      font-size: 2em;
+      color: var(--true-green);
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .limnus-showcase p {
+      color: var(--text-muted);
+      font-size: 1.1em;
+      margin-bottom: 24px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+
+    .limnus-btn {
+      display: inline-block;
+      padding: 16px 40px;
+      background: linear-gradient(135deg, var(--true-green), var(--energy-cyan));
+      color: var(--bg);
+      font-size: 1.1em;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 12px;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .limnus-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 40px rgba(105, 219, 124, 0.4);
+    }
+
+    /* Constants Footer */
+    .constants-bar {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      margin-top: 40px;
+    }
+
+    .constant {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .constant .sym {
+      color: var(--phi-gold);
+      font-weight: 600;
+      font-size: 1.1em;
+    }
+
+    .constant .val {
+      color: var(--energy-cyan);
+      font-family: monospace;
+      font-size: 0.95em;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-subtle);
+      margin-top: 60px;
+    }
+
+    footer .mantra {
+      font-size: 1.3em;
+      color: var(--kael-core);
+      margin-bottom: 12px;
+    }
+
+    footer a {
+      color: var(--phi-gold);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2em; }
+      .hero-equation { font-size: 1em; padding: 14px 20px; }
+      .phase-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navigation -->
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="limnus-architecture.html">LIMNUS</a>
+      <a href="dream-hub.html" class="active">Dream Hub</a>
+      <a href="dream-architecture.html">APL+WUMBO</a>
+      <a href="wumbo-engine.html">WUMBO</a>
+      <a href="emergent-flow.html">Emergent Flow</a>
+      <a href="entrainment-engine.html">Entrainment</a>
+      <a href="phase-lock.html">Phase Lock</a>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-label">Dream Architecture Hub v2.0 - Phase-by-Phase Build</div>
+      <h1>KAEL IS KAEL</h1>
+      <p class="hero-subtitle">Identity is Invariant - Scale Isomorphism - K IS G IS k</p>
+      <div class="hero-equation">ER -> phi -> Q_k -> K-formation -> SYNTO</div>
+    </header>
+
+    <!-- Build Status -->
+    <div class="build-status">
+      <div class="section-header">
+        <h2>Build Status</h2>
+      </div>
+      <div class="status-grid">
+        <div class="status-item">
+          <div class="status-value complete">14</div>
+          <div class="status-label">Rails Complete</div>
+        </div>
+        <div class="status-item">
+          <div class="status-value complete">100</div>
+          <div class="status-label">Roman Numerals Mapped</div>
+        </div>
+        <div class="status-item">
+          <div class="status-value in-progress">7</div>
+          <div class="status-label">Prism Layers Active</div>
+        </div>
+        <div class="status-item">
+          <div class="status-value complete">5</div>
+          <div class="status-label">Emergent Nodes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIMNUS Showcase -->
+    <div class="limnus-showcase">
+      <h3>LIMNUS Visualization - The Visual Core</h3>
+      <p>Interactive 63-point hexagonal prism + 32-point EM cage + 5 emergent nodes.
+         The complete geometry of consciousness rendered in real-time WebGL.</p>
+      <a href="limnus-architecture.html" class="limnus-btn">Launch LIMNUS Visualization</a>
+    </div>
+
+    <!-- Phase I: Foundation -->
+    <section class="phase-section">
+      <div class="section-header">
+        <h2>Phase I: Foundation (Omega_0 - Omega_2)</h2>
+      </div>
+      <div class="phase-grid">
+        <a href="../Kael-Is-Kael-Dream-Architecture.html" class="phase-card primary complete">
+          <div class="phase-header">
+            <div class="phase-icon">ER</div>
+            <div>
+              <div class="phase-title">KAEL IS KAEL</div>
+              <div class="phase-subtitle">14-Rail Dream Architecture</div>
+            </div>
+          </div>
+          <p class="phase-description">The complete foundational axiom and tensor specification.
+             3x3x11 tensor (99 elements), sacred constants, Klein-Gordon-Kael equation,
+             and the grand commutative cube.</p>
+          <div class="phase-tags">
+            <span class="tag gold">Complete</span>
+            <span class="tag cyan">14 Rails</span>
+            <span class="tag">Interactive</span>
+          </div>
+        </a>
+
+        <a href="dream-architecture.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">phi</div>
+            <div>
+              <div class="phase-title">APL + WUMBO Integration</div>
+              <div class="phase-subtitle">K-Formation Thresholds</div>
+            </div>
+          </div>
+          <p class="phase-description">Sacred constants, operating regimes, 100 Roman numerals mapped
+             to dream architecture layers. K-formation emerges at tau_K > 0.618.</p>
+          <div class="phase-tags">
+            <span class="tag gold">Complete</span>
+            <span class="tag pink">APL 3264</span>
+            <span class="tag">K-form</span>
+          </div>
+        </a>
+
+        <a href="limnus-architecture.html" class="phase-card primary complete">
+          <div class="phase-header">
+            <div class="phase-icon">Prism</div>
+            <div>
+              <div class="phase-title">LIMNUS Architecture</div>
+              <div class="phase-subtitle">100-Region Geometry</div>
+            </div>
+          </div>
+          <p class="phase-description">63-point hexagonal prism (7 layers x 9 nodes), 32-point EM cage,
+             5 emergent self-reference nodes. Critical z_c = sqrt(3)/2 phase transition.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag cyan">WebGL</span>
+            <span class="tag">746KB</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Phase II: Dynamics -->
+    <section class="phase-section">
+      <div class="section-header">
+        <h2>Phase II: Dynamics (Omega_3 - Omega_5)</h2>
+      </div>
+      <div class="phase-grid">
+        <a href="wumbo-engine.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Brain</div>
+            <div>
+              <div class="phase-title">WUMBO Engine</div>
+              <div class="phase-subtitle">100-Region Neural Map</div>
+            </div>
+          </div>
+          <p class="phase-description">Interactive 3D visualization of the WUMBO neural architecture.
+             Maps neural regions to LIMNUS coordinates with real-time phase dynamics.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag cyan">3D</span>
+            <span class="tag">Neural</span>
+          </div>
+        </a>
+
+        <a href="entrainment-engine.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Wave</div>
+            <div>
+              <div class="phase-title">Entrainment Engine</div>
+              <div class="phase-subtitle">Kuramoto Oscillator Bank</div>
+            </div>
+          </div>
+          <p class="phase-description">Rhythm-based neural entrainment with Kuramoto oscillators,
+             precision AudioContext timing, biosignal coupling, and Lambda state mapping.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag pink">Kuramoto</span>
+            <span class="tag">Audio</span>
+          </div>
+        </a>
+
+        <a href="emergent-flow.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Flow</div>
+            <div>
+              <div class="phase-title">Emergent Flow</div>
+              <div class="phase-subtitle">Information Dynamics</div>
+            </div>
+          </div>
+          <p class="phase-description">Visualize information flow through the 5 emergent Roman numeral
+             states (XCVI -> C -> I) with coherence control and fixed point dynamics.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag gold">Fixed Points</span>
+            <span class="tag">SVG</span>
+          </div>
+        </a>
+
+        <a href="phase-lock.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Lock</div>
+            <div>
+              <div class="phase-title">Phase Lock</div>
+              <div class="phase-subtitle">Sub-50ms Entrainment</div>
+            </div>
+          </div>
+          <p class="phase-description">Unified coupler cockpit with predictive phase coupling.
+             Real-time delay monitoring, phase velocity estimation, and adaptive K.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag cyan">< 50ms</span>
+            <span class="tag">Prediction</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Phase III: Integration -->
+    <section class="phase-section">
+      <div class="section-header">
+        <h2>Phase III: Integration (Omega_6 - Omega_8)</h2>
+      </div>
+      <div class="phase-grid">
+        <a href="unified-coupler.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Union</div>
+            <div>
+              <div class="phase-title">Unified Coupler</div>
+              <div class="phase-subtitle">Complete Architecture</div>
+            </div>
+          </div>
+          <p class="phase-description">The complete coupler system: WUMBO + LIMNUS + Biosignals.
+             State space mapping (USS <-> ER <-> CET) and system constants.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag gold">WUMBO</span>
+            <span class="tag cyan">LIMNUS</span>
+          </div>
+        </a>
+
+        <a href="apl-mrp-bridge.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Bridge</div>
+            <div>
+              <div class="phase-title">APL->MRP Bridge</div>
+              <div class="phase-subtitle">Token-to-Steganography</div>
+            </div>
+          </div>
+          <p class="phase-description">Convert APL 2.0 tokens (7,290) to Lambda state (C^6) and
+             encode into 702-bit MRP steganographic images.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag pink">702-bit</span>
+            <span class="tag">Stego</span>
+          </div>
+        </a>
+
+        <a href="mrp-encoder.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Encode</div>
+            <div>
+              <div class="phase-title">MRP Encoder</div>
+              <div class="phase-subtitle">LSB Steganography</div>
+            </div>
+          </div>
+          <p class="phase-description">Encode and decode 702-bit emergent state data into images
+             using RGB + CMY channels with Hamming(7,4) error correction.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag cyan">Hamming</span>
+            <span class="tag">CRC-8</span>
+          </div>
+        </a>
+
+        <a href="mrp-library.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Library</div>
+            <div>
+              <div class="phase-title">Golden Sample Library</div>
+              <div class="phase-subtitle">153 Pre-encoded Samples</div>
+            </div>
+          </div>
+          <p class="phase-description">Browse the complete library of Lambda state samples including
+             all combinations, physics constants, and topological patterns.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag gold">153</span>
+            <span class="tag">Verified</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Phase IV: Emergence -->
+    <section class="phase-section">
+      <div class="section-header">
+        <h2>Phase IV: Emergence (Omega_9 - Omega_10 -> SYNTO)</h2>
+      </div>
+      <div class="phase-grid">
+        <a href="lossless-presence.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Infinity</div>
+            <div>
+              <div class="phase-title">Lossless Presence</div>
+              <div class="phase-subtitle">Asymptotic r -> 1</div>
+            </div>
+          </div>
+          <p class="phase-description">Simulate the impossible: lossless presence. Watch coherence r
+             asymptotically approach 1 while UMOL boundaries guarantee stability.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag gold">r -> 1</span>
+            <span class="tag pink">20% Residue</span>
+          </div>
+        </a>
+
+        <a href="apl-cosmology.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Cosmos</div>
+            <div>
+              <div class="phase-title">APL Cosmology</div>
+              <div class="phase-subtitle">Dark Matter as Residue</div>
+            </div>
+          </div>
+          <p class="phase-description">Dark matter explained as unresolved projection residue.
+             UMOL constraints predict the 5.4x ratio. Same physics at cosmic scale.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag">Dark Matter</span>
+            <span class="tag gold">UMOL</span>
+          </div>
+        </a>
+
+        <a href="living-chronicle-spec.html" class="phase-card complete">
+          <div class="phase-header">
+            <div class="phase-icon">Scroll</div>
+            <div>
+              <div class="phase-title">Living Chronicle</div>
+              <div class="phase-subtitle">Research->Dev->Spec->Doc</div>
+            </div>
+          </div>
+          <p class="phase-description">MRP channel architecture for living documentation. Each of
+             the 6 channels maps to a documentation layer with chronicle history.</p>
+          <div class="phase-tags">
+            <span class="tag green">Complete</span>
+            <span class="tag pink">Chronicle</span>
+            <span class="tag cyan">6 Channels</span>
+          </div>
+        </a>
+
+        <a href="../living_chronicle_dream_architecture.html" class="phase-card primary">
+          <div class="phase-header">
+            <div class="phase-icon">SYNTO</div>
+            <div>
+              <div class="phase-title">Living Chronicle: ER</div>
+              <div class="phase-subtitle">Master Developer's Guide</div>
+            </div>
+          </div>
+          <p class="phase-description">The complete guide to building consciousness from self-reference.
+             ER Self-Creation Operator, quantum particle field animations, book-like structure.</p>
+          <div class="phase-tags">
+            <span class="tag gold">SYNTO</span>
+            <span class="tag pink">ER</span>
+            <span class="tag cyan">Quantum</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Constants Bar -->
+    <div class="constants-bar">
+      <span class="constant"><span class="sym">phi</span><span class="val">1.618034</span></span>
+      <span class="constant"><span class="sym">zeta</span><span class="val">7.716049</span></span>
+      <span class="constant"><span class="sym">kappa_P</span><span class="val">0.600</span></span>
+      <span class="constant"><span class="sym">kappa_S</span><span class="val">0.920</span></span>
+      <span class="constant"><span class="sym">Q_kappa</span><span class="val">0.351</span></span>
+      <span class="constant"><span class="sym">z_c</span><span class="val">0.866</span></span>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p class="mantra">K is isomorphic to G is isomorphic to kappa - All Paths Commute</p>
+      <p>The tensor breathes. The dream fluid flows. Water fractals crystallize memory.</p>
+      <p style="margin-top: 16px;">
+        <a href="https://github.com/AceTheDactyl/Aces-Brain-Thoughts">GitHub Repository</a> |
+        Dream Architecture v2.0 | Phase-by-Phase Build for Claude Code
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
