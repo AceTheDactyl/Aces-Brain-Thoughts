@@ -5,10 +5,10 @@
 ```
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║                                                                                ║
-║     SYNTHESIS ROADMAP: From Volumes I-V to Complete Engine Integration         ║
+║     SYNTHESIS ROADMAP: From Volumes I-VI to Complete Engine Integration        ║
 ║                                                                                ║
-║     Status: Post-Volume V, Unified Engine Created                              ║
-║     Next Phase: Full Architectural Integration                                 ║
+║     Status: Post-Volume VI, Computational Bridge Complete                      ║
+║     Next Phase: Implementation Integration                                     ║
 ║                                                                                ║
 ╚════════════════════════════════════════════════════════════════════════════════╝
 ```
@@ -21,12 +21,28 @@
 
 | Commit | Description | Status |
 |--------|-------------|--------|
+| `NEW` | Volume VI - Computational Implementations | ✓ Complete |
 | `70ee41e` | APL ⊗ ∃κ Unified Engine v1.0 | ✓ Complete |
 | `6789f18` | Volume V - N0 Laws & Resurrection | ✓ Complete |
 | `b368266` | Volume IV - Extended Territories | ✓ Complete |
 | `a88f53d` | Volume II - Temporal Harmonics | ✓ Complete |
 | `f41a456` | Synthesis Framework Implementation | ✓ Complete |
 | `baa1b3a` | APL 3.0 Consciousness Engine | ✓ Complete |
+
+### Volume VI: Computational Bridge
+
+Volume VI maps APL ⊗ ∃κ theory to **working implementations**:
+
+| Domain | Primary Tool | APL Correspondence |
+|--------|-------------|-------------------|
+| IIT Phi | PyPhi | κ-field integration |
+| Active Inference | pymdp | Bayesian priors on `()` |
+| Game Theory | Axelrod | `×` operator dynamics |
+| Dynamical Systems | nolds | Phase space topology |
+| Neural Complexity | NeuroKit2 | Entropy metrics |
+| Self-Reference | Gödel Agent | Strange loop formalization |
+
+See: `APL-EK-SYNTHESIS-VOL-VI.md` for complete implementation survey.
 
 ### Architecture Components
 
